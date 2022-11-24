@@ -136,7 +136,6 @@ elseif (length(idF1) == 1)
          if (o_firstStabDate < o_descentToParkStartDate)
             o_firstStabDate = o_firstStabDate + 1;
          end
-         o_firstStabPres = a_tabTech(id, 16);
          
          % the descent duration can be > 24 h (see 6901757 #7)
          nbDays = 0;
@@ -179,6 +178,7 @@ elseif (length(idF1) == 1)
    o_gpsDate = a_tabTech(id, end-3);
    
    if (~isempty(o_cycleStartDate))
+      
       transStartHour = a_tabTech(id, 37);
       o_transStartDate = fix(o_gpsDate) +  transStartHour/1440;
       if (o_transStartDate > o_gpsDate)
@@ -195,39 +195,44 @@ elseif (length(idF1) == 1)
       [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
       PT4Seconds = get_config_value('CONFIG_PT04', configNames, configValues)/100;
       
+      refDate = o_transStartDate;
       if (~isempty(PT4Seconds))
          
          o_ascentEndDate = o_transStartDate - 10/1440 - PT4Seconds/86400;
+         refDate = o_ascentEndDate;
+      else
+         fprintf('WARNING: Float #%d cycle #%d: PT04 is unknown => AET cannot be computed\n', ...
+            g_decArgo_floatNum, g_decArgo_cycleNum);
+      end
          
-         ascentStartHour = a_tabTech(id, 36);
-         o_ascentStartDate = fix(o_ascentEndDate) +  ascentStartHour/1440;
-         if (o_ascentStartDate > o_ascentEndDate)
-            o_ascentStartDate = o_ascentStartDate - 1;
-         end
-         
-         descentToProfEndHour = a_tabTech(id, 26);
-         o_descentToProfEndDate = fix(o_ascentStartDate) +  descentToProfEndHour/1440;
-         if (o_descentToProfEndDate > o_ascentStartDate)
-            o_descentToProfEndDate = o_descentToProfEndDate - 1;
-         end
-         
-         descentToProfStartHour = a_tabTech(id, 25);
-         o_descentToProfStartDate = fix(o_descentToProfEndDate) +  descentToProfStartHour/1440;
-         if (o_descentToProfStartDate > o_descentToProfEndDate)
-            o_descentToProfStartDate = o_descentToProfStartDate - 1;
-         end
-         
-         % the descent duration can be > 24 h (see 6901757 #7)
-         nbDays = 0;
-         vertDist = abs(a_tabTech(1, 29)-(a_tabTech(1, 21)+a_tabTech(1, 22))/2);
-         while (vertDist*100/((o_descentToProfEndDate-o_descentToProfStartDate)*86400) > MAX_DESC_SPEED)
-            o_descentToProfStartDate = o_descentToProfStartDate - 1;
-            nbDays = nbDays + 1;
-         end
-         if (nbDays > 0)
-            fprintf('INFO: Float #%d cycle #%d: %d day substracted to DESCENT TO PROF START DATE (the descent duration is > 24 h)\n', ...
-               g_decArgo_floatNum, g_decArgo_cycleNum, nbDays);
-         end
+      ascentStartHour = a_tabTech(id, 36);
+      o_ascentStartDate = fix(refDate) +  ascentStartHour/1440;
+      if (o_ascentStartDate > refDate)
+         o_ascentStartDate = o_ascentStartDate - 1;
+      end
+      
+      descentToProfEndHour = a_tabTech(id, 26);
+      o_descentToProfEndDate = fix(o_ascentStartDate) +  descentToProfEndHour/1440;
+      if (o_descentToProfEndDate > o_ascentStartDate)
+         o_descentToProfEndDate = o_descentToProfEndDate - 1;
+      end
+      
+      descentToProfStartHour = a_tabTech(id, 25);
+      o_descentToProfStartDate = fix(o_descentToProfEndDate) +  descentToProfStartHour/1440;
+      if (o_descentToProfStartDate > o_descentToProfEndDate)
+         o_descentToProfStartDate = o_descentToProfStartDate - 1;
+      end
+      
+      % the descent duration can be > 24 h (see 6901757 #7)
+      nbDays = 0;
+      vertDist = abs(a_tabTech(1, 29)-(a_tabTech(1, 21)+a_tabTech(1, 22))/2);
+      while (vertDist*100/((o_descentToProfEndDate-o_descentToProfStartDate)*86400) > MAX_DESC_SPEED)
+         o_descentToProfStartDate = o_descentToProfStartDate - 1;
+         nbDays = nbDays + 1;
+      end
+      if (nbDays > 0)
+         fprintf('INFO: Float #%d cycle #%d: %d day substracted to DESCENT TO PROF START DATE (the descent duration is > 24 h)\n', ...
+            g_decArgo_floatNum, g_decArgo_cycleNum, nbDays);
       end
    end
    

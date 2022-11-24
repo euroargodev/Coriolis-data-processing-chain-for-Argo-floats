@@ -15,7 +15,7 @@
 %    a_tabProfiles, ...
 %    a_parkDate, a_parkTransDate, ...
 %    a_parkPres, a_parkTemp, a_parkSal, ...
-%    a_parkC1PhaseDoxy, a_parkC2PhaseDoxy, a_parkTempDoxy, a_parkDoxy)
+%    a_parkC1PhaseDoxy, a_parkC2PhaseDoxy, a_parkTempDoxy, a_parkDoxy, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_cycleNum               : current cycle number
@@ -41,10 +41,11 @@
 %   a_parkPres               : drift meas PRES
 %   a_parkTemp               : drift meas TEMP
 %   a_parkSal                : drift meas PSAL
-%   a_parkC1PhaseDoxy         : drift meas C1PHASE_DOXY
-%   a_parkC2PhaseDoxy         : drift meas C2PHASE_DOXY
-%   a_parkTempDoxy            : drift meas TEMP_DOXY
-%   a_parkDoxy                : drift meas DOXY
+%   a_parkC1PhaseDoxy        : drift meas C1PHASE_DOXY
+%   a_parkC2PhaseDoxy        : drift meas C2PHASE_DOXY
+%   a_parkTempDoxy           : drift meas TEMP_DOXY
+%   a_parkDoxy               : drift meas DOXY
+%   a_decoderId              : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabTrajNMeas  : N_MEASUREMENT trajectory data
@@ -71,7 +72,7 @@ function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_206_207_208
    a_tabProfiles, ...
    a_parkDate, a_parkTransDate, ...
    a_parkPres, a_parkTemp, a_parkSal, ...
-   a_parkC1PhaseDoxy, a_parkC2PhaseDoxy, a_parkTempDoxy, a_parkDoxy)
+   a_parkC1PhaseDoxy, a_parkC2PhaseDoxy, a_parkTempDoxy, a_parkDoxy, a_decoderId)
 
 % output parameters initialization
 o_tabTrajNMeas = [];
@@ -105,6 +106,7 @@ global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
+global g_MC_InAirSingleMeas;
 
 % global time status
 global g_JULD_STATUS_1;
@@ -450,6 +452,36 @@ if (a_deepCycle == 1)
          
          trajNCycleStruct.repParkPres = mean(a_parkPres(idForMean));
          trajNCycleStruct.repParkPresStatus = g_RPP_STATUS_1;
+      end
+   end
+   
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % IN AIR MEASUREMENTS
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   for idProf = 1:length(a_tabProfiles)
+      profile = a_tabProfiles(idProf);
+      if ((profile.direction == 'A') && any(strfind(profile.vertSamplingScheme, 'unpumped')))
+         
+         [inAirMeasProfile] = create_in_air_meas_profile(a_decoderId, profile);
+         
+         if (~isempty(inAirMeasProfile))
+            
+            inAirMeasDates = inAirMeasProfile.dates;
+            dateFillValue = inAirMeasProfile.dateList.fillValue;
+            
+            for idMeas = 1:length(inAirMeasDates)
+               if (inAirMeasDates(idMeas) ~= dateFillValue)
+                  measStruct = create_one_meas_float_time(g_MC_InAirSingleMeas, inAirMeasDates(idMeas), g_JULD_STATUS_2, floatClockDrift);
+               else
+                  measStruct = get_traj_one_meas_init_struct();
+                  measStruct.measCode = g_MC_InAirSingleMeas;
+               end
+               measStruct.paramList = inAirMeasProfile.paramList;
+               measStruct.paramData = inAirMeasProfile.data(idMeas, :);
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+            end
+         end
       end
    end
    

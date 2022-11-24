@@ -140,14 +140,39 @@ else
    end
 end
 
+% BE CAREFUL:
+% "descent to profile end date" has a 6 min resolution
+% "descent to profile start date" has a 1 min resolution
+% then if PARK == PROF these 2 dates can be chronologically incoherent
+% Ex:
+% 6902689	2	 Tech2	 Descent to profile depth start time	1144	 =>	 19:04:00
+% 6902689	2	 Tech2	 Descent to profile depth stop time	190	 =>	 19:00:00
+
+descentToProfStartMinute = a_tabTech(14);
+descentToProfEndMinute = a_tabTech(15)*6;
+
+% retrieve the drift and profile depths from the configuration
+[configNames, configValues] = get_float_config_argos_2(g_decArgo_cycleNum);
+driftDepth = get_config_value('CONFIG_MC010_', configNames, configValues);
+profDepth = get_config_value('CONFIG_MC011_', configNames, configValues);
+if (~isnan(driftDepth) && ~isnan(profDepth))
+
+   if (driftDepth == profDepth)
+      if ((descentToProfEndMinute < descentToProfStartMinute) && ...
+            (descentToProfStartMinute - descentToProfEndMinute < 6))
+         descentToProfEndMinute = descentToProfStartMinute;
+      end
+   end
+end
+
 % determination of descent to profile end date
-o_descentToProfEndDate = fix(o_ascentStartDate) + a_tabTech(15)*6/1440 + zeroOr3Min;
+o_descentToProfEndDate = fix(o_ascentStartDate) + descentToProfEndMinute/1440 + zeroOr3Min;
 if (o_descentToProfEndDate > o_ascentStartDate)
    o_descentToProfEndDate = o_descentToProfEndDate - 1;
 end
 
 % determination of descent to profile start date
-o_descentToProfStartDate = fix(o_descentToProfEndDate) + a_tabTech(14)/1440;
+o_descentToProfStartDate = fix(o_descentToProfEndDate) + descentToProfStartMinute/1440;
 if (o_descentToProfStartDate > o_descentToProfEndDate)
    o_descentToProfStartDate = o_descentToProfStartDate - 1;
 end

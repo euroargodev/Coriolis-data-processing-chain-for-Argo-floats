@@ -29,12 +29,14 @@ global g_decArgo_outputCsvFileId;
 global g_decArgo_floatNum;
 
 
+% print Aanderaa optode coef
 if (~isempty(g_decArgo_calibInfo) && isfield(g_decArgo_calibInfo, 'OPTODE') && isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
    tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
    if (~isempty(tabDoxyCoef))
       
-      %       For the Stern-Volmer method: size(a_tabCoef) = 1 7 and
-      %          a_tabCoef(1, 1:7) = [SVUFoilCoef0 SVUFoilCoef1 ... SVUFoilCoef6]
+      %       For the Stern-Volmer method: size(a_tabCoef) = 2 7 and
+      %          a_tabCoef(1, 1:4) = [PhaseCoef0 PhaseCoef1 ... PhaseCoef3]
+      %          a_tabCoef(2, 1:7) = [SVUFoilCoef0 SVUFoilCoef1 ... SVUFoilCoef6]
       %       For the Aanderaa standard calibration method:
       %          size(a_tabCoef) = 5 28 and
       %          a_tabCoef(1, 1:4) = [PhaseCoef0 PhaseCoef1 ... PhaseCoef3]
@@ -104,38 +106,32 @@ if (~isempty(g_decArgo_calibInfo) && isfield(g_decArgo_calibInfo, 'OPTODE') && i
                ['ConcCoef' num2str(idC-1)], tabDoxyCoef(6, idC));
          end
       end
-      
-      % for Arvor 2DO print SBE coef also
-      if (a_decoderId == 209)
-      end
    end
 end
 
-% for Arvor 2DO print SBE coef also
-if (a_decoderId == 209)
-   if (~isempty(g_decArgo_calibInfo) && isfield(g_decArgo_calibInfo, 'OPTODE') && isfield(g_decArgo_calibInfo.OPTODE, 'SbeTabDoxyCoef'))
-      tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
-      % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 9
-      
-      for idC = 1:3
-         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
-            g_decArgo_floatNum, -1, ...
-            ['SBEOptodeA' num2str(idC-1)], tabDoxyCoef(1, idC));
-      end
-      for idC = 1:2
-         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
-            g_decArgo_floatNum, -1, ...
-            ['SBEOptodeB' num2str(idC-1)], tabDoxyCoef(1, idC+3));
-      end
-      for idC = 1:3
-         fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
-            g_decArgo_floatNum, -1, ...
-            ['SBEOptodeC' num2str(idC-1)], tabDoxyCoef(1, idC+5));
-      end
+% print SBE optode coef
+if (~isempty(g_decArgo_calibInfo) && isfield(g_decArgo_calibInfo, 'OPTODE') && isfield(g_decArgo_calibInfo.OPTODE, 'SbeTabDoxyCoef'))
+   tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
+   % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 9
+   
+   for idC = 1:3
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
          g_decArgo_floatNum, -1, ...
-         'SBEOptodeE', tabDoxyCoef(1, 9));
+         ['SBEOptodeA' num2str(idC-1)], tabDoxyCoef(1, idC));
    end
+   for idC = 1:2
+      fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
+         g_decArgo_floatNum, -1, ...
+         ['SBEOptodeB' num2str(idC-1)], tabDoxyCoef(1, idC+3));
+   end
+   for idC = 1:3
+      fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
+         g_decArgo_floatNum, -1, ...
+         ['SBEOptodeC' num2str(idC-1)], tabDoxyCoef(1, idC+5));
+   end
+   fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; %s; %g\n', ...
+      g_decArgo_floatNum, -1, ...
+      'SBEOptodeE', tabDoxyCoef(1, 9));
 end
 
 return;

@@ -70,11 +70,27 @@ for idFloat = 1:length(g_decArgo_reportData)
       newChild.appendChild(newChildBis);
    end
    
-   for idFile = 1:length(reportStruct.outputMonoProfFiles)
+   fileList = reportStruct.outputMonoProfFiles;
+   while (~isempty(fileList))
+      filePathName = fileList{1};
+      
       newChildBis = docNode.createElement('output_mono-profile_file');
-      textNode = char(reportStruct.outputMonoProfFiles(idFile));
+      textNode = fileList{1};
       newChildBis.appendChild(docNode.createTextNode(textNode));
       newChild.appendChild(newChildBis);
+      
+      fileList(1) = [];
+      [filePath, fileName, fileExt] = fileparts(filePathName);
+      idF = find(strcmp([filePath '/' 'B' fileName fileExt], fileList) == 1, 1);
+      if (~isempty(idF))
+         
+         newChildBis = docNode.createElement('output_mono-profile_file');
+         textNode = fileList{idF};
+         newChildBis.appendChild(docNode.createTextNode(textNode));
+         newChild.appendChild(newChildBis);
+         
+         fileList(idF) = [];
+      end
    end
    
    for idFile = 1:length(reportStruct.outputMultiProfFiles)

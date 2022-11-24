@@ -30,7 +30,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 128;39;Number of ascent slices in shallow zone;NUMBER_AscendingProfileReductionUpperPart_COUNT;Ascending profile reduction Number of slices in shallow zone - NTS
 129;40;Number of ascent slices in deep zone;NUMBER_AscendingProfileReductionLowerPart_COUNT;Ascending profile reduction Number of slices in deep zone - NTF
 145;41;Sub-Surface pressure;PRES_LastAscentPumpedRawSample_dbar;Last (shallowest) pumped raw pressure sample acquired during the ascent from the profile depth to the surface (i.e. just before the cut-off pressure where the pump is stopped) (in dbars).
-130;46;Pressure sensor offset (two’s complement coded);PRES_SurfaceOffsetBeforeReset_1cBarResolution_dbar;Surface pressure measured just before the float dives which is then used to correct pressure on board the float for the next profile.  Note: this is a relative offset. Autocorrected.
+130;46;Pressure sensor offset (two’s complement coded);PRES_SurfaceOffsetCorrectedNotResetNegative_1cBarResolution_dbar;Surface pressure recorded just before the previous descent but data is corrected on board the float. Note: cumulative NEGATIVE   offset  (real offset * -1) but no further correction required. Autocorrected
 131;47;Internal pressure;PRESSURE_InternalVacuumAtSurface_mbar;Surface internal pressure
 132;48;Batteries voltage drop at Pmax, pump ON (with regard to Unom = 10.0 V) (in dV) ;VOLTAGE_BatteryPumpStartProfile_volts;Pump battery voltage (volts) at depth
 133;49;RTC state indicator ( normal = 0, failure = 1);FLAG_RTCStatus_LOGICAL;real time clock status - 1= OK, 0=not OK

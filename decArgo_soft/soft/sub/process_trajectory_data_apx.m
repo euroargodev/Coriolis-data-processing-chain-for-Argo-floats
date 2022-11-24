@@ -97,7 +97,7 @@ trajNMeasStruct = get_traj_n_meas_init_struct(a_cycleNum, -1);
 
 % structure to store N_CYCLE data
 trajNCycleStruct = get_traj_n_cycle_init_struct(a_cycleNum, -1);
-trajNCycleStruct.grounded = '';
+trajNCycleStruct.grounded = 'U';
 
 % surface data for the current cycle
 cycleSurfData = a_floatSurfData.cycleData(end);

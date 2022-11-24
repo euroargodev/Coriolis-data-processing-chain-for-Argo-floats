@@ -41,7 +41,7 @@ global g_decArgo_phaseDsc2Prk;
 global g_decArgo_phaseParkDrift;
 global g_decArgo_phaseAscProf;
 
-WAITING_FOR_FITLM_MATLAB_FUNCTION = 1;
+WAITING_FOR_FITLM_MATLAB_FUNCTION = 0;
 
 
 % unpack the input data

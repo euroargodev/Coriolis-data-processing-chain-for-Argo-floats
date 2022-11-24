@@ -1,3 +1,4 @@
+
 % ------------------------------------------------------------------------------
 % Process Argos data to create Argos cycle files to be used by the decoder.
 % This tool applies the following tools to the input data:
@@ -28,11 +29,13 @@ function process_argos_data_prv(varargin)
 % directory of input Argos files (all the files in only one directory)
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\tmp_process_prv\IN\';
 DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\test_20160225\argos\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\Desktop\reprocess_argos_error_cls_header\DATA\IN\';
 
 % output directory (at the end of the process, it will contain one directory for
 % each step of the process and a 'FINAL' directory for the final step)
 DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\tmp_process_prv\OUT\';
 DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\test_20160225\argos_out\';
+DIR_OUTPUT = 'C:\Users\jprannou\Desktop\reprocess_argos_error_cls_header\DATA\OUT\';
 
 % directory to store the log files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';

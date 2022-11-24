@@ -476,7 +476,7 @@ if (floatDecId < 1000)
       end
    end
    
-else
+elseif ((floatDecId > 1000) && (floatDecId < 2000))
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % APEX FLOATS
@@ -794,6 +794,8 @@ else
             message);
       end
    end
+else
+   fprintf('ERROR: Decoder Id #%d not managed in rename_argos_input_file\n', floatDecId);
 end
 
 return;

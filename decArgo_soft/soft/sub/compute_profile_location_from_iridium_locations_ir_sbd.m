@@ -4,7 +4,7 @@
 % cookbook.
 %
 % SYNTAX :
-%  [o_locDate, o_locLon, o_locLat, o_locQc] = ...
+%  [o_locDate, o_locLon, o_locLat, o_locQc, o_lastCycleFlag] = ...
 %    compute_profile_location_from_iridium_locations_ir_sbd(a_iridiumMailData, a_cycleNumber)
 %
 % INPUT PARAMETERS :
@@ -12,10 +12,12 @@
 %   a_cycleNumber     : concerned cycle number
 %
 % OUTPUT PARAMETERS :
-%   o_locDate : profile location date
-%   o_locLon  : profile location longitude
-%   o_locLat  : profile location latitude
-%   o_locQc  : profile location Qc
+%   o_locDate       : profile location date
+%   o_locLon        : profile location longitude
+%   o_locLat        : profile location latitude
+%   o_locQc         : profile location Qc
+%   o_lastCycleFlag : 1 if the concerned cycle is the last received one, 0
+%                     otherwise
 %
 % EXAMPLES :
 %
@@ -25,7 +27,7 @@
 % RELEASES :
 %   10/15/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_locDate, o_locLon, o_locLat, o_locQc] = ...
+function [o_locDate, o_locLon, o_locLat, o_locQc, o_lastCycleFlag] = ...
    compute_profile_location_from_iridium_locations_ir_sbd(a_iridiumMailData, a_cycleNumber)
 
 % QC flag values (char)
@@ -37,6 +39,7 @@ o_locDate = [];
 o_locLon = [];
 o_locLat = [];
 o_locQc = [];
+o_lastCycleFlag = [];
 
 
 % process the contents of the Iridium mail associated to the current cycle
@@ -55,6 +58,11 @@ if (~isempty(idFCyNum))
       o_locQc = g_decArgo_qcStrGood;
    else
       o_locQc = g_decArgo_qcStrProbablyGood;
+   end
+   
+   o_lastCycleFlag = 0;
+   if (a_cycleNumber == max([a_iridiumMailData.cycleNumber]))
+      o_lastCycleFlag = 1;
    end
 end
 

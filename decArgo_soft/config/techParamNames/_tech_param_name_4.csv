@@ -38,7 +38,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 111;19;float's time : hh (5bits)+mm (6bits)+ss (6bits);CLOCK_FloatTime_HHMMSS;float internal clock time
 112;-1;Argos or Iridium date of technical message;CLOCK_Satellite_YYYYMMDDHHMMSS;time derived from satellite communications
 113;-1;"""float time"" - ""satellite time""";CLOCK_FloatTimeCorrection_minutes;float internal clock time correction
-610;20;pressure sensor offset;PRES_SurfaceOffsetBeforeReset_1dBarResolution_dbar ;Surface pressure measured just before the float dives which is then used to correct pressure on board the float for the next profile.  Note: this is a relative offset and no further correction is possible. Autocorrected
+610;20;pressure sensor offset;PRES_SurfaceOffsetCorrectedNotResetNegative_1dbarResolution_dbar;Surface pressure recorded just before the previous descent but data is corrected on board the float. Note: cumulative NEGATIVE  offset  (real offset * -1) but no further correction required. Autocorrected
 611;21;internal pressure;PRESSURE_InternalVacuumAtSurface_mbar;Surface internal pressure
 124;23;profile ascent start time;CLOCK_StartAscentToSurface_HHMM;ascent start time (tenths of an hour since midnight)
 310;24;number of entrance in drift target range (descent);NUMBER_DescentToParkEntriesInParkMargin_COUNT;descent to park pressure: number of entries in margin around park pressure target - specifically, how many times the float enters the band of pressure surrounding the target park pressure (generally +/- 30db)

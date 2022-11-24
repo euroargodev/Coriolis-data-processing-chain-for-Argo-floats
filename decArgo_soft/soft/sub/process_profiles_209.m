@@ -168,7 +168,7 @@ for idProf = 1:3
       nbMeaslist = [];
       if (~isempty(tabTech))
          % number of expected profile bins in the descending profile
-         nbMeaslist = get_nb_meas_list_from_tech(a_tabTech, a_decoderId);
+         nbMeaslist = get_nb_meas_list_from_tech(tabTech, a_decoderId);
          nbMeaslist(3:4) = [];
          profileCompleted = sum(nbMeaslist) - length(a_descProfPres);
       end
@@ -226,7 +226,7 @@ for idProf = 1:3
       nbMeaslist = [];
       if (~isempty(tabTech))
          % number of expected profile bins in the ascending profile
-         nbMeaslist = get_nb_meas_list_from_tech(a_tabTech, a_decoderId);
+         nbMeaslist = get_nb_meas_list_from_tech(tabTech, a_decoderId);
          nbMeaslist(1:2) = [];
          profileCompleted = sum(nbMeaslist) - length(a_ascProfPres);
       end
@@ -335,7 +335,7 @@ for idProf = 1:3
       end
       
       % add profile date and location information
-      [profStruct] = add_profile_date_and_location_201_to_209( ...
+      [profStruct] = add_profile_date_and_location_201_to_209_2001_2002( ...
          profStruct, a_gpsData, a_iridiumMailData, ...
          a_descentToParkStartDate, a_ascentEndDate, a_transStartDate);
       

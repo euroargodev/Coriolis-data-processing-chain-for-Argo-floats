@@ -33,6 +33,20 @@
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/10/2016 - RNU - V 1.0: creation
+%   03/14/2016 - RNU - V 1.1: - trajectory file should be retrieved fro storage
+%                             directories, not from XML report.
+%                             - incorrect initialization of testDoneList and
+%                             testFailedList when no trajectory file is
+%                             avaialable.
+%   03/16/2016 - RNU - V 1.2: improved INFO, WARNING and ERROR messages (added
+%                             float number (and cycle number when relevant))
+%   04/13/2016 - RNU - V 1.3: update of the 'set_qc' function
+%                             (g_decArgo_qcStrInterpolated QC value can be
+%                             replaced by any QC value).
+%   05/19/2016 - RNU - V 1.4: correction of the 'set_qc' function
+%   06/17/2016 - RNU - V 1.5: don't initialize JULD_QC (or JULD_ADJUSTED_QC) to
+%                             '0' if JULD_STATUS (or JULD_ADJUSTED_STATUS) is
+%                             set to '9'.
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -62,9 +76,12 @@ global g_MC_InAirSingleMeas;
 % temporary trajectory data
 global g_rtqc_trajData;
 
+% global time status
+global g_JULD_STATUS_9;
+
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '1.0';
+g_decArgo_addRtqcToTrajVersion = '1.5';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -98,7 +115,8 @@ MEDITERRANEAN_SEA_REGION = [[30 40 -5 40]; ...
 
 % check input trajectory file exists
 if ~(exist(a_ncTrajInputFilePathName, 'file') == 2)
-   fprintf('RTQC_ERROR: No input trajectory nc file to perform RTQC\n');
+   fprintf('RTQC_ERROR: Float #%d: No input trajectory nc file to perform RTQC (%s)\n', ...
+      a_floatNum, a_ncTrajInputFilePathName);
    return;
 end
 ncTrajInputFilePathName = a_ncTrajInputFilePathName;
@@ -159,12 +177,13 @@ if (testFlagList(4) == 1)
    if (~isempty(testMetaId))
       etopo2PathFileName = a_testMetaData{testMetaId+1};
       if ~(exist(etopo2PathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST004: ETPO2 file (%s) not found => test #4 not performed\n', ...
-            etopo2PathFileName);
+         fprintf('RTQC_WARNING: TEST004: Float #%d: ETPO2 file (%s) not found => test #4 not performed\n', ...
+            a_floatNum, etopo2PathFileName);
          testFlagList(4) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST004: ETPO2 file needed to perform test #4 => test #4 not performed\n');
+      fprintf('RTQC_WARNING: TEST004: Float #%d: ETPO2 file needed to perform test #4 => test #4 not performed\n', ...
+         a_floatNum);
       testFlagList(4) = 0;
    end
 end
@@ -175,12 +194,13 @@ if (testFlagList(15) == 1)
    if (~isempty(testMetaId))
       greyListPathFileName = a_testMetaData{testMetaId+1};
       if ~(exist(greyListPathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST015: Grey list file (%s) not found => test #15 not performed\n', ...
-            greyListPathFileName);
+         fprintf('RTQC_WARNING: TEST015: Float #%d: Grey list file (%s) not found => test #15 not performed\n', ...
+            a_floatNum, greyListPathFileName);
          testFlagList(15) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST005: Grey list file needed to perform test #15 => test #15 not performed\n');
+      fprintf('RTQC_WARNING: TEST005: Float #%d: Grey list file needed to perform test #15 => test #15 not performed\n', ...
+         a_floatNum);
       testFlagList(15) = 0;
    end
 end
@@ -191,12 +211,13 @@ if (testFlagList(57) == 1)
    if (~isempty(testMetaId))
       ncMetaPathFileName = a_testMetaData{testMetaId+1};
       if ~(exist(ncMetaPathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST057: Nc meta-data file (%s) not found => test #57 not performed\n', ...
-            ncMetaPathFileName);
+         fprintf('RTQC_WARNING: TEST057: Float #%d: Nc meta-data file (%s) not found => test #57 not performed\n', ...
+            a_floatNum, ncMetaPathFileName);
          testFlagList(57) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST057: Nc meta-data file needed to perform test #57 => test #57 not performed\n');
+      fprintf('RTQC_WARNING: TEST057: Float #%d: Nc meta-data file needed to perform test #57 => test #57 not performed\n', ...
+         a_floatNum);
       testFlagList(57) = 0;
    end
    
@@ -257,7 +278,7 @@ end
 
 % check if any test has to be performed
 if (isempty(find(testFlagList == 1, 1)))
-   fprintf('RTQC_INFO: No RTQC test to perform\n');
+   fprintf('RTQC_INFO: Float #%d: No RTQC test to perform\n', a_floatNum);
    return;
 end
 
@@ -276,8 +297,10 @@ wantedVars = [ ...
    {'CONFIG_MISSION_NUMBER'} ...
    {'DATA_MODE'} ...
    {'JULD'} ...
+   {'JULD_STATUS'} ...
    {'JULD_QC'} ...
    {'JULD_ADJUSTED'} ...
+   {'JULD_ADJUSTED_STATUS'} ...
    {'JULD_ADJUSTED_QC'} ...
    {'LATITUDE'} ...
    {'LONGITUDE'} ...
@@ -294,8 +317,10 @@ cycleNumberIndex = get_data_from_name('CYCLE_NUMBER_INDEX', ncTrajData);
 configMissionNumber = get_data_from_name('CONFIG_MISSION_NUMBER', ncTrajData);
 dataMode = get_data_from_name('DATA_MODE', ncTrajData)';
 juld = get_data_from_name('JULD', ncTrajData);
+juldStatus = get_data_from_name('JULD_STATUS', ncTrajData);
 juldQc = get_data_from_name('JULD_QC', ncTrajData)';
 juldAdj = get_data_from_name('JULD_ADJUSTED', ncTrajData);
+juldAdjStatus = get_data_from_name('JULD_ADJUSTED_STATUS', ncTrajData);
 juldAdjQc = get_data_from_name('JULD_ADJUSTED_QC', ncTrajData)';
 latitude = get_data_from_name('LATITUDE', ncTrajData);
 longitude = get_data_from_name('LONGITUDE', ncTrajData);
@@ -535,13 +560,21 @@ testFailedList = zeros(lastTestNum, 1);
 % set QC = ' ' for unused values and QC = '0' for existing values
 
 % JULD_QC
-juldQc = repmat(g_decArgo_qcStrDef, size(juldQc));
+% initialize JULD_QC (execept when JULD_STATUS = '9')
+idUpdate = find(juldStatus ~= g_JULD_STATUS_9);
+if (~isempty(idUpdate))
+   juldQc(idUpdate) = g_decArgo_qcStrDef;
+end
 idNoDef = find(juld ~= paramJuld.fillValue);
 if (~isempty(idNoDef))
    juldQc(idNoDef) = g_decArgo_qcStrNoQc;
 end
 % JULD_ADJUSTED_QC
-juldAdjQc = repmat(g_decArgo_qcStrDef, size(juldAdjQc));
+% initialize JULD_ADJUSTED_QC (execept when JULD_ADJUSTED_STATUS = '9')
+idUpdate = find(juldAdjStatus ~= g_JULD_STATUS_9);
+if (~isempty(idUpdate))
+   juldAdjQc(idUpdate) = g_decArgo_qcStrDef;
+end
 idNoDef = find(juldAdj ~= paramJuld.fillValue);
 if (~isempty(idNoDef))
    juldAdjQc(idNoDef) = g_decArgo_qcStrNoQc;
@@ -641,8 +674,6 @@ if (~isempty(g_rtqc_trajData))
       for idParam = 1:length(ncTrajParamXDataQcList)
          eval([ncTrajParamXDataQcList{idParam} ' = g_rtqc_trajData.(ncTrajParamXDataQcList{idParam});']);
       end
-      testDoneList = [];
-      testFailedList = [];
       if (isfield(g_rtqc_trajData, 'testDoneList'))
          testDoneList = g_rtqc_trajData.testDoneList;
          testFailedList = g_rtqc_trajData.testFailedList;
@@ -743,7 +774,8 @@ if (testFlagList(4) == 1)
             end
             testDoneList(4) = 1;
          else
-            fprintf('RTQC_WARNING: TEST004: Unable to retrieve ETOPO2 elevations at trajectory location => test #4 not performed\n');
+            fprintf('RTQC_WARNING: TEST004: Float #%d: Unable to retrieve ETOPO2 elevations at trajectory location => test #4 not performed\n', ...
+               a_floatNum);
          end
       end
    end
@@ -1130,15 +1162,15 @@ if (testFlagList(15) == 1)
    % read grey list file
    fId = fopen(greyListPathFileName, 'r');
    if (fId == -1)
-      fprintf('RTQC_WARNING: TEST015: Unable to open grey list file (%s) => test #15 not performed\n', ...
-         greyListPathFileName);
+      fprintf('RTQC_WARNING: TEST015: Float #%d: Unable to open grey list file (%s) => test #15 not performed\n', ...
+         a_floatNum, greyListPathFileName);
    else
       fileContents = textscan(fId, '%s', 'delimiter', ',');
       fclose(fId);
       fileContents = fileContents{:};
       if (rem(size(fileContents, 1), 7) ~= 0)
-         fprintf('RTQC_WARNING: TEST015: Unable to parse grey list file (%s) => test #15 not performed\n', ...
-            greyListPathFileName);
+         fprintf('RTQC_WARNING: TEST015: Float #%d: Unable to parse grey list file (%s) => test #15 not performed\n', ...
+            a_floatNum, greyListPathFileName);
       else
          
          greyListInfo = reshape(fileContents, 7, size(fileContents, 1)/7)';
@@ -1354,12 +1386,12 @@ if (testFlagList(57) == 1)
                      testFailedList(57) = 1;
                   end
                else
-                  fprintf('RTQC_WARNING: TEST057: Cannot find parameter_sensor ''%s'' in the meta-data sensors => test #57 not performed\n', ...
-                     paramSensor);
+                  fprintf('RTQC_WARNING: TEST057: Float #%d: Cannot find parameter_sensor ''%s'' in the meta-data sensors => test #57 not performed\n', ...
+                     a_floatNum, paramSensor);
                end
             else
-               fprintf('RTQC_WARNING: TEST057: Cannot find parameter ''%s'' in the meta-data parameters => test #57 not performed\n', ...
-                  test57ParameterList{idP});
+               fprintf('RTQC_WARNING: TEST057: Float #%d: Cannot find parameter ''%s'' in the meta-data parameters => test #57 not performed\n', ...
+                  a_floatNum, test57ParameterList{idP});
             end
          end
       end
@@ -1535,7 +1567,7 @@ for idFile = 1:2
       fileName = a_bTrajFileName;
    end
    
-   % retrieve data from profile file
+   % retrieve data from trajectory file
    wantedVars = [ ...
       {'DATE_CREATION'} ...
       {'MEASUREMENT_CODE'} ...

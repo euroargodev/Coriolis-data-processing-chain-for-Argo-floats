@@ -21,6 +21,8 @@ function generate_json_float_meta_apx_argos()
 
 % meta-data file exported from Coriolis data base
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\export_meta_APEX_from_VB_20150703.txt';
+% floatMetaFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\new_apex_meta.txt';
+
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 

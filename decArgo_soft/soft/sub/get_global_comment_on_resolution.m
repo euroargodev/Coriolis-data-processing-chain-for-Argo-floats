@@ -65,6 +65,10 @@ switch (a_decoderId)
       % Apex Argos
       o_comment = 'PRES variable resolution depends on measurement codes';
 
+   case {2001, 2002}
+      % Nova, Dova
+      o_comment = 'JULD and PRES variable resolution depends on measurement codes';
+
    otherwise
       o_comment = ' ';
       fprintf('WARNING: Float #%d: No global comment on resolution defined yet for decoderId #%d\n', ...

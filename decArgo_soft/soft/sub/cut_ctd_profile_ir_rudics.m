@@ -23,7 +23,6 @@ function [o_cutProfiles] = cut_ctd_profile_ir_rudics(a_tabProfiles)
 % output parameters initialization
 o_cutProfiles = [];
 
-
 % cut the CTD profiles
 tabProfiles = [];
 for idProf = 1:length(a_tabProfiles)

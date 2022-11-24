@@ -92,6 +92,8 @@ if (o_deepCycle == 1)
       g_decArgo_cycleNum 1207];
    g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(14)/60-floatClockDrift*24);
    
+   % we store the transmitted time with its associated resolution
+   % i.e. the modification done in compute_prv_dates_30 is not reported here
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
       g_decArgo_cycleNum 1208];
    g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(a_tabTech(15)*6/60-floatClockDrift*24);

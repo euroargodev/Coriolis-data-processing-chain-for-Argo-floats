@@ -57,7 +57,20 @@ switch (a_decoderId)
       % Arvor-2DO Iridium 5.73
       
       init_float_config_ir_sbd_206_to_209(a_launchDate, a_decoderId);
-
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {2001, 2002} % Nova, Dova
+      
+      init_float_config_ir_sbd_nva_1_2(a_launchDate, a_decoderId);
+      
+      %       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      %
+      %    case {210} % Arvor-ARN Iridium
+      %
+      %       init_float_config_ir_sbd_210(a_launchDate);
+      
+      
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet to initialize configuration for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

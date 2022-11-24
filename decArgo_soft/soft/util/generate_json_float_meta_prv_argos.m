@@ -22,11 +22,13 @@ function generate_json_float_meta_prv_argos()
 % meta-data file exported from Coriolis data base
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\ASFAR\DBexport_ASFAR_fromVB20151029.txt';
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_argos_all.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
 
@@ -111,7 +113,7 @@ refFloatList = load(floatListFileName);
 floatList = sort(intersect(floatList, refFloatList));
 % floatList = [3901000];
 % floatList = [6901881];
-floatList = [7900120];
+% floatList = [7900120];
 
 notFoundFloat = setdiff(refFloatList, floatList);
 if (~isempty(notFoundFloat))
@@ -590,11 +592,16 @@ for idFloat = 1:length(floatList)
             metaStruct.CALIBRATION_COEFFICIENT = calibrationCoefficient;
          end
       case {'4.42'}
-         idF = find(strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1);
+         idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1));
          calibData = [];
          for id = 1:length(idF)
             calibName = metaData{idForWmo(idF(id)), 5};
-            fieldName = ['SVUFoilCoef' num2str(str2num(calibName(end)))];
+            if (strncmp(calibName, 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1)
+               fieldName = ['SVUFoilCoef' num2str(str2num(calibName(end)))];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1)
+               fieldName = ['PhaseCoef' calibName(end)];
+            end
             calibData.(fieldName) = metaData{idForWmo(idF(id)), 4};
          end
          if (~isempty(calibData))

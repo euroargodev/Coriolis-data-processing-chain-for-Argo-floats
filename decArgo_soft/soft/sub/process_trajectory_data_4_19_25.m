@@ -94,6 +94,7 @@ global g_MC_FMT;
 global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
+global g_MC_InAirSingleMeas;
 
 % global time status
 global g_JULD_STATUS_1;
@@ -381,6 +382,36 @@ if (~isempty(a_parkPres))
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IN AIR MEASUREMENTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+for idProf = 1:length(a_cycleProfiles)
+   profile = a_cycleProfiles(idProf);
+   if ((profile.direction == 'A') && any(strfind(profile.vertSamplingScheme, 'unpumped')))
+      
+      [inAirMeasProfile] = create_in_air_meas_profile(a_decoderId, profile);
+      
+      if (~isempty(inAirMeasProfile))
+         
+         inAirMeasDates = inAirMeasProfile.dates;
+         dateFillValue = inAirMeasProfile.dateList.fillValue;
+         
+         for idMeas = 1:length(inAirMeasDates)
+            if (inAirMeasDates(idMeas) ~= dateFillValue)
+               measStruct = create_one_meas_float_time(g_MC_InAirSingleMeas, inAirMeasDates(idMeas), g_JULD_STATUS_2, floatClockDrift);
+            else
+               measStruct = get_traj_one_meas_init_struct();
+               measStruct.measCode = g_MC_InAirSingleMeas;
+            end
+            measStruct.paramList = inAirMeasProfile.paramList;
+            measStruct.paramData = inAirMeasProfile.data(idMeas, :);
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MISCELLANEOUS MEASUREMENTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -533,6 +564,8 @@ if (a_cycleNum >= firstDeepCycle)
    for idMc = 1:length(mcList)
       measStruct = create_one_meas_float_time(mcList(idMc), -1, g_JULD_STATUS_9, 0);
       measData = [measData; measStruct];
+      
+      [trajNCycleStruct] = set_status_of_n_cycle_juld(trajNCycleStruct, mcList(idMc), g_JULD_STATUS_9);
    end
    
    % store the data

@@ -1,0 +1,44 @@
+TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PARAM_DESCRIPTION
+100;1;Time in the day when the float ended it descent to parking;CLOCK_EndDescentToPark_HHMMSS;time when park pressure is reached  (tenths of an hour since midnight)
+101;2;Time in the day when the float first activated the valve during its descent;CLOCK_InitialStabilizationDuringDescentToPark_HHMMSS;time when first stabilization appears during descent to park (tenths of an hour since midnight)
+102;3;Time in the day when the float started its descent to profile depth;CLOCK_StartDescentToProfile_HHMMSS;Number of minutes elapsed in the day at the beginning of the descent to profile depth.
+103;4;Time in the day when the float achieved its profile depth;CLOCK_EndDescentToProfile_HHMMSS;Number of minutes elapsed in the day at the end of the descent to profile depth.
+104;5;Time in the day when the float started it s ascending profile;CLOCK_StartAscentToSurface_HHMMSS;Number of minutes elapsed in the day at the beginning of the ascent to the surface.
+105;6;Time in the day when the float ended it s ascending profile;CLOCK_EndAscentToSurface_HHMMSS;ascent end time, just before Argos transmission  - note units can vary and the raw values can be in the tech file only if it's not possible to calculate the final JULD in real time.
+106;7;Number of valve activations at surface;NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT;number of solenoid valve actions at the surface until the crossing of the GAP threshold
+107;8;Number of valve activations during the descent to parking;NUMBER_ValveActionsDuringDescentToPark_COUNT;number of valve actions between the crossing  of the gap threshold and the end of descent at park pressure
+108;9;Number of pump activations during the descent to parking;NUMBER_PumpActionsDuringDescentToPark_COUNT;number of pump actions between the crossing  of the gap threshold and the end of descent at park pressure
+109;10;Number of valve activations during the descent to profile;NUMBER_ValveActionsDuringDescentToProfile_COUNT;number of valve actions during descent to start profile pressure
+110;11;Number of pump activations during the descent to profile;NUMBER_PumpActionsDuringDescentToProfile_COUNT;number of pump actions during descent to start profile pressure
+111;12;Number of pump activations during the ascent to surface;NUMBER_PumpActionsDuringAscentToSurface_COUNT;number of pump actions between start and end of ascent 
+112;13;Number of depth corrections during parking;NUMBER_RepositionsDuringPark_COUNT;number of times the float readjusts its buoyancy during park phase - using either the pump or EV
+113;14;Number of entries in parking zone;NUMBER_DescentToParkAndToProfEntriesInParkMargin_COUNT;Cumulated numbers of entries in both parking zones (at park and profile depth). Specifically, how many times the float enters the band of pressure surrounding the target park/profile pressure (thus 2 is the nominal value for a float which never experienced stabilization issues).
+114;19;Number of CTD points in descent profile;NUMBER_DescendingCTDSamplesInternalCounter_COUNT;total number of slices of the descending profile after reduction
+115;20;Number of messages in descent profile;NUMBER_CTDDescentIridiumPackets_COUNT;Number of Iridium packets used to transmit data collected during the descent phases (from surface to the parking depth and from the parking depth to the profile depth).
+116;21;Number of CTD points in ascent profile;NUMBER_AscendingCTDSamplesInternal_COUNT;Ascending profile  measurements - Internal count
+117;22;Number of messages in ascent profile;NUMBER_CTDAscentIridiumPackets_COUNT;Number of Iridium packets used to transmit data collected during the ascent from the profile depth to the surface.
+118;23;Number of CTD points in parking;NUMBER_ParkCTDSamplesInternal_COUNT;Park  measurements - Internal counter
+119;24;Number of messages in parking;NUMBER_CTDParkIridiumPackets_COUNT;Number of Iridium packets used to transmit data collected during the drift at park depth.
+120;25;Number of messages in pressure;NUMBER_HydraulicPackets_COUNT;Number of hydraulic packets used to transmit hydraulic (pump or valve) actions performed during the cycle.
+121;26;CTD pressure offset;PRES_SurfaceOffsetBeforeReset_1dBarResolution_dbar ;Surface pressure measured just before the float dives which is then used to correct pressure on board the float for the next profile.  Note: this is a relative offset and no further correction is possible. Autocorrected
+122;27;Internal vacuum;PRESSURE_InternalVacuumAtSurface_mbar;Surface internal pressure
+123;28;Ground detection at surface;FLAG_Beached_LOGICAL;is the float beached? - could be logical
+124;29;Ground detection during descent;FLAG_Grounded_LOGICAL;grounded flag , diagnostic bit - could also be logical?  Yes/no? 0/1? Or can be number of profiles during which the float grounded
+125;31;Battery Voltage;VOLTAGE_BatterySurfaceNoLoad_volts;battery voltage during inactive surface phase
+126;32;Number of power resets CTD;NUMBER_CTDReset_COUNT;CTD reset count
+127;33;Number of failed acquisitions CTD;NUMBER_CTDAcquisitionsFailed_COUNT;Number of Failed  CTD Acquisitions
+128;34;CTD Command error flag;FLAG_CTDFastPressureError_LOGICAL; Flag for Error on CTD Fast Pressure Command
+129;34;;FLAG_CTDStartProfileError_LOGICAL; Flag for Error on CTD Start Profile Command
+130;34;;FLAG_CTDStopProfileError_LOGICAL; Flag for Error on CTD Stop Profile Command
+131;34;;FLAG_CTDDownloadError_LOGICAL; Flag for Error on CTD Download Command
+132;34;;FLAG_CTDAverageError_LOGICAL; Flag for Error on CTD Average Command
+133;35;Number of power resets Iridium;NUMBER_IridiumResets_COUNT;Number of Power Resets iridium
+134;36;Number of incoming Iridium packets received during previous session;NUMBER_IridiumPacketsReceivedPreviousSession_COUNT;Number of Incoming Iridium Packets Received during previous session
+135;37;Number of power resets GPS;NUMBER_GPSResets_COUNT;Number of Power Resets GPS
+136;40;Day of month of last GPS fix;TIME_SinceLastIridiumGPSFix_DD;Day of month of last GPS fix/Time of Last GPS Fix (HH)
+137;41;Time of last GPS fix;TIME_SinceLastIridiumGPSFix_HHMMSS;Day of month of last GPS fix/Time of Last GPS Fix (HH)
+138;42;Emergency ascent flag;FLAG_EmergencyAscent_LOGICAL;Was an emergency ascent performed?
+139;43;Watchdog timeout flag;FLAG_WakeUpByWatchDogAlarm_LOGICAL;Wake-up by watchdog alarm (Yes or No)
+140;44;Number of hydraulic records;NUMBER_HydraulicRecords_COUNT;Number of hydraulic (pump or valve) actions performed during the cycle. Due to transmission limitations some of them may not be transmitted (in the NUMBER_HydraulicPackets_COUNT transmitted packets).
+141;49;Time to last GPS fix;TIME_IridiumGPSFix_seconds;the number of seconds required to obtain a GPS fix for a profile
+142;50;Time needed to transmit last Housekeeping packet;TIME_TransmissionLastHousekeepingMessage_seconds;time required to transmit the last housekeeping message

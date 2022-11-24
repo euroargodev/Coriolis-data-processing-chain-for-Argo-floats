@@ -23,27 +23,28 @@ function nc_compare_mono_profile_files_apx(varargin)
 
 % top directory of base NetCDF mono-profile files
 DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_ref_apx_bascule\';
-DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\071412\';
+% DIR_INPUT_BASE_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\updated_data\';
 
 % top directory of new NetCDF mono-profile files
-DIR_INPUT_NEW_NC_FILES = 'E:\archive_201602\coriolis\';
-DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\DM_profile_file_apex_co_in_archive_201602\';
+DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\nc_file_apex_co_in_archive_201602\';
+% DIR_INPUT_NEW_NC_FILES = 'C:\Users\jprannou\_DATA\convert_DM_apex_in_3.1\DM_profile_file_apex_co_in_archive_201602\';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % default list of floats to compare
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_071412.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_062608.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061609.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_021009.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061810.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_093008.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_071412.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_062608.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061609.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_021009.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061810.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_093008.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_matlab_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_with_DM_profile_071412.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_with_DM_profile_071412.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_with_DM_profile_061609.txt';
 
 % flag to print data measurements (when different) in the log file
-PRINT_DIFF_DATA_FLAG =1;
+PRINT_DIFF_DATA_FLAG = 1;
 
 % when comparing data measurements consider only parameters of BASE data set
 BASE_PARAM_ONLY = 0;
@@ -864,30 +865,14 @@ for idFile = 1:length(monoProfFiles)
          
          [uJulD, idA, idC] = unique(julD);
          if (length(uJulD) > 1)
-            fprintf('ERROR: %d profiles in the %s NetCDF input file: %s => file ignored\n', ...
+            fprintf('WARNING: %d profiles in the %s NetCDF input file: %s => only the first one is considered\n', ...
                length(uJulD), a_commentStr, profFileName);
-            continue;
          end
-           
-         if (length(uJulD) ~= length(julD))
-            % delete duplicated information
-            for id1 = 1:length(uJulD)
-               idF = find(idC == id1);
-               if (length(idF) > 1)
-                  for id2 = length(idF):-1:2
-                     cycleNumber(idF(id2)) = [];
-                     direction(idF(id2)) = [];
-                     julD(idF(id2)) = [];
-                     julDLocation(idF(id2)) = [];
-                  end
-               end
-            end
-         end
-         
-         profNum = [profNum; cycleNumber];
-         profDir = [profDir direction];
-         profDate = [profDate; julD];
-         profLocDate = [profLocDate; julDLocation];
+                    
+         profNum = [profNum; cycleNumber(1)];
+         profDir = [profDir direction(1)];
+         profDate = [profDate; julD(1)];
+         profLocDate = [profLocDate; julDLocation(1)];
          
       else
          if (~var_is_present(fCdf, 'CYCLE_NUMBER'))

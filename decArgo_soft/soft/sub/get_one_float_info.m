@@ -94,6 +94,12 @@ elseif (~isempty(a_floatArgosId))
       fprintf('ERROR: Float information file not found for Argos Id #%d\n', a_floatArgosId);
       return;
    else
+      for idF = 1: length(floatInfoFileNames)
+         if (~isempty(strfind(floatInfoFileNames(idF).name, 'WWWWWWW_')))
+            fprintf('ERROR: Conflict between one JSON info file (%s) and the other ones => clean the set of JSON info files for this float\n', floatInfoFileNames(idF).name);
+            return;
+         end
+      end
       % read Argos file
       [argosLocDate, argosLocLon, argosLocLat, argosLocAcc, argosLocSat, ...
          argosDataDate, argosDataData] = read_argos_file({g_decArgo_inputArgosFile}, a_floatArgosId, 31);

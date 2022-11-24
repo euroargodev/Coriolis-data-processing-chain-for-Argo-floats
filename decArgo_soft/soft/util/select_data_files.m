@@ -21,9 +21,11 @@
 function select_data_files()
 
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061609.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
-inputDirName = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-
+inputDirName = 'H:\archive_201603\coriolis\';
+inputDirName = 'H:\archive_201603\incois\';
+inputDirName = 'C:\Users\jprannou\_DATA\OUT\test_update_format_tech - copie\coriolis\';
 
 fprintf('Floats from list: %s\n', floatListFileName);
 floatList = load(floatListFileName);

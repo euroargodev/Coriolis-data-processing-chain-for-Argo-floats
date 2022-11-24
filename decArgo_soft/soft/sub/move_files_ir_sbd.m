@@ -69,32 +69,54 @@ end
 for idFile = 1:length(a_listFileNames)
    fileName = a_listFileNames{idFile};
    fileNameIn = [a_inputDir '/' fileName];
-   if (a_deleteSbdFileFlag == 0)
-      fileNamOut = [a_outputDir '/' fileName];
+   fileNamOut = [a_outputDir '/' fileName];
+   
+   if (strcmp(fileName(end-3:end), '.txt'))
+      
+      %       if ((g_decArgo_realtimeFlag == 1) && (a_updateXmlReportFlag == 1))
+      %          % in RT we delete the processed files
+      %          delete(fileNameIn);
+      %       else
       if (move_file(fileNameIn, fileNamOut) == 0)
          o_ok = 0;
          continue;
       end
-   else
-      delete(fileNameIn);
-   end
-   
-   if (strcmp(fileName(end-3:end), '.sbd'))
-      fileName = [fileName(1:end-4) '.txt'];
-      fileNameIn = [a_inputDir '/' fileName];
-      fileNamOut = [a_outputDir '/' fileName];
-      if (move_file(fileNameIn, fileNamOut) == 0)
-         o_ok = 0;
-         continue;
-      end
-   
+      %       end
+      
       if (a_updateXmlReportFlag == 1)
          if (g_decArgo_realtimeFlag == 1)
             % store information for the XML report
             g_decArgo_reportStruct.inputFiles = [g_decArgo_reportStruct.inputFiles ...
-               {fileNamOut}];
+               {fileName}];
          end
       end
+      
+      if (a_deleteSbdFileFlag == 1)
+         fileNameSbd = [fileName(1:end-4) '.sbd'];
+         fileNameSbdIn = [a_inputDir '/' fileNameSbd];
+         delete(fileNameSbdIn);
+      end
+      
+   elseif (strcmp(fileName(end-3:end), '.sbd'))
+      
+      if (a_deleteSbdFileFlag == 1)
+         delete(fileNameIn);
+      end
+      
+      fileNameTxt = [fileName(1:end-4) '.txt'];
+      fileNameTxtIn = [a_inputDir '/' fileNameTxt];
+      fileNameTxtOut = [a_outputDir '/' fileNameTxt];
+      
+      %       if ((g_decArgo_realtimeFlag == 1) && (a_updateXmlReportFlag == 1))
+      %          % in RT we delete the processed files
+      %          delete(fileNameTxtIn);
+      %       else
+      if (move_file(fileNameTxtIn, fileNameTxtOut) == 0)
+         o_ok = 0;
+         continue;
+      end
+      %       end
+      
    end
 end
 

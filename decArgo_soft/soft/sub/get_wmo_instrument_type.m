@@ -47,6 +47,12 @@ switch (a_decoderId)
    case {1001, 1002, 1003, 1004, 1005, 1006}
       o_wmoInstType = '846';
       
+   case {2001}
+      o_wmoInstType = '865';
+      
+   case {2002}
+      o_wmoInstType = '869';
+      
    otherwise
       o_wmoInstType = '';
       fprintf('WARNING: Float #%d: No instrument reference assigned to decoderId #%d\n', ...

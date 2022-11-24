@@ -22,7 +22,7 @@ function nc_meta_2_csv(varargin)
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rnuokRem&PrvIr\';
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\test_update_format_conf\coriolis\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\test_update_format_conf\coriolis\';
 
 % default list of floats to convert
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_cm.txt';
@@ -324,7 +324,11 @@ for idL = 1:length(metaVars)
    if (~isempty(idVal))
       val = metaData{idVal+1}';
    end
-   fprintf(fidOut, ' %d; %s; %s\n', a_floatNum, name, strtrim(val));
+   valStr = sprintf('%s', strtrim(val(1, :)));
+   for id = 2:size(val, 1)
+      valStr = [valStr sprintf('; %s', strtrim(val(id, :)))];
+   end
+   fprintf(fidOut, ' %d; %s; %s\n', a_floatNum, name, valStr);
 end
 
 fprintf(fidOut, ' %d\n', a_floatNum);
@@ -488,7 +492,7 @@ for idL = 1:length(metaVars)
    if (~isempty(idVal))
       val = metaData{idVal+1}';
       for idParam = 1:size(val, 1)
-         fprintf(fidOut, '; %s', strtrim(val(idParam, :)));
+         fprintf(fidOut, ';"%s"', strtrim(val(idParam, :)));
       end
    end
    fprintf(fidOut, '\n');

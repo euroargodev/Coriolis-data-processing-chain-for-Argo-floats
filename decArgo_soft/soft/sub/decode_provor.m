@@ -137,7 +137,7 @@ for idFloat = 1:nbFloats
    
    % check that it is a PROVOR float
    if (floatDecId > 1000)
-      fprintf('ERROR: Float #%d is an APEX => not decoded\n', floatNum);
+      fprintf('ERROR: Float #%d is not a Provor float => not decoded\n', floatNum);
       continue;
    end
    

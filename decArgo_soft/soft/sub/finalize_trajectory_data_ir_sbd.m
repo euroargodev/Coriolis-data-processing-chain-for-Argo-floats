@@ -51,6 +51,9 @@ global g_MC_TET;
 global g_JULD_STATUS_2;
 global g_JULD_STATUS_9;
 
+% default values
+global g_decArgo_ncDateDef;
+
 
 % N_MEASUREMENT DATA
 
@@ -122,8 +125,8 @@ tabCyNum = sort(unique([a_tabTrajNMeas.cycleNumber]));
 for idCy = 1:length(tabCyNum)
    cycleNum = tabCyNum(idCy);
    
-   idCy = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
-   idF1 = find([a_tabTrajNMeas(idCy).tabMeas.measCode] == g_MC_CycleStart);
+   idC = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
+   idF1 = find([a_tabTrajNMeas(idC).tabMeas.measCode] == g_MC_CycleStart);
    if (~isempty(idF1))
       idCyPrec = find([a_tabTrajNMeas.cycleNumber] == cycleNum-1);
       if (~isempty(idCyPrec))
@@ -131,59 +134,10 @@ for idCy = 1:length(tabCyNum)
          if (~isempty(idF2))
             
             measStruct = create_one_meas_float_time(g_MC_TET, ...
-               a_tabTrajNMeas(idCy).tabMeas(idF1).juld, g_JULD_STATUS_2, 0);
+               a_tabTrajNMeas(idC).tabMeas(idF1).juld, g_JULD_STATUS_2, 0);
             a_tabTrajNMeas(idCyPrec).tabMeas(idF2) = measStruct;
          end
       end
-   end
-end
-
-% check that all expected MC are present
-
-% measurement codes expected to be in each cycle for these floats (primary and
-% secondary MC experienced by Arvor deep floats)
-expMcList = [ ...
-   g_MC_DST ...
-   g_MC_FST ...
-   g_MC_PST ...
-   g_MC_PET ...
-   g_MC_DPST ...
-   g_MC_AST ...
-   g_MC_AET ...
-   g_MC_TST ...
-   g_MC_TET ...
-   ];
-
-tabCyNum = sort(unique([a_tabTrajNMeas.cycleNumber]));
-tabCyNum = tabCyNum(find(tabCyNum > 0));
-for idCy = 1:length(tabCyNum)
-   cycleNum = tabCyNum(idCy);
-   
-   if (cycleNum == -1)
-      % cycle number = -1 is used to store launch location and date only (no
-      % need to add all the expected MCs)
-      continue;
-   end
-   
-   idCy = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
-   measCodeList = unique([a_tabTrajNMeas(idCy).tabMeas.measCode]);
-   
-   % add MCs so that all expected ones will be present
-   mcList = setdiff(expMcList, measCodeList);
-   measData = [];
-   for idMc = 1:length(mcList)
-      measStruct = create_one_meas_float_time(mcList(idMc), -1, g_JULD_STATUS_9, 0);
-      measData = [measData; measStruct];
-   end
-   
-   % store the data
-   if (~isempty(measData))
-      a_tabTrajNMeas(idCy(end)).tabMeas = [a_tabTrajNMeas(idCy(end)).tabMeas; measData];
-      
-      % sort the N_MEASUREMENT data structures according to the measurement codes
-      tabMeas = a_tabTrajNMeas(idCy).tabMeas;
-      [~, idSort] = sort([tabMeas.measCode]);
-      a_tabTrajNMeas(idCy).tabMeas = tabMeas(idSort);
    end
 end
 
@@ -248,17 +202,75 @@ if (~isempty(a_tabTrajNCycle))
       for idCy = 1:length(tabCyNum)
          cycleNum = tabCyNum(idCy);
          
-         idCy = find([a_tabTrajNCycle.cycleNumber] == cycleNum);
-         idCyPrec = find([a_tabTrajNCycle.cycleNumber] == cycleNum-1);
-         if (~isempty(idCyPrec))
-            a_tabTrajNCycle(idCyPrec).juldTransmissionEnd = a_tabTrajNCycle(idCy).juldCycleStart;
-            a_tabTrajNCycle(idCyPrec).juldTransmissionEndStatus = a_tabTrajNCycle(idCy).juldCycleStartStatus;
+         idC = find([a_tabTrajNCycle.cycleNumber] == cycleNum);
+         idCPrec = find([a_tabTrajNCycle.cycleNumber] == cycleNum-1);
+         if (~isempty(idCPrec) && ...
+               ~isempty(a_tabTrajNCycle(idC).juldCycleStart) && ...
+               (a_tabTrajNCycle(idC).juldCycleStart ~= g_decArgo_ncDateDef))
+
+            a_tabTrajNCycle(idCPrec).juldTransmissionEnd = a_tabTrajNCycle(idC).juldCycleStart;
+            a_tabTrajNCycle(idCPrec).juldTransmissionEndStatus = a_tabTrajNCycle(idC).juldCycleStartStatus;
          end
       end
       
       % clean the data
       idDel = find([a_tabTrajNCycle.surfOnly] == 1);
       a_tabTrajNCycle(idDel) = [];
+   end
+end
+
+% check that all expected MC are present
+
+% measurement codes expected to be in each cycle for these floats (primary and
+% secondary MC experienced by Arvor deep floats)
+expMcList = [ ...
+   g_MC_DST ...
+   g_MC_FST ...
+   g_MC_PST ...
+   g_MC_PET ...
+   g_MC_DPST ...
+   g_MC_AST ...
+   g_MC_AET ...
+   g_MC_TST ...
+   g_MC_TET ...
+   ];
+
+tabCyNum = sort(unique([a_tabTrajNMeas.cycleNumber]));
+tabCyNum = tabCyNum(find(tabCyNum > 0));
+for idCy = 1:length(tabCyNum)
+   cycleNum = tabCyNum(idCy);
+   
+   if (cycleNum == -1)
+      % cycle number = -1 is used to store launch location and date only (no
+      % need to add all the expected MCs)
+      continue;
+   end
+   
+   idC = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
+   measCodeList = unique([a_tabTrajNMeas(idC).tabMeas.measCode]);
+   
+   % add MCs so that all expected ones will be present
+   mcList = setdiff(expMcList, measCodeList);
+   measData = [];
+   for idMc = 1:length(mcList)
+      measStruct = create_one_meas_float_time(mcList(idMc), -1, g_JULD_STATUS_9, 0);
+      measData = [measData; measStruct];
+      
+      if (~isempty(a_tabTrajNCycle))
+         idF = find([a_tabTrajNCycle.cycleNumber] == cycleNum);
+         if (~isempty(idF))
+            [a_tabTrajNCycle(idF)] = set_status_of_n_cycle_juld(a_tabTrajNCycle(idF), mcList(idMc), g_JULD_STATUS_9);
+         end
+      end
+   end
+   
+   % store the data
+   if (~isempty(measData))
+      a_tabTrajNMeas(idC(end)).tabMeas = [a_tabTrajNMeas(idC(end)).tabMeas; measData];
+      
+      % sort trajectory data structures according to the predefined
+      % measurement code order
+      a_tabTrajNMeas(idC) = sort_trajectory_data(a_tabTrajNMeas(idC), a_decoderId);
    end
 end
 

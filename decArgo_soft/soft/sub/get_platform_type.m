@@ -61,6 +61,14 @@ switch (a_decoderId)
       % Apex Argos
       o_platformType = 'APEX';
       
+   case {2001}
+      % Nova
+      o_platformType = 'NOVA';
+      
+   case {2002}
+      % Dova
+      o_platformType = 'DOVA';
+      
    otherwise
       o_platformType = '';
       fprintf('WARNING: Float #%d: No platform type assigned to decoderId #%d\n', ...

@@ -1371,83 +1371,69 @@ if (~isempty(cycles))
       nCycle = a_tabTrajNCycle(idNC);
       
       idC = find(cycles == nCycle.outputCycleNumber);
-      
+         
       if (~isempty(nCycle.juldDescentStart))
          netcdf.putVar(fCdf, juldDescentStartVarId, idC-1, 1, nCycle.juldDescentStart);
-      end
-      if (~isempty(nCycle.juldDescentStartStatus))
          netcdf.putVar(fCdf, juldDescentStartStatusVarId, idC-1, 1, nCycle.juldDescentStartStatus);
       end
       if (~isempty(nCycle.juldFirstStab))
          netcdf.putVar(fCdf, juldFirstStabilizationVarId, idC-1, 1, nCycle.juldFirstStab);
-      end
-      if (~isempty(nCycle.juldFirstStabStatus))
          netcdf.putVar(fCdf, juldFirstStabilizationStatusVarId, idC-1, 1, nCycle.juldFirstStabStatus);
+      end
+      if (~isempty(nCycle.juldDescentEnd))
+         netcdf.putVar(fCdf, juldDescentEndVarId, idC-1, 1, nCycle.juldDescentEnd);
+         netcdf.putVar(fCdf, juldDescentEndStatusVarId, idC-1, 1, nCycle.juldDescentEndStatus);
       end
       if (~isempty(nCycle.juldParkStart))
          netcdf.putVar(fCdf, juldParkStartVarId, idC-1, 1, nCycle.juldParkStart);
-      end
-      if (~isempty(nCycle.juldParkStartStatus))
          netcdf.putVar(fCdf, juldParkStartStatusVarId, idC-1, 1, nCycle.juldParkStartStatus);
       end
       if (~isempty(nCycle.juldParkEnd))
          netcdf.putVar(fCdf, juldParkEndVarId, idC-1, 1, nCycle.juldParkEnd);
-      end
-      if (~isempty(nCycle.juldParkEndStatus))
          netcdf.putVar(fCdf, juldParkEndStatusVarId, idC-1, 1, nCycle.juldParkEndStatus);
+      end
+      if (~isempty(nCycle.juldDeepDescentEnd))
+         netcdf.putVar(fCdf, juldDeepDescentEndVarId, idC-1, 1, nCycle.juldDeepDescentEnd);
+         netcdf.putVar(fCdf, juldDeepDescentEndStatusVarId, idC-1, 1, nCycle.juldDeepDescentEndStatus);
       end
       if (~isempty(nCycle.juldDeepParkStart))
          netcdf.putVar(fCdf, juldDeepParkStartVarId, idC-1, 1, nCycle.juldDeepParkStart);
-      end
-      if (~isempty(nCycle.juldDeepParkStartStatus))
          netcdf.putVar(fCdf, juldDeepParkStartStatusVarId, idC-1, 1, nCycle.juldDeepParkStartStatus);
       end
       if (~isempty(nCycle.juldAscentStart))
          netcdf.putVar(fCdf, juldAscentStartVarId, idC-1, 1, nCycle.juldAscentStart);
-      end
-      if (~isempty(nCycle.juldAscentStartStatus))
          netcdf.putVar(fCdf, juldAscentStartStatusVarId, idC-1, 1, nCycle.juldAscentStartStatus);
+      end
+      if (~isempty(nCycle.juldDeepAscentStart))
+         netcdf.putVar(fCdf, juldDeepAscentStartVarId, idC-1, 1, nCycle.juldDeepAscentStart);
+         netcdf.putVar(fCdf, juldDeepAscentStartStatusVarId, idC-1, 1, nCycle.juldDeepAscentStart);
       end
       if (~isempty(nCycle.juldAscentEnd))
          netcdf.putVar(fCdf, juldAscentEndVarId, idC-1, 1, nCycle.juldAscentEnd);
-      end
-      if (~isempty(nCycle.juldAscentEndStatus))
          netcdf.putVar(fCdf, juldAscentEndStatusVarId, idC-1, 1, nCycle.juldAscentEndStatus);
       end
       if (~isempty(nCycle.juldTransmissionStart))
          netcdf.putVar(fCdf, juldTransmissionStartVarId, idC-1, 1, nCycle.juldTransmissionStart);
-      end
-      if (~isempty(nCycle.juldTransmissionStartStatus))
          netcdf.putVar(fCdf, juldTransmissionStartStatusVarId, idC-1, 1, nCycle.juldTransmissionStartStatus);
       end
       if (~isempty(nCycle.juldFirstMessage))
          netcdf.putVar(fCdf, juldFirstMessageVarId, idC-1, 1, nCycle.juldFirstMessage);
-      end
-      if (~isempty(nCycle.juldFirstMessageStatus))
          netcdf.putVar(fCdf, juldFirstMessageStatusVarId, idC-1, 1, nCycle.juldFirstMessageStatus);
       end
       if (~isempty(nCycle.juldFirstLocation))
          netcdf.putVar(fCdf, juldFirstLocationVarId, idC-1, 1, nCycle.juldFirstLocation);
-      end
-      if (~isempty(nCycle.juldFirstLocationStatus))
          netcdf.putVar(fCdf, juldFirstLocationStatusVarId, idC-1, 1, nCycle.juldFirstLocationStatus);
       end
       if (~isempty(nCycle.juldLastLocation))
          netcdf.putVar(fCdf, juldLastLocationVarId, idC-1, 1, nCycle.juldLastLocation);
-      end
-      if (~isempty(nCycle.juldLastLocationStatus))
          netcdf.putVar(fCdf, juldLastLocationStatusVarId, idC-1, 1, nCycle.juldLastLocationStatus);
       end
       if (~isempty(nCycle.juldLastMessage))
          netcdf.putVar(fCdf, juldLastMessageVarId, idC-1, 1, nCycle.juldLastMessage);
-      end
-      if (~isempty(nCycle.juldLastMessageStatus))
          netcdf.putVar(fCdf, juldLastMessageStatusVarId, idC-1, 1, nCycle.juldLastMessageStatus);
       end
       if (~isempty(nCycle.juldTransmissionEnd))
          netcdf.putVar(fCdf, juldTransmissionEndVarId, idC-1, 1, nCycle.juldTransmissionEnd);
-      end
-      if (~isempty(nCycle.juldTransmissionEndStatus))
          netcdf.putVar(fCdf, juldTransmissionEndStatusVarId, idC-1, 1, nCycle.juldTransmissionEndStatus);
       end
       if (~isempty(nCycle.clockOffset))

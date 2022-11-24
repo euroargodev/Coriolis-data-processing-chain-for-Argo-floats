@@ -44,16 +44,15 @@ if (~isempty(a_evAct))
    evPres = [];
    evDur = [];
    for idP = 1:size(a_evAct, 1)
-      
-      data = a_evAct(idP, :);
-      for idPoint = 1:15
-         if ~((data(idPoint+1) == g_decArgo_dateDef) && ...
-               (data(idPoint+1+15) == g_decArgo_presCountsDef) && ...
-               (data(idPoint+1+15*2) == g_decArgo_durationDef))
+      data = a_evAct(idP, 2:end);
+      for idPoint = 1:13
+         if ~((data(idPoint) == g_decArgo_dateDef) && ...
+               (data(idPoint+13) == g_decArgo_presCountsDef) && ...
+               (data(idPoint+13*2) == g_decArgo_durationDef))
             
-            evDate = [evDate; data(idPoint+1) + g_decArgo_julD2FloatDayOffset];
-            evPres = [evPres; data(idPoint+1+15)];
-            evDur = [evDur; data(idPoint+1+15*2)];
+            evDate = [evDate; data(idPoint) + g_decArgo_julD2FloatDayOffset];
+            evPres = [evPres; data(idPoint+13)];
+            evDur = [evDur; data(idPoint+13*2)];
          else
             break;
          end
@@ -85,16 +84,15 @@ if (~isempty(a_pumpAct))
    pumpPres = [];
    pumpDur = [];
    for idP = 1:size(a_pumpAct, 1)
-      
-      data = a_pumpAct(idP, :);
-      for idPoint = 1:15
-         if ~((data(idPoint+1) == g_decArgo_dateDef) && ...
-               (data(idPoint+1+15) == g_decArgo_presCountsDef) && ...
-               (data(idPoint+1+15*2) == g_decArgo_durationDef))
+      data = a_pumpAct(idP, 2:end);
+      for idPoint = 1:13
+         if ~((data(idPoint) == g_decArgo_dateDef) && ...
+               (data(idPoint+13) == g_decArgo_presCountsDef) && ...
+               (data(idPoint+13*2) == g_decArgo_durationDef))
             
-            pumpDate = [pumpDate; data(idPoint+1) + g_decArgo_julD2FloatDayOffset];
-            pumpPres = [pumpPres; data(idPoint+1+15)];
-            pumpDur = [pumpDur; data(idPoint+1+15*2)];
+            pumpDate = [pumpDate; data(idPoint) + g_decArgo_julD2FloatDayOffset];
+            pumpPres = [pumpPres; data(idPoint+13)];
+            pumpDur = [pumpDur; data(idPoint+13*2)];
          else
             break;
          end

@@ -132,10 +132,12 @@ global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
+global g_MC_InAirSingleMeas;
 
 % global time status
 global g_JULD_STATUS_1;
 global g_JULD_STATUS_2;
+global g_JULD_STATUS_3;
 global g_JULD_STATUS_4;
 global g_JULD_STATUS_9;
 
@@ -170,6 +172,14 @@ for idCyc = 1:length(cycleNumList)
 
       if (~isempty(packTimes))
          
+         if (any(a_cyProfPhaseList(idPack, 5) == g_decArgo_phaseSurfWait) && ...
+               (cycleNum == 0) && (profNum == 0))
+            % transmission start time
+            measStruct = create_one_meas_float_time(g_MC_TST, -1, g_JULD_STATUS_9, 0);
+            measStruct.cyclePhase = g_decArgo_phaseSurfWait;
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+         end
+
          % first message time
          [firstMsgTime, idMin] = min(packTimes);
          measStruct = create_one_meas_surface(g_MC_FMT, ...
@@ -214,7 +224,7 @@ for idCyc = 1:length(cycleNumList)
             g_decArgo_argosLonDef, [], [], [], []);
          measStruct.cyclePhase = a_cyProfPhaseList(idPack(idMax), 5);
          measData = [measData; measStruct];
-         
+
          % sort the data by date
          measDates = [measData.juld];
          [measDates, idSort] = sort(measDates);
@@ -223,6 +233,14 @@ for idCyc = 1:length(cycleNumList)
          % store the data
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
          measData = [];
+
+         % transmission end time
+         if (any(a_cyProfPhaseList(idPack, 5) == g_decArgo_phaseSurfWait) && ...
+               (cycleNum == 0) && (profNum == 0))
+            measStruct = create_one_meas_float_time(g_MC_TET, -1, g_JULD_STATUS_9, 0);
+            measStruct.cyclePhase = g_decArgo_phaseSurfWait;
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+         end
       end
       
       %%%%%%%%%%%%%%%%%%%%%%
@@ -257,7 +275,7 @@ for idCyc = 1:length(cycleNumList)
             % descent to park start time
             measStruct = create_one_meas_float_time(g_MC_DST, a_tabTrajData{idPackTech}.descentToParkStartDate, g_JULD_STATUS_2, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             
             % first stab time and pres
             if (~isempty(a_tabTrajData{idPackTech}.firstStabDate))
@@ -267,7 +285,7 @@ for idCyc = 1:length(cycleNumList)
                measStruct.paramList = paramPres;
                measStruct.paramData = a_tabTrajData{idPackTech}.firstStabPres;
                measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-               measData = [measData; measStruct];
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             end
             
             % spy pressure measurements during descent to park
@@ -317,6 +335,17 @@ for idCyc = 1:length(cycleNumList)
                end
             end
             
+            % sort the data by date
+            if (~isempty(measData))
+               measDates = [measData.juld];
+               [measDates, idSort] = sort(measDates);
+               measData = measData(idSort);
+               
+               % store the data
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
+               measData = [];
+            end
+            
             % deepest bin measurements
             idPackData  = find( ...
                (a_tabTrajIndex(:, 1) == 1) & ...
@@ -332,25 +361,14 @@ for idCyc = 1:length(cycleNumList)
                measStruct.paramData = a_tabTrajData{idPackData}.data;
                measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                measStruct.sensorNumber = a_tabTrajData{idPackData}.sensorNumber;
-               measData = [measData; measStruct];
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             end
             
             % park start time
             measStruct = create_one_meas_float_time(g_MC_PST, a_tabTrajData{idPackTech}.descentToParkEndDate, g_JULD_STATUS_2, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
-            
-            % sort the data by date
-            if (~isempty(measData))
-               measDates = [measData.juld];
-               [measDates, idSort] = sort(measDates);
-               measData = measData(idSort);
-               
-               % store the data
-               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
-               measData = [];
-            end
-            
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                        
             % max P during descent to park
             measStruct = get_traj_one_meas_init_struct();
             measStruct.measCode = g_MC_MaxPresInDescToPark;
@@ -359,12 +377,8 @@ for idCyc = 1:length(cycleNumList)
             measStruct.paramList = paramPres;
             measStruct.paramData = a_tabTrajData{idPackTech}.maxPDuringDescentToPark;
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
-            
-            % store the data
-            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
-            measData = [];
-            
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                        
             % spy pressure measurements during drift at park
             idPackData  = find( ...
                (a_tabTrajIndex(:, 1) == 252) & ...
@@ -546,9 +560,9 @@ for idCyc = 1:length(cycleNumList)
                % we cannot assign only one sensor number to this measurement
                % => we cannot report the QC = '4' for ko sensors for some of the
                % measuremenst
-               measData = [measData; measStruct];
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
                
-               trajNMeasStructRpp.tabMeas = [trajNMeasStructRpp.tabMeas; measData];
+               trajNMeasStructRpp.tabMeas = [trajNMeasStructRpp.tabMeas; measStruct];
             end
             
             % min P during drift at park
@@ -559,7 +573,7 @@ for idCyc = 1:length(cycleNumList)
             measStruct.paramList = paramPres;
             measStruct.paramData = a_tabTrajData{idPackTech}.minPDuringDriftAtPark;
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             
             % max P during drift at park
             measStruct = get_traj_one_meas_init_struct();
@@ -569,16 +583,12 @@ for idCyc = 1:length(cycleNumList)
             measStruct.paramList = paramPres;
             measStruct.paramData = a_tabTrajData{idPackTech}.maxPDuringDriftAtPark;
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
-            
-            % store the data
-            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
-            measData = [];
-            
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                        
             % park end time
             measStruct = create_one_meas_float_time(g_MC_PET, a_tabTrajData{idPackTech}.descentToProfStartDate, g_JULD_STATUS_2, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             
             % spy pressure measurements during descent to prof
             idPackData  = find( ...
@@ -601,10 +611,21 @@ for idCyc = 1:length(cycleNumList)
                end
             end
             
+            % sort the data by date
+            if (~isempty(measData))
+               measDates = [measData.juld];
+               [measDates, idSort] = sort(measDates);
+               measData = measData(idSort);
+               
+               % store the data
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
+               measData = [];
+            end
+            
             % deep park start time
             measStruct = create_one_meas_float_time(g_MC_DPST, a_tabTrajData{idPackTech}.descentToProfEndDate, g_JULD_STATUS_2, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             
             % spy pressure measurements during drift at prof
             idPackData  = find( ...
@@ -646,7 +667,7 @@ for idCyc = 1:length(cycleNumList)
             measStruct.paramList = paramPres;
             measStruct.paramData = a_tabTrajData{idPackTech}.maxPDuringDescentToProf;
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             
             % min P during drift at prof
             measStruct = get_traj_one_meas_init_struct();
@@ -656,7 +677,7 @@ for idCyc = 1:length(cycleNumList)
             measStruct.paramList = paramPres;
             measStruct.paramData = a_tabTrajData{idPackTech}.minPDuringDriftAtProf;
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             
             % max P during drift at prof
             measStruct = get_traj_one_meas_init_struct();
@@ -666,16 +687,12 @@ for idCyc = 1:length(cycleNumList)
             measStruct.paramList = paramPres;
             measStruct.paramData = a_tabTrajData{idPackTech}.maxPDuringDriftAtProf;
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
-            
-            % store the data
-            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
-            measData = [];
-            
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                        
             % ascent start time
             measStruct = create_one_meas_float_time(g_MC_AST, a_tabTrajData{idPackTech}.ascentStartDate, g_JULD_STATUS_2, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             
             % deepest bin measurements
             idPackData  = find( ...
@@ -692,7 +709,7 @@ for idCyc = 1:length(cycleNumList)
                measStruct.paramData = a_tabTrajData{idPackData}.data;
                measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                measStruct.sensorNumber = a_tabTrajData{idPackData}.sensorNumber;
-               measData = [measData; measStruct];
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             end
             
             % spy pressure measurements during ascent to surface
@@ -745,13 +762,15 @@ for idCyc = 1:length(cycleNumList)
             end
             
             % sort the data by date
-            measDates = [measData.juld];
-            [measDates, idSort] = sort(measDates);
-            measData = measData(idSort);
-            
-            % store the data
-            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
-            measData = [];
+            if (~isempty(measData))
+               measDates = [measData.juld];
+               [measDates, idSort] = sort(measDates);
+               measData = measData(idSort);
+               
+               % store the data
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
+               measData = [];
+            end
             
             % last pumped CTD measurement
             idPackData  = find( ...
@@ -771,41 +790,58 @@ for idCyc = 1:length(cycleNumList)
                   a_tabTrajData{id}.subsurface_temp ...
                   a_tabTrajData{id}.subsurface_psal];
                measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-               measData = [measData; measStruct];
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             end
-            
-            % store the data
-            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
-            measData = [];
             
             % ascent end time
             measStruct = create_one_meas_float_time(g_MC_AET, a_tabTrajData{idPackTech}.ascentEndDate, g_JULD_STATUS_2, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                        
+            % IN AIR measurements
             
+            idPackData  = find( ...
+               (a_tabTrajIndex(:, 1) == 2) & ...
+               (a_tabTrajIndex(:, 2) == cycleNum) & ...
+               (a_tabTrajIndex(:, 3) == profNum));
+            
+            for idMeas = 1:length(idPackData)
+               id = idPackData(idMeas);
+               dates = a_tabTrajData{id}.dates;
+               dateFillValue = a_tabTrajData{id}.dateList.fillValue;
+               data = a_tabTrajData{id}.data;
+
+               for idM = 1:length(dates)
+                  if (dates(idM) ~= dateFillValue)
+                     measStruct = create_one_meas_float_time(g_MC_InAirSingleMeas, dates(idM), g_JULD_STATUS_2, 0);
+                  else
+                     measStruct = get_traj_one_meas_init_struct();
+                     measStruct.measCode = g_MC_InAirSingleMeas;
+                  end
+                  measStruct.paramList = a_tabTrajData{id}.paramList;
+                  measStruct.paramNumberWithSubLevels = a_tabTrajData{id}.paramNumberWithSubLevels;
+                  measStruct.paramNumberOfSubLevels = a_tabTrajData{id}.paramNumberOfSubLevels;
+                  measStruct.paramData = data(idM, :);
+                  measStruct.cyclePhase = a_tabTrajData{id}.phaseNumber;
+                  measStruct.sensorNumber = a_tabTrajData{id}.sensorNumber;
+                  trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+               end
+            end
+                        
             % transmission start time
             if (~isempty(a_tabTrajData{idPackTech}.transStartDate))
-               measStruct = create_one_meas_float_time(g_MC_TST, a_tabTrajData{idPackTech}.transStartDate, g_JULD_STATUS_2, 0);
+               measStruct = create_one_meas_float_time(g_MC_TST, a_tabTrajData{idPackTech}.transStartDate, g_JULD_STATUS_3, 0);
             else
                measStruct = create_one_meas_float_time(g_MC_TST, -1, g_JULD_STATUS_9, 0);
             end
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             
             % transmission end time
             measStruct = create_one_meas_float_time(g_MC_TET, -1, g_JULD_STATUS_9, 0);
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
-            
-            % sort the data by date
-            measDates = [measData.juld];
-            [measDates, idSort] = sort(measDates);
-            measData = measData(idSort);
-            
-            % store the data
-            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
-            measData = [];
-            
+            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+                        
             % grounding information
             if (~isempty(a_tabTrajData{idPackTech}.groundingDate))
                measStruct = create_one_meas_float_time(g_MC_Grounded, a_tabTrajData{idPackTech}.groundingDate, g_JULD_STATUS_2, 0);
@@ -814,11 +850,7 @@ for idCyc = 1:length(cycleNumList)
                measStruct.paramList = paramPres;
                measStruct.paramData = a_tabTrajData{idPackTech}.groundingPres;
                measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-               measData = [measData; measStruct];
-               
-               % store the data
-               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
-               measData = [];
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             end
             
             %%%%%%%%%%%%%%%%%%%%%
@@ -926,6 +958,17 @@ for idCyc = 1:length(cycleNumList)
                end
             end
             
+            % sort the data by date
+            if (~isempty(measData))
+               measDates = [measData.juld];
+               [measDates, idSort] = sort(measDates);
+               measData = measData(idSort);
+               
+               % store the data
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
+               measData = [];
+            end
+            
             % deepest bin measurements
             idPackData  = find( ...
                (a_tabTrajIndex(:, 1) == 1) & ...
@@ -941,7 +984,7 @@ for idCyc = 1:length(cycleNumList)
                measStruct.paramData = a_tabTrajData{idPackData}.data;
                measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                measStruct.sensorNumber = a_tabTrajData{idPackData}.sensorNumber;
-               measData = [measData; measStruct];
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             end
             
             % spy pressure measurements during drift at park
@@ -1117,14 +1160,10 @@ for idCyc = 1:length(cycleNumList)
                measStruct.paramNumberOfSubLevels = paramNumberOfSubLevelsRpp;
                measStruct.paramData = paramDataRpp;
                measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-               measData = [measData; measStruct];
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
                
-               trajNMeasStructRpp.tabMeas = [trajNMeasStructRpp.tabMeas; measData];
+               trajNMeasStructRpp.tabMeas = [trajNMeasStructRpp.tabMeas; measStruct];
             end
-            
-            % store the data
-            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
-            measData = [];
             
             % spy pressure measurements during descent to prof
             idPackData  = find( ...
@@ -1168,6 +1207,17 @@ for idCyc = 1:length(cycleNumList)
                end
             end
             
+            % sort the data by date
+            if (~isempty(measData))
+               measDates = [measData.juld];
+               [measDates, idSort] = sort(measDates);
+               measData = measData(idSort);
+               
+               % store the data
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
+               measData = [];
+            end
+            
             % deepest bin measurements
             idPackData  = find( ...
                (a_tabTrajIndex(:, 1) == 1) & ...
@@ -1183,7 +1233,7 @@ for idCyc = 1:length(cycleNumList)
                measStruct.paramData = a_tabTrajData{idPackData}.data;
                measStruct.cyclePhase = g_decArgo_phaseSatTrans;
                measStruct.sensorNumber = a_tabTrajData{idPackData}.sensorNumber;
-               measData = [measData; measStruct];
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             end
             
             % spy pressure measurements during ascent to surface
@@ -1261,12 +1311,8 @@ for idCyc = 1:length(cycleNumList)
                   a_tabTrajData{idPackData}.subsurface_temp ...
                   a_tabTrajData{idPackData}.subsurface_psal];
                measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-               measData = [measData; measStruct];
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             end
-            
-            % store the data
-            trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measData];
-            measData = [];
             
             %%%%%%%%%%%%%%%%%%%%%
             % data after the dive
@@ -1448,6 +1494,7 @@ global g_decArgo_floatConfig;
 % global default values
 global g_decArgo_argosLonDef;
 global g_decArgo_argosLatDef;
+global g_decArgo_ncDateDef;
 
 
 % process each cycle and each profile
@@ -1525,7 +1572,7 @@ for idCyc = 1:length(cycleNumList)
             
             % ascent end date
             trajNCycleStruct.juldAscentEnd = a_tabTrajData{idPackTech}.ascentEndDate;
-            trajNCycleStruct.juldAscentEndStatus = g_JULD_STATUS_3;
+            trajNCycleStruct.juldAscentEndStatus = g_JULD_STATUS_2;
             
             if (config_surface_after_prof_ir_rudics_sbd2(cycleNum, profNum) && ...
                   ~isempty(a_tabTrajData{idPackTech}.transStartDate))
@@ -1554,6 +1601,7 @@ for idCyc = 1:length(cycleNumList)
                trajNCycleStruct.juldLastMessageStatus = g_JULD_STATUS_4;
                
                % transmission end date
+               trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
                trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
             end
             
@@ -1695,6 +1743,22 @@ for idCyc = 1:length(cycleNumList)
                % phase of the float tech message
                trajNCycleStruct.cyclePhase = idPhase;
                trajNCycleStruct.surfOnly = 1;
+               if ((cycleNum == 0) && (profNum == 0))
+                  % to keep N_CYCLE arrays for the prelude
+                  trajNCycleStruct.surfOnly = 2;
+                  
+                  trajNCycleStruct.clockOffset = 0;
+                  trajNCycleStruct.dataMode = 'A'; % corrected from clock drift
+                  trajNCycleStruct.grounded = 'U';
+                  
+                  % transmission start date
+                  trajNCycleStruct.juldTransmissionStart = g_decArgo_ncDateDef;
+                  trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_9;
+                  
+                  % transmission end date
+                  trajNCycleStruct.juldTransmissionEnd = g_decArgo_ncDateDef;
+                  trajNCycleStruct.juldTransmissionEndStatus = g_JULD_STATUS_9;
+               end
                
                o_tabTrajNCycle = [o_tabTrajNCycle trajNCycleStruct];
             end

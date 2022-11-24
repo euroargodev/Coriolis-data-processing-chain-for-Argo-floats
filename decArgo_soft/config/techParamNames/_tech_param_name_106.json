@@ -508,8 +508,8 @@
       "TECH_PARAM_DEC_ID" : "207",
       "TECH_PARAM_MSG_ID" : "250",
       "TECH_PARAM_MSG_LABEL" : "Pressure offset (surface)",
-      "TECH_PARAM_NAME" : "PRES_SurfaceOffsetBeforeReset_1cBarResolution_dbar",
-      "TECH_PARAM_DESCRIPTION" : "Surface pressure measured just before the float dives which is then used to correct pressure on board the float for the next profile.  Note: this is a relative offset. Autocorrected."
+      "TECH_PARAM_NAME" : "PRES_SurfaceOffsetCorrectedNotResetNegative_1cBarResolution_dbar",
+      "TECH_PARAM_DESCRIPTION" : "Surface pressure recorded just before the previous descent but data is corrected on board the float. Note: cumulative NEGATIVE   offset  (real offset * -1) but no further correction required. Autocorrected"
    },
    "TECH_PARAM_65" :
    {

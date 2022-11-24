@@ -53,7 +53,7 @@ end
 % interpolate/extrapolate the CTD data at the pressures of the MOLAR_NITRATE
 % measurements
 if (size(a_ctdData, 1) > 1)
-   ctdIntData = compute_interpolated_CTD_measurements(a_ctdData, a_MOLAR_NITRATE_pres+sunaVerticalOffset, 1);
+   ctdIntData = compute_interpolated_CTD_measurements(a_ctdData, a_MOLAR_NITRATE_pres+sunaVerticalOffset, 0);
 else
    ctdIntData = a_ctdData;
 end

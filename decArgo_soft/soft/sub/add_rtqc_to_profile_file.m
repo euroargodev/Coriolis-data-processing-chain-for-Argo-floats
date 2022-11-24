@@ -65,6 +65,22 @@
 %                             - update of the history global attribute.
 %   02/11/2016 - RNU - V 2.0: improvements and corrections while implementing
 %                             RTQC for trajectory data.
+%   03/14/2016 - RNU - V 2.1: - trajectory file should be retrieved fro storage
+%                             directories, not from XML report
+%                             - incorrect initialization of <PARAM>_ADJUSTED_QC
+%                             (it should be set to ' ' in 'R' mode).
+%   03/16/2016 - RNU - V 2.2: improved INFO, WARNING and ERROR messages (added
+%                             float number (and cycle number when relevant))
+%   04/13/2016 - RNU - V 2.3: update of the 'set_qc' function
+%                             (g_decArgo_qcStrInterpolated QC value can be
+%                             replaced by any QC value).
+%   05/19/2016 - RNU - V 2.4: correction of the 'set_qc' function
+%   06/10/2016 - RNU - V 2.5: RTQC on profile data can be performed even if no
+%                             multi-profile file is available (tests #16 and #18
+%                             are not performed) 
+%   06/22/2016 - RNU - V 2.6: in test #5, the JULD_LOCATION can be found in traj
+%                             JULD or JULD_ADJUSTED (due to NOVA/DOVA floats
+%                             which transmit GPS times in float time)
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -96,7 +112,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '2.0';
+g_decArgo_addRtqcToProfileVersion = '2.6';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -121,17 +137,18 @@ MEDITERRANEAN_SEA_REGION = [[30 40 -5 40]; ...
 
 % check input mono profile file exists
 if ~(exist(a_ncMonoProfInputPathFileName, 'file') == 2)
-   fprintf('RTQC_ERROR: No input mono profile nc file to perform RTQC\n');
+   fprintf('RTQC_ERROR: Float #%d: No input mono profile nc file to perform RTQC (%s)\n', ...
+      a_floatNum, a_ncMonoProfInputPathFileName);
    return;
 end
 ncMonoProfInputPathFileName = a_ncMonoProfInputPathFileName;
 
 % check input multi profile file exists
-if ~(exist(a_ncMultiProfInputPathFileName, 'file') == 2)
-   fprintf('RTQC_ERROR: No input multi profile nc file to perform RTQC\n');
-   return;
+multiProfFileFlag = 0;
+if (exist(a_ncMultiProfInputPathFileName, 'file') == 2)
+   multiProfFileFlag = 1;
+   ncMultiProfInputPathFileName = a_ncMultiProfInputPathFileName;
 end
-ncMultiProfInputPathFileName = a_ncMultiProfInputPathFileName;
 
 % look for input B mono profile file
 monoBProfFileFlag = 0;
@@ -143,10 +160,12 @@ end
 
 % look for input B multi profile file
 multiBProfFileFlag = 0;
-[filePath, fileName, fileExt] = fileparts(ncMultiProfInputPathFileName);
-ncMultiBProfInputPathFileName = [filePath '/' fileName(1:end-4) 'B' fileName(end-3:end) fileExt];
-if (exist(ncMultiBProfInputPathFileName, 'file') == 2)
-   multiBProfFileFlag = 1;
+if (multiProfFileFlag)
+   [filePath, fileName, fileExt] = fileparts(ncMultiProfInputPathFileName);
+   ncMultiBProfInputPathFileName = [filePath '/' fileName(1:end-4) 'B' fileName(end-3:end) fileExt];
+   if (exist(ncMultiBProfInputPathFileName, 'file') == 2)
+      multiBProfFileFlag = 1;
+   end
 end
 
 % set mono profile output file names
@@ -160,13 +179,15 @@ if (monoBProfFileFlag == 1)
 end
 
 % set multi profile output file names
-ncMultiProfOutputPathFileName = a_ncMultiProfOutputPathFileName;
-if (isempty(ncMultiProfOutputPathFileName))
-   ncMultiProfOutputPathFileName = ncMultiProfInputPathFileName;
-end
-if (multiBProfFileFlag == 1)
-   [filePath, fileName, fileExt] = fileparts(ncMultiProfOutputPathFileName);
-   ncMultiBProfOutputPathFileName = [filePath '/' fileName(1:end-4) 'B' fileName(end-3:end) fileExt];
+if (multiProfFileFlag)
+   ncMultiProfOutputPathFileName = a_ncMultiProfOutputPathFileName;
+   if (isempty(ncMultiProfOutputPathFileName))
+      ncMultiProfOutputPathFileName = ncMultiProfInputPathFileName;
+   end
+   if (multiBProfFileFlag == 1)
+      [filePath, fileName, fileExt] = fileparts(ncMultiProfOutputPathFileName);
+      ncMultiBProfOutputPathFileName = [filePath '/' fileName(1:end-4) 'B' fileName(end-3:end) fileExt];
+   end
 end
 
 % list of possible tests
@@ -224,12 +245,13 @@ if (testFlagList(4) == 1)
    if (~isempty(testMetaId))
       etopo2PathFileName = a_testMetaData{testMetaId+1};
       if ~(exist(etopo2PathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST004: ETPO2 file (%s) not found => test #4 not performed\n', ...
-            etopo2PathFileName);
+         fprintf('RTQC_WARNING: TEST004: Float #%d: ETPO2 file (%s) not found => test #4 not performed\n', ...
+            a_floatNum, etopo2PathFileName);
          testFlagList(4) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST004: ETPO2 file needed to perform test #4 => test #4 not performed\n');
+      fprintf('RTQC_WARNING: TEST004: Float #%d: ETPO2 file needed to perform test #4 => test #4 not performed\n', ...
+         a_floatNum);
       testFlagList(4) = 0;
    end
 end
@@ -237,7 +259,8 @@ end
 if (testFlagList(5) == 1)
    % for impossible speed test, we need the trajectory data (in global variable)
    if (isempty(g_rtqc_trajData))
-      fprintf('RTQC_WARNING: TEST005: Trajectory data needed to perform test #5 => test #5 not performed\n');
+      fprintf('RTQC_WARNING: TEST005: Float #%d: Trajectory data needed to perform test #5 => test #5 not performed\n', ...
+         a_floatNum);
       testFlagList(5) = 0;
    end
 end
@@ -248,13 +271,32 @@ if (testFlagList(15) == 1)
    if (~isempty(testGreyListId))
       greyListPathFileName = a_testMetaData{testGreyListId+1};
       if ~(exist(greyListPathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST015: Grey list file (%s) not found => test #15 not performed\n', ...
-            greyListPathFileName);
+         fprintf('RTQC_WARNING: TEST015: Float #%d: Grey list file (%s) not found => test #15 not performed\n', ...
+            a_floatNum, greyListPathFileName);
          testFlagList(15) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST005: Grey list file needed to perform test #15 => test #15 not performed\n');
+      fprintf('RTQC_WARNING: TEST005: Float #%d: Grey list file needed to perform test #15 => test #15 not performed\n', ...
+         a_floatNum);
       testFlagList(15) = 0;
+   end
+end
+
+if (testFlagList(16) == 1)
+   % for gross salinity or temperature sensor drift test, we need the multi-profile file
+   if (multiProfFileFlag == 0)
+      fprintf('RTQC_WARNING: TEST016: Float #%d: Multi-profile file needed to perform test #16 => test #16 not performed\n', ...
+         a_floatNum);
+      testFlagList(16) = 0;
+   end
+end
+
+if (testFlagList(18) == 1)
+   % for frozen profile test, we need the multi-profile file
+   if (multiProfFileFlag == 0)
+      fprintf('RTQC_WARNING: TEST018: Float #%d: Multi-profile file needed to perform test #18 => test #18 not performed\n', ...
+         a_floatNum);
+      testFlagList(18) = 0;
    end
 end
 
@@ -264,12 +306,13 @@ if (testFlagList(19) == 1)
    if (~isempty(testMetaId))
       ncMetaPathFileName = a_testMetaData{testMetaId+1};
       if ~(exist(ncMetaPathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST019: Nc meta-data file (%s) not found => test #19 not performed\n', ...
-            ncMetaPathFileName);
+         fprintf('RTQC_WARNING: TEST019: Float #%d: Nc meta-data file (%s) not found => test #19 not performed\n', ...
+            a_floatNum, ncMetaPathFileName);
          testFlagList(19) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST019: Nc meta-data file needed to perform test #19 => test #19 not performed\n');
+      fprintf('RTQC_WARNING: TEST019: Float #%d: Nc meta-data file needed to perform test #19 => test #19 not performed\n', ...
+         a_floatNum);
       testFlagList(19) = 0;
    end
    
@@ -354,7 +397,8 @@ if (testFlagList(21) == 1)
    if (~isempty(floatDecoderId))
       apexFloatFlag = ((floatDecoderId > 1000) && (floatDecoderId < 2000));
    else
-      fprintf('RTQC_WARNING: TEST021: Apex float flag needed to perform test #21 => test #21 not performed\n');
+      fprintf('RTQC_WARNING: TEST021: Float #%d: Apex float flag needed to perform test #21 => test #21 not performed\n', ...
+         a_floatNum);
       testFlagList(21) = 0;
    end
    
@@ -363,12 +407,13 @@ if (testFlagList(21) == 1)
       if (~isempty(testMetaId))
          ncMetaPathFileName = a_testMetaData{testMetaId+1};
          if ~(exist(ncMetaPathFileName, 'file') == 2)
-            fprintf('RTQC_WARNING: TEST021: Nc meta-data file (%s) not found => test #19 not performed\n', ...
-               ncMetaPathFileName);
+            fprintf('RTQC_WARNING: TEST021: Float #%d: Nc meta-data file (%s) not found => test #19 not performed\n', ...
+               a_floatNum, ncMetaPathFileName);
             testFlagList(21) = 0;
          end
       else
-         fprintf('RTQC_WARNING: TEST021: Nc meta-data file needed to perform test #19 => test #19 not performed\n');
+         fprintf('RTQC_WARNING: TEST021: Float #%d: Nc meta-data file needed to perform test #19 => test #19 not performed\n', ...
+            a_floatNum);
          testFlagList(21) = 0;
       end
       
@@ -430,7 +475,8 @@ end
 if (testFlagList(22) == 1)
    % for near-surface mixed air/water test, we need the float decoder Id
    if (isempty(floatDecoderId))
-      fprintf('RTQC_WARNING: TEST022: Float decoder Id needed to perform test #22 => test #22 not performed\n');
+      fprintf('RTQC_WARNING: TEST022: Float #%d: Float decoder Id needed to perform test #22 => test #22 not performed\n', ...
+         a_floatNum);
       testFlagList(22) = 0;
    end
 end
@@ -441,14 +487,15 @@ if (testFlagList(23) == 1)
    if (~isempty(testDeepFloatFlagId))
       deepFloatFlag = a_testMetaData{testDeepFloatFlagId+1};
    else
-      fprintf('RTQC_WARNING: TEST023: Deep float flag needed to perform test #23 => test #23 not performed\n');
+      fprintf('RTQC_WARNING: TEST023: Float #%d: Deep float flag needed to perform test #23 => test #23 not performed\n', ...
+         a_floatNum);
       testFlagList(23) = 0;
    end
 end
 
 % check if any test has to be performed
 if (isempty(find(testFlagList == 1, 1)))
-   fprintf('RTQC_INFO: No RTQC test to perform\n');
+   fprintf('RTQC_INFO: Float #%d: No RTQC test to perform\n', a_floatNum);
    return;
 end
 
@@ -812,156 +859,47 @@ end
 % READ MULTI PROFILE DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-wantedVars = [ ...
-   {'CYCLE_NUMBER'} ...
-   {'DIRECTION'} ...
-   {'DATA_MODE'} ...
-   {'JULD'} ...
-   {'JULD_QC'} ...
-   {'JULD_LOCATION'} ...
-   {'LATITUDE'} ...
-   {'LONGITUDE'} ...
-   {'POSITION_QC'} ...
-   {'STATION_PARAMETERS'} ...
-   ];
-
-[ncMultiProfData] = get_data_from_nc_file(ncMultiProfInputPathFileName, wantedVars);
-
-cycleNumberM = get_data_from_name('CYCLE_NUMBER', ncMultiProfData)';
-directionM = get_data_from_name('DIRECTION', ncMultiProfData)';
-dataModeMFile = get_data_from_name('DATA_MODE', ncMultiProfData)';
-juldM = get_data_from_name('JULD', ncMultiProfData)';
-juldQcM = get_data_from_name('JULD_QC', ncMultiProfData)';
-juldLocationM = get_data_from_name('JULD_LOCATION', ncMultiProfData)';
-latitudeM = get_data_from_name('LATITUDE', ncMultiProfData)';
-longitudeM = get_data_from_name('LONGITUDE', ncMultiProfData)';
-positionQcM = get_data_from_name('POSITION_QC', ncMultiProfData)';
-
-% create the list of parameters
-stationParametersNcMulti = get_data_from_name('STATION_PARAMETERS', ncMultiProfData);
-[~, nParam, nProf] = size(stationParametersNcMulti);
-ncMParamNameList = [];
-ncMParamAdjNameList = [];
-for idProf = 1:nProf
-   if (dataModeMFile(idProf) ~= 'D')
-      for idParam = 1:nParam
-         paramName = deblank(stationParametersNcMulti(:, idParam, idProf)');
-         if (~isempty(paramName))
-            ncMParamNameList{end+1} = paramName;
-            paramInfo = get_netcdf_param_attributes(paramName);
-            if (paramInfo.adjAllowed == 1)
-               ncMParamAdjNameList = [ncMParamAdjNameList ...
-                  {[paramName '_ADJUSTED']} ...
-                  ];
-            end
-         end
-      end
-   end
-end
-ncMParamNameList = unique(ncMParamNameList);
-ncMParamAdjNameList = unique(ncMParamAdjNameList);
-
-% retrieve the data
-ncMParamNameQcList = [];
-wantedVars = [];
-for idParam = 1:length(ncMParamNameList)
-   paramName = ncMParamNameList{idParam};
-   paramNameQc = [paramName '_QC'];
-   ncMParamNameQcList{end+1} = paramNameQc;
+if (multiProfFileFlag)
+   
    wantedVars = [ ...
-      wantedVars ...
-      {paramName} ...
-      {paramNameQc} ...
-      ];
-end
-ncMParamAdjNameQcList = [];
-for idParam = 1:length(ncMParamAdjNameList)
-   paramAdjName = ncMParamAdjNameList{idParam};
-   paramAdjNameQc = [paramAdjName '_QC'];
-   ncMParamAdjNameQcList{end+1} = paramAdjNameQc;
-   wantedVars = [ ...
-      wantedVars ...
-      {paramAdjName} ...
-      {paramAdjNameQc} ...
-      ];
-end
-
-[ncMultiProfData] = get_data_from_nc_file(ncMultiProfInputPathFileName, wantedVars);
-
-ncMParamDataList = [];
-ncMParamDataQcList = [];
-ncMParamFillValueList = [];
-nLevelsCFile = '';
-for idParam = 1:length(ncMParamNameList)
-   
-   paramName = ncMParamNameList{idParam};
-   paramNameData = [lower(paramName) '_M'];
-   ncMParamDataList{end+1} = paramNameData;
-   paramNameQc = ncMParamNameQcList{idParam};
-   paramNameQcData = [lower(paramNameQc) '_M'];
-   ncMParamDataQcList{end+1} = paramNameQcData;
-   paramInfo = get_netcdf_param_attributes(paramName);
-   ncMParamFillValueList{end+1} = paramInfo.fillValue;
-   
-   data = get_data_from_name(paramName, ncMultiProfData)';
-   dataQc = get_data_from_name(paramNameQc, ncMultiProfData)';
-   nLevelsCFile = size(data, 2);
-   
-   eval([paramNameData ' = data;']);
-   eval([paramNameQcData ' = dataQc;']);
-end
-ncMParamAdjDataList = [];
-ncMParamAdjDataQcList = [];
-ncMParamAdjFillValueList = [];
-for idParam = 1:length(ncMParamAdjNameList)
-   
-   paramAdjName = ncMParamAdjNameList{idParam};
-   paramAdjNameData = [lower(paramAdjName) '_M'];
-   ncMParamAdjDataList{end+1} = paramAdjNameData;
-   paramAdjNameQc = ncMParamAdjNameQcList{idParam};
-   paramAdjNameQcData = [lower(paramAdjNameQc) '_M'];
-   ncMParamAdjDataQcList{end+1} = paramAdjNameQcData;
-   adjPos = strfind(paramAdjName, '_ADJUSTED');
-   paramName = paramAdjName(1:adjPos-1);
-   paramInfo = get_netcdf_param_attributes(paramName);
-   ncMParamAdjFillValueList{end+1} = paramInfo.fillValue;
-   
-   data = get_data_from_name(paramAdjName, ncMultiProfData)';
-   dataQc = get_data_from_name(paramAdjNameQc, ncMultiProfData)';
-   
-   eval([paramAdjNameData ' = data;']);
-   eval([paramAdjNameQcData ' = dataQc;']);
-end
-
-% retrieve the data from the B multi profile file
-if (multiBProfFileFlag == 1)
-   
-   % retrieve the parameter list
-   wantedVars = [ ...
+      {'CYCLE_NUMBER'} ...
+      {'DIRECTION'} ...
       {'DATA_MODE'} ...
-      {'PARAMETER_DATA_MODE'} ...
+      {'JULD'} ...
+      {'JULD_QC'} ...
+      {'JULD_LOCATION'} ...
+      {'LATITUDE'} ...
+      {'LONGITUDE'} ...
+      {'POSITION_QC'} ...
       {'STATION_PARAMETERS'} ...
       ];
    
-   [ncMultiBProfData] = get_data_from_nc_file(ncMultiBProfInputPathFileName, wantedVars);
+   [ncMultiProfData] = get_data_from_nc_file(ncMultiProfInputPathFileName, wantedVars);
    
-   dataModeBMFile = get_data_from_name('DATA_MODE', ncMultiBProfData)';
-   paramDataModeBMFile = get_data_from_name('PARAMETER_DATA_MODE', ncMultiBProfData)';
+   cycleNumberM = get_data_from_name('CYCLE_NUMBER', ncMultiProfData)';
+   directionM = get_data_from_name('DIRECTION', ncMultiProfData)';
+   dataModeMFile = get_data_from_name('DATA_MODE', ncMultiProfData)';
+   juldM = get_data_from_name('JULD', ncMultiProfData)';
+   juldQcM = get_data_from_name('JULD_QC', ncMultiProfData)';
+   juldLocationM = get_data_from_name('JULD_LOCATION', ncMultiProfData)';
+   latitudeM = get_data_from_name('LATITUDE', ncMultiProfData)';
+   longitudeM = get_data_from_name('LONGITUDE', ncMultiProfData)';
+   positionQcM = get_data_from_name('POSITION_QC', ncMultiProfData)';
    
    % create the list of parameters
-   stationParametersNcMultiB = get_data_from_name('STATION_PARAMETERS', ncMultiBProfData);
-   [~, nParam, nProf] = size(stationParametersNcMultiB);
-   ncBMParamNameList = [];
-   ncBMParamAdjNameList = [];
+   stationParametersNcMulti = get_data_from_name('STATION_PARAMETERS', ncMultiProfData);
+   [~, nParam, nProf] = size(stationParametersNcMulti);
+   ncMParamNameList = [];
+   ncMParamAdjNameList = [];
    for idProf = 1:nProf
-      for idParam = 1:nParam
-         if (paramDataModeBMFile(idProf, idParam) ~= 'D')
-            paramName = deblank(stationParametersNcMultiB(:, idParam, idProf)');
+      if (dataModeMFile(idProf) ~= 'D')
+         for idParam = 1:nParam
+            paramName = deblank(stationParametersNcMulti(:, idParam, idProf)');
             if (~isempty(paramName))
-               ncBMParamNameList{end+1} = paramName;
+               ncMParamNameList{end+1} = paramName;
                paramInfo = get_netcdf_param_attributes(paramName);
-               if ((paramInfo.adjAllowed == 1) && (paramInfo.paramType ~= 'c'))
-                  ncBMParamAdjNameList = [ncBMParamAdjNameList ...
+               if (paramInfo.adjAllowed == 1)
+                  ncMParamAdjNameList = [ncMParamAdjNameList ...
                      {[paramName '_ADJUSTED']} ...
                      ];
                end
@@ -969,28 +907,27 @@ if (multiBProfFileFlag == 1)
          end
       end
    end
-   ncBMParamNameList = unique(ncBMParamNameList);
-   ncBMParamNameList(find(strcmp(ncBMParamNameList, 'PRES') == 1)) = [];
-   ncBMParamAdjNameList = unique(ncBMParamAdjNameList);
+   ncMParamNameList = unique(ncMParamNameList);
+   ncMParamAdjNameList = unique(ncMParamAdjNameList);
    
    % retrieve the data
-   ncBMParamNameQcList = [];
+   ncMParamNameQcList = [];
    wantedVars = [];
-   for idParam = 1:length(ncBMParamNameList)
-      paramName = ncBMParamNameList{idParam};
+   for idParam = 1:length(ncMParamNameList)
+      paramName = ncMParamNameList{idParam};
       paramNameQc = [paramName '_QC'];
-      ncBMParamNameQcList{end+1} = paramNameQc;
+      ncMParamNameQcList{end+1} = paramNameQc;
       wantedVars = [ ...
          wantedVars ...
          {paramName} ...
          {paramNameQc} ...
          ];
    end
-   ncBMParamAdjNameQcList = [];
-   for idParam = 1:length(ncBMParamAdjNameList)
-      paramAdjName = ncBMParamAdjNameList{idParam};
+   ncMParamAdjNameQcList = [];
+   for idParam = 1:length(ncMParamAdjNameList)
+      paramAdjName = ncMParamAdjNameList{idParam};
       paramAdjNameQc = [paramAdjName '_QC'];
-      ncBMParamAdjNameQcList{end+1} = paramAdjNameQc;
+      ncMParamAdjNameQcList{end+1} = paramAdjNameQc;
       wantedVars = [ ...
          wantedVars ...
          {paramAdjName} ...
@@ -998,82 +935,195 @@ if (multiBProfFileFlag == 1)
          ];
    end
    
-   [ncMultiBProfData] = get_data_from_nc_file(ncMultiBProfInputPathFileName, wantedVars);
+   [ncMultiProfData] = get_data_from_nc_file(ncMultiProfInputPathFileName, wantedVars);
    
-   ncBMParamDataList = [];
-   ncBMParamDataQcList = [];
-   ncBMParamFillValueList = [];
-   for idParam = 1:length(ncBMParamNameList)
-      paramName = ncBMParamNameList{idParam};
-      paramNameData = [lower(paramName) '_M'];
-      ncBMParamDataList{end+1} = paramNameData;
-      paramNameQc = ncBMParamNameQcList{idParam};
-      paramNameQcData = [lower(paramNameQc) '_M'];
-      ncBMParamDataQcList{end+1} = paramNameQcData;
-      paramInfo = get_netcdf_param_attributes(paramName);
-      ncBMParamFillValueList{end+1} = paramInfo.fillValue;
+   ncMParamDataList = [];
+   ncMParamDataQcList = [];
+   ncMParamFillValueList = [];
+   nLevelsCFile = '';
+   for idParam = 1:length(ncMParamNameList)
       
-      data = get_data_from_name(paramName, ncMultiBProfData);
-      data = permute(data, ndims(data):-1:1);
-      dataQc = get_data_from_name(paramNameQc, ncMultiBProfData)';
-      nLevels = size(data, 2);
-      if (nLevels ~= nLevelsCFile)
-         nbLinesToAdd = nLevelsCFile - nLevels;
-         if (ndims(data) == 2)
-            data = cat(2, data, ones(size(data, 1), nbLinesToAdd)*paramInfo.fillValue);
-         elseif (ndims(data) == 3)
-            data = cat(2, data, ones(size(data, 1), nbLinesToAdd, size(data, 3))*paramInfo.fillValue);
-         end
-         dataQc = cat(2, dataQc, repmat(g_decArgo_qcStrDef, size(data, 1), nbLinesToAdd));
-      end
+      paramName = ncMParamNameList{idParam};
+      paramNameData = [lower(paramName) '_M'];
+      ncMParamDataList{end+1} = paramNameData;
+      paramNameQc = ncMParamNameQcList{idParam};
+      paramNameQcData = [lower(paramNameQc) '_M'];
+      ncMParamDataQcList{end+1} = paramNameQcData;
+      paramInfo = get_netcdf_param_attributes(paramName);
+      ncMParamFillValueList{end+1} = paramInfo.fillValue;
+      
+      data = get_data_from_name(paramName, ncMultiProfData)';
+      dataQc = get_data_from_name(paramNameQc, ncMultiProfData)';
+      nLevelsCFile = size(data, 2);
       
       eval([paramNameData ' = data;']);
       eval([paramNameQcData ' = dataQc;']);
    end
-   ncBMParamAdjDataList = [];
-   ncBMParamAdjDataQcList = [];
-   ncBMParamAdjFillValueList = [];
-   for idParam = 1:length(ncBMParamAdjNameList)
-      paramAdjName = ncBMParamAdjNameList{idParam};
+   ncMParamAdjDataList = [];
+   ncMParamAdjDataQcList = [];
+   ncMParamAdjFillValueList = [];
+   for idParam = 1:length(ncMParamAdjNameList)
+      
+      paramAdjName = ncMParamAdjNameList{idParam};
       paramAdjNameData = [lower(paramAdjName) '_M'];
-      ncBMParamAdjDataList{end+1} = paramAdjNameData;
-      paramAdjNameQc = ncBMParamAdjNameQcList{idParam};
+      ncMParamAdjDataList{end+1} = paramAdjNameData;
+      paramAdjNameQc = ncMParamAdjNameQcList{idParam};
       paramAdjNameQcData = [lower(paramAdjNameQc) '_M'];
-      ncBMParamAdjDataQcList{end+1} = paramAdjNameQcData;
+      ncMParamAdjDataQcList{end+1} = paramAdjNameQcData;
       adjPos = strfind(paramAdjName, '_ADJUSTED');
       paramName = paramAdjName(1:adjPos-1);
       paramInfo = get_netcdf_param_attributes(paramName);
-      ncBMParamAdjFillValueList{end+1} = paramInfo.fillValue;
+      ncMParamAdjFillValueList{end+1} = paramInfo.fillValue;
       
-      data = get_data_from_name(paramAdjName, ncMultiBProfData);
-      data = permute(data, ndims(data):-1:1);
-      dataQc = get_data_from_name(paramAdjNameQc, ncMultiBProfData)';
-      nLevels = size(data, 2);
-      if (nLevels ~= nLevelsCFile)
-         nbLinesToAdd = nLevelsCFile - nLevels;
-         if (ndims(data) == 2)
-            data = cat(2, data, ones(size(data, 1), nbLinesToAdd)*paramInfo.fillValue);
-         elseif (ndims(data) == 3)
-            data = cat(2, data, ones(size(data, 1), nbLinesToAdd, size(data, 3))*paramInfo.fillValue);
-         end
-         dataQc = cat(2, dataQc, repmat(g_decArgo_qcStrDef, size(data, 1), nbLinesToAdd));
-      end
+      data = get_data_from_name(paramAdjName, ncMultiProfData)';
+      dataQc = get_data_from_name(paramAdjNameQc, ncMultiProfData)';
       
       eval([paramAdjNameData ' = data;']);
       eval([paramAdjNameQcData ' = dataQc;']);
    end
    
-   ncMParamNameList = [ncMParamNameList ncBMParamNameList];
-   ncMParamNameQcList = [ncMParamNameQcList ncBMParamNameQcList];
-   ncMParamDataList = [ncMParamDataList ncBMParamDataList];
-   ncMParamDataQcList = [ncMParamDataQcList ncBMParamDataQcList];
-   ncMParamFillValueList = [ncMParamFillValueList ncBMParamFillValueList];
-   
-   ncMParamAdjNameList = [ncMParamAdjNameList ncBMParamAdjNameList];
-   ncMParamAdjNameQcList = [ncMParamAdjNameQcList ncBMParamAdjNameQcList];
-   ncMParamAdjDataList = [ncMParamAdjDataList ncBMParamAdjDataList];
-   ncMParamAdjDataQcList = [ncMParamAdjDataQcList ncBMParamAdjDataQcList];
-   ncMParamAdjFillValueList = [ncMParamAdjFillValueList ncBMParamAdjFillValueList];
+   % retrieve the data from the B multi profile file
+   if (multiBProfFileFlag == 1)
+      
+      % retrieve the parameter list
+      wantedVars = [ ...
+         {'DATA_MODE'} ...
+         {'PARAMETER_DATA_MODE'} ...
+         {'STATION_PARAMETERS'} ...
+         ];
+      
+      [ncMultiBProfData] = get_data_from_nc_file(ncMultiBProfInputPathFileName, wantedVars);
+      
+      dataModeBMFile = get_data_from_name('DATA_MODE', ncMultiBProfData)';
+      paramDataModeBMFile = get_data_from_name('PARAMETER_DATA_MODE', ncMultiBProfData)';
+      
+      % create the list of parameters
+      stationParametersNcMultiB = get_data_from_name('STATION_PARAMETERS', ncMultiBProfData);
+      [~, nParam, nProf] = size(stationParametersNcMultiB);
+      ncBMParamNameList = [];
+      ncBMParamAdjNameList = [];
+      for idProf = 1:nProf
+         for idParam = 1:nParam
+            if (paramDataModeBMFile(idProf, idParam) ~= 'D')
+               paramName = deblank(stationParametersNcMultiB(:, idParam, idProf)');
+               if (~isempty(paramName))
+                  ncBMParamNameList{end+1} = paramName;
+                  paramInfo = get_netcdf_param_attributes(paramName);
+                  if ((paramInfo.adjAllowed == 1) && (paramInfo.paramType ~= 'c'))
+                     ncBMParamAdjNameList = [ncBMParamAdjNameList ...
+                        {[paramName '_ADJUSTED']} ...
+                        ];
+                  end
+               end
+            end
+         end
+      end
+      ncBMParamNameList = unique(ncBMParamNameList);
+      ncBMParamNameList(find(strcmp(ncBMParamNameList, 'PRES') == 1)) = [];
+      ncBMParamAdjNameList = unique(ncBMParamAdjNameList);
+      
+      % retrieve the data
+      ncBMParamNameQcList = [];
+      wantedVars = [];
+      for idParam = 1:length(ncBMParamNameList)
+         paramName = ncBMParamNameList{idParam};
+         paramNameQc = [paramName '_QC'];
+         ncBMParamNameQcList{end+1} = paramNameQc;
+         wantedVars = [ ...
+            wantedVars ...
+            {paramName} ...
+            {paramNameQc} ...
+            ];
+      end
+      ncBMParamAdjNameQcList = [];
+      for idParam = 1:length(ncBMParamAdjNameList)
+         paramAdjName = ncBMParamAdjNameList{idParam};
+         paramAdjNameQc = [paramAdjName '_QC'];
+         ncBMParamAdjNameQcList{end+1} = paramAdjNameQc;
+         wantedVars = [ ...
+            wantedVars ...
+            {paramAdjName} ...
+            {paramAdjNameQc} ...
+            ];
+      end
+      
+      [ncMultiBProfData] = get_data_from_nc_file(ncMultiBProfInputPathFileName, wantedVars);
+      
+      ncBMParamDataList = [];
+      ncBMParamDataQcList = [];
+      ncBMParamFillValueList = [];
+      for idParam = 1:length(ncBMParamNameList)
+         paramName = ncBMParamNameList{idParam};
+         paramNameData = [lower(paramName) '_M'];
+         ncBMParamDataList{end+1} = paramNameData;
+         paramNameQc = ncBMParamNameQcList{idParam};
+         paramNameQcData = [lower(paramNameQc) '_M'];
+         ncBMParamDataQcList{end+1} = paramNameQcData;
+         paramInfo = get_netcdf_param_attributes(paramName);
+         ncBMParamFillValueList{end+1} = paramInfo.fillValue;
+         
+         data = get_data_from_name(paramName, ncMultiBProfData);
+         data = permute(data, ndims(data):-1:1);
+         dataQc = get_data_from_name(paramNameQc, ncMultiBProfData)';
+         nLevels = size(data, 2);
+         if (nLevels ~= nLevelsCFile)
+            nbLinesToAdd = nLevelsCFile - nLevels;
+            if (ndims(data) == 2)
+               data = cat(2, data, ones(size(data, 1), nbLinesToAdd)*paramInfo.fillValue);
+            elseif (ndims(data) == 3)
+               data = cat(2, data, ones(size(data, 1), nbLinesToAdd, size(data, 3))*paramInfo.fillValue);
+            end
+            dataQc = cat(2, dataQc, repmat(g_decArgo_qcStrDef, size(data, 1), nbLinesToAdd));
+         end
+         
+         eval([paramNameData ' = data;']);
+         eval([paramNameQcData ' = dataQc;']);
+      end
+      ncBMParamAdjDataList = [];
+      ncBMParamAdjDataQcList = [];
+      ncBMParamAdjFillValueList = [];
+      for idParam = 1:length(ncBMParamAdjNameList)
+         paramAdjName = ncBMParamAdjNameList{idParam};
+         paramAdjNameData = [lower(paramAdjName) '_M'];
+         ncBMParamAdjDataList{end+1} = paramAdjNameData;
+         paramAdjNameQc = ncBMParamAdjNameQcList{idParam};
+         paramAdjNameQcData = [lower(paramAdjNameQc) '_M'];
+         ncBMParamAdjDataQcList{end+1} = paramAdjNameQcData;
+         adjPos = strfind(paramAdjName, '_ADJUSTED');
+         paramName = paramAdjName(1:adjPos-1);
+         paramInfo = get_netcdf_param_attributes(paramName);
+         ncBMParamAdjFillValueList{end+1} = paramInfo.fillValue;
+         
+         data = get_data_from_name(paramAdjName, ncMultiBProfData);
+         data = permute(data, ndims(data):-1:1);
+         dataQc = get_data_from_name(paramAdjNameQc, ncMultiBProfData)';
+         nLevels = size(data, 2);
+         if (nLevels ~= nLevelsCFile)
+            nbLinesToAdd = nLevelsCFile - nLevels;
+            if (ndims(data) == 2)
+               data = cat(2, data, ones(size(data, 1), nbLinesToAdd)*paramInfo.fillValue);
+            elseif (ndims(data) == 3)
+               data = cat(2, data, ones(size(data, 1), nbLinesToAdd, size(data, 3))*paramInfo.fillValue);
+            end
+            dataQc = cat(2, dataQc, repmat(g_decArgo_qcStrDef, size(data, 1), nbLinesToAdd));
+         end
+         
+         eval([paramAdjNameData ' = data;']);
+         eval([paramAdjNameQcData ' = dataQc;']);
+      end
+      
+      ncMParamNameList = [ncMParamNameList ncBMParamNameList];
+      ncMParamNameQcList = [ncMParamNameQcList ncBMParamNameQcList];
+      ncMParamDataList = [ncMParamDataList ncBMParamDataList];
+      ncMParamDataQcList = [ncMParamDataQcList ncBMParamDataQcList];
+      ncMParamFillValueList = [ncMParamFillValueList ncBMParamFillValueList];
+      
+      ncMParamAdjNameList = [ncMParamAdjNameList ncBMParamAdjNameList];
+      ncMParamAdjNameQcList = [ncMParamAdjNameQcList ncBMParamAdjNameQcList];
+      ncMParamAdjDataList = [ncMParamAdjDataList ncBMParamAdjDataList];
+      ncMParamAdjDataQcList = [ncMParamAdjDataQcList ncBMParamAdjDataQcList];
+      ncMParamAdjFillValueList = [ncMParamAdjFillValueList ncBMParamAdjFillValueList];
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1180,19 +1230,25 @@ for idProf = 1:nProf
                   paramFillValue = ncParamXFillValueList{idParam};
                   
                   % initialize Qc flags
-                  if (a_justAfterDecodingFlag == 1)
-                     % initialize Qc flags to g_decArgo_qcStrNoQc except for
-                     % those which have been set by the decoder (in
-                     % update_qc_from_sensor_state_ir_rudics_sbd2)
-                     dataQc(idProf, 1:nLevelsParam) = set_qc(dataQc(idProf, 1:nLevelsParam), g_decArgo_qcStrNoQc);
+                  if ~((dataModeCFile(idProf) == 'R') && (idD == 2))
+                     if (a_justAfterDecodingFlag == 1)
+                        % initialize Qc flags to g_decArgo_qcStrNoQc except for
+                        % those which have been set by the decoder (in
+                        % update_qc_from_sensor_state_ir_rudics_sbd2)
+                        dataQc(idProf, 1:nLevelsParam) = set_qc(dataQc(idProf, 1:nLevelsParam), g_decArgo_qcStrNoQc);
+                     else
+                        % initialize Qc flags to g_decArgo_qcStrNoQc
+                        dataQc(idProf, :) = g_decArgo_qcStrDef;
+                        dataQc(idProf, 1:nLevelsParam) = g_decArgo_qcStrNoQc;
+                     end
+                     idDef = find(data(idProf, 1:nLevelsParam) == paramFillValue);
+                     if (~isempty(idDef))
+                        dataQc(idProf, idDef) = set_qc(dataQc(idProf, idDef), g_decArgo_qcStrMissing);
+                     end
                   else
-                     % initialize Qc flags to g_decArgo_qcStrNoQc
+                     % if data mode is 'R' <PARAM>_ADJUSTED_QC should be set to
+                     % g_decArgo_qcStrDef
                      dataQc(idProf, :) = g_decArgo_qcStrDef;
-                     dataQc(idProf, 1:nLevelsParam) = g_decArgo_qcStrNoQc;
-                  end
-                  idDef = find(data(idProf, 1:nLevelsParam) == paramFillValue);
-                  if (~isempty(idDef))
-                     dataQc(idProf, idDef) = set_qc(dataQc(idProf, idDef), g_decArgo_qcStrMissing);
                   end
                   eval([ncParamXDataQcList{idParam} ' = dataQc;']);
                end
@@ -1220,7 +1276,7 @@ for idProf = 1:nProf
                      if (length(size(data)) < 3)
                         % parameter with (N_PROF, N_LEVELS) dimension
                         if (a_justAfterDecodingFlag == 1)
-                           % initialize Qc flags to g_decArgo_qcStrNoQc except for%
+                           % initialize Qc flags to g_decArgo_qcStrNoQc except for
                            % those which have been set by the decoder (in
                            % update_qc_from_sensor_state_ir_rudics_sbd2)
                            dataQc(idProf, 1:nLevelsParam) = set_qc(dataQc(idProf, 1:nLevelsParam), g_decArgo_qcStrNoQc);
@@ -1334,8 +1390,8 @@ if (testFlagList(19) == 1)
                   end
                   
                   if (isempty(deepestPres))
-                     fprintf('RTQC_WARNING: TEST019: Unable to retrieve CONFIG_ProfilePressure_dbar from file %s => test #19 not performed\n', ...
-                        ncMetaPathFileName);
+                     fprintf('RTQC_WARNING: TEST019: Float #%d Cycle #%d: Unable to retrieve CONFIG_ProfilePressure_dbar from file %s => test #19 not performed\n', ...
+                        a_floatNum, cycleNumber(idProf), ncMetaPathFileName);
                   else
                      
                      % apply the test
@@ -1485,7 +1541,8 @@ if (testFlagList(4) == 1)
                   testFailedList(4, idProf) = 1;
                end
             else
-               fprintf('RTQC_WARNING: TEST004: Unable to retrieve ETOPO2 elevations at profile location => test #4 not performed\n');
+               fprintf('RTQC_WARNING: TEST004: Float #%d Cycle #%d: Unable to retrieve ETOPO2 elevations at profile location => test #4 not performed\n', ...
+                  a_floatNum, cycleNumber(idProf));
             end
          end
       end
@@ -1514,7 +1571,7 @@ if (testFlagList(5) == 1)
          idProfPosInTraj = find( ...
             (g_rtqc_trajData.cycleNumber == cycleNumber(idProf)+cycleOffset) & ...
             (g_rtqc_trajData.measurementCode == g_MC_Surface) & ...
-            (g_rtqc_trajData.juld == juldLocation(idProf)) & ...
+            ((g_rtqc_trajData.juld == juldLocation(idProf)) | (g_rtqc_trajData.juldAdj == juldLocation(idProf))) & ...
             (g_rtqc_trajData.latitude == latitude(idProf)) & ...
             (g_rtqc_trajData.longitude == longitude(idProf)));
          if (length(idProfPosInTraj) == 1)
@@ -1524,9 +1581,11 @@ if (testFlagList(5) == 1)
             end
             testDoneList(5, idProf) = 1;
          elseif (isempty(idProfPosInTraj))
-            fprintf('RTQC_WARNING: TEST005: Unable to retrieve profile location Qc from trajectory data => test #5 not performed\n');
+            fprintf('RTQC_INFO: TEST005: Float #%d Cycle #%d: Unable to retrieve profile location Qc from trajectory data => test #5 not performed\n', ...
+               a_floatNum, cycleNumber(idProf));
          else
-            fprintf('RTQC_WARNING: TEST005: Many profile location Qc from trajectory data => test #5 not performed\n');
+            fprintf('RTQC_WARNING: TEST005: Float #%d Cycle #%d: Many profile location Qc from trajectory data => test #5 not performed\n', ...
+               a_floatNum, cycleNumber(idProf));
          end
       end
    end
@@ -1745,8 +1804,8 @@ if (testFlagList(22) == 1)
                            testDoneList(22, idProf) = 1;
                            testDoneListForTraj{22, idProf} = [testDoneListForTraj{22, idProf} idNoDef];
                         else
-                           fprintf('RTQC_ERROR: float #%d: TEST022 not implemented for decoder Id #%d\n', ...
-                              a_floatNum, floatDecoderId);
+                           fprintf('RTQC_ERROR: Float #%d Cycle #%d: TEST022 not implemented for decoder Id #%d\n', ...
+                              a_floatNum, cycleNumber(idProf), floatDecoderId);
                         end
                      end
                   end
@@ -2607,15 +2666,15 @@ if (testFlagList(15) == 1)
          % read grey list file
          fId = fopen(greyListPathFileName, 'r');
          if (fId == -1)
-            fprintf('RTQC_WARNING: TEST015: Unable to open grey list file (%s) => test #15 not performed\n', ...
-               greyListPathFileName);
+            fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to open grey list file (%s) => test #15 not performed\n', ...
+               a_floatNum, cycleNumber(idProf), greyListPathFileName);
          else
             fileContents = textscan(fId, '%s', 'delimiter', ',');
             fclose(fId);
             fileContents = fileContents{:};
             if (rem(size(fileContents, 1), 7) ~= 0)
-               fprintf('RTQC_WARNING: TEST015: Unable to parse grey list file (%s) => test #15 not performed\n', ...
-                  greyListPathFileName);
+               fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to parse grey list file (%s) => test #15 not performed\n', ...
+                  a_floatNum, cycleNumber(idProf), greyListPathFileName);
             else
                
                greyListInfo = reshape(fileContents, 7, size(fileContents, 1)/7)';
@@ -2703,84 +2762,63 @@ end
 % update multi profile QC data (because we will use these data in the next two
 % tests)
 %
-idProfileInMulti = ones(1, length(juld))*-1;
-errorNum = 1;
-for idProf = 1:length(juld)
-   if (strncmp(vssList{idProf}, 'Primary sampling:', length('Primary sampling:')))
-      % find the corresponding Id of the current profile in the multi profile
-      % file
-      idProfM = -1;
-      idF = find((cycleNumberM == cycleNumber(idProf)) & (directionM == direction(idProf)));
-      if (~isempty(idF))
-         if (length(idF) > 1)
-            fprintf('RTQC_WARNING: float #%d: %d profiles whith cycle number = %d and direction = ''%c'' in multi profile file\n', ...
-               a_floatNum, length(idF), cycleNumber(idProf), direction(idProf));
-            idF = idF(errorNum);
-            errorNum = errorNum + 1;
-         end
-         
-         idProfM = idF;
-         idProfileInMulti(idProf) = idF;
-      end
-      
-      if (idProfM ~= -1)
-         
-         if (dataModeMFile(idProfM) ~= 'D')
-            
-            % update JULD_QC and POSITION_QC
-            juldQcM(idProfM) = juldQc(idProf);
-            positionQcM(idProfM) = positionQc(idProf);
-            
-            % update <PARAM>_QC
-            for idParam = 1:length(ncMParamNameQcList)
-               paramNameQc = lower(ncMParamNameQcList{idParam});
-               if (~isempty(who(paramNameQc)))
-                  dataQc = eval(paramNameQc);
-                  paramNameQcM = [paramNameQc '_M'];
-                  dataQcM = eval(paramNameQcM);
-                  sizeMin = min(size(dataQc, 2), size(dataQcM, 2));
-                  dataQcM(idProfM, 1:sizeMin) = dataQc(idProf, 1:sizeMin);
-                  eval([paramNameQcM ' = dataQcM;']);
-               end
+idProfileInMulti = [];
+if (multiProfFileFlag)
+   
+   idProfileInMulti = ones(1, length(juld))*-1;
+   errorNum = 1;
+   for idProf = 1:length(juld)
+      if (strncmp(vssList{idProf}, 'Primary sampling:', length('Primary sampling:')))
+         % find the corresponding Id of the current profile in the multi profile
+         % file
+         idProfM = -1;
+         idF = find((cycleNumberM == cycleNumber(idProf)) & (directionM == direction(idProf)));
+         if (~isempty(idF))
+            if (length(idF) > 1)
+               fprintf('RTQC_WARNING: Float #%d Cycle #%d: %d profiles whith cycle number = %d and direction = ''%c'' in multi profile file\n', ...
+                  a_floatNum, cycleNumber(idProf), length(idF), cycleNumber(idProf), direction(idProf));
+               idF = idF(errorNum);
+               errorNum = errorNum + 1;
             end
             
-            % update <PARAM>_ADJUSTED_QC
-            for idParam = 1:length(ncMParamAdjNameQcList)
-               useAdj = -1;
-               paramAdjNameQc = ncMParamAdjNameQcList{idParam};
-               adjPos = strfind(paramAdjNameQc, '_ADJUSTED');
-               paramName = paramAdjNameQc(1:adjPos-1);
-               paramInfo = get_netcdf_param_attributes(paramName);
-               if (paramInfo.paramType == 'c')
-                  % 'c' parameters
-                  if (dataModeCFile(idProf) == 'A')
-                     % use <PARAM>_ADJUSTED_QC
-                     useAdj = 1;
-                     %                   elseif (dataModeCFile(idProf) == 'R')
-                     %                      dataMode = dataModeMFile;
-                     %                      dataMode(find(dataMode == ' ')) = [];
-                     %                      dataMode = unique(dataMode);
-                     %                      if (~isempty(find(dataMode ~= 'R', 1)))
-                     %                         % use <PARAM>_QC to update <PARAM>_ADJUSTED_QC
-                     %                         useAdj = 0;
-                     %                      end
-                     %                   else
-                     %                      % if dataModeCFile(idProf) == 'D' we don't update anything
+            idProfM = idF;
+            idProfileInMulti(idProf) = idF;
+         end
+         
+         if (idProfM ~= -1)
+            
+            if (dataModeMFile(idProfM) ~= 'D')
+               
+               % update JULD_QC and POSITION_QC
+               juldQcM(idProfM) = juldQc(idProf);
+               positionQcM(idProfM) = positionQc(idProf);
+               
+               % update <PARAM>_QC
+               for idParam = 1:length(ncMParamNameQcList)
+                  paramNameQc = lower(ncMParamNameQcList{idParam});
+                  if (~isempty(who(paramNameQc)))
+                     dataQc = eval(paramNameQc);
+                     paramNameQcM = [paramNameQc '_M'];
+                     dataQcM = eval(paramNameQcM);
+                     sizeMin = min(size(dataQc, 2), size(dataQcM, 2));
+                     dataQcM(idProfM, 1:sizeMin) = dataQc(idProf, 1:sizeMin);
+                     eval([paramNameQcM ' = dataQcM;']);
                   end
-               elseif (monoBProfFileFlag == 1)
-                  % 'i' and 'b' parameters
-                  idF1 = find([ncBParamNameId{:, 3}]' == idProf);
-                  idF2 = find(strcmp(ncBParamNameId(idF1, 1), paramName));
-                  % idF2 can be empty if a b parameter is in the multi-profile
-                  % file and not in the mono-profile file (Ex: DOXY of Provor
-                  % 2DO is missing in some mono-profile files (use of PM17 to
-                  % filter transmitted data))
-                  if (~isempty(idF2))
-                     paramId = ncBParamNameId{idF1(idF2), 2};
-                     if (paramDataModeBFile(idProf, paramId) == 'A')
+               end
+               
+               % update <PARAM>_ADJUSTED_QC
+               for idParam = 1:length(ncMParamAdjNameQcList)
+                  useAdj = -1;
+                  paramAdjNameQc = ncMParamAdjNameQcList{idParam};
+                  adjPos = strfind(paramAdjNameQc, '_ADJUSTED');
+                  paramName = paramAdjNameQc(1:adjPos-1);
+                  paramInfo = get_netcdf_param_attributes(paramName);
+                  if (paramInfo.paramType == 'c')
+                     % 'c' parameters
+                     if (dataModeCFile(idProf) == 'A')
                         % use <PARAM>_ADJUSTED_QC
                         useAdj = 1;
-                        %                   elseif (paramDataModeBFile(idProf, paramId) == 'R')
+                        %                   elseif (dataModeCFile(idProf) == 'R')
                         %                      dataMode = dataModeMFile;
                         %                      dataMode(find(dataMode == ' ')) = [];
                         %                      dataMode = unique(dataMode);
@@ -2789,31 +2827,56 @@ for idProf = 1:length(juld)
                         %                         useAdj = 0;
                         %                      end
                         %                   else
-                        %                      % if paramDataModeBFile(idProf, idF1(dF2)) == 'D' we don't update anything
+                        %                      % if dataModeCFile(idProf) == 'D' we don't update anything
+                     end
+                  elseif (monoBProfFileFlag == 1)
+                     % 'i' and 'b' parameters
+                     idF1 = find([ncBParamNameId{:, 3}]' == idProf);
+                     idF2 = find(strcmp(ncBParamNameId(idF1, 1), paramName));
+                     % idF2 can be empty if a b parameter is in the multi-profile
+                     % file and not in the mono-profile file (Ex: DOXY of Provor
+                     % 2DO is missing in some mono-profile files (use of PM17 to
+                     % filter transmitted data))
+                     if (~isempty(idF2))
+                        paramId = ncBParamNameId{idF1(idF2), 2};
+                        if (paramDataModeBFile(idProf, paramId) == 'A')
+                           % use <PARAM>_ADJUSTED_QC
+                           useAdj = 1;
+                           %                   elseif (paramDataModeBFile(idProf, paramId) == 'R')
+                           %                      dataMode = dataModeMFile;
+                           %                      dataMode(find(dataMode == ' ')) = [];
+                           %                      dataMode = unique(dataMode);
+                           %                      if (~isempty(find(dataMode ~= 'R', 1)))
+                           %                         % use <PARAM>_QC to update <PARAM>_ADJUSTED_QC
+                           %                         useAdj = 0;
+                           %                      end
+                           %                   else
+                           %                      % if paramDataModeBFile(idProf, idF1(dF2)) == 'D' we don't update anything
+                        end
                      end
                   end
-               end
-               
-               if (useAdj ~= -1)
-                  dataQc = [];
-                  if (useAdj == 1)
-                     paramAdjNameQc = lower(ncMParamAdjNameQcList{idParam});
-                     if (~isempty(who(paramAdjNameQc)))
-                        dataQc = eval(paramAdjNameQc);
+                  
+                  if (useAdj ~= -1)
+                     dataQc = [];
+                     if (useAdj == 1)
+                        paramAdjNameQc = lower(ncMParamAdjNameQcList{idParam});
+                        if (~isempty(who(paramAdjNameQc)))
+                           dataQc = eval(paramAdjNameQc);
+                        end
+                        %                   else
+                        %                      paramNameQc = lower([paramName '_QC']);
+                        %                      if (~isempty(who(paramNameQc)))
+                        %                         dataQc = eval(paramNameQc);
+                        %                      end
                      end
-                     %                   else
-                     %                      paramNameQc = lower([paramName '_QC']);
-                     %                      if (~isempty(who(paramNameQc)))
-                     %                         dataQc = eval(paramNameQc);
-                     %                      end
-                  end
-                  if (~isempty(dataQc))
-                     paramAdjNameQc = lower(ncMParamAdjNameQcList{idParam});
-                     paramAdjNameQcM = [paramAdjNameQc '_M'];
-                     dataQcM = eval(paramAdjNameQcM);
-                     sizeMin = min(size(dataQc, 2), size(dataQcM, 2));
-                     dataQcM(idProfM, 1:sizeMin) = dataQc(idProf, 1:sizeMin);
-                     eval([paramAdjNameQcM ' = dataQcM;']);
+                     if (~isempty(dataQc))
+                        paramAdjNameQc = lower(ncMParamAdjNameQcList{idParam});
+                        paramAdjNameQcM = [paramAdjNameQc '_M'];
+                        dataQcM = eval(paramAdjNameQcM);
+                        sizeMin = min(size(dataQc, 2), size(dataQcM, 2));
+                        dataQcM(idProfM, 1:sizeMin) = dataQc(idProf, 1:sizeMin);
+                        eval([paramAdjNameQcM ' = dataQcM;']);
+                     end
                   end
                end
             end
@@ -2891,7 +2954,7 @@ if (testFlagList(16) == 1)
                      while (isempty(meanParamRef) && (findInCyNum > 0))
                         idFPrevProf = find((cycleNumberM == findInCyNum) & (directionM == direction(idProf)));
                         if (length(idFPrevProf) > 1)
-                           fprintf('RTQC_WARNING: float #%d: cycle #%d: %d profiles with the same cycle # and direction in multi profile file\n', ...
+                           fprintf('RTQC_WARNING: Float #%d Cycle #%d: %d profiles with the same cycle # and direction in multi profile file\n', ...
                               a_floatNum, findInCyNum, length(idFPrevProf));
                            idFPrevProf = idFPrevProf(end);
                         end
@@ -3078,7 +3141,7 @@ if (testFlagList(18) == 1)
                      if (~isempty(idFPrevProf))
                         
                         if (length(idFPrevProf) > 1)
-                           fprintf('RTQC_WARNING: float #%d: cycle #%d: %d profiles with the same cycle # and direction in multi profile file\n', ...
+                           fprintf('RTQC_WARNING: Float #%d Cycle #%d: %d profiles with the same cycle # and direction in multi profile file\n', ...
                               a_floatNum, cycleNumber(idProf) - 1, length(idFPrevProf));
                            % the last one is the previous profile of the current
                            % profile
@@ -3469,7 +3532,7 @@ if (testFlagList(63) == 1)
                      % retrieve the primary profile Id
                      idPProf = find(strncmp(vssList, 'Primary sampling:', length('Primary sampling:')) == 1);
                      if (length(idPProf) > 1)
-                        fprintf('RTQC_WARNING: float #%d: cycle #%d: %d primary profiles in mono profile file\n', ...
+                        fprintf('RTQC_WARNING: Float #%d Cycle #%d: %d primary profiles in mono profile file\n', ...
                            a_floatNum, cycleNumber(idProf), length(idPProf));
                         idPProf = idPProf(find(idPProf < idProf));
                         idPProf = idPProf(end);
@@ -3513,7 +3576,8 @@ if (testFlagList(63) == 1)
                      if (~isempty(darkChlaId))
                         darkChla = a_testMetaData{darkChlaId+1};
                      else
-                        fprintf('RTQC_WARNING: TEST063: DARK_CHLA needed to perform test #63 => test #63 not performed\n');
+                        fprintf('RTQC_WARNING: TEST063: Float #%d Cycle #%d: DARK_CHLA needed to perform test #63 => test #63 not performed\n', ...
+                           a_floatNum, cycleNumber(idProf));
                         testFlagList(63) = 0;
                         continue;
                      end
@@ -3521,7 +3585,8 @@ if (testFlagList(63) == 1)
                      if (~isempty(scaleChlaId))
                         scaleChla = a_testMetaData{scaleChlaId+1};
                      else
-                        fprintf('RTQC_WARNING: TEST063: SCALE_CHLA needed to perform test #63 => test #63 not performed\n');
+                        fprintf('RTQC_WARNING: TEST063: Float #%d Cycle #%d: SCALE_CHLA needed to perform test #63 => test #63 not performed\n', ...
+                           a_floatNum, cycleNumber(idProf));
                         testFlagList(63) = 0;
                         continue;
                      end
@@ -3738,66 +3803,44 @@ chlaProfIdList = find(testDoneList(63, :) == 1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % update multi profile QC data
 %
-for idProf = 1:length(juld)
-   if (idProfileInMulti(idProf) ~= -1)
-      idProfM = idProfileInMulti(idProf);
-      
-      if (dataModeMFile(idProfM) ~= 'D')
+if (multiProfFileFlag)
+
+   for idProf = 1:length(juld)
+      if (idProfileInMulti(idProf) ~= -1)
+         idProfM = idProfileInMulti(idProf);
          
-         % update JULD_QC and POSITION_QC
-         juldQcM(idProfM) = juldQc(idProf);
-         positionQcM(idProfM) = positionQc(idProf);
-         
-         % update <PARAM>_QC
-         for idParam = 1:length(ncMParamNameQcList)
-            paramNameQc = lower(ncMParamNameQcList{idParam});
-            if (~isempty(who(paramNameQc)))
-               dataQc = eval(paramNameQc);
-               paramNameQcM = [paramNameQc '_M'];
-               dataQcM = eval(paramNameQcM);
-               sizeMin = min(size(dataQc, 2), size(dataQcM, 2));
-               dataQcM(idProfM, 1:sizeMin) = dataQc(idProf, 1:sizeMin);
-               eval([paramNameQcM ' = dataQcM;']);
-            end
-         end
-         
-         % update <PARAM>_ADJUSTED_QC
-         for idParam = 1:length(ncMParamAdjNameQcList)
-            useAdj = -1;
-            paramAdjNameQc = ncMParamAdjNameQcList{idParam};
-            adjPos = strfind(paramAdjNameQc, '_ADJUSTED');
-            paramName = paramAdjNameQc(1:adjPos-1);
-            paramInfo = get_netcdf_param_attributes(paramName);
-            if (paramInfo.paramType == 'c')
-               % 'c' parameters
-               if (dataModeCFile(idProf) == 'A')
-                  % use <PARAM>_ADJUSTED_QC
-                  useAdj = 1;
-                  %                elseif (dataModeCFile(idProf) == 'R')
-                  %                   dataMode = dataModeMFile;
-                  %                   dataMode(find(dataMode == ' ')) = [];
-                  %                   dataMode = unique(dataMode);
-                  %                   if (~isempty(find(dataMode ~= 'R', 1)))
-                  %                      % use <PARAM>_QC to update <PARAM>_ADJUSTED_QC
-                  %                      useAdj = 0;
-                  %                   end
-                  %                else
-                  %                   % if dataModeCFile(idProf) == 'D' we don't update anything
+         if (dataModeMFile(idProfM) ~= 'D')
+            
+            % update JULD_QC and POSITION_QC
+            juldQcM(idProfM) = juldQc(idProf);
+            positionQcM(idProfM) = positionQc(idProf);
+            
+            % update <PARAM>_QC
+            for idParam = 1:length(ncMParamNameQcList)
+               paramNameQc = lower(ncMParamNameQcList{idParam});
+               if (~isempty(who(paramNameQc)))
+                  dataQc = eval(paramNameQc);
+                  paramNameQcM = [paramNameQc '_M'];
+                  dataQcM = eval(paramNameQcM);
+                  sizeMin = min(size(dataQc, 2), size(dataQcM, 2));
+                  dataQcM(idProfM, 1:sizeMin) = dataQc(idProf, 1:sizeMin);
+                  eval([paramNameQcM ' = dataQcM;']);
                end
-            elseif (monoBProfFileFlag == 1)
-               % 'i' and 'b' parameters
-               idF1 = find([ncBParamNameId{:, 3}]' == idProf);
-               idF2 = find(strcmp(ncBParamNameId(idF1, 1), paramName));
-               % idF2 can be empty if a b parameter is in the multi-profile
-               % file and not in the mono-profile file (Ex: DOXY of Provor
-               % 2DO is missing in some mono-profile files (use of PM17 to
-               % filter transmitted data))
-               if (~isempty(idF2))
-                  paramId = ncBParamNameId{idF1(idF2), 2};
-                  if (paramDataModeBFile(idProf, paramId) == 'A')
+            end
+            
+            % update <PARAM>_ADJUSTED_QC
+            for idParam = 1:length(ncMParamAdjNameQcList)
+               useAdj = -1;
+               paramAdjNameQc = ncMParamAdjNameQcList{idParam};
+               adjPos = strfind(paramAdjNameQc, '_ADJUSTED');
+               paramName = paramAdjNameQc(1:adjPos-1);
+               paramInfo = get_netcdf_param_attributes(paramName);
+               if (paramInfo.paramType == 'c')
+                  % 'c' parameters
+                  if (dataModeCFile(idProf) == 'A')
                      % use <PARAM>_ADJUSTED_QC
                      useAdj = 1;
-                     %                elseif (paramDataModeBFile(idProf, paramId) == 'R')
+                     %                elseif (dataModeCFile(idProf) == 'R')
                      %                   dataMode = dataModeMFile;
                      %                   dataMode(find(dataMode == ' ')) = [];
                      %                   dataMode = unique(dataMode);
@@ -3806,31 +3849,56 @@ for idProf = 1:length(juld)
                      %                      useAdj = 0;
                      %                   end
                      %                else
-                     %                   % if paramDataModeBFile(idProf, idF1(dF2)) == 'D' we don't update anything
+                     %                   % if dataModeCFile(idProf) == 'D' we don't update anything
+                  end
+               elseif (monoBProfFileFlag == 1)
+                  % 'i' and 'b' parameters
+                  idF1 = find([ncBParamNameId{:, 3}]' == idProf);
+                  idF2 = find(strcmp(ncBParamNameId(idF1, 1), paramName));
+                  % idF2 can be empty if a b parameter is in the multi-profile
+                  % file and not in the mono-profile file (Ex: DOXY of Provor
+                  % 2DO is missing in some mono-profile files (use of PM17 to
+                  % filter transmitted data))
+                  if (~isempty(idF2))
+                     paramId = ncBParamNameId{idF1(idF2), 2};
+                     if (paramDataModeBFile(idProf, paramId) == 'A')
+                        % use <PARAM>_ADJUSTED_QC
+                        useAdj = 1;
+                        %                elseif (paramDataModeBFile(idProf, paramId) == 'R')
+                        %                   dataMode = dataModeMFile;
+                        %                   dataMode(find(dataMode == ' ')) = [];
+                        %                   dataMode = unique(dataMode);
+                        %                   if (~isempty(find(dataMode ~= 'R', 1)))
+                        %                      % use <PARAM>_QC to update <PARAM>_ADJUSTED_QC
+                        %                      useAdj = 0;
+                        %                   end
+                        %                else
+                        %                   % if paramDataModeBFile(idProf, idF1(dF2)) == 'D' we don't update anything
+                     end
                   end
                end
-            end
-            
-            if (useAdj ~= -1)
-               dataQc = [];
-               if (useAdj == 1)
-                  paramAdjNameQc = lower(ncMParamAdjNameQcList{idParam});
-                  if (~isempty(who(paramAdjNameQc)))
-                     dataQc = eval(paramAdjNameQc);
+               
+               if (useAdj ~= -1)
+                  dataQc = [];
+                  if (useAdj == 1)
+                     paramAdjNameQc = lower(ncMParamAdjNameQcList{idParam});
+                     if (~isempty(who(paramAdjNameQc)))
+                        dataQc = eval(paramAdjNameQc);
+                     end
+                     %                else
+                     %                   paramNameQc = lower([paramName '_QC']);
+                     %                   if (~isempty(who(paramNameQc)))
+                     %                      dataQc = eval(paramNameQc);
+                     %                   end
                   end
-                  %                else
-                  %                   paramNameQc = lower([paramName '_QC']);
-                  %                   if (~isempty(who(paramNameQc)))
-                  %                      dataQc = eval(paramNameQc);
-                  %                   end
-               end
-               if (~isempty(dataQc))
-                  paramAdjNameQc = lower(ncMParamAdjNameQcList{idParam});
-                  paramAdjNameQcM = [paramAdjNameQc '_M'];
-                  dataQcM = eval(paramAdjNameQcM);
-                  sizeMin = min(size(dataQc, 2), size(dataQcM, 2));
-                  dataQcM(idProfM, 1:sizeMin) = dataQc(idProf, 1:sizeMin);
-                  eval([paramAdjNameQcM ' = dataQcM;']);
+                  if (~isempty(dataQc))
+                     paramAdjNameQc = lower(ncMParamAdjNameQcList{idParam});
+                     paramAdjNameQcM = [paramAdjNameQc '_M'];
+                     dataQcM = eval(paramAdjNameQcM);
+                     sizeMin = min(size(dataQc, 2), size(dataQcM, 2));
+                     dataQcM(idProfM, 1:sizeMin) = dataQc(idProf, 1:sizeMin);
+                     eval([paramAdjNameQcM ' = dataQcM;']);
+                  end
                end
             end
          end
@@ -3919,7 +3987,14 @@ if (~isempty(g_rtqc_trajData))
       end
       
       % link profile and trajectory data for concerned MC
-      if ((floatDecoderId > 1000) && (floatDecoderId < 2000))
+      if (floatDecoderId < 1000) || ((floatDecoderId > 2000) && (floatDecoderId < 3000))
+         % NKE, NOVA, DOVA floats
+         if (direction(1) == 'A')
+            profMeasCode = [g_MC_AscProfDeepestBin g_MC_AscProf];
+         else
+            profMeasCode = [g_MC_DescProfDeepestBin g_MC_DescProf];
+         end
+      elseif ((floatDecoderId > 1000) && (floatDecoderId < 2000))
          % Apex floats
          if (direction(1) == 'A')
             profMeasCode = g_MC_AscProfDeepestBin;
@@ -3927,12 +4002,9 @@ if (~isempty(g_rtqc_trajData))
             profMeasCode = [];
          end
       else
-         % NKE floats
-         if (direction(1) == 'A')
-            profMeasCode = [g_MC_AscProfDeepestBin g_MC_AscProf];
-         else
-            profMeasCode = [g_MC_DescProfDeepestBin g_MC_DescProf];
-         end
+         fprintf('RTQC_ERROR: Float #%d: PROF to TRAJ link rules not implemented for decoder Id #%d\n', ...
+            a_floatNum, floatDecoderId);
+         continue;
       end
       
       profNmeasXIndex = [];
@@ -3962,7 +4034,8 @@ if (~isempty(g_rtqc_trajData))
                      end
                   end
                   if (found == 0)
-                     fprintf('RTQC_WARNING: One trajectory data (N_MEAS #%d) cannot be linked to an associated profile one (probably due to PSAL RT adjustment)\n', idMeas);
+                     fprintf('RTQC_WARNING: Float #%d: One trajectory data (N_MEAS #%d) cannot be linked to an associated profile one (probably due to PSAL RT adjustment)\n', ...
+                        a_floatNum, idMeas);
                   end
                end
             end
@@ -4089,8 +4162,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % directory to store temporary files
-[multiProfInputPath, ~, ~] = fileparts(ncMultiProfInputPathFileName);
-DIR_TMP_FILE = [multiProfInputPath '/tmp/'];
+[monoProfInputPath, ~, ~] = fileparts(ncMonoProfInputPathFileName);
+DIR_TMP_FILE = [monoProfInputPath '/../tmp/'];
 
 % delete the temp directory
 remove_directory(DIR_TMP_FILE);
@@ -4135,38 +4208,44 @@ for idParam = 1:length(ncParamAdjNameList)
 end
 
 % make a copy of the input multi profile file(s) to be updated
-[~, fileName, fileExtension] = fileparts(ncMultiProfOutputPathFileName);
-tmpNcMultiProfOutputPathFileName = [DIR_TMP_FILE '/' fileName fileExtension];
-copyfile(ncMultiProfInputPathFileName, tmpNcMultiProfOutputPathFileName);
-
+tmpNcMultiProfOutputPathFileName = '';
 tmpNcMultiBProfOutputPathFileName = '';
-if (multiBProfFileFlag == 1)
-   [~, fileName, fileExtension] = fileparts(ncMultiBProfOutputPathFileName);
-   tmpNcMultiBProfOutputPathFileName = [DIR_TMP_FILE '/' fileName fileExtension];
-   copyfile(ncMultiBProfInputPathFileName, tmpNcMultiBProfOutputPathFileName);
-end
-
-% create the list of data to store in the NetCDF multi profile files
 dataMList = [];
-
-% create the list of data Qc to store in the NetCDF multi profile files
-dataQcMList = [ ...
-   {'JULD_QC'} {juldQcM} ...
-   {'POSITION_QC'} {positionQcM} ...
-   ];
-for idParam = 1:length(ncMParamNameList)
-   paramName = ncMParamDataQcList{idParam};
-   paramName = paramName(1:end-2);
-   dataQcMList = [dataQcMList ...
-      {upper(paramName)} {eval(ncMParamDataQcList{idParam})} ...
+dataQcMList = [];
+if (multiProfFileFlag)
+   [~, fileName, fileExtension] = fileparts(ncMultiProfOutputPathFileName);
+   tmpNcMultiProfOutputPathFileName = [DIR_TMP_FILE '/' fileName fileExtension];
+   copyfile(ncMultiProfInputPathFileName, tmpNcMultiProfOutputPathFileName);
+   
+   tmpNcMultiBProfOutputPathFileName = '';
+   if (multiBProfFileFlag == 1)
+      [~, fileName, fileExtension] = fileparts(ncMultiBProfOutputPathFileName);
+      tmpNcMultiBProfOutputPathFileName = [DIR_TMP_FILE '/' fileName fileExtension];
+      copyfile(ncMultiBProfInputPathFileName, tmpNcMultiBProfOutputPathFileName);
+   end
+   
+   % create the list of data to store in the NetCDF multi profile files
+   dataMList = [];
+   
+   % create the list of data Qc to store in the NetCDF multi profile files
+   dataQcMList = [ ...
+      {'JULD_QC'} {juldQcM} ...
+      {'POSITION_QC'} {positionQcM} ...
       ];
-end
-for idParam = 1:length(ncMParamAdjNameList)
-   paramAdjName = ncMParamAdjDataQcList{idParam};
-   paramAdjName = paramAdjName(1:end-2);
-   dataQcMList = [dataQcMList ...
-      {upper(paramAdjName)} {eval(ncMParamAdjDataQcList{idParam})} ...
-      ];
+   for idParam = 1:length(ncMParamNameList)
+      paramName = ncMParamDataQcList{idParam};
+      paramName = paramName(1:end-2);
+      dataQcMList = [dataQcMList ...
+         {upper(paramName)} {eval(ncMParamDataQcList{idParam})} ...
+         ];
+   end
+   for idParam = 1:length(ncMParamAdjNameList)
+      paramAdjName = ncMParamAdjDataQcList{idParam};
+      paramAdjName = paramAdjName(1:end-2);
+      dataQcMList = [dataQcMList ...
+         {upper(paramAdjName)} {eval(ncMParamAdjDataQcList{idParam})} ...
+         ];
+   end
 end
 
 % update the input file(s)
@@ -4191,15 +4270,17 @@ if (ok == 1)
    end
    
    % multi profile file(s)
-   [multiProfOutputPath, ~, ~] = fileparts(ncMultiProfOutputPathFileName);
-   [~, fileName, fileExtension] = fileparts(tmpNcMultiProfOutputPathFileName);
-   movefile(tmpNcMultiProfOutputPathFileName, [multiProfOutputPath '/' fileName fileExtension]);
-   
-   if (multiBProfFileFlag == 1)
-      [~, fileName, fileExtension] = fileparts(tmpNcMultiBProfOutputPathFileName);
-      movefile(tmpNcMultiBProfOutputPathFileName, [multiProfOutputPath '/' fileName fileExtension]);
+   if (multiProfFileFlag)
+      [multiProfOutputPath, ~, ~] = fileparts(ncMultiProfOutputPathFileName);
+      [~, fileName, fileExtension] = fileparts(tmpNcMultiProfOutputPathFileName);
+      movefile(tmpNcMultiProfOutputPathFileName, [multiProfOutputPath '/' fileName fileExtension]);
+      
+      if (multiBProfFileFlag == 1)
+         [~, fileName, fileExtension] = fileparts(tmpNcMultiBProfOutputPathFileName);
+         movefile(tmpNcMultiBProfOutputPathFileName, [multiProfOutputPath '/' fileName fileExtension]);
+      end
    end
-   
+
 end
 
 % delete the temp directory
@@ -4754,9 +4835,6 @@ for idFile = 1:2
          netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
             fliplr([nHistory profIdList(idProf)-1 0]), ...
             fliplr([1 1 length(dateUpdate)]), dateUpdate');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
-            fliplr([nHistory profIdList(idProf)-1 0]), ...
-            fliplr([1 1 length(dateUpdate)]), dateUpdate');
          netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_ACTION'), ...
             fliplr([nHistory profIdList(idProf)-1 0]), ...
             fliplr([1 1 length(histoAction)]), histoAction');
@@ -4770,159 +4848,161 @@ for idFile = 1:2
 end
 
 % update the multi profile file(s)
-if (~isempty(find(a_idProfM ~= -1, 1)))
-   
-   for idFile = 1:2
-      if (idFile == 1)
-         % c file update
-         fileName = a_cMultiFileName;
-         profIdList = profIdListC;
-      else
-         % b file update
-         if (isempty(a_bMultiFileName))
-            continue;
+if (~isempty(a_cMultiFileName))
+   if (~isempty(find(a_idProfM ~= -1, 1)))
+      
+      for idFile = 1:2
+         if (idFile == 1)
+            % c file update
+            fileName = a_cMultiFileName;
+            profIdList = profIdListC;
+         else
+            % b file update
+            if (isempty(a_bMultiFileName))
+               continue;
+            end
+            fileName = a_bMultiFileName;
+            profIdList = profIdListB;
+            if (isempty(profIdList))
+               continue;
+            end
          end
-         fileName = a_bMultiFileName;
-         profIdList = profIdListB;
-         if (isempty(profIdList))
-            continue;
+         
+         % retrieve data from profile file
+         wantedVars = [ ...
+            {'PRES'} ...
+            {'HISTORY_INSTITUTION'} ...
+            ];
+         [ncProfData] = get_data_from_nc_file(fileName, wantedVars);
+         
+         % retrieve the N_LEVELS dimension
+         pres = get_data_from_name('PRES', ncProfData);
+         nLevels = size(pres, 1);
+         
+         % open the file to update
+         fCdf = netcdf.open(fileName, 'NC_WRITE');
+         if (isempty(fCdf))
+            fprintf('RTQC_ERROR: Unable to open NetCDF file: %s\n', fileName);
+            return;
          end
-      end
-      
-      % retrieve data from profile file
-      wantedVars = [ ...
-         {'PRES'} ...
-         {'HISTORY_INSTITUTION'} ...
-         ];
-      [ncProfData] = get_data_from_nc_file(fileName, wantedVars);
-      
-      % retrieve the N_LEVELS dimension
-      pres = get_data_from_name('PRES', ncProfData);
-      nLevels = size(pres, 1);
-      
-      % open the file to update
-      fCdf = netcdf.open(fileName, 'NC_WRITE');
-      if (isempty(fCdf))
-         fprintf('RTQC_ERROR: Unable to open NetCDF file: %s\n', fileName);
-         return;
-      end
-      
-      for idProf = 1:length(a_idProfM)
-         if (a_idProfM(idProf) ~= -1)
-            idProfM = a_idProfM(idProf);
-            
-            % update <PARAM>_QC and PROFILE_<PARAM>_QC values
-            for idParamQcM = 1:2:length(a_dataQcM)
-               paramQcName = a_dataQcM{idParamQcM};
-               if (var_is_present_dec_argo(fCdf, paramQcName))
-                  
-                  % <PARAM>_QC values
-                  dataQc = a_dataQcM{idParamQcM+1};
-                  if (strcmp(paramQcName, 'JULD_QC') || strcmp(paramQcName, 'POSITION_QC'))
-                     dataQc = dataQc(1, idProfM);
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), ...
-                        idProfM-1, 1, dataQc);
-                  else
-                     dataQc = dataQc(idProfM, :);
-                     if (size(dataQc, 2) > nLevels)
-                        dataQc = dataQc(:, 1:nLevels);
-                     end
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), ...
-                        fliplr([idProfM-1 0]), fliplr([1 length(dataQc)]), dataQc');
+         
+         for idProf = 1:length(a_idProfM)
+            if (a_idProfM(idProf) ~= -1)
+               idProfM = a_idProfM(idProf);
+               
+               % update <PARAM>_QC and PROFILE_<PARAM>_QC values
+               for idParamQcM = 1:2:length(a_dataQcM)
+                  paramQcName = a_dataQcM{idParamQcM};
+                  if (var_is_present_dec_argo(fCdf, paramQcName))
                      
-                     % PROFILE_<PARAM>_QC values
-                     % the <PARAM>_ADJUSTED_QC values are after the <PARAM>_QC
-                     % values in the a_dataQc list. So, if <PARAM>_ADJUSTED_QC
-                     % values differ from FillValue, they will be used to
-                     % compute PROFILE_<PARAM>_QC values.
-                     profParamQcName = ['PROFILE_' paramQcName];
-                     if (var_is_present_dec_argo(fCdf, profParamQcName))
-                        % compute PROFILE_<PARAM>_QC from <PARAM>_QC values
-                        newProfParamQc = compute_profile_quality_flag(dataQc);
-                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), ...
-                           idProfM-1, 1, newProfParamQc);
+                     % <PARAM>_QC values
+                     dataQc = a_dataQcM{idParamQcM+1};
+                     if (strcmp(paramQcName, 'JULD_QC') || strcmp(paramQcName, 'POSITION_QC'))
+                        dataQc = dataQc(1, idProfM);
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), ...
+                           idProfM-1, 1, dataQc);
                      else
-                        if (~isempty(strfind(paramQcName, '_ADJUSTED_QC')))
-                           if ~((length(unique(dataQc)) == 1) && (unique(dataQc) == g_decArgo_qcStrDef))
-                              profParamQcName = ['PROFILE_' regexprep(paramQcName, '_ADJUSTED', '')];
-                              if (var_is_present_dec_argo(fCdf, profParamQcName))
-                                 % compute PROFILE_<PARAM>_QC from
-                                 % <PARAM>_ADJUSTED_QC values
-                                 newProfParamQc = compute_profile_quality_flag(dataQc);
-                                 netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), ...
-                                    idProfM-1, 1, newProfParamQc);
+                        dataQc = dataQc(idProfM, :);
+                        if (size(dataQc, 2) > nLevels)
+                           dataQc = dataQc(:, 1:nLevels);
+                        end
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), ...
+                           fliplr([idProfM-1 0]), fliplr([1 length(dataQc)]), dataQc');
+                        
+                        % PROFILE_<PARAM>_QC values
+                        % the <PARAM>_ADJUSTED_QC values are after the <PARAM>_QC
+                        % values in the a_dataQc list. So, if <PARAM>_ADJUSTED_QC
+                        % values differ from FillValue, they will be used to
+                        % compute PROFILE_<PARAM>_QC values.
+                        profParamQcName = ['PROFILE_' paramQcName];
+                        if (var_is_present_dec_argo(fCdf, profParamQcName))
+                           % compute PROFILE_<PARAM>_QC from <PARAM>_QC values
+                           newProfParamQc = compute_profile_quality_flag(dataQc);
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), ...
+                              idProfM-1, 1, newProfParamQc);
+                        else
+                           if (~isempty(strfind(paramQcName, '_ADJUSTED_QC')))
+                              if ~((length(unique(dataQc)) == 1) && (unique(dataQc) == g_decArgo_qcStrDef))
+                                 profParamQcName = ['PROFILE_' regexprep(paramQcName, '_ADJUSTED', '')];
+                                 if (var_is_present_dec_argo(fCdf, profParamQcName))
+                                    % compute PROFILE_<PARAM>_QC from
+                                    % <PARAM>_ADJUSTED_QC values
+                                    newProfParamQc = compute_profile_quality_flag(dataQc);
+                                    netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), ...
+                                       idProfM-1, 1, newProfParamQc);
+                                 end
                               end
                            end
                         end
                      end
                   end
                end
-            end
-            
-            % update miscellaneous information
-            
-            % upate date
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), dateUpdate);
-            
-            % data state indicator
-            newDataStateIndicator = '2B';
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_STATE_INDICATOR'), ...
-               fliplr([idProfM-1 0]), fliplr([1 length(newDataStateIndicator)]), newDataStateIndicator');
-            
-            % update history information
-            historyInstitution = get_data_from_name('HISTORY_INSTITUTION', ncProfData);
-            [~, ~, nHistory] = size(historyInstitution);
-            histoInstitution = 'IF';
-            histoStep = 'ARGQ';
-            histoSoftware = 'COQC';
-            histoSoftwareRelease = g_decArgo_addRtqcToProfileVersion;
-            
-            for idHisto = 1:2
-               if (idHisto == 1)
-                  histoAction = 'QCP$';
-                  if (idFile == 1)
-                     histoQcTest = a_testDoneCHex{profIdList(idProf)};
-                  else
-                     histoQcTest = a_testDoneBHex{profIdList(idProf)};
-                  end
-               else
-                  nHistory = nHistory + 1;
-                  histoAction = 'QCF$';
-                  if (idFile == 1)
-                     histoQcTest = a_testFailedCHex{profIdList(idProf)};
-                  else
-                     histoQcTest = a_testFailedBHex{profIdList(idProf)};
-                  end
-               end
                
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
-                  fliplr([nHistory idProfM-1 0]), ...
-                  fliplr([1 1 length(histoInstitution)]), histoInstitution');
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_STEP'), ...
-                  fliplr([nHistory idProfM-1 0]), ...
-                  fliplr([1 1 length(histoStep)]), histoStep');
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
-                  fliplr([nHistory idProfM-1 0]), ...
-                  fliplr([1 1 length(histoSoftware)]), histoSoftware');
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
-                  fliplr([nHistory idProfM-1 0]), ...
-                  fliplr([1 1 length(histoSoftwareRelease)]), histoSoftwareRelease');
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
-                  fliplr([nHistory idProfM-1 0]), ...
-                  fliplr([1 1 length(dateUpdate)]), dateUpdate');
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
-                  fliplr([nHistory idProfM-1 0]), ...
-                  fliplr([1 1 length(dateUpdate)]), dateUpdate');
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_ACTION'), ...
-                  fliplr([nHistory idProfM-1 0]), ...
-                  fliplr([1 1 length(histoAction)]), histoAction');
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_QCTEST'), ...
-                  fliplr([nHistory idProfM-1 0]), ...
-                  fliplr([1 1 length(histoQcTest)]), histoQcTest');
+               % update miscellaneous information
+               
+               % upate date
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), dateUpdate);
+               
+               % data state indicator
+               newDataStateIndicator = '2B';
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_STATE_INDICATOR'), ...
+                  fliplr([idProfM-1 0]), fliplr([1 length(newDataStateIndicator)]), newDataStateIndicator');
+               
+               % update history information
+               historyInstitution = get_data_from_name('HISTORY_INSTITUTION', ncProfData);
+               [~, ~, nHistory] = size(historyInstitution);
+               histoInstitution = 'IF';
+               histoStep = 'ARGQ';
+               histoSoftware = 'COQC';
+               histoSoftwareRelease = g_decArgo_addRtqcToProfileVersion;
+               
+               for idHisto = 1:2
+                  if (idHisto == 1)
+                     histoAction = 'QCP$';
+                     if (idFile == 1)
+                        histoQcTest = a_testDoneCHex{profIdList(idProf)};
+                     else
+                        histoQcTest = a_testDoneBHex{profIdList(idProf)};
+                     end
+                  else
+                     nHistory = nHistory + 1;
+                     histoAction = 'QCF$';
+                     if (idFile == 1)
+                        histoQcTest = a_testFailedCHex{profIdList(idProf)};
+                     else
+                        histoQcTest = a_testFailedBHex{profIdList(idProf)};
+                     end
+                  end
+                  
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
+                     fliplr([nHistory idProfM-1 0]), ...
+                     fliplr([1 1 length(histoInstitution)]), histoInstitution');
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_STEP'), ...
+                     fliplr([nHistory idProfM-1 0]), ...
+                     fliplr([1 1 length(histoStep)]), histoStep');
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
+                     fliplr([nHistory idProfM-1 0]), ...
+                     fliplr([1 1 length(histoSoftware)]), histoSoftware');
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
+                     fliplr([nHistory idProfM-1 0]), ...
+                     fliplr([1 1 length(histoSoftwareRelease)]), histoSoftwareRelease');
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
+                     fliplr([nHistory idProfM-1 0]), ...
+                     fliplr([1 1 length(dateUpdate)]), dateUpdate');
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
+                     fliplr([nHistory idProfM-1 0]), ...
+                     fliplr([1 1 length(dateUpdate)]), dateUpdate');
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_ACTION'), ...
+                     fliplr([nHistory idProfM-1 0]), ...
+                     fliplr([1 1 length(histoAction)]), histoAction');
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_QCTEST'), ...
+                     fliplr([nHistory idProfM-1 0]), ...
+                     fliplr([1 1 length(histoQcTest)]), histoQcTest');
+               end
             end
          end
+         netcdf.close(fCdf);
       end
-      netcdf.close(fCdf);
    end
 end
 

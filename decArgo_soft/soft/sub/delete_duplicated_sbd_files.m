@@ -69,9 +69,7 @@ if (size(uTabInfoFile, 1) ~= size(tabInfoFile, 1))
                      
                      % move the mail file to the archive directory
                      mailFileName = [sbdFileName(1:end-4) '.txt'];
-                     fileNameIn = [a_buffDir '/' mailFileName];
-                     fileNamOut = [a_archiveDir '/' mailFileName];
-                     move_file(fileNameIn, fileNamOut);
+                     move_files_ir_sbd({mailFileName}, a_buffDir, a_archiveDir, 1, 0);
                   end
                end
             end

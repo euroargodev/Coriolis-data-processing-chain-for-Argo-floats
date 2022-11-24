@@ -48,6 +48,11 @@ idProfInFile = find( ...
 idSecondary = find(profInfo(idProfInFile, 3) == 2);
 if (~isempty(idSecondary))
    
+   % 6901473 #127 anomaly
+   if (length(idSecondary) > 1)
+      idSecondary = idSecondary(1);
+   end
+   
    secondaryProf = a_tabProfiles(idProfInFile(idSecondary));
    
    [o_defaultPrimaryProf] = get_profile_init_struct( ...

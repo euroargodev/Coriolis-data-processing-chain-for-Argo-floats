@@ -214,6 +214,9 @@ for idNCy = 1:length(a_tabTrajNCycle)
    if (~isempty(idConf))
       a_tabTrajNCycle(idNCy).configMissionNumber = g_decArgo_floatConfig.USE.CONFIG(idConf);
       a_tabTrajNCycle(idNCy).outputCycleNumber = g_decArgo_floatConfig.USE.CYCLE_OUT(idConf);
+      if (a_tabTrajNCycle(idNCy).surfOnly == 2)
+         a_tabTrajNCycle(idNCy).outputCycleNumber = 0;
+      end
    end
 end
 

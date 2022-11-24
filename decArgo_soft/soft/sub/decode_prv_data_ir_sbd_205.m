@@ -175,7 +175,7 @@ for idMes = 1:size(a_tabData, 1)
          % set cycle number
          g_decArgo_cycleNum = tabTech(2);
          fprintf('cyle #%d\n', g_decArgo_cycleNum);
-         
+
          % subsurface information are set to 0 for a surface cycle
          if (g_decArgo_secondIridiumSession == 0)
             if ((length(unique(tabTech(3:42))) == 1) && (unique(tabTech(3:42)) == 0))

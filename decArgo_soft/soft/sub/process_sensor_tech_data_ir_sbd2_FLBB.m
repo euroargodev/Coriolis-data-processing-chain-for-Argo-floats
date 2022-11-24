@@ -73,7 +73,7 @@ for id = 1:length(idPack)
       200];
    g_decArgo_outputNcParamValue{end+1} = a_sensorTechFLBBNbPackDesc(idP, 3);
    g_decArgo_outputNcParamLabelInfo{g_decArgo_outputNcParamLabelInfoCounter} = [{'<Sensor>'} {'Flbb'}];
-   g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;w
+   g_decArgo_outputNcParamLabelInfoCounter = g_decArgo_outputNcParamLabelInfoCounter + 1;
    
    % Nb packets for drift
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex; ...

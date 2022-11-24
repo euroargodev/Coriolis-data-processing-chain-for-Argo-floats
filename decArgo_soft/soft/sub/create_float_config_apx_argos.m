@@ -366,8 +366,10 @@ end
 % is it always profiling from the same depth ?
 idF = find(strcmp(configNames, 'CONFIG_N_ParkAndProfileCycleLength'));
 if (isnan(configValues(idF)))
-   fprintf('ERROR: Float #%d: Configuration parameter ''%s'' is mandatory => temporarily set to 1 for this run\n', ...
-      g_decArgo_floatNum, 'CONFIG_N_ParkAndProfileCycleLength');
+   if (isempty(a_decMetaData))
+      fprintf('ERROR: Float #%d: Configuration parameter ''%s'' is mandatory => temporarily set to 1 for this run\n', ...
+         g_decArgo_floatNum, 'CONFIG_N_ParkAndProfileCycleLength');
+   end
    configValues(idF) = 1;
 end
 if (configValues(idF) > 1)
@@ -385,8 +387,10 @@ end
 % base configuration
 idF = find(strcmp(configNames, 'CONFIG_N_ParkAndProfileCycleLength'));
 if (isnan(configValues(idF)))
-   fprintf('ERROR: Float #%d: Configuration parameter ''%s'' is mandatory => temporarily set to 1 for this run\n', ...
-      g_decArgo_floatNum, 'CONFIG_N_ParkAndProfileCycleLength');
+   if (isempty(a_decMetaData))
+      fprintf('ERROR: Float #%d: Configuration parameter ''%s'' is mandatory => temporarily set to 1 for this run\n', ...
+         g_decArgo_floatNum, 'CONFIG_N_ParkAndProfileCycleLength');
+   end
    configValues(idF) = 1;
 end
 if (configValues(idF) ~= 234)

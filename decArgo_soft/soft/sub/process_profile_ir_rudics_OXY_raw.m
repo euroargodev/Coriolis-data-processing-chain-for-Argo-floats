@@ -48,6 +48,9 @@ global g_decArgo_phaseAscProf;
 % treatment types
 global g_decArgo_treatRaw;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 
 % get the pressure cut-off for CTD ascending profile (from the CTD technical
 % data)

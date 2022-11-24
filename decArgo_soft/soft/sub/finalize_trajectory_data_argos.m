@@ -37,6 +37,9 @@ global g_MC_TET;
 % global time status
 global g_JULD_STATUS_2;
 
+% default values
+global g_decArgo_ncDateDef;
+
 
 % N_MEASUREMENT DATA
 
@@ -46,8 +49,8 @@ if (~isempty(a_tabTrajNMeas))
    for idCy = 1:length(tabCyNum)
       cycleNum = tabCyNum(idCy);
       if (cycleNum > 0)
-         idCy = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
-         idF1 = find([a_tabTrajNMeas(idCy).tabMeas.measCode] == g_MC_CycleStart);
+         idC = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
+         idF1 = find([a_tabTrajNMeas(idC).tabMeas.measCode] == g_MC_CycleStart);
          if (~isempty(idF1))
             idCyPrec = find([a_tabTrajNMeas.cycleNumber] == cycleNum-1);
             if (~isempty(idCyPrec))
@@ -55,7 +58,7 @@ if (~isempty(a_tabTrajNMeas))
                if (~isempty(idF2))
                   
                   measStruct = create_one_meas_float_time(g_MC_TET, ...
-                     a_tabTrajNMeas(idCy).tabMeas(idF1).juld, g_JULD_STATUS_2, 0);
+                     a_tabTrajNMeas(idC).tabMeas(idF1).juld, g_JULD_STATUS_2, 0);
                   a_tabTrajNMeas(idCyPrec).tabMeas(idF2) = measStruct;
                end
             end
@@ -71,12 +74,16 @@ if (~isempty(a_tabTrajNMeas))
    tabCyNum = sort(unique([a_tabTrajNCycle.cycleNumber]));
    for idCy = 1:length(tabCyNum)
       cycleNum = tabCyNum(idCy);
+      
       if (cycleNum > 0)
-         idCy = find([a_tabTrajNCycle.cycleNumber] == cycleNum);
+         idCyCur = find([a_tabTrajNCycle.cycleNumber] == cycleNum);
          idCyPrec = find([a_tabTrajNCycle.cycleNumber] == cycleNum-1);
-         if (~isempty(idCyPrec))
-            a_tabTrajNCycle(idCyPrec).juldTransmissionEnd = a_tabTrajNCycle(idCy).juldCycleStart;
-            a_tabTrajNCycle(idCyPrec).juldTransmissionEndStatus = a_tabTrajNCycle(idCy).juldCycleStartStatus;
+         if (~isempty(idCyPrec) && ...
+               ~isempty(a_tabTrajNCycle(idCyCur).juldCycleStart) && ...
+               (a_tabTrajNCycle(idCyCur).juldCycleStart ~= g_decArgo_ncDateDef))
+            
+            a_tabTrajNCycle(idCyPrec).juldTransmissionEnd = a_tabTrajNCycle(idCyCur).juldCycleStart;
+            a_tabTrajNCycle(idCyPrec).juldTransmissionEndStatus = a_tabTrajNCycle(idCyCur).juldCycleStartStatus;
          end
       end
    end

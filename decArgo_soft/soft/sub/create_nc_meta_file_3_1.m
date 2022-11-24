@@ -66,6 +66,9 @@ end
 % read meta-data file
 metaData = loadjson(jsonInputFileName);
 
+% update the meta-data contents
+metaData = update_meta_data(metaData, a_decoderId);
+
 % collect dimensions in input meta-data
 nbSensor = 0;
 if (~isempty(metaData.SENSOR))
@@ -76,8 +79,13 @@ if (~isempty(metaData.PARAMETER))
    nbParam = length(fieldnames(metaData.PARAMETER));
 end
 
+launchConfigName = [];
+launchConfigValue = [];
 nbLaunchConfigParam = 0;
+missionConfigName = [];
+missionConfigValue = [];
 nbConfigParam = 0;
+configMissionNumber = [];
 % process the launch and mission configurations
 switch (a_decoderId)
    
@@ -249,7 +257,7 @@ switch (a_decoderId)
       % create the launch configuration
       launchConfigName = configName;
       launchConfigValue = configValue(:, 1);
-      nbLaunchConfigParam =length(configName);
+      nbLaunchConfigParam = length(configName);
       
       % create the mission configuration
       missionConfigName = configName;
@@ -373,7 +381,7 @@ switch (a_decoderId)
       % create the launch configuration
       launchConfigName = configName;
       launchConfigValue = configValue(:, 1);
-      nbLaunchConfigParam =length(configName);
+      nbLaunchConfigParam = length(configName);
       
       % create the mission configuration
       missionConfigName = configName;
@@ -446,7 +454,7 @@ switch (a_decoderId)
       % create the launch configuration
       launchConfigName = configName;
       launchConfigValue = configValue(:, 1);
-      nbLaunchConfigParam =length(configName);
+      nbLaunchConfigParam = length(configName);
       
       % create the mission configuration
       missionConfigName = configName;
@@ -483,6 +491,19 @@ switch (a_decoderId)
             
       % retrieve mandatory configuration names for this decoder
       [mandatoryConfigName] = get_config_param_mandatory(a_decoderId);
+      
+      % if no data has been received create the configuration at launch
+      if (isempty(a_structConfig.NAMES))
+         
+         % create and initialize the launch configuration
+         create_float_config_apx_argos([], a_decoderId);
+         
+         % create the configuration parameter names for the META NetCDF file
+         [decArgoConfParamNames, ncConfParamNames] = create_config_param_names_apx_argos(a_decoderId);
+         
+         % create output float configuration
+         [a_structConfig] = create_output_float_config_argos(decArgoConfParamNames, ncConfParamNames);
+      end
       
       configName = a_structConfig.NAMES;
       configValue = a_structConfig.VALUES;
@@ -530,6 +551,89 @@ switch (a_decoderId)
       
       nbConfigParam = length(missionConfigName);
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % NOVA, DOVA floats
+
+   case {2001, 2002} % Nova, Dova
+      
+      % retrieve mandatory configuration names for this decoder
+      [mandatoryConfigName] = get_config_param_mandatory(a_decoderId);
+      
+      % concat the input configuration information
+      inputStaticConfigName = a_structConfig.STATIC_NC.NAMES;
+      inputStaticConfigValue = a_structConfig.STATIC_NC.VALUES;
+      
+      inputDynamicConfigName = a_structConfig.DYNAMIC_NC.NAMES;
+      inputDynamicConfigValue = a_structConfig.DYNAMIC_NC.VALUES;
+      
+      % siwtch 0 <-> 1 in CONFIG_PH38 parameter (the float meaning is the
+      % contrary to the NetCDF label one)
+      idF = find(strcmp('PH38', g_decArgo_outputNcConfParamId) == 1);
+      if (~isempty(idF))
+         idF2 = find(strcmp(g_decArgo_outputNcConfParamLabel{idF}, inputDynamicConfigName) == 1);
+         if (~isempty(idF2))
+            values = inputDynamicConfigValue(idF2, :);
+            values = values + 1;
+            values(find(values == 2)) = 0;
+            inputDynamicConfigValue(idF2, :) = values;
+         end
+      end
+      
+      configName = [inputStaticConfigName; inputDynamicConfigName];
+      
+      mandatoryList = [];
+      for idL = 1:length(mandatoryConfigName)
+         for idC = 1:length(configName)
+            if (~isempty(strfind(configName{idC}, mandatoryConfigName{idL})))
+               mandatoryList = [mandatoryList idC];
+               if (idL < length(mandatoryConfigName))
+                  break;
+               end
+            end
+         end
+      end
+      
+      if (~isempty(inputStaticConfigName))
+         staticConfigValue = nan(size(inputStaticConfigName, 1), size(inputDynamicConfigValue, 2));
+         if (~isempty(inputStaticConfigValue))
+            staticConfigValue(:, 1) = str2num(char(inputStaticConfigValue));
+         end
+      end
+      configValue = cat(1, staticConfigValue, inputDynamicConfigValue);
+      
+      % create the launch configuration
+      launchConfigName = configName;
+      launchConfigValue = configValue(:, 1);
+      nbLaunchConfigParam = length(configName);
+      
+      % create the mission configuration
+      missionConfigName = configName;
+      missionConfigValue = configValue;
+      
+      if (size(configValue, 2) > 1)
+         idDel = [];
+         for idL = 1:size(missionConfigValue, 1)
+            if (sum(isnan(missionConfigValue(idL, 2:end))) == size(missionConfigValue, 2)-1)
+               idDel = [idDel; idL];
+            elseif ((length(unique(missionConfigValue(idL, 2:end))) == 1) && ...
+                  (unique(missionConfigValue(idL, 2:end)) == missionConfigValue(idL, 1)))
+               idDel = [idDel; idL];
+            end
+         end
+         idDel = setdiff(idDel, mandatoryList);
+         missionConfigName(idDel) = [];
+         missionConfigValue(idDel, :) = [];
+         % don't keep launch mission
+         missionConfigValue(:, 1) = [];
+         configMissionNumber = a_structConfig.DYNAMIC_NC.NUMBER(2:end);
+      else
+         missionConfigName = configName(mandatoryList);
+         missionConfigValue = configValue(mandatoryList, 1);
+         configMissionNumber = 1;
+      end
+      
+      nbConfigParam = length(missionConfigName);      
+
    otherwise
       fprintf('WARNING: Float #%d: Nothing done yet in launch and mission configurations processing for decoderId #%d\n', ...
          g_decArgo_floatNum, ...
@@ -599,6 +703,7 @@ end
 
 % create dimensions
 dateTimeDimId = netcdf.defDim(fCdf, 'DATE_TIME', 14);
+string4096DimId = netcdf.defDim(fCdf, 'STRING4096', 4096);
 string1024DimId = netcdf.defDim(fCdf, 'STRING1024', 1024);
 string256DimId = netcdf.defDim(fCdf, 'STRING256', 256);
 string128DimId = netcdf.defDim(fCdf, 'STRING128', 128);
@@ -1076,19 +1181,19 @@ floatNcVarId = [floatNcVarId; parameterResolutionVarId];
 floatNcVarName{end+1} = 'PARAMETER_RESOLUTION';
 
 % float calibration information
-predeploymentCalibEquationVarId = netcdf.defVar(fCdf, 'PREDEPLOYMENT_CALIB_EQUATION', 'NC_CHAR', fliplr([nParamDimId string1024DimId]));
+predeploymentCalibEquationVarId = netcdf.defVar(fCdf, 'PREDEPLOYMENT_CALIB_EQUATION', 'NC_CHAR', fliplr([nParamDimId string4096DimId]));
 netcdf.putAtt(fCdf, predeploymentCalibEquationVarId, 'long_name', 'Calibration equation for this parameter');
 netcdf.putAtt(fCdf, predeploymentCalibEquationVarId, '_FillValue', ' ');
 floatNcVarId = [floatNcVarId; predeploymentCalibEquationVarId];
 floatNcVarName{end+1} = 'PREDEPLOYMENT_CALIB_EQUATION';
 
-predeploymentCalibCoefficientVarId = netcdf.defVar(fCdf, 'PREDEPLOYMENT_CALIB_COEFFICIENT', 'NC_CHAR', fliplr([nParamDimId string1024DimId]));
+predeploymentCalibCoefficientVarId = netcdf.defVar(fCdf, 'PREDEPLOYMENT_CALIB_COEFFICIENT', 'NC_CHAR', fliplr([nParamDimId string4096DimId]));
 netcdf.putAtt(fCdf, predeploymentCalibCoefficientVarId, 'long_name', 'Calibration coefficients for this equation');
 netcdf.putAtt(fCdf, predeploymentCalibCoefficientVarId, '_FillValue', ' ');
 floatNcVarId = [floatNcVarId; predeploymentCalibCoefficientVarId];
 floatNcVarName{end+1} = 'PREDEPLOYMENT_CALIB_COEFFICIENT';
 
-predeploymentCalibCommentVarId = netcdf.defVar(fCdf, 'PREDEPLOYMENT_CALIB_COMMENT', 'NC_CHAR', fliplr([nParamDimId string1024DimId]));
+predeploymentCalibCommentVarId = netcdf.defVar(fCdf, 'PREDEPLOYMENT_CALIB_COMMENT', 'NC_CHAR', fliplr([nParamDimId string4096DimId]));
 netcdf.putAtt(fCdf, predeploymentCalibCommentVarId, 'long_name', 'Comment applying to this parameter calibration');
 netcdf.putAtt(fCdf, predeploymentCalibCommentVarId, '_FillValue', ' ');
 floatNcVarId = [floatNcVarId; predeploymentCalibCommentVarId];

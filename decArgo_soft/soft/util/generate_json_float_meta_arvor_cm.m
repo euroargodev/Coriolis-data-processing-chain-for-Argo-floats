@@ -23,6 +23,7 @@ function generate_json_float_meta_arvor_cm
 
 % meta-data file exported from Coriolis data base
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor-Cm-Bio\DBexport_arvorCM_fromVB20151030.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 

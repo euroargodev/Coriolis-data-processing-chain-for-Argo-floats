@@ -26,7 +26,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 121;1;Heure de début de remontée.;CLOCK_StartAscentToSurface_HHMM;Number of minutes elapsed in the day at the beginning of the ascent to the surface.
 122;1;Heure de fin de remontée.;CLOCK_TransmissionStart_HHMM;time of the first transmission for this cycle
 123;1;Nombre de coups de pompe en remontée.;NUMBER_PumpActionsDuringAscentToSurface_COUNT;number of pump actions between start and end of ascent 
-124;1;Offset de pression.;PRES_SurfaceOffsetBeforeReset_1cBarResolution_dbar;Surface pressure measured just before the float dives which is then used to correct pressure on board the float for the next profile.  Note: this is a relative offset. Autocorrected.
+124;1;Offset de pression.;PRES_SurfaceOffsetCorrectedNotResetNegative_1cBarResolution_dbar;Surface pressure recorded just before the previous descent but data is corrected on board the float. Note: cumulative NEGATIVE   offset  (real offset * -1) but no further correction required. Autocorrected
 125;1;Vide interne en surface.;PRESSURE_InternalVacuumAtSurface_mbar;Surface internal pressure
 126;1;Tension batterie.;VOLTAGE_BatteryPumpStartProfile_volts;Pump battery voltage (volts) at depth
 127;1;Erreur RTC.;FLAG_RTCStatus_LOGICAL;real time clock status - 1= OK, 0=not OK

@@ -67,6 +67,6 @@ end
 % compute output data
 idNoDef = find(a_RAW_DOWNWELLING_IRRADIANCE490 ~= a_RAW_DOWNWELLING_IRRADIANCE490_fill_value);
 o_DOWN_IRRADIANCE490(idNoDef) = ...
-   a1Lambda490*(a_RAW_DOWNWELLING_IRRADIANCE490(idNoDef) - a0Lambda490)*lmLambda490;
+   0.01*a1Lambda490*(a_RAW_DOWNWELLING_IRRADIANCE490(idNoDef) - a0Lambda490)*lmLambda490;
 
 return;

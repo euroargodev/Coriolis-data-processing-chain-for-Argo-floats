@@ -112,15 +112,10 @@ floatNumStr = num2str(floatNum);
 if (test_to_perform('TEST019_DEEPEST_PRESSURE', testToPerformList) == 1)
    
    % add meta file path name
-   reportMetaFile = a_reportStruct.outputMetaFiles;
-   if (~isempty(reportMetaFile))
-      ncMetaFilePathName = reportMetaFile{:};
-   else
-      ncMetaFileName = sprintf('%d_meta.nc', floatNum);
-      ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
-   end
+   ncMetaFileName = sprintf('%d_meta.nc', floatNum);
+   ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
    if ~(exist(ncMetaFilePathName, 'file') == 2)
-      fprintf('RTQC_WARNING: TEST019: No meta file to perform test#19\n');
+      fprintf('RTQC_WARNING: TEST019: Float #%d: No meta file to perform test#19\n', floatNum);
    else
       idVal = find(strcmp('TEST019_METADA_DATA_FILE', testMetaData) == 1);
       if (~isempty(idVal))
@@ -132,15 +127,10 @@ end
 if (test_to_perform('TEST021_NS_UNPUMPED_SALINITY', testToPerformList) == 1)
    
    % add meta file path name
-   reportMetaFile = a_reportStruct.outputMetaFiles;
-   if (~isempty(reportMetaFile))
-      ncMetaFilePathName = reportMetaFile{:};
-   else
-      ncMetaFileName = sprintf('%d_meta.nc', floatNum);
-      ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
-   end
+   ncMetaFileName = sprintf('%d_meta.nc', floatNum);
+   ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
    if ~(exist(ncMetaFilePathName, 'file') == 2)
-      fprintf('RTQC_WARNING: TEST021: No meta file to perform test#21\n');
+      fprintf('RTQC_WARNING: TEST021: Float #%d: No meta file to perform test#21\n', floatNum);
    else
       idVal = find(strcmp('TEST021_METADA_DATA_FILE', testMetaData) == 1);
       if (~isempty(idVal))
@@ -165,15 +155,10 @@ end
 if (test_to_perform('TEST057_DOXY', testToPerformList) == 1)
    
    % add meta file path name
-   reportMetaFile = a_reportStruct.outputMetaFiles;
-   if (~isempty(reportMetaFile))
-      ncMetaFilePathName = reportMetaFile{:};
-   else
-      ncMetaFileName = sprintf('%d_meta.nc', floatNum);
-      ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
-   end
+   ncMetaFileName = sprintf('%d_meta.nc', floatNum);
+   ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
    if ~(exist(ncMetaFilePathName, 'file') == 2)
-      fprintf('RTQC_WARNING: TEST057: No meta file to perform test#57\n');
+      fprintf('RTQC_WARNING: TEST057: Float #%d: No meta file to perform test#57\n', floatNum);
    else
       idVal = find(strcmp('TEST057_METADA_DATA_FILE', testMetaData) == 1);
       if (~isempty(idVal))
@@ -236,20 +221,15 @@ end
 % PARTIAL RTQC ON TRAJECTORY FILE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% retrieve the traj c file from the report structure
-reportTrajFile = a_reportStruct.outputTrajFiles;
-trajFilePathName = '';
-for idFile = 1:length(reportTrajFile)
-   [~, fileName, ~] = fileparts(reportTrajFile{idFile});
-   if (~isempty(strfind(fileName, '_B')))
-      continue;
-   end
-   trajFilePathName = reportTrajFile{idFile};
-end
-
 % global variable to store temporary RTQC on traj data
 g_rtqc_trajData = [];
-if (~isempty(trajFilePathName))
+
+% retrieve the traj c file path name
+trajFileName = sprintf('%d_Rtraj.nc', floatNum);
+trajFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' trajFileName];
+if ~(exist(trajFilePathName, 'file') == 2)
+   fprintf('INFO: Float #%d: Trajectory file not found (nominal for first cycle profile processing)\n', floatNum);
+else
    
    % define the tests to perform on trajectory data
    testToPerformList2 = [ ...
@@ -264,8 +244,6 @@ if (~isempty(trajFilePathName))
    add_rtqc_to_trajectory_file(floatNum, ...
       trajFilePathName, [], ...
       testToPerformList2, testMetaData, 1, 0, 1);
-else
-   fprintf('WARNING: Trajectory file not found\n');
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

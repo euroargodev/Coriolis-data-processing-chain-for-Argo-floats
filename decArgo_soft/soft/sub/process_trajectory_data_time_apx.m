@@ -354,6 +354,8 @@ for idC = 1:length(cycleNumList)
       for idMc = 1:length(mcList)
          measStruct = create_one_meas_float_time(mcList(idMc), -1, g_JULD_STATUS_9, 0);
          measData = [measData; measStruct];
+         
+         [trajNCycleStruct] = set_status_of_n_cycle_juld(trajNCycleStruct, mcList(idMc), g_JULD_STATUS_9);
       end
       
       % store the data

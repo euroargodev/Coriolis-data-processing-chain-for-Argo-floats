@@ -152,10 +152,19 @@ if ((a_decoderId == 4) || (a_decoderId == 19) || (a_decoderId == 25) || ...
          if (isfield(g_decArgo_calibInfo, 'OPTODE'))
             calibData = g_decArgo_calibInfo.OPTODE;
             tabDoxyCoef = [];
+            for id = 0:3
+               fieldName = ['PhaseCoef' num2str(id)];
+               if (isfield(calibData, fieldName))
+                  tabDoxyCoef(1, id+1) = calibData.(fieldName);
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+                  return;
+               end
+            end
             for id = 0:6
                fieldName = ['SVUFoilCoef' num2str(id)];
                if (isfield(calibData, fieldName))
-                  tabDoxyCoef = [tabDoxyCoef calibData.(fieldName)];
+                  tabDoxyCoef(2, id+1) = calibData.(fieldName);
                else
                   fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
                   return;

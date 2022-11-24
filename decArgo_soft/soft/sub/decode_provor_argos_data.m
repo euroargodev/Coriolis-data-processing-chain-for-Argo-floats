@@ -556,10 +556,14 @@ for idCy = 1:length(a_cycleList)
             [descProfDoxy] = compute_DOXY_27(descProfRawDoxy, descProfPres, descProfTemp, descProfSal);
             [parkDoxy] = compute_DOXY_27(parkRawDoxy, parkPres, parkTemp, parkSal);
             [ascProfDoxy] = compute_DOXY_27(ascProfRawDoxy, ascProfPres, ascProfTemp, ascProfSal);
-         elseif ((a_decoderId == 28) || (a_decoderId == 29))
-            [descProfDoxy] = compute_DOXY_28_29(descProfRawDoxy, descProfPres, descProfTemp, descProfSal);
-            [parkDoxy] = compute_DOXY_28_29(parkRawDoxy, parkPres, parkTemp, parkSal);
-            [ascProfDoxy] = compute_DOXY_28_29(ascProfRawDoxy, ascProfPres, ascProfTemp, ascProfSal);
+         elseif (a_decoderId == 28)
+            [descProfDoxy] = compute_DOXY_28(descProfRawDoxy, descProfPres, descProfTemp, descProfSal);
+            [parkDoxy] = compute_DOXY_28(parkRawDoxy, parkPres, parkTemp, parkSal);
+            [ascProfDoxy] = compute_DOXY_28(ascProfRawDoxy, ascProfPres, ascProfTemp, ascProfSal);
+         elseif (a_decoderId == 29)
+            [descProfDoxy] = compute_DOXY_29(descProfRawDoxy, descProfPres, descProfTemp, descProfSal);
+            [parkDoxy] = compute_DOXY_29(parkRawDoxy, parkPres, parkTemp, parkSal);
+            [ascProfDoxy] = compute_DOXY_29(ascProfRawDoxy, ascProfPres, ascProfTemp, ascProfSal);
          end
          
          % take float clock drift into account to correct float dates
@@ -769,7 +773,10 @@ for idCy = 1:length(a_cycleList)
                   lastArgosMsgDateOfPrevCycle);
                
                % create drift data set
-               nbDriftMeas = tabTech1(30);
+               nbDriftMeas = [];
+               if (~isempty(tabTech1))
+                  nbDriftMeas = tabTech1(30);
+               end
                [parkOcc, parkDate, parkTransDate, parkPres, parkTemp, parkSal] = ...
                   create_prv_drift_30(tabDriftCTD, nbDriftMeas, ...
                   descentStartDate, floatClockDrift, ...
@@ -990,7 +997,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = update_output_cycle_number_argos( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle);
    
-   % set TET as cycle start time of the next cycle (on ly for post 2013 firmware)
+   % set TET as cycle start time of the next cycle (only for post 2013 firmware)
    [o_tabTrajNMeas, o_tabTrajNCycle] = finalize_trajectory_data_argos( ...
       o_tabTrajNMeas, o_tabTrajNCycle);
 

@@ -4,21 +4,23 @@
 % cookbook.
 %
 % SYNTAX :
-%  [o_locDate, o_locLon, o_locLat, o_locQc, o_firstMsgTime] = ...
+%  [o_locDate, o_locLon, o_locLat, o_locQc, o_firstMsgTime, o_lastCycleFlag] = ...
 %    compute_profile_location_from_iridium_locations_ir_sbd2( ...
 %    a_iridiumMailData, a_cycleNumber, a_profileNumber)
 %
 % INPUT PARAMETERS :
 %   a_iridiumMailData : Iridium mail contents
 %   a_cycleNumber     : concerned cycle number
-%   a_profileNumber     : concerned profile number
+%   a_profileNumber   : concerned profile number
 %
 % OUTPUT PARAMETERS :
-%   o_locDate      : profile location date
-%   o_locLon       : profile location longitude
-%   o_locLat       : profile location latitude
-%   o_locQc        : profile location Qc
-%   o_firstMsgTime : first message time
+%   o_locDate       : profile location date
+%   o_locLon        : profile location longitude
+%   o_locLat        : profile location latitude
+%   o_locQc         : profile location Qc
+%   o_firstMsgTime  : first message time
+%   o_lastCycleFlag : 1 if the concerned cycle and profile is the last received
+%                     one
 %
 % EXAMPLES :
 %
@@ -28,7 +30,7 @@
 % RELEASES :
 %   12/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_locDate, o_locLon, o_locLat, o_locQc, o_firstMsgTime] = ...
+function [o_locDate, o_locLon, o_locLat, o_locQc, o_firstMsgTime, o_lastCycleFlag] = ...
    compute_profile_location_from_iridium_locations_ir_sbd2( ...
    a_iridiumMailData, a_cycleNumber, a_profileNumber)
 
@@ -41,6 +43,7 @@ o_locLon = [];
 o_locLat = [];
 o_locQc = [];
 o_firstMsgTime = [];
+o_lastCycleFlag = [];
 
 
 % process the contents of the Iridium mail associated to the current cycle
@@ -62,6 +65,14 @@ if (~isempty(idFCyProfNum))
       o_locQc = '2';
    end
    o_firstMsgTime = min(timeList);
+   
+   o_lastCycleFlag = 0;
+   if (a_cycleNumber == max([a_iridiumMailData.floatCycleNumber]))
+      idFCyNum = find([a_iridiumMailData.floatCycleNumber] == a_cycleNumber);
+      if (a_profileNumber == max([a_iridiumMailData(idFCyNum).floatProfileNumber]))
+         o_lastCycleFlag = 1;
+      end
+   end
 end
 
 return;

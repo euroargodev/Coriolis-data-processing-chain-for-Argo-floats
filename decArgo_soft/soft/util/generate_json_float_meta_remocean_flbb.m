@@ -24,20 +24,27 @@ function generate_json_float_meta_remocean_flbb
 % meta-data file exported from Coriolis data base
 % floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150519.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\export_JPR_from_VB_Rem_all_20160511.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 
 % list of concerned floats
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_ir_sbd_rem_all.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_all_20160512.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_flbb_20160512.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
 
 % calibration coefficient file decoded from data
 calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
+calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % directory of individual configuration commands report files
 % inputDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\ConfigAtLaunch\FLBB\';
 inputDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\ConfigAtLaunch\ArvorCM\';
+inputDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\ConfigAtLaunch\FLBB\';
 
 % directory of individual json float meta-data files
 outputDirName = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];

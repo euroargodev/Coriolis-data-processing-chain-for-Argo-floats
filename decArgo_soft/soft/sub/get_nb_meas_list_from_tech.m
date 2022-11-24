@@ -65,6 +65,12 @@ switch (a_decoderId)
       nbMeasAscShallow = a_tabTech(39);
       nbMeasAscDeep = a_tabTech(40);
       
+   case {2001, 2002}
+      nbMeasDescShallow = 0;
+      nbMeasDescDeep = a_tabTech(19);
+      nbMeasAscShallow = 0;
+      nbMeasAscDeep = a_tabTech(21);
+      
    otherwise
       fprintf('WARNING: Float #%d: Nothing done yet in get_nb_meas_list_from_tech for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

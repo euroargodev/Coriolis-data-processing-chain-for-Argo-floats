@@ -1,16 +1,16 @@
 % ------------------------------------------------------------------------------
-% Convert oxygen sensor measurements (MOLAR_DOXY) to dissolved oxygen
-% measurements (DOXY).
+% Compute dissolved oxygen measurements (DOXY) from oxygen sensor measurements
+% (MOLAR_DOXY).
 %
 % SYNTAX :
 % [o_doxyValues] = compute_DOXY_4_19_25(a_molarDoxyValues, ...
-%    a_presValues, a_tempValues, a_salValues)
+%    a_presValues, a_tempValues, a_psalValues)
 %
 % INPUT PARAMETERS :
 %   a_molarDoxyValues : oxygen sensor measurements
 %   a_presValues      : pressure measurement values
 %   a_tempValues      : temperature measurement values
-%   a_salValues       : salinity measurement values
+%   a_psalValues       : salinity measurement values
 %
 % OUTPUT PARAMETERS :
 %   o_doxyValues : dissolved oxygen values
@@ -24,10 +24,7 @@
 %   05/20/2011 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_doxyValues] = compute_DOXY_4_19_25(a_molarDoxyValues, ...
-   a_presValues, a_tempValues, a_salValues)
-
-% output parameters initialization
-o_doxyValues = [];
+   a_presValues, a_tempValues, a_psalValues)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -45,14 +42,29 @@ global g_decArgo_salDef;
 % arrays to store calibration information
 global g_decArgo_calibInfo;
 
-% 07/07/2011 C.Lagadec/J.P.Rannou (needed on Linux platform?)
-if isempty(a_molarDoxyValues)
+% retrieve global coefficient default values
+global g_decArgo_doxy_201and202_201_301_d0;
+global g_decArgo_doxy_201and202_201_301_d1;
+global g_decArgo_doxy_201and202_201_301_d2;
+global g_decArgo_doxy_201and202_201_301_d3;
+global g_decArgo_doxy_201and202_201_301_sPreset;
+global g_decArgo_doxy_201and202_201_301_b0;
+global g_decArgo_doxy_201and202_201_301_b1;
+global g_decArgo_doxy_201and202_201_301_b2;
+global g_decArgo_doxy_201and202_201_301_b3;
+global g_decArgo_doxy_201and202_201_301_c0;
+global g_decArgo_doxy_201and202_201_301_pCoef2;
+global g_decArgo_doxy_201and202_201_301_pCoef3;
+
+% output parameters initialization
+o_doxyValues = ones(length(a_molarDoxyValues), 1)*g_decArgo_doxyDef;
+
+
+if (isempty(a_molarDoxyValues))
    return;
 end
 
-
-% convert MOLAR_DOXY to DOXY
-o_doxyValues = ones(length(a_molarDoxyValues), 1)*g_decArgo_doxyDef;
+% get calibration information
 if (isempty(g_decArgo_calibInfo))
    fprintf('WARNING: Float #%d Cycle #%d: DOXY calibration reference salinity is missing\n', ...
       g_decArgo_floatNum, ...
@@ -71,28 +83,40 @@ idDef = find( ...
    (a_molarDoxyValues == g_decArgo_molarDoxyCountsDef) | ...
    (a_presValues == g_decArgo_presDef) | ...
    (a_tempValues == g_decArgo_tempDef) | ...
-   (a_salValues == g_decArgo_salDef));
-idNoDef = setdiff([1:length(o_doxyValues)], idDef);
+   (a_psalValues == g_decArgo_salDef));
+idNoDef = setdiff(1:length(o_doxyValues), idDef);
 
-molarDoxyValues = a_molarDoxyValues(idNoDef);
-presValues = a_presValues(idNoDef);
-tempValues = a_tempValues(idNoDef);
-salValues = a_salValues(idNoDef);
-
-% salinity effect correction
-oxygenSalComp = calcoxy_salcomp(molarDoxyValues, salValues, tempValues, doxyCalibRefSalinity);
-
-% pressure effect correction
-oxygenPresComp = calcoxy_prescomp(oxygenSalComp, presValues);
-
-% compute potential temperature and potential density
-tpot = tetai(presValues, tempValues, salValues, 0);
-[null, sigma0] = swstat90(salValues, tpot, 0);
-rho = (sigma0+1000)/1000;
-
-% units convertion (micromol/L to micromol/kg)
-oxyValues = oxygenPresComp ./ rho;
-
-o_doxyValues(idNoDef) = oxyValues;
+if (~isempty(idNoDef))
+   molarDoxyValues = a_molarDoxyValues(idNoDef);
+   presValues = a_presValues(idNoDef);
+   tempValues = a_tempValues(idNoDef);
+   psalValues = a_psalValues(idNoDef);
+   
+   % salinity effect correction
+   oxygenSalComp = calcoxy_salcomp(molarDoxyValues, tempValues, psalValues, doxyCalibRefSalinity, ...
+      g_decArgo_doxy_201and202_201_301_d0, ...
+      g_decArgo_doxy_201and202_201_301_d1, ...
+      g_decArgo_doxy_201and202_201_301_d2, ...
+      g_decArgo_doxy_201and202_201_301_d3, ...
+      g_decArgo_doxy_201and202_201_301_sPreset, ...
+      g_decArgo_doxy_201and202_201_301_b0, ...
+      g_decArgo_doxy_201and202_201_301_b1, ...
+      g_decArgo_doxy_201and202_201_301_b2, ...
+      g_decArgo_doxy_201and202_201_301_b3, ...
+      g_decArgo_doxy_201and202_201_301_c0 ...
+      );
+   
+   % pressure effect correction
+   oxygenPresComp = calcoxy_prescomp(oxygenSalComp, presValues, tempValues, ...
+      g_decArgo_doxy_201and202_201_301_pCoef2, ...
+      g_decArgo_doxy_201and202_201_301_pCoef3 ...
+      );
+   
+   % units convertion (micromol/L to micromol/kg)
+   rho = potential_density(presValues, tempValues, psalValues);
+   oxyValues = oxygenPresComp ./ rho;
+   
+   o_doxyValues(idNoDef) = oxyValues;
+end
 
 return;

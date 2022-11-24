@@ -65,7 +65,6 @@ if (~isempty(g_decArgo_koSensorState))
                      % PRES_QC is not modified (except if it is the CTD sensor)
                      continue;
                   end
-                  profParam.name
                   param = get_netcdf_param_attributes(profParam.name);
                   paramData = prof.data(:, idParam);
                   paramDataQc = ones(length(paramData), 1)*g_decArgo_qcDef;

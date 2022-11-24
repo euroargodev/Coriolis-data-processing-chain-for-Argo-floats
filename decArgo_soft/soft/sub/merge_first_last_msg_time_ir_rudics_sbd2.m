@@ -202,68 +202,6 @@ for idCyc = 1:length(uCycleNum)
    end
 end
 
-% check that all expected MC are present
-
-% measurement codes expected to be in each cycle for these floats (primary and
-% secondary MC experienced by Remocean floats)
-expMcList = [ ...
-   g_MC_DST ...
-   g_MC_FST ...
-   g_MC_PST ...
-   g_MC_PET ...
-   g_MC_DPST ...
-   g_MC_AST ...
-   g_MC_AET ...
-   g_MC_TST ...
-   g_MC_TET ...
-   ];
-
-cycleNumList = [a_tabTrajNMeas.cycleNumber];
-profNumList = [a_tabTrajNMeas.profileNumber];
-uCycleNum = sort(unique(cycleNumList));
-uProfNum = sort(unique(profNumList));
-for idCyc = 1:length(uCycleNum)
-   cycleNum = uCycleNum(idCyc);
-   if (cycleNum == -1)
-      % cycle number = -1 is used to store launch location and date only (no
-      % need to add all the expected MCs)
-      continue;
-   end
-   for idPrf = 1:length(uProfNum)
-      profNum = uProfNum(idPrf);
-      
-      idData = find( ...
-         (cycleNumList == cycleNum) & ...
-         (profNumList == profNum));
-      
-      if (~isempty(idData))
-         
-         measCodeList = [];
-         for idD = 1:length(idData)
-            tabMeas = a_tabTrajNMeas(idData(idD)).tabMeas;
-            if (~isempty(tabMeas))
-               measCodeList = [measCodeList [tabMeas.measCode]];
-            end
-         end
-         measCodeList = unique(measCodeList);
-         
-         % add MCs so that all expected ones will be present
-         mcList = setdiff(expMcList, measCodeList);
-         measData = [];
-         for idMc = 1:length(mcList)
-            measStruct = create_one_meas_float_time(mcList(idMc), -1, g_JULD_STATUS_9, 0);
-            measStruct.cyclePhase = g_decArgo_phaseSatTrans;
-            measData = [measData; measStruct];
-         end
-         
-         % store the data
-         if (~isempty(measData))
-            a_tabTrajNMeas(idData(end)).tabMeas = [a_tabTrajNMeas(idData(end)).tabMeas; measData];
-         end
-      end
-   end
-end
-
 % N_CYCLE DATA
 
 if (~isempty(a_tabTrajNCycle))
@@ -309,6 +247,80 @@ if (~isempty(a_tabTrajNCycle))
             (profNumList == profNum));
 
          if (~isempty(idData))
+            
+            % prelude data
+            idPreMisAndSurfWait = find( ...
+               ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phasePreMission) | ...
+               ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phaseSurfWait));
+            if (~isempty(idPreMisAndSurfWait))
+               
+               idFinal = find( ...
+                  ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phaseSurfWait) & ...
+                  ([a_tabTrajNCycle(idData).surfOnly] == 2));
+               if (~isempty(idFinal))
+                  
+                  idFinal = idFinal(end);
+                  idList = idData(idPreMisAndSurfWait);
+                  
+                  dates = [];
+                  status = [];
+                  for id = idList
+                     if (~isempty(a_tabTrajNCycle(id).juldFirstMessage))
+                        dates = [dates; a_tabTrajNCycle(id).juldFirstMessage];
+                        status = [status; a_tabTrajNCycle(id).juldFirstMessageStatus];
+                     end
+                  end
+                  if (~isempty(dates))
+                     [minDate, idMin] = min(dates);
+                     a_tabTrajNCycle(idData(idFinal)).juldFirstMessage = minDate;
+                     a_tabTrajNCycle(idData(idFinal)).juldFirstMessageStatus = status(idMin);
+                  end
+                                    
+                  dates = [];
+                  status = [];
+                  for id = idList
+                     if (~isempty(a_tabTrajNCycle(id).juldFirstLocation))
+                        dates = [dates; a_tabTrajNCycle(id).juldFirstLocation];
+                        status = [status; a_tabTrajNCycle(id).juldFirstLocationStatus];
+                     end
+                  end
+                  if (~isempty(dates))
+                     [minDate, idMin] = min(dates);
+                     a_tabTrajNCycle(idData(idFinal)).juldFirstLocation = minDate;
+                     a_tabTrajNCycle(idData(idFinal)).juldFirstLocationStatus = status(idMin);
+                  end
+                  
+                  dates = [];
+                  status = [];
+                  for id = idData(idPreMisAndSurfWait)
+                     if (~isempty(a_tabTrajNCycle(id).juldLastLocation))
+                        dates = [dates; a_tabTrajNCycle(id).juldLastLocation];
+                        status = [status; a_tabTrajNCycle(id).juldLastLocationStatus];
+                     end
+                  end
+                  if (~isempty(dates))
+                     [maxDate, idMax] = max(dates);
+                     a_tabTrajNCycle(idData(idFinal)).juldLastLocation = maxDate;
+                     a_tabTrajNCycle(idData(idFinal)).juldLastLocationStatus = status(idMax);
+                  end
+                  
+                  dates = [];
+                  status = [];
+                  for id = idList
+                     if (~isempty(a_tabTrajNCycle(id).juldLastMessage))
+                        dates = [dates; a_tabTrajNCycle(id).juldLastMessage];
+                        status = [status; a_tabTrajNCycle(id).juldLastMessageStatus];
+                     end
+                  end
+                  if (~isempty(dates))
+                     [maxDate, idMax] = max(dates);
+                     a_tabTrajNCycle(idData(idFinal)).juldLastMessage = maxDate;
+                     a_tabTrajNCycle(idData(idFinal)).juldLastMessageStatus = status(idMax);
+                  end
+               end
+            end            
+            
+            % after first dive data
             idSatTransAndEol = find( ...
                ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phaseSatTrans) | ...
                ([a_tabTrajNCycle(idData).cyclePhase] == g_decArgo_phaseEndOfLife));
@@ -386,11 +398,82 @@ if (~isempty(a_tabTrajNCycle))
    % clean the data
    idDel = find( ...
       ([a_tabTrajNCycle.cyclePhase] == g_decArgo_phasePreMission) | ...
-      (([a_tabTrajNCycle.cyclePhase] == g_decArgo_phaseSatTrans) & ...
-      ([a_tabTrajNCycle.surfOnly] == 1)) | ...
-      ([a_tabTrajNCycle.cyclePhase] == g_decArgo_phaseSurfWait) | ...
+      (([a_tabTrajNCycle.cyclePhase] == g_decArgo_phaseSatTrans) & ([a_tabTrajNCycle.surfOnly] == 1)) | ...
+      (([a_tabTrajNCycle.cyclePhase] == g_decArgo_phaseSurfWait) & ([a_tabTrajNCycle.surfOnly] ~= 2)) | ...
       ([a_tabTrajNCycle.cyclePhase] == g_decArgo_phaseEndOfLife));
    a_tabTrajNCycle(idDel) = [];
+end
+
+% check that all expected MC are present
+
+% measurement codes expected to be in each cycle for these floats (primary and
+% secondary MC experienced by Remocean floats)
+expMcList = [ ...
+   g_MC_DST ...
+   g_MC_FST ...
+   g_MC_PST ...
+   g_MC_PET ...
+   g_MC_DPST ...
+   g_MC_AST ...
+   g_MC_AET ...
+   g_MC_TST ...
+   g_MC_TET ...
+   ];
+
+cycleNumList = [a_tabTrajNMeas.cycleNumber];
+profNumList = [a_tabTrajNMeas.profileNumber];
+uCycleNum = sort(unique(cycleNumList));
+uProfNum = sort(unique(profNumList));
+for idCyc = 1:length(uCycleNum)
+   cycleNum = uCycleNum(idCyc);
+   if (cycleNum == -1)
+      % cycle number = -1 is used to store launch location and date only (no
+      % need to add all the expected MCs)
+      continue;
+   end
+   for idPrf = 1:length(uProfNum)
+      profNum = uProfNum(idPrf);
+      
+      idData = find( ...
+         (cycleNumList == cycleNum) & ...
+         (profNumList == profNum));
+      
+      if (~isempty(idData))
+         
+         measCodeList = [];
+         for idD = 1:length(idData)
+            tabMeas = a_tabTrajNMeas(idData(idD)).tabMeas;
+            if (~isempty(tabMeas))
+               measCodeList = [measCodeList [tabMeas.measCode]];
+            end
+         end
+         measCodeList = unique(measCodeList);
+         
+         % add MCs so that all expected ones will be present
+         mcList = setdiff(expMcList, measCodeList);
+         measData = [];
+         for idMc = 1:length(mcList)
+            measStruct = create_one_meas_float_time(mcList(idMc), -1, g_JULD_STATUS_9, 0);
+            measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+            measData = [measData; measStruct];
+            
+            if (~isempty(a_tabTrajNCycle))
+               idF = find( ...
+                  ([a_tabTrajNCycle.cycleNumber] == cycleNum) & ...
+                  ([a_tabTrajNCycle.profileNumber] == profNum) & ...
+                  ([a_tabTrajNCycle.surfOnly] ~= 2));
+               if (~isempty(idF))
+                  [a_tabTrajNCycle(idF)] = set_status_of_n_cycle_juld(a_tabTrajNCycle(idF), mcList(idMc), g_JULD_STATUS_9);
+               end
+            end
+         end
+         
+         % store the data
+         if (~isempty(measData))
+            a_tabTrajNMeas(idData(end)).tabMeas = [a_tabTrajNMeas(idData(end)).tabMeas; measData];
+         end
+      end
+   end
 end
 
 % store output data

@@ -139,7 +139,7 @@ DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 % FLOAT_LIST_FILE_NAME = 'C:/users/RNU/Argo/Aco/12833_update_decPrv_pour_RT_TRAJ3/lists/nke_all_with_DM.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\nke_all_with_DM_bis_20151003.txt';
 
-% default list of floats to process
+% list to link DM and RT cycle numbers
 % DM_2_RT_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\DM_2_RT_link.txt';
 % DM_2_RT_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\DM_2_RT_link_for_Arvor_Ir.txt';
 DM_2_RT_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\DM_2_RT_link_bis_20151003.txt';

@@ -1,6 +1,6 @@
 % ------------------------------------------------------------------------------
 % Create and add the vertical sampling scheme information to the profiles of the
-% Argos floats.
+% Iridium floats.
 %
 % SYNTAX :
 %  [o_tabProfiles] = add_vertical_sampling_scheme_ir_sbd(a_tabProfiles, a_decoderId)

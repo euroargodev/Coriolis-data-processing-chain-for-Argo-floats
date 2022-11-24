@@ -2,15 +2,17 @@
 % Read and store the Iridium e-mail contents and extract the attachement if any.
 %
 % SYNTAX :
-%  [o_mailContents, o_attachmentFound] = read_mail_and_extract_attachment(a_fileName, a_dirName)
+%  [o_mailContents, o_attachmentFound] = read_mail_and_extract_attachment( ...
+%    a_fileName, a_inputDirName, a_outputDirName)
 %
 % INPUT PARAMETERS :
-%   a_fileName : e-mail file name
-%   a_dirName  : e-mail file directory name
+%   a_fileName      : e-mail file name
+%   a_inputDirName  : name of input e-mail file directory
+%   a_outputDirName : name of output SBD file directory
 %
 % OUTPUT PARAMETERS :
 %   o_mailContents    : e-mail contents
-%   o_attachmentFound : attacheent exists flag
+%   o_attachmentFound : attachement exists flag
 %
 % EXAMPLES :
 %
@@ -20,7 +22,8 @@
 % RELEASES :
 %   10/14/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_mailContents, o_attachmentFound] = read_mail_and_extract_attachment(a_fileName, a_dirName)
+function [o_mailContents, o_attachmentFound] = read_mail_and_extract_attachment( ...
+   a_fileName, a_inputDirName, a_outputDirName)
 
 % output parameters initialization
 o_mailContents = '';
@@ -45,7 +48,7 @@ SBD_FILE_NAME = 'filename=';
 BOUNDARY_END = '----------';
 
 % mail file path name to process
-mailFilePathName = [a_dirName '/' a_fileName];
+mailFilePathName = [a_inputDirName '/' a_fileName];
 
 if ~(exist(mailFilePathName, 'file') == 2)
    fprintf('ERROR: Mail file not found: %s\n', mailFilePathName);
@@ -180,7 +183,7 @@ end
 if (~isempty(sbdData))
    
    if (~isempty(strfind(a_fileName, mailContents.attachementFileName(1:end-4))))
-      sbdPathFileName = [a_dirName '/' a_fileName(1:end-4) '.sbd'];
+      sbdPathFileName = [a_outputDirName '/' a_fileName(1:end-4) '.sbd'];
       [decodedSbdData] = base64decode(sbdData, sbdPathFileName, 'matlab');
       info = whos('decodedSbdData');
       if (info.bytes ~= o_mailContents.messageSize)

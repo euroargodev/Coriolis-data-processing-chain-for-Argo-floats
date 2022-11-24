@@ -22,16 +22,21 @@ function generate_csv_meta_remocean(varargin)
 
 % calibration coefficients decoded from data
 calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
+calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % show mode state decoded from data
 showModeFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\ShowMode\show_mode.txt';
+showModeFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\DataFromFloatToMeta\ShowMode\show_mode.txt';
 
 % SUNA output pixel numbers decoded from data
 outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
+outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
 
 % meta-data file exported from Coriolis data base
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor-Cm-Bio\DBexport_arvorCM_fromVB20151030.txt';
 dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\export_JPR_from_VB_Rem_all_20160511.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
 
 % directory to store the log and csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -895,31 +900,31 @@ switch a_inputSensorName
       switch a_decId
          case {105, 106, 107, 108, 109, 301}
             o_paramName = [ ...
-               {'C1PHASE_DOXY'} {'C2PHASE_DOXY'} {'TEMP_DOXY'} ...
+               {'C1PHASE_DOXY'} {'C2PHASE_DOXY'} {'TEMP_DOXY'} {'PPOX_DOXY'} ...
                {'DOXY'} ...
                ];
-            o_paramDimLevel = [101 102 103 104];
+            o_paramDimLevel = [101 102 103 109 104];
             o_paramSensor = [ ...
-               {'OPTODE_DOXY'} {'OPTODE_DOXY'} {'OPTODE_DOXY'} ...
+               {'OPTODE_DOXY'} {'OPTODE_DOXY'} {'OPTODE_DOXY'} {'OPTODE_DOXY'}...
                {'OPTODE_DOXY'} ...
                ];
             o_paramUnits = [ ...
-               {'degree'} {'degree'} {'degree_Celsius'} ...
+               {'degree'} {'degree'} {'degree_Celsius'} {'millibar'} ...
                {'micromole/kg'} ...
                ];
             
          case {302, 303}
             o_paramName = [ ...
-               {'DPHASE_DOXY'} {'TEMP_DOXY'} ...
+               {'DPHASE_DOXY'} {'TEMP_DOXY'} {'PPOX_DOXY'} ...
                {'DOXY'} ...
                ];
-            o_paramDimLevel = [101 102 103 104];
+            o_paramDimLevel = [101 103 109 104];
             o_paramSensor = [ ...
-               {'OPTODE_DOXY'} {'OPTODE_DOXY'} ...
+               {'OPTODE_DOXY'} {'OPTODE_DOXY'} {'OPTODE_DOXY'} ...
                {'OPTODE_DOXY'} ...
                ];
             o_paramUnits = [ ...
-               {'degree'} {'degree_Celsius'} ...
+               {'degree'} {'degree_Celsius'} {'millibar'} ...
                {'micromole/kg'} ...
                ];
             
@@ -1184,18 +1189,18 @@ switch a_parameterName
    
    % CTD
    case {'PRES'}
-      o_calibEquation = '';
-      o_calibCoef = '';
+      o_calibEquation = 'none';
+      o_calibCoef = 'none';
       o_calibComment = '';
       
    case {'TEMP'}
-      o_calibEquation = '';
-      o_calibCoef = '';
+      o_calibEquation = 'none';
+      o_calibCoef = 'none';
       o_calibComment = '';
       
    case {'PSAL'}
-      o_calibEquation = '';
-      o_calibCoef = '';
+      o_calibEquation = 'none';
+      o_calibCoef = 'none';
       o_calibComment = '';
       
       % OPTODE
@@ -1219,6 +1224,11 @@ switch a_parameterName
       o_calibCoef = '';
       o_calibComment = '';
       
+   case {'PPOX_DOXY'}
+      o_calibEquation = '';
+      o_calibCoef = '';
+      o_calibComment = '';
+      
    case {'DOXY'}
       o_calibEquation = '';
       o_calibCoef = '';
@@ -1226,14 +1236,14 @@ switch a_parameterName
       
       % ECO3
    case {'FLUORESCENCE_CHLA'}
-      o_calibEquation = '';
-      o_calibCoef = '';
+      o_calibEquation = 'none';
+      o_calibCoef = 'none';
       o_calibComment = 'Uncalibrated chlorophyll-a fluorescence measurement';
       
    case {'BETA_BACKSCATTERING532', ...
          'BETA_BACKSCATTERING700'}
-      o_calibEquation = '';
-      o_calibCoef = '';
+      o_calibEquation = 'none';
+      o_calibCoef = 'none';
       o_calibComment = 'Uncalibrated backscattering measurement';
       
    case {'FLUORESCENCE_CDOM'}
@@ -1265,10 +1275,10 @@ switch a_parameterName
       end
       
       if ((~isempty(scaleFactChloroA)) && (~isempty(darkCountChloroA)))
-         o_calibEquation = 'CHLA(i)=(FLUORESCENCE_CHLA(i)-DARK_CHLA)*SCALE_CHLA';
-         o_calibCoef = sprintf('DARK_CHLA=%g, SCALE_CHLA=%g', ...
-            darkCountChloroA, scaleFactChloroA);
-         o_calibComment = '';
+         o_calibEquation = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
+         o_calibCoef = sprintf('DARK_CHLA=%s, SCALE_CHLA=%s', ...
+            num_2_str(darkCountChloroA), num_2_str(scaleFactChloroA));
+         o_calibComment = 'No DARK_CHLA_O provided';
       end
       
    case {'BBP532'}
@@ -1277,10 +1287,10 @@ switch a_parameterName
       [khiCoefBackscatter] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'KhiCoefBackscatter');
       %       [molecularBackscatteringOfWaterBackscatter532] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'MolecularBackscatteringOfWaterBackscatter532');
       
-      o_calibEquation = 'BBP532(i)=2*pi*chi*((BETA_BACKSCATTERING532(i)-DARK_BACKSCATTERING532)*SCALE_BACKSCATTERING532)-bbw';
-      o_calibCoef = sprintf('DARK_BACKSCATTERING532=%g, SCALE_BACKSCATTERING532=%g, chi=%g, bbw at 532 nm depends on temperature and salinity)', ...
-         darkCountBackscatter532, scaleFactBackscatter532, khiCoefBackscatter);
-      o_calibComment = 'Sullivan et al. 2009, IOCCG 2006';
+      o_calibEquation = 'BBP532=2*pi*khi*((BETA_BACKSCATTERING532-DARK_BACKSCATTERING532)*SCALE_BACKSCATTERING532-BETASW532)';
+      o_calibCoef = sprintf('DARK_BACKSCATTERING532=%s, SCALE_BACKSCATTERING532=%s, khi=%s, BETASW532 (contribution of pure sea water) is calculated at 124 angularDeg', ...
+         num_2_str(darkCountBackscatter532), num_2_str(scaleFactBackscatter532), num_2_str(khiCoefBackscatter));
+      o_calibComment = 'No DARK_BACKSCATTERING532_O provided, Sullivan et al., 2012, Zhang et al., 2009, BETASW532 is the contribution by the pure seawater at 532nm, the calculation can be found at http://doi.org/10.17882/42916';
       
       % ECO3 or FLBB
    case {'BBP700'}
@@ -1308,40 +1318,41 @@ switch a_parameterName
       
       if ((~isempty(scaleFactBackscatter700)) && (~isempty(darkCountBackscatter700)) && ...
             (~isempty(khiCoefBackscatter)))
-         o_calibEquation = 'BBP700(i)=2*pi*chi*((BETA_BACKSCATTERING700(i)-DARK_BACKSCATTERING700)*SCALE_BACKSCATTERING700)-bbw';
-         o_calibCoef = sprintf('DARK_BACKSCATTERING700=%g, SCALE_BACKSCATTERING700=%g, chi=%g, bbw at 700 nm depends on temperature and salinity', ...
-            darkCountBackscatter700, scaleFactBackscatter700, khiCoefBackscatter);
-         o_calibComment = 'Sullivan et al. 2009, IOCCG 2006';
+         o_calibEquation = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700)*SCALE_BACKSCATTERING700-BETASW700)';
+         o_calibCoef = sprintf('DARK_BACKSCATTERING700=%s, SCALE_BACKSCATTERING700=%s, khi=%s, BETASW700 (contribution of pure sea water) is calculated at 124 angularDeg', ...
+            num_2_str(darkCountBackscatter700), num_2_str(scaleFactBackscatter700), num_2_str(khiCoefBackscatter));
+         o_calibComment = 'No DARK_BACKSCATTERING700_O provided, Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916';
+
       end
       
    case {'CDOM'}
       [scaleFactCDOM] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'ScaleFactCDOM');
       [darkCountCDOM] = get_calib_coef(a_calibData, a_floatNum, 'ECO3', 'DarkCountCDOM');
       
-      o_calibEquation = 'CDOM(i)=(FLUORESCENCE_CDOM(i)-DARK_CDOM)*SCALE_CDOM';
-      o_calibCoef = sprintf('DARK_CDOM=%g, SCALE_CDOM=%g', ...
-         darkCountCDOM, scaleFactCDOM);
+      o_calibEquation = 'CDOM=(FLUORESCENCE_CDOM-DARK_CDOM)*SCALE_CDOM';
+      o_calibCoef = sprintf('DARK_CDOM=%s, SCALE_CDOM=%s', ...
+         num_2_str(darkCountCDOM), num_2_str(scaleFactCDOM));
       o_calibComment = '';
       
       % OCR
    case {'RAW_DOWNWELLING_IRRADIANCE380'}
-      o_calibEquation = '';
-      o_calibCoef = '';
+      o_calibEquation = 'none';
+      o_calibCoef = 'none';
       o_calibComment = 'Uncalibrated downwelling irradiance measurement at 380 nm';
       
    case {'RAW_DOWNWELLING_IRRADIANCE412'}
-      o_calibEquation = '';
-      o_calibCoef = '';
+      o_calibEquation = 'none';
+      o_calibCoef = 'none';
       o_calibComment = 'Uncalibrated downwelling irradiance measurement at 412 nm';
       
    case {'RAW_DOWNWELLING_IRRADIANCE490'}
-      o_calibEquation = '';
-      o_calibCoef = '';
+      o_calibEquation = 'none';
+      o_calibCoef = 'none';
       o_calibComment = 'Uncalibrated downwelling irradiance measurement at 490 nm';
       
    case {'RAW_DOWNWELLING_PAR'}
-      o_calibEquation = '';
-      o_calibCoef = '';
+      o_calibEquation = 'none';
+      o_calibCoef = 'none';
       o_calibComment = 'Uncalibrated downwelling PAR measurement';
       
    case {'DOWN_IRRADIANCE380'}
@@ -1349,9 +1360,9 @@ switch a_parameterName
       [a1Lambda380] = get_calib_coef(a_calibData, a_floatNum, 'OCR', 'A1Lambda380');
       [lmLambda380] = get_calib_coef(a_calibData, a_floatNum, 'OCR', 'LmLambda380');
       
-      o_calibEquation = 'DOWN_IRRADIANCE380(i)=A1_380*(RAW_DOWNWELLING_IRRADIANCE380(i)-A0_380)*Im_380';
-      o_calibCoef = sprintf('A1_380=%g, A0_380=%g, Im_380=%g', ...
-         a1Lambda380, a0Lambda380, lmLambda380);
+      o_calibEquation = 'DOWN_IRRADIANCE380=0.01*A1_380*(RAW_DOWNWELLING_IRRADIANCE380-A0_380)*lm_380';
+      o_calibCoef = sprintf('A1_380=%s, A0_380=%s, lm_380=%s', ...
+         num_2_str(a1Lambda380), num_2_str(a0Lambda380), num_2_str(lmLambda380));
       o_calibComment = '';
       
    case {'DOWN_IRRADIANCE412'}
@@ -1359,9 +1370,9 @@ switch a_parameterName
       [a1Lambda412] = get_calib_coef(a_calibData, a_floatNum, 'OCR', 'A1Lambda412');
       [lmLambda412] = get_calib_coef(a_calibData, a_floatNum, 'OCR', 'LmLambda412');
       
-      o_calibEquation = 'DOWN_IRRADIANCE412(i)=A1_412*(RAW_DOWNWELLING_IRRADIANCE412(i)-A0_412)*Im_412';
-      o_calibCoef = sprintf('A1_412=%g, A0_412=%g, Im_412=%g', ...
-         a1Lambda412, a0Lambda412, lmLambda412);
+      o_calibEquation = 'DOWN_IRRADIANCE412=0.01*A1_412*(RAW_DOWNWELLING_IRRADIANCE412-A0_412)*lm_412';
+      o_calibCoef = sprintf('A1_412=%s, A0_412=%s, lm_412=%s', ...
+         num_2_str(a1Lambda412), num_2_str(a0Lambda412), num_2_str(lmLambda412));
       o_calibComment = '';
       
    case {'DOWN_IRRADIANCE490'}
@@ -1369,9 +1380,9 @@ switch a_parameterName
       [a1Lambda490] = get_calib_coef(a_calibData, a_floatNum, 'OCR', 'A1Lambda490');
       [lmLambda490] = get_calib_coef(a_calibData, a_floatNum, 'OCR', 'LmLambda490');
       
-      o_calibEquation = 'DOWN_IRRADIANCE490(i)=A1_490*(RAW_DOWNWELLING_IRRADIANCE490(i)-A0_490)*Im_490';
-      o_calibCoef = sprintf('A1_490=%g, A0_490=%g, Im_490=%g', ...
-         a1Lambda490, a0Lambda490, lmLambda490);
+      o_calibEquation = 'DOWN_IRRADIANCE490=0.01*A1_490*(RAW_DOWNWELLING_IRRADIANCE490-A0_490)*lm_490';
+      o_calibCoef = sprintf('A1_490=%s, A0_490=%s, lm_490=%s', ...
+         num_2_str(a1Lambda490), num_2_str(a0Lambda490), num_2_str(lmLambda490));
       o_calibComment = '';
       
    case {'DOWNWELLING_PAR'}
@@ -1379,9 +1390,9 @@ switch a_parameterName
       [a1PAR] = get_calib_coef(a_calibData, a_floatNum, 'OCR', 'A1PAR');
       [lmPAR] = get_calib_coef(a_calibData, a_floatNum, 'OCR', 'LmPAR');
       
-      o_calibEquation = 'DOWNWELLING_PAR(i)=A1_PAR*(RAW_DOWNWELLING_PAR(i)-A0_PAR)*Im_PAR';
-      o_calibCoef = sprintf('A1_PAR=%g, A0_PAR=%g, Im_PAR=%g', ...
-         a1PAR, a0PAR, lmPAR);
+      o_calibEquation = 'DOWNWELLING_PAR=A1_PAR*(RAW_DOWNWELLING_PAR-A0_PAR)*lm_PAR';
+      o_calibCoef = sprintf('A1_PAR=%s, A0_PAR=%s, lm_PAR=%s', ...
+         num_2_str(a1PAR), num_2_str(a0PAR), num_2_str(lmPAR));
       o_calibComment = '';
       
       % FLNTU
@@ -1428,9 +1439,9 @@ switch a_parameterName
       o_calibComment = '';
       
    case {'UV_INTENSITY_DARK_NITRATE'}
-      o_calibEquation = '';
-      o_calibCoef = '';
-      o_calibComment = '';
+      o_calibEquation = 'none';
+      o_calibCoef = 'none';
+      o_calibComment = 'Intensity of ultra violet flux dark measurement from nitrate sensor';
       
    case {'FIT_ERROR_NITRATE'}
       o_calibEquation = '';
@@ -1438,9 +1449,9 @@ switch a_parameterName
       o_calibComment = '';
       
    case {'UV_INTENSITY_NITRATE'}
-      o_calibEquation = '';
-      o_calibCoef = '';
-      o_calibComment = '';
+      o_calibEquation = 'none';
+      o_calibCoef = 'none';
+      o_calibComment = 'Intensity of ultra violet flux from nitrate sensor';
       
       % CYCLOPS
    case {'FLUORESCENCE_VOLTAGE_CHLA'}

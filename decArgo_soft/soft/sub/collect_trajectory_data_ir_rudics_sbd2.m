@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  [o_tabTrajIndex, o_tabTrajData] = collect_trajectory_data_ir_rudics_sbd2( ...
-%    a_tabProfiles, a_tabDrift, ...
+%    a_decoderId, a_tabProfiles, a_tabDrift, ...
 %    a_floatProgTech, a_floatProgParam, ...
 %    a_floatPres, a_tabTech, a_refDay, ...
 %    a_cycleStartDate, a_buoyancyRedStartDate, ...
@@ -15,6 +15,8 @@
 %    a_sensorTechCTD)
 %
 % INPUT PARAMETERS :
+%   a_decoderId              : float decoder Id
+%   a_tabProfiles            : profile data
 %   a_tabProfiles            : profile data
 %   a_tabDrift               : drift measurement data
 %   a_floatProgTech          : float prog technical data
@@ -46,7 +48,7 @@
 %   03/06/2013 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_tabTrajIndex, o_tabTrajData] = collect_trajectory_data_ir_rudics_sbd2( ...
-   a_tabProfiles, a_tabDrift, ...
+   a_decoderId, a_tabProfiles, a_tabDrift, ...
    a_floatProgTech, a_floatProgParam, ...
    a_floatPres, a_tabTech, a_refDay, ...
    a_cycleStartDate, a_buoyancyRedStartDate, ...
@@ -425,6 +427,48 @@ for idPack = 1:size(sensorTechCTDSubPres, 1)
    o_tabTrajIndex = [o_tabTrajIndex;
       250  packCycleNumber packProfileNumber -1];
    o_tabTrajData = [o_tabTrajData; {trajFromCtdTechStruct}];
+end
+
+% create IN AIR measurement profile (PPOX_DOXY)
+if (~isempty(a_tabProfiles))
+   cyNumList = unique([a_tabProfiles.cycleNumber]);
+   profNumList = unique([a_tabProfiles.profileNumber]);
+   for idCyN = 1:length(cyNumList)
+      for idProfN = 1:length(profNumList)
+         idFCtd = find(([a_tabProfiles.cycleNumber] == cyNumList(idCyN)) & ...
+            ([a_tabProfiles.profileNumber] == profNumList(idCyN)) & ...
+            ([a_tabProfiles.direction] == 'A') & ...
+            ([a_tabProfiles.sensorNumber] == 0));
+         idFDo = find(([a_tabProfiles.cycleNumber] == cyNumList(idCyN)) & ...
+            ([a_tabProfiles.profileNumber] == profNumList(idCyN)) & ...
+            ([a_tabProfiles.direction] == 'A') & ...
+            ([a_tabProfiles.sensorNumber] == 1));
+         if ((length(idFCtd) == 1) && (length(idFDo) == 1))
+            
+            [inAirMeasProfile] = create_in_air_meas_profile_ir_rudics_sbd2(a_decoderId, ...
+               a_tabProfiles(idFCtd), a_tabProfiles(idFDo));
+
+            if (~isempty(inAirMeasProfile))
+               datedMeasStruct = get_dated_meas_init_struct( ...
+                  inAirMeasProfile.cycleNumber, ...
+                  inAirMeasProfile.profileNumber, ...
+                  inAirMeasProfile.phaseNumber);
+               
+               datedMeasStruct.paramList = inAirMeasProfile.paramList;
+               datedMeasStruct.paramNumberWithSubLevels = inAirMeasProfile.paramNumberWithSubLevels;
+               datedMeasStruct.paramNumberOfSubLevels = inAirMeasProfile.paramNumberOfSubLevels;
+               datedMeasStruct.dateList = inAirMeasProfile.dateList;
+               
+               datedMeasStruct.dates = inAirMeasProfile.dates;
+               datedMeasStruct.data = inAirMeasProfile.data;
+               
+               o_tabTrajIndex = [o_tabTrajIndex;
+                  2  inAirMeasProfile.cycleNumber inAirMeasProfile.profileNumber inAirMeasProfile.phaseNumber];
+               o_tabTrajData = [o_tabTrajData; {datedMeasStruct}];
+            end
+         end
+      end
+   end
 end
 
 return;

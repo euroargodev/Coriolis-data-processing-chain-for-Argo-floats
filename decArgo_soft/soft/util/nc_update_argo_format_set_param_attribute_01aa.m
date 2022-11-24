@@ -440,7 +440,9 @@ if (exist(a_ncPathFileName, 'file') == 2)
       globalHistoryText = [datestr(datenum(dateCreation, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; '];
       globalHistoryText = [globalHistoryText ...
          datestr(datenum(historyDate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COUF software (V ' g_couf_ncUpdateArgoFormatVersion '))'];
+      netcdf.reDef(fCdf);
       netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
+      netcdf.endDef(fCdf);
       
       % update the update date
       netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), historyDate);
@@ -531,8 +533,10 @@ if (exist(a_ncPathFileName, 'file') == 2)
       globalVarId = netcdf.getConstant('NC_GLOBAL');
       globalHistoryText = [datestr(datenum(dateCreation, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; '];
       globalHistoryText = [globalHistoryText ...
-         datestr(datenum(historyDate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COUF software)'];
+         datestr(datenum(historyDate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COUF software (V ' g_couf_ncUpdateArgoFormatVersion '))'];
+      netcdf.reDef(fCdf);
       netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
+      netcdf.endDef(fCdf);
       
       % update the update date
       netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), historyDate);
@@ -561,8 +565,10 @@ if (exist(a_ncPathFileName, 'file') == 2)
       globalVarId = netcdf.getConstant('NC_GLOBAL');
       globalHistoryText = [datestr(datenum(dateCreation, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; '];
       globalHistoryText = [globalHistoryText ...
-         datestr(datenum(historyDate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COUF software)'];
+         datestr(datenum(historyDate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COUF software (V ' g_couf_ncUpdateArgoFormatVersion '))'];
+      netcdf.reDef(fCdf);
       netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
+      netcdf.endDef(fCdf);
       
       % update the update date
       netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), historyDate);

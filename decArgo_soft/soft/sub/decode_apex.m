@@ -126,26 +126,24 @@ for idFloat = 1:nbFloats
    end
    
    % check that it is an APEX float
-   if (floatDecId < 1000)
-      fprintf('ERROR: Float #%d is a PROVOR => not decoded\n', floatNum);
+   if ~((floatDecId > 1000) && (floatDecId < 2000))
+      fprintf('ERROR: Float #%d is not an Apex float => not decoded\n', floatNum);
       continue;
    end
    
    % read the NetCDF TECH parameter names
    if (isempty(g_decArgo_outputCsvFileId))
-      if (g_decArgo_generateNcTech ~= 0)
-         % get NetCDF technical parameter list
-         [g_decArgo_outputNcParamId, g_decArgo_outputNcParamLabel] = ...
-            get_nc_tech_parameters_json(g_decArgo_dirInputJsonTechLabelFile, floatDecId);
-         
-         g_decArgo_outputNcParamLabelInfo = [];
-         g_decArgo_outputNcParamLabelInfoCounter = 2;
-      end
-      if (g_decArgo_generateNcMeta ~= 0)
-         % get NetCDF configuration parameter list
-         [g_decArgo_outputNcConfParamId, g_decArgo_outputNcConfParamLabel] = ...
-            get_nc_config_parameters_json(g_decArgo_dirInputJsonConfLabelFile, floatDecId);
-      end
+      
+      % get NetCDF technical parameter list
+      [g_decArgo_outputNcParamId, g_decArgo_outputNcParamLabel] = ...
+         get_nc_tech_parameters_json(g_decArgo_dirInputJsonTechLabelFile, floatDecId);
+      
+      g_decArgo_outputNcParamLabelInfo = [];
+      g_decArgo_outputNcParamLabelInfoCounter = 2;
+      
+      % get NetCDF configuration parameter list
+      [g_decArgo_outputNcConfParamId, g_decArgo_outputNcConfParamLabel] = ...
+         get_nc_config_parameters_json(g_decArgo_dirInputJsonConfLabelFile, floatDecId);
    end
    
    % create list of cycles to decode

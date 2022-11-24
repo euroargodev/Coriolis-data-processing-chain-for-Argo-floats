@@ -700,7 +700,7 @@
       "CONF_PARAM_DEC_ID" : "670",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Min concentration of SUNA",
-      "CONF_PARAM_NAME" : "CONFIG_SunaMinTransmittedNitrateConcentration_umole/L",
+      "CONF_PARAM_NAME" : "CONFIG_SunaMinTransmittedNitrateConcentration_umol/L",
       "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Suna nitrate concentration measurements (in micro-Mol/L)."
    },
    "CONF_PARAM_89" :
@@ -708,7 +708,7 @@
       "CONF_PARAM_DEC_ID" : "671",
       "CONF_PARAM_MSG_ID" : "251",
       "CONF_PARAM_MSG_LABEL" : "Max concentration of SUNA",
-      "CONF_PARAM_NAME" : "CONFIG_SunaMaxTransmittedNitrateConcentration_umole/L",
+      "CONF_PARAM_NAME" : "CONFIG_SunaMaxTransmittedNitrateConcentration_umol/L",
       "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Suna nitrate concentration measurements (in micro-Mol/L)."
    },
    "CONF_PARAM_90" :

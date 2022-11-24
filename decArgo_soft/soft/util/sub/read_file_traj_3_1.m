@@ -288,6 +288,7 @@ else
          {'MOLAR_DOXY'}; ...
          {'MLPL_DOXY'}; ...
          {'TEMP_DOXY'}; ...
+         {'PPOX_DOXY'}; ...
          {'NB_SAMPLE'}; ...
          {'CHLA'}; ...
          {'BBP700'}; ...
@@ -336,6 +337,10 @@ else
       
       paramDone = zeros(length(paramNameList), 1);
       
+      offset = zeros(length(paramNameList), 1);
+      for idParam = 1:length(paramNameList)
+         offset(idParam) = sum(paramDataNbDimList(1:idParam-1)) - idParam + 1;
+      end
       for idParam = 1:length(paramSortedList)
          for idS = 1:length(sufixList)
             paramName = [paramSortedList{idParam} sufixList{idS}];
@@ -346,7 +351,7 @@ else
                paramNameListTmp = [paramNameListTmp paramNameList(idF)];
                paramDataFormatListTmp = [paramDataFormatListTmp paramDataFormatList(idF)];
                paramDataNbDimListTmp = [paramDataNbDimListTmp paramDataNbDimList(idF)];
-               paramDataTmp = [paramDataTmp paramData(:, idF:idF+paramDataNbDimList(idF)-1)];
+               paramDataTmp = [paramDataTmp paramData(:, idF+offset(idF):idF+paramDataNbDimList(idF)-1+offset(idF))];
                paramQcNameListTmp = [paramQcNameListTmp paramQcNameList(idF)];
                paramQcDataTmp = [paramQcDataTmp paramQcData(:, idF)];
                
@@ -362,7 +367,7 @@ else
                   paramAdjNameListTmp = [paramAdjNameListTmp paramAdjNameList(idF)];
                   paramAdjDataFormatListTmp = [paramAdjDataFormatListTmp paramAdjDataFormatList(idF)];
                   paramAdjDataNbDimListTmp = [paramAdjDataNbDimListTmp paramAdjDataNbDimList(idF)];
-                  paramAdjDataTmp = [paramAdjDataTmp paramAdjData(:, idF:idF+paramAdjDataNbDimList(idF)-1)];
+                  paramAdjDataTmp = [paramAdjDataTmp paramAdjData(:, idF+offset(idF):idF+paramAdjDataNbDimList(idF)-1+offset(idF))];
                   paramAdjQcNameListTmp = [paramAdjQcNameListTmp paramAdjQcNameList(idF)];
                   paramAdjQcDataTmp = [paramAdjQcDataTmp paramAdjQcData(:, idF)];
                end
@@ -380,9 +385,9 @@ else
             paramNameListTmp = [paramNameListTmp paramNameList(idF)];
             paramDataFormatListTmp = [paramDataFormatListTmp paramDataFormatList(idF)];
             paramDataNbDimListTmp = [paramDataNbDimListTmp paramDataNbDimList(idF)];
-            paramDataTmp = [paramDataTmp paramData(:, idF:idF+paramDataNbDimList(idF)-1)];
+            paramDataTmp = [paramDataTmp paramData(:, idF+offset(idF):idF+paramDataNbDimList(idF)-1+offset(idF))];
             paramQcNameListTmp = [paramQcNameListTmp paramQcNameList(idF)];
-            paramQcDataTmp = [paramQcDataTmp paramQcData(:, idF:idF+paramDataNbDimList(idF)-1)];
+            paramQcDataTmp = [paramQcDataTmp paramQcData(:, idF)];
             
             paramDone(idF) = 1;
          end
@@ -396,9 +401,9 @@ else
                paramAdjNameListTmp = [paramAdjNameListTmp paramAdjNameList(idF)];
                paramAdjDataFormatListTmp = [paramAdjDataFormatListTmp paramAdjDataFormatList(idF)];
                paramAdjDataNbDimListTmp = [paramAdjDataNbDimListTmp paramAdjDataNbDimList(idF)];
-               paramAdjDataTmp = [paramAdjDataTmp paramAdjData(:, idF:idF+paramAdjDataNbDimList(idF)-1)];
+               paramAdjDataTmp = [paramAdjDataTmp paramAdjData(:, idF+offset(idF):idF+paramAdjDataNbDimList(idF)-1+offset(idF))];
                paramAdjQcNameListTmp = [paramAdjQcNameListTmp paramAdjQcNameList(idF)];
-               paramAdjQcDataTmp = [paramAdjQcDataTmp paramAdjQcData(:, idF:idF+paramAdjDataNbDimList(idF)-1)];
+               paramAdjQcDataTmp = [paramAdjQcDataTmp paramAdjQcData(:, idF)];
             end
          end
       end

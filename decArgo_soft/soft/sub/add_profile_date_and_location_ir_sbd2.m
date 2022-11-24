@@ -46,6 +46,10 @@ global g_decArgo_dateDef;
 % QC flag values (char)
 global g_decArgo_qcStrInterpolated;
 
+% maximum time difference (in days) between 2 GPS locations used to replace
+% Iridium profile locations by interpolated GPS profile locations
+global g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc;
+
 
 % unpack the input data
 a_gpsLocCycleNum = a_gpsData{1};
@@ -128,9 +132,10 @@ if (a_profStruct.direction == 'A')
             end
             
             % interpolate between the 2 locations
-            if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
-               
-               % interpolate the locations
+            if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef) && ...
+                  ((nextLocDate-prevLocDate) <= g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc))
+
+            % interpolate the locations
                interpLocLon = interp1q([prevLocDate; nextLocDate], [prevLocLon; nextLocLon], a_profStruct.date);
                interpLocLat = interp1q([prevLocDate; nextLocDate], [prevLocLat; nextLocLat], a_profStruct.date);
                
@@ -153,7 +158,7 @@ if (a_profStruct.direction == 'A')
    % we have not been able to set a location for the profile, we will use the
    % Iridium locations
    if (a_profStruct.locationDate == g_decArgo_dateDef)
-      [locDate, locLon, locLat, locQc, firstMsgTime] = ...
+      [locDate, locLon, locLat, locQc, firstMsgTime, lastCycleFlag] = ...
          compute_profile_location_from_iridium_locations_ir_sbd2( ...
          a_iridiumMailData, a_profStruct.cycleNumber, a_profStruct.profileNumber);
 
@@ -172,6 +177,13 @@ if (a_profStruct.direction == 'A')
          
          % positioning system
          a_profStruct.posSystem = 'IRIDIUM';
+         
+         % if the current cycle is the last received cycle, the location could
+         % have been updated (if the last cycle data have been received in two
+         % different rsync log files)
+         if (lastCycleFlag == 1)
+            a_profStruct.updated = 1;
+         end
       end
    end
    

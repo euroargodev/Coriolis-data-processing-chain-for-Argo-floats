@@ -19,7 +19,7 @@
 function nc_collect_not_allowed_conf_labels(varargin)
 
 % top directory of input NetCDF meta files
-DIR_INPUT_NC_FILES = 'E:\archive_201602\';
+DIR_INPUT_NC_FILES = 'H:\archive_201603\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\test_update_format_conf\';
 
 % directory to store the log and the csv files
@@ -144,9 +144,9 @@ dacDir = dir(DIR_INPUT_NC_FILES);
 for idDir = 1:length(dacDir)
    
    dacDirName = dacDir(idDir).name;
-%    if (strcmp(dacDirName, 'coriolis'))
-%       continue;
-%    end
+   if (~strcmp(dacDirName, 'coriolis'))
+      continue;
+   end
    dacDirPathName = [DIR_INPUT_NC_FILES '/' dacDirName];
    if ((exist(dacDirPathName, 'dir') == 7) && ~strcmp(dacDirName, '.') && ~strcmp(dacDirName, '..'))
       

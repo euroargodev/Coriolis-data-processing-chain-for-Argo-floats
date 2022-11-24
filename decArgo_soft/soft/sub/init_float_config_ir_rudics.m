@@ -67,7 +67,7 @@ g_decArgo_rtOffsetInfo = [];
 % default values
 global g_decArgo_janFirst1950InMatlab;
 
-WAITING_FOR_FITLM_MATLAB_FUNCTION = 1;
+WAITING_FOR_FITLM_MATLAB_FUNCTION = 0;
 
 
 % create static configuration names
@@ -463,10 +463,19 @@ if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
             if (isfield(g_decArgo_calibInfo, 'OPTODE'))
                calibData = g_decArgo_calibInfo.OPTODE;
                tabDoxyCoef = [];
+               for id = 0:3
+                  fieldName = ['PhaseCoef' num2str(id)];
+                  if (isfield(calibData, fieldName))
+                     tabDoxyCoef(1, id+1) = calibData.(fieldName);
+                  else
+                     fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
+                     return;
+                  end
+               end
                for id = 0:6
                   fieldName = ['SVUFoilCoef' num2str(id)];
                   if (isfield(calibData, fieldName))
-                     tabDoxyCoef = [tabDoxyCoef calibData.(fieldName)];
+                     tabDoxyCoef(2, id+1) = calibData.(fieldName);
                   else
                      fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information\n', g_decArgo_floatNum);
                      return;

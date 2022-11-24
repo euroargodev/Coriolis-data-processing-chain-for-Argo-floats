@@ -25,6 +25,8 @@ function generate_json_float_meta_remocean
 floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
 % floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150519.txt';
 % floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_JPR_6901866_from_LF_20150715.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\export_JPR_from_VB_Rem_all_20160511.txt';
+floatMetaFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
 
 fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileName);
 
@@ -32,17 +34,22 @@ fprintf('Generating json meta-data files from input file: %s\n', floatMetaFileNa
 % floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_all.txt';
 % floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\rem_with_suna.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_all_20160512.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 fprintf('Generating json meta-data files for floats of the list: %s\n', floatListFileName);
 
 % calibration coefficient file decoded from data
 calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
+calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
 % directory of individual configuration commands report files
 configDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\ConfigAtLaunch\';
+configDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\ConfigAtLaunch\';
 
 % directory of SUNA calibration files
 sunaCalibDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\meta_remocean_www\suna_calibration_file\';
+sunaCalibDirName = 'C:\Users\jprannou\_RNU\DecPrv_info\Remocean\finalisation_meta_sensor&param\JPR\suna_calibration_file\';
 
 % directory of individual json float meta-data files
 outputDirName = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];
@@ -130,7 +137,7 @@ refFloatList = load(floatListFileName);
 
 floatList = sort(intersect(floatList, refFloatList));
 % floatList = [6901032 6901440];
-floatList = [6901865];
+% floatList = [6901483];
 
 notFoundFloat = setdiff(refFloatList, floatList);
 if (~isempty(notFoundFloat))
@@ -308,11 +315,16 @@ for idFloat = 1:length(floatList)
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
          end
       case {'5.92', '6.01', '6.11'}
-         idF = find(strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1);
+         idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1));
          calibDataDb = [];
          for id = 1:length(idF)
-            calibName = char(metaData(idForWmo(idF(id)), 5));
-            fieldName = ['SVUFoilCoef' num2str(str2num(calibName(end)))];
+            calibName = metaData{idForWmo(idF(id)), 5};
+            if (strncmp(calibName, 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1)
+               fieldName = ['SVUFoilCoef' num2str(str2num(calibName(end)))];
+            elseif (strncmp(calibName, 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1)
+               fieldName = ['PhaseCoef' calibName(end)];
+            end
             calibDataDb.(fieldName) = char(metaData(idForWmo(idF(id)), 4));
          end
          if (~isempty(calibDataDb))
@@ -325,6 +337,9 @@ for idFloat = 1:length(floatList)
       
       % find the SUNA calibration file
       files = dir([sunaCalibDirName '/' num2str(floatList(idFloat)) '_*.cal']);
+      if (isempty(files))
+         files = dir([sunaCalibDirName '/' num2str(floatList(idFloat)) '_*.CAL']);
+      end
       if (length(files) == 1)
          
          sunaCalibFileName = [sunaCalibDirName '/' files(1).name];

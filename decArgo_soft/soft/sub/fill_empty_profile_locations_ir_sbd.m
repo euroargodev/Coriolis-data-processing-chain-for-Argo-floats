@@ -94,10 +94,11 @@ for idProf = 1:length(a_tabProfiles)
             a_tabProfiles(idProf).locationLat = interpLocLat;
             a_tabProfiles(idProf).locationQc = g_decArgo_qcStrInterpolated;
             a_tabProfiles(idProf).iridiumLocation = 0;
+            a_tabProfiles(idProf).posSystem = 'GPS';
             
             % to update the associated NetCDF file
             if (nextLocCyNum == max(gpsLocCycleNum))
-               a_tabProfiles(idProf).updated = 2;
+               a_tabProfiles(idProf).updated = 1;
             end
          else
             fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing => profile not located\n', ...

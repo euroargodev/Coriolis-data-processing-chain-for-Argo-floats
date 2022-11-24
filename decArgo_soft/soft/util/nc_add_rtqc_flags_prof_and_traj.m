@@ -22,7 +22,7 @@ function nc_add_rtqc_flags_prof_and_traj(varargin)
 
 % top directory of the input NetCDF files
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decPrv_all - copie pour test RTQC\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decPrv_all - copie pour test RTQC\';
 
 % top directory of the output NetCDF files (should be set to '' if we want to
 % update the existing files
@@ -61,8 +61,8 @@ NB_FILES_TO_PROCESS = -1;
 % the RTQC on profiles and trajectory data are linked (they should always be
 % performed together), however the 2 following flags can be used to report or
 % not the QC values in the concerned files
-UPDATE_PROFILE_FILE_FLAG = 0;
-UPDATE_TRAJECTORY_FILE_FLAG = 0;
+UPDATE_PROFILE_FILE_FLAG = 1;
+UPDATE_TRAJECTORY_FILE_FLAG = 1;
 
 
 % list of tests to perform

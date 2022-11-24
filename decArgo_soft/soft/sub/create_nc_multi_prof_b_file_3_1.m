@@ -1477,6 +1477,9 @@ if (nbProfParam > 0)
       for idParam = 1:length(tabParams)
          param = tabParams{idParam};
          idPosParam = find(strcmp(ncParamlist(profId, :), param) == 1);
+         if (isempty(idPosParam))
+            continue;
+         end
          tabEquation = tabEquations{idParam};
          tabCoefficient = tabCoefficients{idParam};
          tabComment = tabComments{idParam};

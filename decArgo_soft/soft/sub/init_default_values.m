@@ -146,6 +146,192 @@ global g_decArgo_qcStrUnused2;
 global g_decArgo_qcStrInterpolated;
 global g_decArgo_qcStrMissing;
 
+% max number of CTD samples in one NOVA sensor data packet
+global g_decArgo_maxCTDSampleInNovaDataPacket;
+
+% max number of CTDO samples in one DOVA sensor data packet
+global g_decArgo_maxCTDOSampleInDovaDataPacket;
+
+% DOXY coefficients
+global g_decArgo_doxy_nomAirPress;
+global g_decArgo_doxy_nomAirMix;
+
+global g_decArgo_doxy_201and202_201_301_d0;
+global g_decArgo_doxy_201and202_201_301_d1;
+global g_decArgo_doxy_201and202_201_301_d2;
+global g_decArgo_doxy_201and202_201_301_d3;
+global g_decArgo_doxy_201and202_201_301_sPreset;
+global g_decArgo_doxy_201and202_201_301_b0_aanderaa;
+global g_decArgo_doxy_201and202_201_301_b1_aanderaa;
+global g_decArgo_doxy_201and202_201_301_b2_aanderaa;
+global g_decArgo_doxy_201and202_201_301_b3_aanderaa;
+global g_decArgo_doxy_201and202_201_301_c0_aanderaa;
+global g_decArgo_doxy_201and202_201_301_b0;
+global g_decArgo_doxy_201and202_201_301_b1;
+global g_decArgo_doxy_201and202_201_301_b2;
+global g_decArgo_doxy_201and202_201_301_b3;
+global g_decArgo_doxy_201and202_201_301_c0;
+global g_decArgo_doxy_201and202_201_301_pCoef2;
+global g_decArgo_doxy_201and202_201_301_pCoef3;
+
+global g_decArgo_doxy_202_204_204_d0;
+global g_decArgo_doxy_202_204_204_d1;
+global g_decArgo_doxy_202_204_204_d2;
+global g_decArgo_doxy_202_204_204_d3;
+global g_decArgo_doxy_202_204_204_sPreset;
+global g_decArgo_doxy_202_204_204_b0;
+global g_decArgo_doxy_202_204_204_b1;
+global g_decArgo_doxy_202_204_204_b2;
+global g_decArgo_doxy_202_204_204_b3;
+global g_decArgo_doxy_202_204_204_c0;
+global g_decArgo_doxy_202_204_204_pCoef1;
+global g_decArgo_doxy_202_204_204_pCoef2;
+global g_decArgo_doxy_202_204_204_pCoef3;
+
+global g_decArgo_doxy_202_204_202_a0;
+global g_decArgo_doxy_202_204_202_a1;
+global g_decArgo_doxy_202_204_202_a2;
+global g_decArgo_doxy_202_204_202_a3;
+global g_decArgo_doxy_202_204_202_a4;
+global g_decArgo_doxy_202_204_202_a5;
+global g_decArgo_doxy_202_204_202_d0;
+global g_decArgo_doxy_202_204_202_d1;
+global g_decArgo_doxy_202_204_202_d2;
+global g_decArgo_doxy_202_204_202_d3;
+global g_decArgo_doxy_202_204_202_sPreset;
+global g_decArgo_doxy_202_204_202_b0;
+global g_decArgo_doxy_202_204_202_b1;
+global g_decArgo_doxy_202_204_202_b2;
+global g_decArgo_doxy_202_204_202_b3;
+global g_decArgo_doxy_202_204_202_c0;
+global g_decArgo_doxy_202_204_202_pCoef1;
+global g_decArgo_doxy_202_204_202_pCoef2;
+global g_decArgo_doxy_202_204_202_pCoef3;
+
+global g_decArgo_doxy_202_204_203_a0;
+global g_decArgo_doxy_202_204_203_a1;
+global g_decArgo_doxy_202_204_203_a2;
+global g_decArgo_doxy_202_204_203_a3;
+global g_decArgo_doxy_202_204_203_a4;
+global g_decArgo_doxy_202_204_203_a5;
+global g_decArgo_doxy_202_204_203_d0;
+global g_decArgo_doxy_202_204_203_d1;
+global g_decArgo_doxy_202_204_203_d2;
+global g_decArgo_doxy_202_204_203_d3;
+global g_decArgo_doxy_202_204_203_sPreset;
+global g_decArgo_doxy_202_204_203_b0;
+global g_decArgo_doxy_202_204_203_b1;
+global g_decArgo_doxy_202_204_203_b2;
+global g_decArgo_doxy_202_204_203_b3;
+global g_decArgo_doxy_202_204_203_c0;
+global g_decArgo_doxy_202_204_203_pCoef1;
+global g_decArgo_doxy_202_204_203_pCoef2;
+global g_decArgo_doxy_202_204_203_pCoef3;
+
+global g_decArgo_doxy_202_205_302_a0;
+global g_decArgo_doxy_202_205_302_a1;
+global g_decArgo_doxy_202_205_302_a2;
+global g_decArgo_doxy_202_205_302_a3;
+global g_decArgo_doxy_202_205_302_a4;
+global g_decArgo_doxy_202_205_302_a5;
+global g_decArgo_doxy_202_205_302_d0;
+global g_decArgo_doxy_202_205_302_d1;
+global g_decArgo_doxy_202_205_302_d2;
+global g_decArgo_doxy_202_205_302_d3;
+global g_decArgo_doxy_202_205_302_sPreset;
+global g_decArgo_doxy_202_205_302_b0;
+global g_decArgo_doxy_202_205_302_b1;
+global g_decArgo_doxy_202_205_302_b2;
+global g_decArgo_doxy_202_205_302_b3;
+global g_decArgo_doxy_202_205_302_c0;
+global g_decArgo_doxy_202_205_302_pCoef1;
+global g_decArgo_doxy_202_205_302_pCoef2;
+global g_decArgo_doxy_202_205_302_pCoef3;
+
+global g_decArgo_doxy_202_205_303_a0;
+global g_decArgo_doxy_202_205_303_a1;
+global g_decArgo_doxy_202_205_303_a2;
+global g_decArgo_doxy_202_205_303_a3;
+global g_decArgo_doxy_202_205_303_a4;
+global g_decArgo_doxy_202_205_303_a5;
+global g_decArgo_doxy_202_205_303_d0;
+global g_decArgo_doxy_202_205_303_d1;
+global g_decArgo_doxy_202_205_303_d2;
+global g_decArgo_doxy_202_205_303_d3;
+global g_decArgo_doxy_202_205_303_sPreset;
+global g_decArgo_doxy_202_205_303_b0;
+global g_decArgo_doxy_202_205_303_b1;
+global g_decArgo_doxy_202_205_303_b2;
+global g_decArgo_doxy_202_205_303_b3;
+global g_decArgo_doxy_202_205_303_c0;
+global g_decArgo_doxy_202_205_303_pCoef1;
+global g_decArgo_doxy_202_205_303_pCoef2;
+global g_decArgo_doxy_202_205_303_pCoef3;
+
+global g_decArgo_doxy_202_205_304_d0;
+global g_decArgo_doxy_202_205_304_d1;
+global g_decArgo_doxy_202_205_304_d2;
+global g_decArgo_doxy_202_205_304_d3;
+global g_decArgo_doxy_202_205_304_sPreset;
+global g_decArgo_doxy_202_205_304_b0;
+global g_decArgo_doxy_202_205_304_b1;
+global g_decArgo_doxy_202_205_304_b2;
+global g_decArgo_doxy_202_205_304_b3;
+global g_decArgo_doxy_202_205_304_c0;
+global g_decArgo_doxy_202_205_304_pCoef1;
+global g_decArgo_doxy_202_205_304_pCoef2;
+global g_decArgo_doxy_202_205_304_pCoef3;
+
+global g_decArgo_doxy_103_208_307_d0;
+global g_decArgo_doxy_103_208_307_d1;
+global g_decArgo_doxy_103_208_307_d2;
+global g_decArgo_doxy_103_208_307_d3;
+global g_decArgo_doxy_103_208_307_sPreset;
+global g_decArgo_doxy_103_208_307_solB0;
+global g_decArgo_doxy_103_208_307_solB1;
+global g_decArgo_doxy_103_208_307_solB2;
+global g_decArgo_doxy_103_208_307_solB3;
+global g_decArgo_doxy_103_208_307_solC0;
+global g_decArgo_doxy_103_208_307_pCoef1;
+global g_decArgo_doxy_103_208_307_pCoef2;
+global g_decArgo_doxy_103_208_307_pCoef3;
+
+global g_decArgo_doxy_201_203_202_d0;
+global g_decArgo_doxy_201_203_202_d1;
+global g_decArgo_doxy_201_203_202_d2;
+global g_decArgo_doxy_201_203_202_d3;
+global g_decArgo_doxy_201_203_202_sPreset;
+global g_decArgo_doxy_201_203_202_b0;
+global g_decArgo_doxy_201_203_202_b1;
+global g_decArgo_doxy_201_203_202_b2;
+global g_decArgo_doxy_201_203_202_b3;
+global g_decArgo_doxy_201_203_202_c0;
+global g_decArgo_doxy_201_203_202_pCoef1;
+global g_decArgo_doxy_201_203_202_pCoef2;
+global g_decArgo_doxy_201_203_202_pCoef3;
+
+global g_decArgo_doxy_201_202_202_d0;
+global g_decArgo_doxy_201_202_202_d1;
+global g_decArgo_doxy_201_202_202_d2;
+global g_decArgo_doxy_201_202_202_d3;
+global g_decArgo_doxy_201_202_202_sPreset;
+global g_decArgo_doxy_201_202_202_b0;
+global g_decArgo_doxy_201_202_202_b1;
+global g_decArgo_doxy_201_202_202_b2;
+global g_decArgo_doxy_201_202_202_b3;
+global g_decArgo_doxy_201_202_202_c0;
+global g_decArgo_doxy_201_202_202_pCoef1;
+global g_decArgo_doxy_201_202_202_pCoef2;
+global g_decArgo_doxy_201_202_202_pCoef3;
+
+% NITRATE coefficients
+global g_decArgo_nitrate_a;
+global g_decArgo_nitrate_b;
+global g_decArgo_nitrate_c;
+global g_decArgo_nitrate_d;
+global g_decArgo_nitrate_opticalWavelengthOffset;
+
+
 % global default values initialization
 g_decArgo_dateDef = 99999.99999999;
 g_decArgo_argosLonDef = 999.999;
@@ -223,7 +409,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '003k';
+g_decArgo_decoderVersion = '004n';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float
@@ -246,7 +432,6 @@ g_decArgo_minNumMsgForNotGhost = 4;
 % maximum time difference (in days) between 2 GPS locations used to replace
 % Iridium profile locations by interpolated GPS profile locations
 g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc = 30;
-
 
 g_decArgo_phasePreMission = 0;
 g_decArgo_phaseSurfWait = 1;
@@ -295,5 +480,190 @@ g_decArgo_qcStrUnused1 = '6';
 g_decArgo_qcStrUnused2 = '7';
 g_decArgo_qcStrInterpolated = '8';
 g_decArgo_qcStrMissing = '9';
+
+% max number of CTD samples in one NOVA sensor data packet (340 bytes max)
+g_decArgo_maxCTDSampleInNovaDataPacket = 55;
+
+% max number of CTDO samples in one DOVA sensor data packet (340 bytes max)
+g_decArgo_maxCTDOSampleInDovaDataPacket = 33;
+
+% DOXY coefficients
+g_decArgo_doxy_nomAirPress = 1013.25;
+g_decArgo_doxy_nomAirMix = 0.20946;
+
+g_decArgo_doxy_201and202_201_301_d0 = 24.4543;
+g_decArgo_doxy_201and202_201_301_d1 = -67.4509;
+g_decArgo_doxy_201and202_201_301_d2 = -4.8489;
+g_decArgo_doxy_201and202_201_301_d3 = -5.44e-4;
+g_decArgo_doxy_201and202_201_301_sPreset = 0;
+g_decArgo_doxy_201and202_201_301_b0_aanderaa = -6.24097e-3;
+g_decArgo_doxy_201and202_201_301_b1_aanderaa = -6.93498e-3;
+g_decArgo_doxy_201and202_201_301_b2_aanderaa = -6.90358e-3;
+g_decArgo_doxy_201and202_201_301_b3_aanderaa = -4.29155e-3;
+g_decArgo_doxy_201and202_201_301_c0_aanderaa = -3.11680e-7;
+g_decArgo_doxy_201and202_201_301_b0 = -6.24523e-3;
+g_decArgo_doxy_201and202_201_301_b1 = -7.37614e-3;
+g_decArgo_doxy_201and202_201_301_b2 = -1.03410e-3;
+g_decArgo_doxy_201and202_201_301_b3 = -8.17083e-3;
+g_decArgo_doxy_201and202_201_301_c0 = -4.88682e-7;
+g_decArgo_doxy_201and202_201_301_pCoef2 = 0.00025;
+g_decArgo_doxy_201and202_201_301_pCoef3 = 0.0328;
+
+g_decArgo_doxy_202_204_204_d0 = 24.4543;
+g_decArgo_doxy_202_204_204_d1 = -67.4509;
+g_decArgo_doxy_202_204_204_d2 = -4.8489;
+g_decArgo_doxy_202_204_204_d3 = -5.44e-4;
+g_decArgo_doxy_202_204_204_sPreset = 0;
+g_decArgo_doxy_202_204_204_b0 = -6.24523e-3;
+g_decArgo_doxy_202_204_204_b1 = -7.37614e-3;
+g_decArgo_doxy_202_204_204_b2 = -1.03410e-3;
+g_decArgo_doxy_202_204_204_b3 = -8.17083e-3;
+g_decArgo_doxy_202_204_204_c0 = -4.88682e-7;
+g_decArgo_doxy_202_204_204_pCoef1 = 0.1;
+g_decArgo_doxy_202_204_204_pCoef2 = 0.00022;
+g_decArgo_doxy_202_204_204_pCoef3 = 0.0419;
+
+g_decArgo_doxy_202_204_202_a0 = 2.00856;
+g_decArgo_doxy_202_204_202_a1 = 3.22400;
+g_decArgo_doxy_202_204_202_a2 = 3.99063;
+g_decArgo_doxy_202_204_202_a3 = 4.80299;
+g_decArgo_doxy_202_204_202_a4 = 9.78188e-1;
+g_decArgo_doxy_202_204_202_a5 = 1.71069;
+g_decArgo_doxy_202_204_202_d0 = 24.4543;
+g_decArgo_doxy_202_204_202_d1 = -67.4509;
+g_decArgo_doxy_202_204_202_d2 = -4.8489;
+g_decArgo_doxy_202_204_202_d3 = -5.44e-4;
+g_decArgo_doxy_202_204_202_sPreset = 0;
+g_decArgo_doxy_202_204_202_b0 = -6.24523e-3;
+g_decArgo_doxy_202_204_202_b1 = -7.37614e-3;
+g_decArgo_doxy_202_204_202_b2 = -1.03410e-3;
+g_decArgo_doxy_202_204_202_b3 = -8.17083e-3;
+g_decArgo_doxy_202_204_202_c0 = -4.88682e-7;
+g_decArgo_doxy_202_204_202_pCoef1 = 0.1;
+g_decArgo_doxy_202_204_202_pCoef2 = 0.00022;
+g_decArgo_doxy_202_204_202_pCoef3 = 0.0419;
+
+g_decArgo_doxy_202_204_203_a0 = 2.00856;
+g_decArgo_doxy_202_204_203_a1 = 3.22400;
+g_decArgo_doxy_202_204_203_a2 = 3.99063;
+g_decArgo_doxy_202_204_203_a3 = 4.80299;
+g_decArgo_doxy_202_204_203_a4 = 9.78188e-1;
+g_decArgo_doxy_202_204_203_a5 = 1.71069;
+g_decArgo_doxy_202_204_203_d0 = 24.4543;
+g_decArgo_doxy_202_204_203_d1 = -67.4509;
+g_decArgo_doxy_202_204_203_d2 = -4.8489;
+g_decArgo_doxy_202_204_203_d3 = -5.44e-4;
+g_decArgo_doxy_202_204_203_sPreset = 0;
+g_decArgo_doxy_202_204_203_b0 = -6.24523e-3;
+g_decArgo_doxy_202_204_203_b1 = -7.37614e-3;
+g_decArgo_doxy_202_204_203_b2 = -1.03410e-3;
+g_decArgo_doxy_202_204_203_b3 = -8.17083e-3;
+g_decArgo_doxy_202_204_203_c0 = -4.88682e-7;
+g_decArgo_doxy_202_204_203_pCoef1 = 0.1;
+g_decArgo_doxy_202_204_203_pCoef2 = 0.00022;
+g_decArgo_doxy_202_204_203_pCoef3 = 0.0419;
+
+g_decArgo_doxy_202_205_302_a0 = 2.00856;
+g_decArgo_doxy_202_205_302_a1 = 3.22400;
+g_decArgo_doxy_202_205_302_a2 = 3.99063;
+g_decArgo_doxy_202_205_302_a3 = 4.80299;
+g_decArgo_doxy_202_205_302_a4 = 9.78188e-1;
+g_decArgo_doxy_202_205_302_a5 = 1.71069;
+g_decArgo_doxy_202_205_302_d0 = 24.4543;
+g_decArgo_doxy_202_205_302_d1 = -67.4509;
+g_decArgo_doxy_202_205_302_d2 = -4.8489;
+g_decArgo_doxy_202_205_302_d3 = -5.44e-4;
+g_decArgo_doxy_202_205_302_sPreset = 0;
+g_decArgo_doxy_202_205_302_b0 = -6.24523e-3;
+g_decArgo_doxy_202_205_302_b1 = -7.37614e-3;
+g_decArgo_doxy_202_205_302_b2 = -1.03410e-3;
+g_decArgo_doxy_202_205_302_b3 = -8.17083e-3;
+g_decArgo_doxy_202_205_302_c0 = -4.88682e-7;
+g_decArgo_doxy_202_205_302_pCoef1 = 0.1;
+g_decArgo_doxy_202_205_302_pCoef2 = 0.00022;
+g_decArgo_doxy_202_205_302_pCoef3 = 0.0419;
+
+g_decArgo_doxy_202_205_303_a0 = 2.00856;
+g_decArgo_doxy_202_205_303_a1 = 3.22400;
+g_decArgo_doxy_202_205_303_a2 = 3.99063;
+g_decArgo_doxy_202_205_303_a3 = 4.80299;
+g_decArgo_doxy_202_205_303_a4 = 9.78188e-1;
+g_decArgo_doxy_202_205_303_a5 = 1.71069;
+g_decArgo_doxy_202_205_303_d0 = 24.4543;
+g_decArgo_doxy_202_205_303_d1 = -67.4509;
+g_decArgo_doxy_202_205_303_d2 = -4.8489;
+g_decArgo_doxy_202_205_303_d3 = -5.44e-4;
+g_decArgo_doxy_202_205_303_sPreset = 0;
+g_decArgo_doxy_202_205_303_b0 = -6.24523e-3;
+g_decArgo_doxy_202_205_303_b1 = -7.37614e-3;
+g_decArgo_doxy_202_205_303_b2 = -1.03410e-3;
+g_decArgo_doxy_202_205_303_b3 = -8.17083e-3;
+g_decArgo_doxy_202_205_303_c0 = -4.88682e-7;
+g_decArgo_doxy_202_205_303_pCoef1 = 0.1;
+g_decArgo_doxy_202_205_303_pCoef2 = 0.00022;
+g_decArgo_doxy_202_205_303_pCoef3 = 0.0419;
+
+g_decArgo_doxy_202_205_304_d0 = 24.4543;
+g_decArgo_doxy_202_205_304_d1 = -67.4509;
+g_decArgo_doxy_202_205_304_d2 = -4.8489;
+g_decArgo_doxy_202_205_304_d3 = -5.44e-4;
+g_decArgo_doxy_202_205_304_sPreset = 0;
+g_decArgo_doxy_202_205_304_b0 = -6.24523e-3;
+g_decArgo_doxy_202_205_304_b1 = -7.37614e-3;
+g_decArgo_doxy_202_205_304_b2 = -1.03410e-3;
+g_decArgo_doxy_202_205_304_b3 = -8.17083e-3;
+g_decArgo_doxy_202_205_304_c0 = -4.88682e-7;
+g_decArgo_doxy_202_205_304_pCoef1 = 0.1;
+g_decArgo_doxy_202_205_304_pCoef2 = 0.00022;
+g_decArgo_doxy_202_205_304_pCoef3 = 0.0419;
+
+g_decArgo_doxy_103_208_307_d0 = 24.4543;
+g_decArgo_doxy_103_208_307_d1 = -67.4509;
+g_decArgo_doxy_103_208_307_d2 = -4.8489;
+g_decArgo_doxy_103_208_307_d3 = -5.44e-4;
+g_decArgo_doxy_103_208_307_sPreset = 0;
+g_decArgo_doxy_103_208_307_solB0 = -6.24523e-3;
+g_decArgo_doxy_103_208_307_solB1 = -7.37614e-3;
+g_decArgo_doxy_103_208_307_solB2 = -1.03410e-3;
+g_decArgo_doxy_103_208_307_solB3 = -8.17083e-3;
+g_decArgo_doxy_103_208_307_solC0 = -4.88682e-7;
+g_decArgo_doxy_103_208_307_pCoef1 = 0.115;
+g_decArgo_doxy_103_208_307_pCoef2 = 0.00022;
+g_decArgo_doxy_103_208_307_pCoef3 = 0.0419;
+
+g_decArgo_doxy_201_203_202_d0 = 24.4543;
+g_decArgo_doxy_201_203_202_d1 = -67.4509;
+g_decArgo_doxy_201_203_202_d2 = -4.8489;
+g_decArgo_doxy_201_203_202_d3 = -5.44e-4;
+g_decArgo_doxy_201_203_202_sPreset = 0;
+g_decArgo_doxy_201_203_202_b0 = -6.24523e-3;
+g_decArgo_doxy_201_203_202_b1 = -7.37614e-3;
+g_decArgo_doxy_201_203_202_b2 = -1.03410e-3;
+g_decArgo_doxy_201_203_202_b3 = -8.17083e-3;
+g_decArgo_doxy_201_203_202_c0 = -4.88682e-7;
+g_decArgo_doxy_201_203_202_pCoef1 = 0.1;
+g_decArgo_doxy_201_203_202_pCoef2 = 0.00022;
+g_decArgo_doxy_201_203_202_pCoef3 = 0.0419;
+
+g_decArgo_doxy_201_202_202_d0 = 24.4543;
+g_decArgo_doxy_201_202_202_d1 = -67.4509;
+g_decArgo_doxy_201_202_202_d2 = -4.8489;
+g_decArgo_doxy_201_202_202_d3 = -5.44e-4;
+g_decArgo_doxy_201_202_202_sPreset = 0;
+g_decArgo_doxy_201_202_202_b0 = -6.24523e-3;
+g_decArgo_doxy_201_202_202_b1 = -7.37614e-3;
+g_decArgo_doxy_201_202_202_b2 = -1.03410e-3;
+g_decArgo_doxy_201_202_202_b3 = -8.17083e-3;
+g_decArgo_doxy_201_202_202_c0 = -4.88682e-7;
+g_decArgo_doxy_201_202_202_pCoef1 = 0.1;
+g_decArgo_doxy_201_202_202_pCoef2 = 0.00022;
+g_decArgo_doxy_201_202_202_pCoef3 = 0.0419;
+
+% NITRATE coefficients
+g_decArgo_nitrate_a = 1.1500276;
+g_decArgo_nitrate_b = 0.02840;
+g_decArgo_nitrate_c = -0.3101349;
+g_decArgo_nitrate_d = 0.001222;
+g_decArgo_nitrate_opticalWavelengthOffset = 208.5;
 
 return;

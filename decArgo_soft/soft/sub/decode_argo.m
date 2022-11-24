@@ -39,8 +39,12 @@ for idFloat = 1:nbFloats
    
    if (floatDecId < 1000)
       decode_provor(floatNum);
-   else
+   elseif ((floatDecId > 1000) && (floatDecId < 2000))
       decode_apex(floatNum);
+   elseif ((floatDecId > 2000) && (floatDecId < 3000))
+      decode_nova(floatNum);
+   else
+      fprintf('ERROR: DecId #%d unavailable => nothing done\n', floatDecId);
    end
 end
 

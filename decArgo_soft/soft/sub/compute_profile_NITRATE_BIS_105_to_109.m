@@ -125,7 +125,7 @@ end
 % interpolate/extrapolate the CTD data at the pressures of the MOLAR_NITRATE
 % measurements (to take the vertical offset into account)
 if (size(a_ctdData, 1) > 1)
-   ctdIntData = compute_interpolated_CTD_measurements(a_ctdData, a_UV_INTENSITY_NITRATE_pres+sunaVerticalOffset, 1);
+   ctdIntData = compute_interpolated_CTD_measurements(a_ctdData, a_UV_INTENSITY_NITRATE_pres+sunaVerticalOffset, 0);
 else
    ctdIntData = a_ctdData;
 end
@@ -410,14 +410,15 @@ return;
 % ------------------------------------------------------------------------------
 function [o_output] = f_function(a_opticalWavelength, a_temp)
 
-A = 1.1500276;
-B = 0.02840;
-C = -0.3101349;
-D = 0.001222;
-OPTICAL_WAVELENGTH_OFFSET = 210;
+% NITRATE coefficients
+global g_decArgo_nitrate_a;
+global g_decArgo_nitrate_b;
+global g_decArgo_nitrate_c;
+global g_decArgo_nitrate_d;
+global g_decArgo_nitrate_opticalWavelengthOffset;
 
 tabOpticalWavelength = repmat(a_opticalWavelength, size(a_temp, 1), 1);
 tabTemp = repmat(a_temp, 1, size(a_opticalWavelength, 2));
-o_output = (A + B*tabTemp) .* exp((C + D*tabTemp) .* (tabOpticalWavelength - OPTICAL_WAVELENGTH_OFFSET));
+o_output = (g_decArgo_nitrate_a + g_decArgo_nitrate_b*tabTemp) .* exp((g_decArgo_nitrate_c + g_decArgo_nitrate_d*tabTemp) .* (tabOpticalWavelength - g_decArgo_nitrate_opticalWavelengthOffset));
 
 return;

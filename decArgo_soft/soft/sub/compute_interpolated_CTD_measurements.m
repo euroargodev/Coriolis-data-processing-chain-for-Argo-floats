@@ -47,19 +47,55 @@ idNoDefInput = find(~((a_ctdMeasData(:, 1) == paramPres.fillValue) | ...
 
 if (length(idNoDefInput) > 1)
    
-   % output parameters initialization
-   o_ctdIntData = [ ...
-      a_presData ...
-      ones(length(a_presData), 1)*paramTemp.fillValue ...
-      ones(length(a_presData), 1)*paramSal.fillValue];
-
-   [ctdPresData, idUnique, ~] = unique(a_ctdMeasData(idNoDefInput, 1));
+   % get PTS measurements
+   ctdPresData = a_ctdMeasData(idNoDefInput, 1);
    ctdTempData = a_ctdMeasData(idNoDefInput, 2);
-   ctdTempData = ctdTempData(idUnique);
    ctdPsalData = a_ctdMeasData(idNoDefInput, 3);
-   ctdPsalData = ctdPsalData(idUnique);
+   
+   % if it is a ascending profile, flip measurements up to down
+   if (length(find(diff(ctdPresData)<0)) > length(ctdPresData)/2)
+      ctdPresData = flipud(ctdPresData);
+      ctdTempData = flipud(ctdTempData);
+      ctdPsalData = flipud(ctdPsalData);
+   end
+   
+   % consider increasing pressures only (we start the algorithm from the middle
+   % of the profile)
+   idToDelete = [];
+   idStart = fix(length(ctdPresData)/2);
+   pMin = ctdPresData(idStart);
+   for id = idStart-1:-1:1
+      if (ctdPresData(id) >= pMin)
+         idToDelete = [idToDelete id];
+      else
+         pMin = ctdPresData(id);
+      end
+   end
+   pMax = ctdPresData(idStart);
+   for id = idStart+1:length(ctdPresData)
+      if (ctdPresData(id) <= pMax)
+         idToDelete = [idToDelete id];
+      else
+         pMax = ctdPresData(id);
+      end
+   end
+
+   ctdPresData(idToDelete) = [];
+   ctdTempData(idToDelete) = [];
+   ctdPsalData(idToDelete) = [];
    
    if (a_extrapFlag == 0)
+      
+      % duplicate T&S values 10 dbar above the shallowest level
+      ctdPresData = [ctdPresData(1)-10; ctdPresData];
+      ctdTempData = [ctdTempData(1); ctdTempData];
+      ctdPsalData = [ctdPsalData(1); ctdPsalData];
+      
+      % duplicate T&S values 50 dbar below the deepest level
+      ctdPresData = [ctdPresData; ctdPresData(end)+50];
+      ctdTempData = [ctdTempData; ctdTempData(end)];
+      ctdPsalData = [ctdPsalData; ctdPsalData(end)];
+      
       tempIntData = interp1(ctdPresData, ...
          ctdTempData, ...
          a_presData(idNoDefOutput), 'linear');
@@ -75,6 +111,11 @@ if (length(idNoDefInput) > 1)
          a_presData(idNoDefOutput), 'linear', 'extrap');
    end
    
+   % output parameters
+   o_ctdIntData = [ ...
+      a_presData ...
+      ones(length(a_presData), 1)*paramTemp.fillValue ...
+      ones(length(a_presData), 1)*paramSal.fillValue];
    o_ctdIntData(idNoDefOutput, 2) = tempIntData;
    o_ctdIntData(idNoDefOutput, 3) = psalIntData;
    

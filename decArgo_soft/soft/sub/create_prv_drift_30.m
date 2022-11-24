@@ -197,9 +197,11 @@ for id = 1:size(a_tabDrifCTD, 1)
 end
 
 % check number of drift measurements done by the float
-if (a_nbDriftMeas ~= nbMeasTot)
-   fprintf('DEC_INFO: Float #%d Cycle #%d: all expected drift measurements has not been received: done (%d) / received (%d)\n', ...
-      g_decArgo_floatNum, g_decArgo_cycleNum, a_nbDriftMeas, nbMeasTot);
+if (~isempty(a_nbDriftMeas))
+   if (a_nbDriftMeas ~= nbMeasTot)
+      fprintf('DEC_INFO: Float #%d Cycle #%d: all expected drift measurements has not been received: done (%d) / received (%d)\n', ...
+         g_decArgo_floatNum, g_decArgo_cycleNum, a_nbDriftMeas, nbMeasTot);
+   end
 end
 
 % check the consistency of drift measurement dates vs the

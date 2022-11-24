@@ -17,7 +17,7 @@
 %    a_parkDate, a_parkTransDate, ...
 %    a_parkPres, a_parkTemp, a_parkSal, ...
 %    a_parkC1PhaseDoxy, a_parkC2PhaseDoxy, a_parkTempDoxy, a_parkDoxy, ...
-%    a_evAct, a_pumpAct)
+%    a_evAct, a_pumpAct, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_cycleNum                : current cycle number
@@ -51,6 +51,7 @@
 %   a_parkDoxy                : drift meas DOXY
 %   a_evAct                   : decoded hydraulic (EV) data
 %   a_pumpAct                 : decoded hydraulic (pump) data
+%   a_decoderId               : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_tabTrajNMeas  : N_MEASUREMENT trajectory data
@@ -79,7 +80,7 @@ function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_202( ...
    a_parkDate, a_parkTransDate, ...
    a_parkPres, a_parkTemp, a_parkSal, ...
    a_parkC1PhaseDoxy, a_parkC2PhaseDoxy, a_parkTempDoxy, a_parkDoxy, ...
-   a_evAct, a_pumpAct)
+   a_evAct, a_pumpAct, a_decoderId)
 
 % output parameters initialization
 o_tabTrajNMeas = [];
@@ -118,6 +119,7 @@ global g_MC_Surface;
 global g_MC_LMT;
 global g_MC_TET;
 global g_MC_Grounded;
+global g_MC_InAirSingleMeas;
 
 % global time status
 global g_JULD_STATUS_1;
@@ -505,6 +507,36 @@ if (a_deepCycle == 1)
    end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % IN AIR MEASUREMENTS
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   for idProf = 1:length(a_tabProfiles)
+      profile = a_tabProfiles(idProf);
+      if ((profile.direction == 'A') && any(strfind(profile.vertSamplingScheme, 'unpumped')))
+         
+         [inAirMeasProfile] = create_in_air_meas_profile(a_decoderId, profile);
+         
+         if (~isempty(inAirMeasProfile))
+            
+            inAirMeasDates = inAirMeasProfile.dates;
+            dateFillValue = inAirMeasProfile.dateList.fillValue;
+            
+            for idMeas = 1:length(inAirMeasDates)
+               if (inAirMeasDates(idMeas) ~= dateFillValue)
+                  measStruct = create_one_meas_float_time(g_MC_InAirSingleMeas, inAirMeasDates(idMeas), g_JULD_STATUS_2, floatClockDrift);
+               else
+                  measStruct = get_traj_one_meas_init_struct();
+                  measStruct.measCode = g_MC_InAirSingleMeas;
+               end
+               measStruct.paramList = inAirMeasProfile.paramList;
+               measStruct.paramData = inAirMeasProfile.data(idMeas, :);
+               trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+            end
+         end
+      end
+   end
+   
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % HYDRAULIC ACTIONS
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
@@ -730,7 +762,7 @@ if (a_deepCycle == 1)
          c1PhaseDoxy = sensor_2_value_for_C1C2Phase_doxy_201_202_203_206_to_209(tabTech2(13));
          c2PhaseDoxy = sensor_2_value_for_C1C2Phase_doxy_201_202_203_206_to_209(tabTech2(14));
          tempDoxy = sensor_2_value_for_temp_doxy_201_202_203_206_to_209(tabTech2(15));
-         doxy = compute_DOXY_202_207_208(c1PhaseDoxy, c2PhaseDoxy, tempDoxy, pres, psal);
+         doxy = compute_DOXY_202_207(c1PhaseDoxy, c2PhaseDoxy, tempDoxy, pres, temp, psal);
          measStruct.paramData = [pres temp psal c1PhaseDoxy c2PhaseDoxy tempDoxy doxy];
          
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];

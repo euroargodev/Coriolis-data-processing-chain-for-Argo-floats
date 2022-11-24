@@ -77,7 +77,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 112;-1;Argos or Iridium date of technical message;CLOCK_Satellite_YYYYMMDDHHMMSS;time derived from satellite communications
 113;-1;"""float time"" - ""satellite time""";CLOCK_FloatTimeCorrection_minutes;float internal clock time correction
 1212;25;Float’s day (gregorian calendar);CLOCK_FloatTime_DD;float internal clock time
-1213;26;Pressure Sensor Offset;PRES_SurfaceOffsetBeforeReset_1cBarResolution_dbar;Surface pressure measured just before the float dives which is then used to correct pressure on board the float for the next profile.  Note: this is a relative offset. Autocorrected.
+1213;26;Pressure Sensor Offset;PRES_SurfaceOffsetCorrectedNotResetNegative_1cBarResolution_dbar;Surface pressure recorded just before the previous descent but data is corrected on board the float. Note: cumulative NEGATIVE   offset  (real offset * -1) but no further correction required. Autocorrected
 1214;27;Transmission Start day : dd;CLOCK_TransmissionStart_DD;time of the first transmission for this cycle
 1215;28;Transmission Start hour : hh;CLOCK_TransmissionStart_HHMM;time of the first transmission for this cycle
 1216;29;Number of repetitions for each argos message;NUMBER_TelemetryRetransmission_COUNT;Number of repeated transmissions of float data for each Argos message
