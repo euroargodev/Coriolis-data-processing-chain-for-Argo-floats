@@ -292,6 +292,12 @@ if (ismember(g_decArgo_floatNum, [6902814 6903230 3901963 6903265 3901645 690300
          id = find((tabCyNum == 40) & (tabPackType == 0), 1);
          tabSession(id:end) = tabSession(id:end) - 1;
          tabBase(id) = 0;
+         % cycle 59 and 60 delayed
+         id = find(tabCyNum == 59);
+         tabSession(id) = min(tabSession(id));
+         tabBase(id) = 0;
+         id = find(tabCyNum > 60);
+         tabSession(id) = min(tabSession(id)) + 1;
       case 6902957
          % packet type 0 4 5 transmitted after data packets
          id = find(tabCyNum == 119);

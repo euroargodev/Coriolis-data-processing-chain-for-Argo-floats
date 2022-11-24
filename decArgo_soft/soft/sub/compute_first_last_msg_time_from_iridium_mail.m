@@ -36,7 +36,7 @@ o_lastMsgTime = g_decArgo_dateDef;
 
 
 % specific
-if (ismember(g_decArgo_floatNum, [6903256, 6902957]))
+if (ismember(g_decArgo_floatNum, [6903256, 6902957, 6901880]))
    switch g_decArgo_floatNum
       case 6903256
          if (a_cycleNumber == 4)
@@ -77,7 +77,7 @@ if (ismember(g_decArgo_floatNum, [6903256, 6902957]))
                   idFCyNum = find([a_iridiumMailData.cycleNumber] == a_cycleNumber-1);
                   if (~isempty(idFCyNum))
                      timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
-                     timeList = timeList(5:9);
+                     timeList = timeList(5:end);
                      o_firstMsgTime = min(timeList);
                      o_lastMsgTime = max(timeList);
                   end
@@ -95,7 +95,7 @@ if (ismember(g_decArgo_floatNum, [6903256, 6902957]))
                   idFCyNum = find([a_iridiumMailData.cycleNumber] == a_cycleNumber-1);
                   if (~isempty(idFCyNum))
                      timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
-                     timeList = timeList(7:11);
+                     timeList = timeList(7:end);
                      o_firstMsgTime = min(timeList);
                      o_lastMsgTime = max(timeList);
                   end
@@ -105,6 +105,38 @@ if (ismember(g_decArgo_floatNum, [6903256, 6902957]))
                   if (~isempty(idFCyNum))
                      timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
                      timeList = timeList(1:5);
+                     o_firstMsgTime = min(timeList);
+                     o_lastMsgTime = max(timeList);
+                  end
+                  return
+            end
+         end
+      case 6901880
+         if (ismember(a_cycleNumber, [58 59 63]))
+            switch a_cycleNumber
+               case 58
+                  idFCyNum = find([a_iridiumMailData.cycleNumber] == a_cycleNumber);
+                  if (~isempty(idFCyNum))
+                     timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
+                     timeList = timeList(1:8);
+                     o_firstMsgTime = min(timeList);
+                     o_lastMsgTime = max(timeList);
+                  end
+                  return
+               case 59
+                  idFCyNum = find([a_iridiumMailData.cycleNumber] == a_cycleNumber-1);
+                  if (~isempty(idFCyNum))
+                     timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
+                     timeList = timeList(9:end-1);
+                     o_firstMsgTime = min(timeList);
+                     o_lastMsgTime = max(timeList);
+                  end
+                  return
+               case 63
+                  idFCyNum = find([a_iridiumMailData.cycleNumber] == a_cycleNumber);
+                  if (~isempty(idFCyNum))
+                     timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
+                     timeList = timeList(1:3);
                      o_firstMsgTime = min(timeList);
                      o_lastMsgTime = max(timeList);
                   end
