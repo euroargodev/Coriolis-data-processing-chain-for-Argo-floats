@@ -394,7 +394,7 @@ end
 if (ismember(g_decArgo_floatNum, [ ...
       6904068, 6900791, 6903064, 6904067, 6904068, 6903800, 6904072, 6904068, ...
       6903059, 6903109, 6903793, 6904236, 6903046, 6903056, 6903055, 3902109, ...
-      6904097]))
+      6904097, 7901014]))
    switch g_decArgo_floatNum
       case 6900791
          % cycle #11 data are separated
@@ -678,6 +678,15 @@ if (ismember(g_decArgo_floatNum, [ ...
       case 6904097
          % WARNING: Float #6904097: config already exists for cycle #24 - updating the current one
          % is due to reset of the float, nothing to do
+      case 7901014
+         % data packets transmitted twice in the first EOL session
+         idBase = find(tabEolFlag ==1, 1, 'first');
+         idDel = find(tabSession == tabSession(idBase) & ~ismember(tabPackType, [0 4]));
+         tabRank(idDel) = -1;
+         tabRankByCycle(idDel) = -1;
+         tabRankByDate(idDel) = -1;
+         idTech = find(tabSession == tabSession(idBase) & ismember(tabPackType, [0 4]));
+         tabDeep(idTech) = 0;
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
