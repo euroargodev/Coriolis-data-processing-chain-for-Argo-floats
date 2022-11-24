@@ -97,7 +97,7 @@ if (~isempty(idPos))
             [argosLocDate, argosDataDate] = ...
                read_argos_file_fmt1_rough(g_decArgo_inputArgosFile, floatArgosId);
             
-            if ~(isempty(argosDataDate) && isempty(argosDataDate))
+            if (~isempty(argosLocDate) || ~isempty(argosDataDate))
                if (~isempty(argosDataDate))
                   move_argos_input_file(floatArgosId, min(argosDataDate), [], [], 'EEE');
                elseif (~isempty(argosLocDate))
@@ -154,6 +154,12 @@ if (~isempty(idPos))
 else
    fprintf('ERROR: Inconsistent input Argos file name (%s)\n', inputArgosFileName);
    return
+end
+
+% specific
+if (floatNum == 6903816)
+   MIN_NON_TRANS_DURATION_FOR_NEW_CYCLE = 3;
+   MIN_NON_TRANS_DURATION_FOR_GHOST = 13;
 end
 
 % read Argos file
@@ -679,6 +685,7 @@ elseif ((floatDecId > 1000) && (floatDecId < 2000))
             cycleNumber = -1;
             cycleNumberCount = -1;
          end
+         % specific
          % OBSOLETE
          %          if (floatNum == 3901663)
          %             % Apex float 3901663 (decId 1022) regularly resets at sea

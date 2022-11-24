@@ -26,17 +26,11 @@
 function process_argos_data_apx(varargin)
 
 % directory of input Argos files (all the files in only one directory)
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\DATA\ori\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_BIO\FINAL\IN\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_APF11\IN\';
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO\IN\';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\Contacts\Desktop\APEX_ARGOS\argos_data\IN\';
 
 % output directory (at the end of the process, it will contain one directory for
 % each step of the process and a 'FINAL' directory for the final step)
-DIR_OUTPUT = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\DATA\ori_out\';
-DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_BIO\FINAL\OUT\';
-DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\APEX_ARGOS_APF11\OUT\';
-DIR_OUTPUT = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO\OUT\';
+DIR_OUTPUT = 'C:\Users\jprannou\Contacts\Desktop\APEX_ARGOS\argos_data\OUT\';
 
 % directory to store the log files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -597,6 +591,12 @@ nbFloats = length(floatList);
 for idFloat = 1:nbFloats
    
    floatNum = floatList(idFloat);
+
+   % specific
+   if (floatNum == 6903816)
+      MIN_NON_TRANS_DURATION_FOR_NEW_CYCLE = 3;
+   end
+   
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
    
@@ -1368,8 +1368,12 @@ for idFile = 1:nbFiles
       
       continue
    end
-   
-   % store file with only ghost messages without any cycle number
+   % specific
+   if (a_floatNum == 6903816)
+      MIN_NON_TRANS_DURATION_FOR_NEW_CYCLE = 3;
+   end
+
+% store file with only ghost messages without any cycle number
    if (isempty(argosDataDate))
       
       % search dates in the file without checking its consistency
@@ -1671,11 +1675,14 @@ DIR_INPUT_OUTPUT_ARGOS_FILES = varargin{2};
 global g_decArgo_realtimeFlag;
 global g_decArgo_delayedModeFlag;
 
+% miscellaneous decoder configuration parameters
+global g_decArgo_minNonTransDurForGhost;
+
 % default values initialization
 init_default_values;
 
 % min non-trans duration (in hour) to use the ghost detection
-MIN_NON_TRANS_DURATION_FOR_GHOST = 3;
+MIN_NON_TRANS_DURATION_FOR_GHOST = g_decArgo_minNonTransDurForGhost;
 
 
 % configuration parameters
@@ -1703,6 +1710,12 @@ for idFloat = 1:nbFloats
    tabFilename = [];
    
    floatNum = floatList(idFloat);
+   
+   % specific
+   if (floatNum == 6903816)
+      MIN_NON_TRANS_DURATION_FOR_GHOST = 13;
+   end
+   
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
    
@@ -1774,14 +1787,21 @@ for idFloat = 1:nbFloats
             argosDate = sort(argosDate);
             argosDate = argosDate-compute_duration(tabCycleNumber(idCy), tabCycleNumber(1), ones(max(tabCycleNumber)+1, 1)*floatCycleTime)';
             argosPathFileName = tabFilename{idCy};
-            while (~isempty(argosDate) && ((argosDate(end)-mean(tabLast))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST))
+                     stop = 0;
+            while (~stop && ~isempty(argosDate) && ((argosDate(end)-mean(tabLast))*24 > MIN_NON_TRANS_DURATION_FOR_GHOST))
                
                % a ghost message is detected, move it to a dedicated file
                [subFileNameList] = split_argos_file_ghost(argosPathFileName, floatNum, floatArgosId);
-               argosPathFileName = subFileNameList{1};
-               
-               argosDate(end) = [];
-               fprintf('=> GHOST DETECTED: stored in %s\n', subFileNameList{2});
+               if (~isempty(subFileNameList))
+                  argosPathFileName = subFileNameList{1};
+                  argosDate(end) = [];
+                  if (~isempty(argosDate))
+                     fprintf('=> GHOST DETECTED: stored in %s\n', subFileNameList{2});
+                  end
+               else
+                  % this is not a real ghost message
+                  stop = 1;
+               end
             end
          end
       end
