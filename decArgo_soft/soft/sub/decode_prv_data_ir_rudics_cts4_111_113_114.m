@@ -1173,6 +1173,13 @@ switch (packType)
          setPoint = values(11*(idBin-1)+10);
          intVacuum = values(11*(idBin-1)+11);
          
+         % specific
+         if (g_decArgo_floatNum == 6903579)
+            if ((cycleNum == 7) && (profNum == 25))
+               continue
+            end
+         end
+         
          if ((cycleNum == 0) && (profNum == 0) && (phaseNum == 0) && ...
                (day == 0) && (month == 0) && (year == 0) && ...
                (hour == 0) && (minute == 0) && ...

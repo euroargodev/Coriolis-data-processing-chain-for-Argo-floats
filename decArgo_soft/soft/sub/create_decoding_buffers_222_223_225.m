@@ -378,6 +378,23 @@ for idL = 1:length(tabRank)
    end
 end
 
+% specific
+if (ismember(g_decArgo_floatNum, [6900791]))
+   switch g_decArgo_floatNum
+      case 6900791
+         % cycle #11 data are separated
+         id = find((tabCyNum == 11) & (tabBase == 1));
+         tabRank(tabCyNum == 11) = tabRank(id);
+         tabRankByCycle(tabCyNum == 11) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 11) = tabRankByDate(id);
+         % cycle #14 data are separated
+         id = find((tabCyNum == 14) & (tabBase == 1));
+         tabRank(tabCyNum == 14) = tabRank(id);
+         tabRankByCycle(tabCyNum == 14) = tabRankByCycle(id);
+         tabRankByDate(tabCyNum == 14) = tabRankByDate(id);
+   end
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % WRITE CYCLE INFORMATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
