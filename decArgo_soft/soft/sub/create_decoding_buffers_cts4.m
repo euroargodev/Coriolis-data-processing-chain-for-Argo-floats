@@ -121,26 +121,8 @@ if (ismember(a_decoderId, [111, 113]))
    tabCyNum(idSurfSensorParam) = (tabCyNumRaw(idSurfSensorParam)+1)*100 + tabProfNumRaw(idSurfSensorParam);
 end
 if (ismember(g_decArgo_floatNum, ...
-      [2902263, 6903240, 6903549, 6903551, 2902239, 2902264, 6903550, 3902122, 2902241, 6903026]))
+      [2902263, 6903240, 6903549, 6903551, 2902239, 2902264, 6903550, 3902122, 2902241]))
    switch g_decArgo_floatNum
-      case 6903026
-         % cycle #54 and #55 are transmitted together => set the second one to a
-         % different transmission session
-         startId54 = find((tabCyNumRaw == 54) & (tabProfNumRaw == 0) & (tabPackType == 253) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         stopId54 = find((tabCyNumRaw == 54) & (tabProfNumRaw == 0) & (tabPackType == 250), 1, 'last');
-
-         startId55 = find((tabCyNumRaw == 55) & (tabProfNumRaw == 0) & (tabPackType == 253) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-         stopId55 = find((tabCyNumRaw == 55) & (tabProfNumRaw == 0) & (tabPackType == 248));
-         
-         tabSession(startId55:end) = tabSession(startId55:end) + 1;
-         tabBase(startId55) = 1;
-         tabDeep(startId55:stopId55) = 1;
-         
-         a_decodedData(startId55).cyProfPhaseList(6) = a_decodedData(startId54).cyProfPhaseList(6);
-         for id = startId54:stopId54
-            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
-         end
-         
       case 2902263
          idF = find((tabCyNumRaw == 48) & (tabProfNumRaw == 0) & ismember(tabPackType, [248 254 255]));
          tabCyNum(idF) = tabCyNumRaw(idF)*100 + tabProfNumRaw(idF) + 1;
