@@ -171,12 +171,16 @@ switch(a_floatNum)
       end
 
    case 6903094
-      % files 3ab0_system_00102#02.hex and 3ab0_system_00106#02.hex should not be kept
+      % files 3ab0_system_00102#02.hex, 3ab0_system_00106#02.hex and 3ab0_system_00110#02.hex should not be kept
       delFile = dir([a_outputDir '/3ab0_system_00102#02_*.hex']);
       if (~isempty(delFile))
          move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
       end
       delFile = dir([a_outputDir '/3ab0_system_00106#02_*.hex']);
+      if (~isempty(delFile))
+         move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
+      end
+      delFile = dir([a_outputDir '/3ab0_system_00110#02_*.hex']);
       if (~isempty(delFile))
          move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
       end

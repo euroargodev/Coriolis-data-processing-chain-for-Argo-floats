@@ -226,13 +226,18 @@ for idFloat = 1:nbFloats
          end
 
       case 6903094
-         % files 3ab0_system_00102#02.hex and 3ab0_system_00106#02.hex should not be kept
+         % files 3ab0_system_00102#02.hex, 3ab0_system_00106#02.hex and 3ab0_system_00110#02.hex should not be kept
          delFile = dir([floatOutputDirName '/3ab0_system_00102#02_*.hex']);
          if (~isempty(delFile))
             move_file([floatOutputDirName '/' delFile.name], unusedDirName);
             fprintf('MISC: %s - not used\n', delFile.name);
          end
          delFile = dir([floatOutputDirName '/3ab0_system_00106#02_*.hex']);
+         if (~isempty(delFile))
+            move_file([floatOutputDirName '/' delFile.name], unusedDirName);
+            fprintf('MISC: %s - not used\n', delFile.name);
+         end
+         delFile = dir([floatOutputDirName '/3ab0_system_00110#02_*.hex']);
          if (~isempty(delFile))
             move_file([floatOutputDirName '/' delFile.name], unusedDirName);
             fprintf('MISC: %s - not used\n', delFile.name);
