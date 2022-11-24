@@ -175,14 +175,14 @@ if (isfield(o_metaData, 'PARAMETER'))
    end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % update RADIOMETRIC meta-data
+   % update RADIOMETRY meta-data
    
-   [o_metaData] = update_parameter_list_radiometric(o_metaData, a_decoderId);
+   [o_metaData] = update_parameter_list_radiometry(o_metaData, a_decoderId);
    
    paramList = struct2cell(o_metaData.PARAMETER);
    for idP = 1:length(paramList)
       [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_radiometric(paramList{idP}, a_decoderId);
+         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_radiometry(paramList{idP}, a_decoderId);
       if (~isempty(param))
          
          % check meta data length
@@ -456,6 +456,100 @@ if (isfield(o_metaData, 'PARAMETER'))
       end
    end
    
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % update CP meta-data
+   
+   [o_metaData] = update_parameter_list_cp(o_metaData, a_decoderId);
+   
+   paramList = struct2cell(o_metaData.PARAMETER);
+   for idP = 1:length(paramList)
+      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_cp(paramList{idP}, a_decoderId);
+      if (~isempty(param))
+         
+         % check meta data length
+         FORMAT_SIZE = 4096;
+         if (length(preCalibEq) > FORMAT_SIZE)
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
+               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
+            preCalibEq = preCalibEq(1:FORMAT_SIZE);
+         end
+         if (length(preCalibCoef) > FORMAT_SIZE)
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
+               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
+            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
+         end
+         if (length(preCalibComment) > FORMAT_SIZE)
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
+               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
+            preCalibComment = preCalibComment(1:FORMAT_SIZE);
+         end
+         
+         for idF = 1:length(fieldList)
+            if (isempty(o_metaData.(fieldList{idF})))
+               for id = 1:length(paramList)
+                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
+               end
+            end
+         end
+         
+         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
+         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
+         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
+         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
+         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
+         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
+         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
+      end
+   end
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % update TURBIDITY meta-data
+   
+   [o_metaData] = update_parameter_list_turbidity(o_metaData, a_decoderId);
+   
+   paramList = struct2cell(o_metaData.PARAMETER);
+   for idP = 1:length(paramList)
+      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_turbidity(paramList{idP}, a_decoderId);
+      if (~isempty(param))
+         
+         % check meta data length
+         FORMAT_SIZE = 4096;
+         if (length(preCalibEq) > FORMAT_SIZE)
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
+               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
+            preCalibEq = preCalibEq(1:FORMAT_SIZE);
+         end
+         if (length(preCalibCoef) > FORMAT_SIZE)
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
+               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
+            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
+         end
+         if (length(preCalibComment) > FORMAT_SIZE)
+            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
+               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
+            preCalibComment = preCalibComment(1:FORMAT_SIZE);
+         end
+         
+         for idF = 1:length(fieldList)
+            if (isempty(o_metaData.(fieldList{idF})))
+               for id = 1:length(paramList)
+                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
+               end
+            end
+         end
+         
+         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
+         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
+         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
+         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
+         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
+         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
+         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
+      end
+   end
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % update RAFOS meta-data
    
@@ -758,6 +852,7 @@ function [o_metaData] = update_parameter_list_ctd(a_metaData)
 
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamNbSampleCtd;
+global g_decArgo_addParamListCtd;
 
 
 paramList = [ ...
@@ -769,6 +864,10 @@ paramList = [ ...
 if (g_decArgo_addParamNbSampleCtd)
    paramList = [paramList {'NB_SAMPLE_CTD'}];
 end
+
+% if (~isempty(g_decArgo_addParamListCtd))
+%    paramList = [paramList g_decArgo_addParamListCtd];
+% end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -1054,6 +1153,56 @@ switch (a_paramName)
       o_preCalibCoef = 'n/a';
       o_preCalibComment = '';
       
+   case {'PRES_MED'}
+      o_param = 'PRES_MED';
+      o_paramSensor = 'CTD_PRES';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'TEMP_STD'}
+      o_param = 'TEMP_STD';
+      o_paramSensor = 'CTD_TEMP';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'TEMP_MED'}
+      o_param = 'TEMP_MED';
+      o_paramSensor = 'CTD_TEMP';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'PSAL_STD'}
+      o_param = 'PSAL_STD';
+      o_paramSensor = 'CTD_CNDC';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'PSAL_MED'}
+      o_param = 'PSAL_MED';
+      o_paramSensor = 'CTD_CNDC';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
 end
 
 return
@@ -1080,6 +1229,10 @@ return
 %   06/13/2016 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_metaData] = update_parameter_list_oxygen(a_metaData, a_decoderId)
+
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListOxygen;
+
 
 paramList = [];
 switch (a_decoderId)
@@ -1119,13 +1272,16 @@ switch (a_decoderId)
                ];
          end
       elseif (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113, 114, 115])) % CTS3 with PPOX_DOXY
-         paramList = [ ...
-            {'TEMP_DOXY'} ...
-            {'C1PHASE_DOXY'} ...
-            {'C2PHASE_DOXY'} ...
-            {'PPOX_DOXY'} ...
-            {'DOXY'} ...
-            ];
+         if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+               any(strcmp('OPTODE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+            paramList = [ ...
+               {'TEMP_DOXY'} ...
+               {'C1PHASE_DOXY'} ...
+               {'C2PHASE_DOXY'} ...
+               {'PPOX_DOXY'} ...
+               {'DOXY'} ...
+               ];
+         end
       else
          paramList = [ ...
             {'TEMP_DOXY'} ...
@@ -1247,6 +1403,10 @@ if (a_decoderId == 201)
       paramList = [];
    end
 end
+
+% if (~isempty(g_decArgo_addParamListOxygen))
+%    paramList = [paramList g_decArgo_addParamListOxygen];
+% end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -3350,13 +3510,97 @@ switch (a_decoderId)
       end
 end
 
+switch (a_paramName)
+
+   case {'TEMP_DOXY_STD'}
+      o_param = 'TEMP_DOXY_STD';
+      o_paramSensor = 'OPTODE_DOXY';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'TEMP_DOXY_MED'}
+      o_param = 'TEMP_DOXY_MED';
+      o_paramSensor = 'OPTODE_DOXY';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'C1PHASE_DOXY_STD'}
+      o_param = 'C1PHASE_DOXY_STD';
+      o_paramSensor = 'OPTODE_DOXY';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'C1PHASE_DOXY_MED'}
+      o_param = 'C1PHASE_DOXY_MED';
+      o_paramSensor = 'OPTODE_DOXY';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'C2PHASE_DOXY_STD'}
+      o_param = 'C2PHASE_DOXY_STD';
+      o_paramSensor = 'OPTODE_DOXY';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'C2PHASE_DOXY_MED'}
+      o_param = 'C2PHASE_DOXY_MED';
+      o_paramSensor = 'OPTODE_DOXY';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'DPHASE_DOXY_STD'}
+      o_param = 'DPHASE_DOXY_STD';
+      o_paramSensor = 'OPTODE_DOXY';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'DPHASE_DOXY_MED'}
+      o_param = 'DPHASE_DOXY_MED';
+      o_paramSensor = 'OPTODE_DOXY';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+end
+
 return
 
 % ------------------------------------------------------------------------------
-% Update parameter list for radiometric associated parameters.
+% Update parameter list for radiometry associated parameters.
 %
 % SYNTAX :
-%  [o_metaData] = update_parameter_list_radiometric(a_metaData, a_decoderId)
+%  [o_metaData] = update_parameter_list_radiometry(a_metaData, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_metaData  : input meta-data to be updated
@@ -3373,10 +3617,13 @@ return
 % RELEASES :
 %   03/27/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_metaData] = update_parameter_list_radiometric(a_metaData, a_decoderId)
+function [o_metaData] = update_parameter_list_radiometry(a_metaData, a_decoderId)
 
 % arrays to store decoded calibration coefficient
 global g_decArgo_calibInfo;
+
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListRadiometry;
 
 
 paramList = [];
@@ -3454,17 +3701,21 @@ switch (a_decoderId)
       end
 end
 
+% if (~isempty(g_decArgo_addParamListRadiometry))
+%    paramList = [paramList g_decArgo_addParamListRadiometry];
+% end
+
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
 
 return
 
 % ------------------------------------------------------------------------------
-% Update meta-data for radiometric associated parameters.
+% Update meta-data for radiometry associated parameters.
 %
 % SYNTAX :
 %  [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
-%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_radiometric(a_paramName, a_decoderId)
+%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_radiometry(a_paramName, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_paramName : input parameter to be updated
@@ -3489,7 +3740,7 @@ return
 %   09/30/2016 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
-   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_radiometric(a_paramName, a_decoderId)
+   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_radiometry(a_paramName, a_decoderId)
 
 % output parameters initialization
 o_param = '';
@@ -3793,6 +4044,92 @@ switch (a_decoderId)
       end
 end
 
+switch (a_paramName)
+
+   case {'RAW_DOWNWELLING_IRRADIANCE380_STD'}
+      o_param = 'RAW_DOWNWELLING_IRRADIANCE380_STD';
+      o_paramSensor = 'RADIOMETER_DOWN_IRR380';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'RAW_DOWNWELLING_IRRADIANCE380_MED'}
+      o_param = 'RAW_DOWNWELLING_IRRADIANCE380_MED';
+      o_paramSensor = 'RADIOMETER_DOWN_IRR380';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'RAW_DOWNWELLING_IRRADIANCE412_STD'}
+      o_param = 'RAW_DOWNWELLING_IRRADIANCE412_STD';
+      o_paramSensor = 'RADIOMETER_DOWN_IRR412';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'RAW_DOWNWELLING_IRRADIANCE412_MED'}
+      o_param = 'RAW_DOWNWELLING_IRRADIANCE412_MED';
+      o_paramSensor = 'RADIOMETER_DOWN_IRR412';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'RAW_DOWNWELLING_IRRADIANCE490_STD'}
+      o_param = 'RAW_DOWNWELLING_IRRADIANCE490_STD';
+      o_paramSensor = 'RADIOMETER_DOWN_IRR490';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'RAW_DOWNWELLING_IRRADIANCE490_MED'}
+      o_param = 'RAW_DOWNWELLING_IRRADIANCE490_MED';
+      o_paramSensor = 'RADIOMETER_DOWN_IRR490';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'RAW_DOWNWELLING_PAR_STD'}
+      o_param = 'RAW_DOWNWELLING_PAR_STD';
+      o_paramSensor = 'RADIOMETER_PAR';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'RAW_DOWNWELLING_PAR_MED'}
+      o_param = 'RAW_DOWNWELLING_PAR_MED';
+      o_paramSensor = 'RADIOMETER_PAR';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+end
+
+return
+
 % ------------------------------------------------------------------------------
 % Update parameter list for backscattering associated parameters.
 %
@@ -3815,6 +4152,10 @@ end
 %   09/30/2016 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_metaData] = update_parameter_list_backscattering(a_metaData, a_decoderId)
+
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListBackscattering;
+
 
 paramList = [];
 switch (a_decoderId)
@@ -3852,6 +4193,10 @@ switch (a_decoderId)
          {'BBP700'} ...
          ];
 end
+
+% if (~isempty(g_decArgo_addParamListBackscattering))
+%    paramList = [paramList g_decArgo_addParamListBackscattering];
+% end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -4167,6 +4512,52 @@ switch (a_decoderId)
       end
 end
 
+switch (a_paramName)
+
+   case {'BETA_BACKSCATTERING532_STD'}
+      o_param = 'BETA_BACKSCATTERING532_STD';
+      o_paramSensor = 'BACKSCATTERINGMETER_BBP532';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'BETA_BACKSCATTERING532_MED'}
+      o_param = 'BETA_BACKSCATTERING532_MED';
+      o_paramSensor = 'BACKSCATTERINGMETER_BBP532';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'BETA_BACKSCATTERING700_STD'}
+      o_param = 'BETA_BACKSCATTERING700_STD';
+      o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'BETA_BACKSCATTERING700_MED'}
+      o_param = 'BETA_BACKSCATTERING700_MED';
+      o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+end
+
+return
+
 % ------------------------------------------------------------------------------
 % Update parameter list for chla associated parameters.
 %
@@ -4190,6 +4581,10 @@ end
 % ------------------------------------------------------------------------------
 function [o_metaData] = update_parameter_list_chla(a_metaData, a_decoderId)
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListChla;
+
+
 paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, ...
@@ -4201,6 +4596,13 @@ switch (a_decoderId)
          paramList = [ ...
             {'FLUORESCENCE_CHLA'} ...
             {'CHLA'} ...
+            ];
+      end
+      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+            any(strcmp('CYCLOPS', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         paramList = [ ...
+            {'FLUORESCENCE_VOLTAGE_CHLA'} ...
+            {'CHLA2'} ...
             ];
       end
    case {1015, 1101, 1105, 1110, 1111, 1112, 1114}
@@ -4215,6 +4617,10 @@ switch (a_decoderId)
          {'CHLA'} ...
          ];
 end
+
+% if (~isempty(g_decArgo_addParamListChla))
+%    paramList = [paramList g_decArgo_addParamListChla];
+% end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -4466,6 +4872,26 @@ switch (a_decoderId)
                   scaleFactChloroA, darkCountChloroA, DarkCountChloroA_O);
                o_preCalibComment = '';
             end
+
+         case {'FLUORESCENCE_VOLTAGE_CHLA'}
+            o_param = 'FLUORESCENCE_VOLTAGE_CHLA';
+            o_paramSensor = 'FLUOROMETER_CHLA2';
+            o_paramUnits = '';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = '';
+            o_preCalibCoef = '';
+            o_preCalibComment = '';
+            
+         case {'CHLA2'}
+            o_param = 'CHLA2';
+            o_paramSensor = 'FLUOROMETER_CHLA2';
+            o_paramUnits = '';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = '';
+            o_preCalibCoef = '';
+            o_preCalibComment = '';
             
       end
       
@@ -4529,6 +4955,50 @@ switch (a_decoderId)
       end
 end
 
+switch (a_paramName)
+
+   case {'FLUORESCENCE_CHLA_STD'}
+      o_param = 'FLUORESCENCE_CHLA_STD';
+      o_paramSensor = 'FLUOROMETER_CHLA';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'FLUORESCENCE_CHLA_MED'}
+      o_param = 'FLUORESCENCE_CHLA_MED';
+      o_paramSensor = 'FLUOROMETER_CHLA';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'FLUORESCENCE_VOLTAGE_CHLA_STD'}
+      o_param = 'FLUORESCENCE_VOLTAGE_CHLA_STD';
+      o_paramSensor = 'FLUOROMETER_CHLA';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'FLUORESCENCE_VOLTAGE_CHLA_MED'}
+      o_param = 'FLUORESCENCE_VOLTAGE_CHLA_MED';
+      o_paramSensor = 'FLUOROMETER_CHLA';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+end
+
 return
 
 % ------------------------------------------------------------------------------
@@ -4554,6 +5024,10 @@ return
 % ------------------------------------------------------------------------------
 function [o_metaData] = update_parameter_list_cdom(a_metaData, a_decoderId)
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListCdom;
+
+
 paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 110, 111, 112, 113, 114, ...
@@ -4567,6 +5041,10 @@ switch (a_decoderId)
             ];
       end
 end
+
+% if (~isempty(g_decArgo_addParamListCdom))
+%    paramList = [paramList g_decArgo_addParamListCdom];
+% end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -4686,6 +5164,30 @@ switch (a_decoderId)
       
 end
 
+switch (a_paramName)
+
+   case {'FLUORESCENCE_CDOM_STD'}
+      o_param = 'FLUORESCENCE_CDOM_STD';
+      o_paramSensor = 'FLUOROMETER_CDOM';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'FLUORESCENCE_CDOM_MED'}
+      o_param = 'FLUORESCENCE_CDOM_MED';
+      o_paramSensor = 'FLUOROMETER_CDOM';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+end
+
 return
 
 % ------------------------------------------------------------------------------
@@ -4721,6 +5223,7 @@ switch (a_decoderId)
          paramList = [ ...
             {'UV_INTENSITY_NITRATE'} ...
             {'UV_INTENSITY_DARK_NITRATE'} ...
+            {'UV_INTENSITY_DARK_NITRATE_STD'} ...
             {'NITRATE'} ...
             {'FIT_ERROR_NITRATE'} ...
             {'TEMP_NITRATE'} ...
@@ -4735,6 +5238,7 @@ switch (a_decoderId)
          paramList = [ ...
             {'UV_INTENSITY_NITRATE'} ...
             {'UV_INTENSITY_DARK_NITRATE'} ...
+            {'UV_INTENSITY_DARK_NITRATE_STD'} ...
             {'NITRATE'} ...
             {'BISULFIDE'} ...
             {'FIT_ERROR_NITRATE'} ...
@@ -4831,6 +5335,16 @@ switch (a_decoderId)
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Intensity of ultra violet flux dark measurement from nitrate sensor';
             
+         case {'UV_INTENSITY_DARK_NITRATE_STD'}
+            o_param = 'UV_INTENSITY_DARK_NITRATE_STD';
+            o_paramSensor = 'SPECTROPHOTOMETER_NITRATE';
+            o_paramUnits = 'count';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Standard deviation of intensity of ultra violet flux dark measurement from nitrate sensor';
+
          case {'NITRATE'}
             
             if (~ismember(a_decoderId, [110, 113, 127]))
@@ -5367,6 +5881,7 @@ function [o_metaData] = update_parameter_list_ph(a_metaData, a_decoderId)
 
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamNbSampleSfet;
+global g_decArgo_addParamListPh;
 
 
 paramList = [];
@@ -5398,6 +5913,10 @@ switch (a_decoderId)
          end
       end
 end
+
+% if (~isempty(g_decArgo_addParamListPh))
+%    paramList = [paramList g_decArgo_addParamListPh];
+% end
 
 % add parameter associated fields
 o_metaData = generate_parameter_fields(a_metaData, paramList);
@@ -5745,6 +6264,454 @@ switch (a_decoderId)
             o_preCalibComment = '';
 
       end
+end
+
+switch (a_paramName)
+
+   case {'VRS_PH_STD'}
+      o_param = 'VRS_PH_STD';
+      o_paramSensor = 'TRANSISTOR_PH';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'VRS_PH_MED'}
+      o_param = 'VRS_PH_MED';
+      o_paramSensor = 'TRANSISTOR_PH';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'VK_PH_STD'}
+      o_param = 'VK_PH_STD';
+      o_paramSensor = 'TRANSISTOR_PH';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'VK_PH_MED'}
+      o_param = 'VK_PH_MED';
+      o_paramSensor = 'TRANSISTOR_PH';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'IK_PH_STD'}
+      o_param = 'IK_PH_STD';
+      o_paramSensor = 'TRANSISTOR_PH';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'IK_PH_MED'}
+      o_param = 'IK_PH_MED';
+      o_paramSensor = 'TRANSISTOR_PH';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'IB_PH_STD'}
+      o_param = 'IB_PH_STD';
+      o_paramSensor = 'TRANSISTOR_PH';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'IB_PH_MED'}
+      o_param = 'IB_PH_MED';
+      o_paramSensor = 'TRANSISTOR_PH';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+      
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Update parameter list for cp associated parameters.
+%
+% SYNTAX :
+%  [o_metaData] = update_parameter_list_cp(a_metaData, a_decoderId)
+%
+% INPUT PARAMETERS :
+%   a_metaData  : input meta-data to be updated
+%   a_decoderId : float decoder Id
+%
+% OUTPUT PARAMETERS :
+%   o_metaData : output updated meta-data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/10/2022 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_metaData] = update_parameter_list_cp(a_metaData, a_decoderId)
+
+% lists of managed decoders
+global g_decArgo_decoderIdListNkeCts4;
+global g_decArgo_decoderIdListNkeCts5Usea;
+
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListCp;
+
+
+paramList = [];
+if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts4))
+   if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+         any(strcmp('CROVER', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+      paramList = [ ...
+         {'CP660'} ...
+         ];
+   end
+elseif (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
+   if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+         any(strcmp('CROVER', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+      paramList = [ ...
+         {'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660'} ...
+         {'CP660'} ...
+         ];
+   end
+end
+
+% if (~isempty(g_decArgo_addParamListCp))
+%    paramList = [paramList g_decArgo_addParamListCp];
+% end
+
+% add parameter associated fields
+o_metaData = generate_parameter_fields(a_metaData, paramList);
+
+return
+
+% ------------------------------------------------------------------------------
+% Update meta-data for cp associated parameters.
+%
+% SYNTAX :
+%  [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
+%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_cp(a_paramName, a_decoderId)
+%
+% INPUT PARAMETERS :
+%   a_paramName : input parameter to be updated
+%   a_decoderId : float decoder Id
+%
+% OUTPUT PARAMETERS :
+%   o_param           : output updated PARAMETER information
+%   o_paramSensor     : output updated PARAMETER_SENSOR information
+%   o_paramUnits      : output updated PARAMETER_UNITS information
+%   o_paramAccuracy   : output updated PARAMETER_ACCURACY information
+%   o_paramResolution : output updated PARAMETER_RESOLUTION information
+%   o_preCalibEq      : output updated PREDEPLOYMENT_CALIB_EQUATION information
+%   o_preCalibCoef    : output updated PREDEPLOYMENT_CALIB_COEFFICIENT information
+%   o_preCalibComment : output updated PARAMETER_ACCURACY information
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/10/2022 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
+   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_cp(a_paramName, a_decoderId)
+
+% output parameters initialization
+o_param = '';
+o_paramSensor = '';
+o_paramUnits = '';
+o_paramAccuracy = '';
+o_paramResolution = '';
+o_preCalibEq = '';
+o_preCalibCoef = '';
+o_preCalibComment = '';
+
+switch (a_paramName)
+
+   case {'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660'}
+      o_param = 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660';
+      o_paramSensor = 'TRANSMISSOMETER_CP660';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = '';
+      o_preCalibCoef = '';
+      o_preCalibComment = '';
+
+   case {'CP660'}
+      o_param = 'CP660';
+      o_paramSensor = 'TRANSMISSOMETER_CP660';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = '';
+      o_preCalibCoef = '';
+      o_preCalibComment = '';
+
+   case {'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660_STD'}
+      o_param = 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660_STD';
+      o_paramSensor = 'TRANSMISSOMETER_CP660';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660_MED'}
+      o_param = 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660_MED';
+      o_paramSensor = 'TRANSMISSOMETER_CP660';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+      
+   case {'CP660_STD'}
+      o_param = 'CP660_STD';
+      o_paramSensor = 'TRANSMISSOMETER_CP660';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'CP660_MED'}
+      o_param = 'CP660_MED';
+      o_paramSensor = 'TRANSMISSOMETER_CP660';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+      
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Update parameter list for turbidity associated parameters.
+%
+% SYNTAX :
+%  [o_metaData] = update_parameter_list_turbidity(a_metaData, a_decoderId)
+%
+% INPUT PARAMETERS :
+%   a_metaData  : input meta-data to be updated
+%   a_decoderId : float decoder Id
+%
+% OUTPUT PARAMETERS :
+%   o_metaData : output updated meta-data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/10/2022 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_metaData] = update_parameter_list_turbidity(a_metaData, a_decoderId)
+
+% lists of managed decoders
+global g_decArgo_decoderIdListNkeCts4;
+
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListTurbidity;
+
+
+paramList = [];
+if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts4))
+   if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+         any(strcmp('FLNTU', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+      paramList = [ ...
+         {'SIDE_SCATTERING_TURBIDITY'} ...
+         {'TURBIDITY'} ...
+         ];
+   end
+elseif (ismember(a_decoderId, [302 303]))
+   if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+         any(strcmp('FLNTU', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+      paramList = [ ...
+         {'SIDE_SCATTERING_TURBIDITY'} ...
+         {'TURBIDITY'} ...
+         ];
+   end
+   if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+         any(strcmp('SEAPOINT', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+      paramList = [ ...
+         {'VOLTAGE_TURBIDITY'} ...
+         {'TURBIDITY2'} ...
+         ];
+   end
+elseif (ismember(a_decoderId, [1014]))
+   paramList = [ ...
+      {'SIDE_SCATTERING_TURBIDITY'} ...
+      {'TURBIDITY'} ...
+      ];
+end
+
+% if (~isempty(g_decArgo_addParamListTurbidity))
+%    paramList = [paramList g_decArgo_addParamListTurbidity];
+% end
+
+% add parameter associated fields
+o_metaData = generate_parameter_fields(a_metaData, paramList);
+
+return
+
+% ------------------------------------------------------------------------------
+% Update meta-data for turbidity associated parameters.
+%
+% SYNTAX :
+%  [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
+%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_turbidity(a_paramName, a_decoderId)
+%
+% INPUT PARAMETERS :
+%   a_paramName : input parameter to be updated
+%   a_decoderId : float decoder Id
+%
+% OUTPUT PARAMETERS :
+%   o_param           : output updated PARAMETER information
+%   o_paramSensor     : output updated PARAMETER_SENSOR information
+%   o_paramUnits      : output updated PARAMETER_UNITS information
+%   o_paramAccuracy   : output updated PARAMETER_ACCURACY information
+%   o_paramResolution : output updated PARAMETER_RESOLUTION information
+%   o_preCalibEq      : output updated PREDEPLOYMENT_CALIB_EQUATION information
+%   o_preCalibCoef    : output updated PREDEPLOYMENT_CALIB_COEFFICIENT information
+%   o_preCalibComment : output updated PARAMETER_ACCURACY information
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/10/2022 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
+   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_turbidity(a_paramName, a_decoderId)
+
+% output parameters initialization
+o_param = '';
+o_paramSensor = '';
+o_paramUnits = '';
+o_paramAccuracy = '';
+o_paramResolution = '';
+o_preCalibEq = '';
+o_preCalibCoef = '';
+o_preCalibComment = '';
+
+switch (a_paramName)
+
+   case {'SIDE_SCATTERING_TURBIDITY'}
+      o_param = 'SIDE_SCATTERING_TURBIDITY';
+      o_paramSensor = 'SCATTEROMETER_TURBIDITY';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = '';
+      o_preCalibCoef = '';
+      o_preCalibComment = '';
+
+   case {'TURBIDITY'}
+      o_param = 'TURBIDITY';
+      o_paramSensor = 'SCATTEROMETER_TURBIDITY';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = '';
+      o_preCalibCoef = '';
+      o_preCalibComment = '';
+
+   case {'VOLTAGE_TURBIDITY'}
+      o_param = 'VOLTAGE_TURBIDITY';
+      o_paramSensor = 'SCATTEROMETER_TURBIDITY2';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = '';
+      o_preCalibCoef = '';
+      o_preCalibComment = '';
+
+   case {'TURBIDITY2'}
+      o_param = 'TURBIDITY2';
+      o_paramSensor = 'SCATTEROMETER_TURBIDITY2';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = '';
+      o_preCalibCoef = '';
+      o_preCalibComment = '';
+
+   case {'SIDE_SCATTERING_TURBIDITY_STD'}
+      o_param = 'SIDE_SCATTERING_TURBIDITY_STD';
+      o_paramSensor = 'SCATTEROMETER_TURBIDITY';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'SIDE_SCATTERING_TURBIDITY_MED'}
+      o_param = 'SIDE_SCATTERING_TURBIDITY_MED';
+      o_paramSensor = 'SCATTEROMETER_TURBIDITY';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'VOLTAGE_TURBIDITY_STD'}
+      o_param = 'VOLTAGE_TURBIDITY_STD';
+      o_paramSensor = 'SCATTEROMETER_TURBIDITY2';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
+   case {'VOLTAGE_TURBIDITY_MED'}
+      o_param = 'VOLTAGE_TURBIDITY_MED';
+      o_paramSensor = 'SCATTEROMETER_TURBIDITY2';
+      o_paramUnits = '';
+      o_paramAccuracy = '';
+      o_paramResolution = '';
+      o_preCalibEq = 'n/a';
+      o_preCalibCoef = 'n/a';
+      o_preCalibComment = '';
+
 end
 
 return

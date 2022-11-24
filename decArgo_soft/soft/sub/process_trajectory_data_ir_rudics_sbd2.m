@@ -158,6 +158,9 @@ global g_JULD_STATUS_3;
 global g_JULD_STATUS_4;
 global g_JULD_STATUS_9;
 
+% sensor list
+global g_decArgo_sensorList;
+
 
 % fill value for JULD parameter
 paramJuld = get_netcdf_param_attributes('JULD');
@@ -275,15 +278,17 @@ for idCyc = 1:length(cycleNumList)
          paramJuld = get_netcdf_param_attributes('JULD');
          
          % retrieve configuration information
-         optodeVerticalOffset = get_static_config_value('CONFIG_PX_1_1_0_0_0', 0);
-         if (isempty(optodeVerticalOffset))
-            optodeVerticalOffset = 0;
-            fprintf('WARNING: Float #%d Cycle #%d Profile #%d: OPTODE vertical offset is missing - surface measurements selected with a 0 dbar vertical offset of OPTODE sensor\n', ...
-               g_decArgo_floatNum, ...
-               cycleNum, ...
-               profNum);
+         if (any(g_decArgo_sensorList == 1))
+            optodeVerticalOffset = get_static_config_value('CONFIG_PX_1_1_0_0_0', 0);
+            if (isempty(optodeVerticalOffset))
+               optodeVerticalOffset = 0;
+               fprintf('WARNING: Float #%d Cycle #%d Profile #%d: OPTODE vertical offset is missing - surface measurements selected with a 0 dbar vertical offset of OPTODE sensor\n', ...
+                  g_decArgo_floatNum, ...
+                  cycleNum, ...
+                  profNum);
+            end
          end
-         
+
          % descending DOXY profile
          idPackData  = find( ...
             (a_tabTrajIndex(:, 1) == 2) & ...
@@ -1024,17 +1029,19 @@ for idCyc = 1:length(cycleNumList)
 
                % fill value for JULD parameter
                paramJuld = get_netcdf_param_attributes('JULD');
-               
+
                % retrieve configuration information
-               optodeVerticalOffset = get_static_config_value('CONFIG_PX_1_1_0_0_0', 0);
-               if (isempty(optodeVerticalOffset))
-                  optodeVerticalOffset = 0;
-                  fprintf('WARNING: Float #%d Cycle #%d Profile #%d: OPTODE vertical offset is missing - surface measurements selected with a 0 dbar vertical offset of OPTODE sensor\n', ...
-                     g_decArgo_floatNum, ...
-                     cycleNum, ...
-                     profNum);
+               if (any(g_decArgo_sensorList == 1))
+                  optodeVerticalOffset = get_static_config_value('CONFIG_PX_1_1_0_0_0', 0);
+                  if (isempty(optodeVerticalOffset))
+                     optodeVerticalOffset = 0;
+                     fprintf('WARNING: Float #%d Cycle #%d Profile #%d: OPTODE vertical offset is missing - surface measurements selected with a 0 dbar vertical offset of OPTODE sensor\n', ...
+                        g_decArgo_floatNum, ...
+                        cycleNum, ...
+                        profNum);
+                  end
                end
-               
+
                % ascending DOXY profile
                idPackData  = find( ...
                   (a_tabTrajIndex(:, 1) == 3) & ...
