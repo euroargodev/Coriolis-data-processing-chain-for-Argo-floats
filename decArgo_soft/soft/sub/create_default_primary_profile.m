@@ -43,10 +43,10 @@ for idProf = 1:length(a_tabProfiles)
    profVss{end+1} = profile.vertSamplingScheme;
 end
 
-% look for the near-surface profile (unpumped part of the primary profile)
 idProfInFile = find( ...
    (profInfo(:, 1) == a_cycleNum) & ...
    (profInfo(:, 2) == a_direction));
+% look for the near-surface profile (unpumped part of the primary profile)
 idSecondary = find(profInfo(idProfInFile, 3) == 2);
 if (~isempty(idSecondary))
    
@@ -79,25 +79,58 @@ if (~isempty(idSecondary))
    o_defaultPrimaryProf.fakeProfFlag = 1;
    
 else
-   
-   [o_defaultPrimaryProf] = get_profile_init_struct( ...
-      -1, -1, -1, 1);
-   
-   o_defaultPrimaryProf.outputCycleNumber = a_cycleNum;
-   direction = 'A';
-   if (a_direction == 1)
-      direction = 'D';
+
+   idSecondary = find(profInfo(idProfInFile, 3) == 0);
+   if (~isempty(idSecondary))
+      
+      if (length(idSecondary) > 1)
+         idSecondary = idSecondary(1);
+      end
+      
+      secondaryProf = a_tabProfiles(idProfInFile(idSecondary));
+      
+      [o_defaultPrimaryProf] = get_profile_init_struct( ...
+         secondaryProf.cycleNumber, secondaryProf.profileNumber, secondaryProf.phaseNumber, 1);
+      
+      o_defaultPrimaryProf.outputCycleNumber = secondaryProf.outputCycleNumber;
+      o_defaultPrimaryProf.direction = secondaryProf.direction;
+      o_defaultPrimaryProf.date = secondaryProf.date;
+      o_defaultPrimaryProf.dateQc = secondaryProf.dateQc;
+      o_defaultPrimaryProf.locationDate = secondaryProf.locationDate;
+      o_defaultPrimaryProf.locationLon = secondaryProf.locationLon;
+      o_defaultPrimaryProf.locationLat = secondaryProf.locationLat;
+      o_defaultPrimaryProf.locationQc = secondaryProf.locationQc;
+      o_defaultPrimaryProf.posSystem = secondaryProf.posSystem;
+      o_defaultPrimaryProf.vertSamplingScheme = 'Primary sampling: averaged []';
+      o_defaultPrimaryProf.paramList = create_primary_parameter_list(a_decoderId);
+      o_defaultPrimaryProf.data = [];
+      o_defaultPrimaryProf.dataQc = [];
+      o_defaultPrimaryProf.configMissionNumber = secondaryProf.configMissionNumber;
+      o_defaultPrimaryProf.sensorNumber = 0;
+      o_defaultPrimaryProf.updated = 0;
+      o_defaultPrimaryProf.fakeProfFlag = 1;
+
+   else
+      
+      [o_defaultPrimaryProf] = get_profile_init_struct( ...
+         -1, -1, -1, 1);
+      
+      o_defaultPrimaryProf.outputCycleNumber = a_cycleNum;
+      direction = 'A';
+      if (a_direction == 1)
+         direction = 'D';
+      end
+      o_defaultPrimaryProf.direction = direction;
+      o_defaultPrimaryProf.posSystem = get_positioning_system(a_decoderId);
+      o_defaultPrimaryProf.vertSamplingScheme = 'Primary sampling: averaged []';
+      o_defaultPrimaryProf.paramList = create_primary_parameter_list(a_decoderId);
+      o_defaultPrimaryProf.data = [];
+      o_defaultPrimaryProf.dataQc = [];
+      o_defaultPrimaryProf.sensorNumber = 0;
+      o_defaultPrimaryProf.updated = 0;
+      o_defaultPrimaryProf.fakeProfFlag = 1;
+      
    end
-   o_defaultPrimaryProf.direction = direction;
-   o_defaultPrimaryProf.posSystem = get_positioning_system(a_decoderId);
-   o_defaultPrimaryProf.vertSamplingScheme = 'Primary sampling: averaged []';
-   o_defaultPrimaryProf.paramList = create_primary_parameter_list(a_decoderId);
-   o_defaultPrimaryProf.data = [];
-   o_defaultPrimaryProf.dataQc = [];
-   o_defaultPrimaryProf.sensorNumber = 0;
-   o_defaultPrimaryProf.updated = 0;
-   o_defaultPrimaryProf.fakeProfFlag = 1;
-   
 end
 
 return

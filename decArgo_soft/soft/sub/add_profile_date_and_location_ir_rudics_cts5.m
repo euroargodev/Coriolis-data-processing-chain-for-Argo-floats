@@ -56,6 +56,7 @@ a_gpsLocSbdFileDate = a_gpsData{9};
 
 % look for the first and last times of the subsurface cycle
 cycleStartDate = g_decArgo_dateDef;
+descentToParkStartDate = g_decArgo_dateDef;
 ascentEndDate = g_decArgo_dateDef;
 for idT = 1:length(a_timedata)
    if (cycleStartDate == g_decArgo_dateDef)
@@ -64,6 +65,15 @@ for idT = 1:length(a_timedata)
             cycleStartDate = a_timedata{idT}.timeAdj;
          else
             cycleStartDate = a_timedata{idT}.time;
+         end
+      end
+   end
+   if (descentToParkStartDate == g_decArgo_dateDef)
+      if (strcmp(a_timedata{idT}.label, 'DESCENT TO PARK START TIME'))
+         if (~isempty(a_timedata{idT}.timeAdj) && (a_timedata{idT}.timeAdj ~= g_decArgo_dateDef))
+            descentToParkStartDate = a_timedata{idT}.timeAdj;
+         else
+            descentToParkStartDate = a_timedata{idT}.time;
          end
       end
    end
@@ -76,7 +86,9 @@ for idT = 1:length(a_timedata)
          end
       end
    end
-   if ((ascentEndDate ~= g_decArgo_dateDef) && (cycleStartDate ~= g_decArgo_dateDef))
+   if ((ascentEndDate ~= g_decArgo_dateDef) && ...
+         (descentToParkStartDate ~= g_decArgo_dateDef) && ...
+         (cycleStartDate ~= g_decArgo_dateDef))
       break
    end
 end
@@ -86,46 +98,150 @@ if (a_profStruct.direction == 'A')
    
    % ascent profile
    
-   if (~isempty(ascentEndDate))
+   % add profile date
+   a_profStruct.date = ascentEndDate;
+   
+   % add profile location
+   
+   % select the GPS data to use
+   idPosToUse = find( ...
+      (a_gpsLocCycleNum == a_profStruct.cycleNumber) & ...
+      (a_gpsLocProfNum == a_profStruct.profileNumber));
+   
+   if (~isempty(idPosToUse))
       
-      % add profile date
-      a_profStruct.date = ascentEndDate;
+      % the float surfaced after this profile
+      idPosToUse = idPosToUse(1);
+      a_profStruct.locationDate = a_gpsLocDate(idPosToUse);
+      a_profStruct.locationLon = a_gpsLocLon(idPosToUse);
+      a_profStruct.locationLat = a_gpsLocLat(idPosToUse);
+      a_profStruct.locationQc = num2str(a_gpsLocQc(idPosToUse));
+   else
       
-      % add profile location
-      
-      % select the GPS data to use
-      idPosToUse = find( ...
-         (a_gpsLocCycleNum == a_profStruct.cycleNumber) & ...
-         (a_gpsLocProfNum == a_profStruct.profileNumber));
-      
-      if (~isempty(idPosToUse))
-                  
-         % the float surfaced after this profile
-         idPosToUse = idPosToUse(1);
-         a_profStruct.locationDate = a_gpsLocDate(idPosToUse);
-         a_profStruct.locationLon = a_gpsLocLon(idPosToUse);
-         a_profStruct.locationLat = a_gpsLocLat(idPosToUse);
-         a_profStruct.locationQc = num2str(a_gpsLocQc(idPosToUse));
-      else
+      % the float didn't surface after this profile
+      if (a_profStruct.date ~= g_decArgo_dateDef)
          
-         % the float didn't surface after this profile
-         if (a_profStruct.date ~= g_decArgo_dateDef)
+         % we must interpolate between the existing GPS locations
+         prevLocDate = g_decArgo_dateDef;
+         nextLocDate = g_decArgo_dateDef;
+         
+         % find the previous GPS location
+         idPrev = find((a_gpsLocDate <= a_profStruct.date) & (a_gpsLocQc == 1));
+         if (~isempty(idPrev))
+            % previous good GPS locations exist, use the last one
+            [~, idMax] = max(a_gpsLocDate(idPrev));
+            prevLocDate = a_gpsLocDate(idPrev(idMax));
+            prevLocLon = a_gpsLocLon(idPrev(idMax));
+            prevLocLat = a_gpsLocLat(idPrev(idMax));
+         end
+         
+         % find the next GPS location
+         idNext = find((a_gpsLocDate >= a_profStruct.date) & (a_gpsLocQc == 1));
+         if (~isempty(idNext))
+            % next good GPS locations exist, use the first one
+            [~, idMin] = min(a_gpsLocDate(idNext));
+            nextLocDate = a_gpsLocDate(idNext(idMin));
+            nextLocLon = a_gpsLocLon(idNext(idMin));
+            nextLocLat = a_gpsLocLat(idNext(idMin));
+         end
+         
+         % interpolate between the 2 locations
+         if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
+            
+            % interpolate the locations
+            [interpLocLon, interpLocLat] = interpolate_between_2_locations(...
+               prevLocDate, prevLocLon, prevLocLat, ...
+               nextLocDate, nextLocLon, nextLocLat, ...
+               a_profStruct.date);
+            
+            if (~isnan(interpLocLon))
+               % assign the interpolated location to the profile
+               a_profStruct.locationDate = a_profStruct.date;
+               a_profStruct.locationLon = interpLocLon;
+               a_profStruct.locationLat = interpLocLat;
+               a_profStruct.locationQc = g_decArgo_qcStrInterpolated;
+            else
+               fprintf('WARNING: Float #%d Cycle #%d Profile #%d: time inconsistency detected while interpolating for profile location processing => profile not located\n', ...
+                  g_decArgo_floatNum, ...
+                  a_profStruct.cycleNumber, a_profStruct.profileNumber);
+            end
+         end
+      end
+   end
+   
+else
+   
+   % descent profile
+   
+   % add profile date
+   a_profStruct.date = cycleStartDate;
+   if (a_profStruct.date == g_decArgo_dateDef)
+      a_profStruct.date = descentToParkStartDate;
+   end
+   
+   % add profile location
+   
+   if (a_profStruct.date ~= g_decArgo_dateDef)
+      
+      % find the previous GPS location
+      idPrev = find((a_gpsLocDate <= a_profStruct.date) & (a_gpsLocQc == 1));
+      if (~isempty(idPrev))
+         % previous good GPS locations exist, use the last one
+         [~, idMax] = max(a_gpsLocDate(idPrev));
+         idPrev = idPrev(idMax);
+         useIt = 0;
+         
+         % search if we can use the previous GPS location
+         if ((a_profStruct.cycleNumber == g_decArgo_firstCycleNumFloat) && ...
+               (a_profStruct.profileNumber == 1))
+            % the previous location is the launch position or the location of
+            % the prelude (cycle = g_decArgo_firstCycleNumFloat, pattern = 0)
+            useIt = 1;
+         else
+            if (a_profStruct.profileNumber == 1)
+               
+               % retrieve the last pattern number of the previous cycle
+               idF = find(g_decArgo_cyclePatternNumFloat(:, 1) == a_profStruct.cycleNumber-1);
+               if (~isempty(idF))
+                  lastPtnNumOfPrevCy = max(g_decArgo_cyclePatternNumFloat(idF, 2));
+                  
+                  if ((a_gpsLocCycleNum(idPrev) == a_profStruct.cycleNumber-1) && ...
+                        (a_gpsLocProfNum(idPrev) == lastPtnNumOfPrevCy))
+                     
+                     % the previous location is the location of the last
+                     % transmission of the previous cycle
+                     useIt = 1;
+                  end
+               end
+            else
+               if ((a_gpsLocCycleNum(idPrev) == a_profStruct.cycleNumber) && ...
+                     (a_gpsLocProfNum(idPrev) == a_profStruct.profileNumber-1))
+                  % the previous location is the location of the previous
+                  % profile (sub-cycle) of the current cycle
+                  useIt = 1;
+               end
+            end
+         end
+         
+         if (useIt == 1)
+            
+            % directly use the previous location
+            a_profStruct.locationDate = a_gpsLocDate(idPrev);
+            a_profStruct.locationLon = a_gpsLocLon(idPrev);
+            a_profStruct.locationLat = a_gpsLocLat(idPrev);
+            a_profStruct.locationQc = num2str(a_gpsLocQc(idPrev));
+            
+         else
             
             % we must interpolate between the existing GPS locations
-            prevLocDate = g_decArgo_dateDef;
-            nextLocDate = g_decArgo_dateDef;
             
             % find the previous GPS location
-            idPrev = find((a_gpsLocDate <= a_profStruct.date) & (a_gpsLocQc == 1));
-            if (~isempty(idPrev))
-               % previous good GPS locations exist, use the last one
-               [~, idMax] = max(a_gpsLocDate(idPrev));
-               prevLocDate = a_gpsLocDate(idPrev(idMax));
-               prevLocLon = a_gpsLocLon(idPrev(idMax));
-               prevLocLat = a_gpsLocLat(idPrev(idMax));
-            end
+            prevLocDate = a_gpsLocDate(idPrev);
+            prevLocLon = a_gpsLocLon(idPrev);
+            prevLocLat = a_gpsLocLat(idPrev);
             
             % find the next GPS location
+            nextLocDate = g_decArgo_dateDef;
             idNext = find((a_gpsLocDate >= a_profStruct.date) & (a_gpsLocQc == 1));
             if (~isempty(idNext))
                % next good GPS locations exist, use the first one
@@ -136,7 +252,7 @@ if (a_profStruct.direction == 'A')
             end
             
             % interpolate between the 2 locations
-            if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
+            if (nextLocDate ~= g_decArgo_dateDef)
                
                % interpolate the locations
                [interpLocLon, interpLocLat] = interpolate_between_2_locations(...
@@ -154,113 +270,6 @@ if (a_profStruct.direction == 'A')
                   fprintf('WARNING: Float #%d Cycle #%d Profile #%d: time inconsistency detected while interpolating for profile location processing => profile not located\n', ...
                      g_decArgo_floatNum, ...
                      a_profStruct.cycleNumber, a_profStruct.profileNumber);
-               end
-            end
-         end
-      end
-   end
-   
-else
-   
-   % descent profile
-   
-   if (~isempty(cycleStartDate))
-      
-      % add profile date
-      a_profStruct.date = cycleStartDate;
-      
-      % add profile location
-      
-      if (a_profStruct.date ~= g_decArgo_dateDef)
-         
-         % find the previous GPS location
-         idPrev = find((a_gpsLocDate <= a_profStruct.date) & (a_gpsLocQc == 1));
-         if (~isempty(idPrev))
-            % previous good GPS locations exist, use the last one
-            [~, idMax] = max(a_gpsLocDate(idPrev));
-            idPrev = idPrev(idMax);
-            useIt = 0;
-            
-            % search if we can use the previous GPS location
-            if ((a_profStruct.cycleNumber == g_decArgo_firstCycleNumFloat) && ...
-                  (a_profStruct.profileNumber == 1))
-               % the previous location is the launch position or the location of
-               % the prelude (cycle = g_decArgo_firstCycleNumFloat, pattern = 0)
-               useIt = 1;
-            else
-               if (a_profStruct.profileNumber == 1)
-                  
-                  % retrieve the last pattern number of the previous cycle
-                  idF = find(g_decArgo_cyclePatternNumFloat(:, 1) == a_profStruct.cycleNumber-1);
-                  if (~isempty(idF))
-                     lastPtnNumOfPrevCy = max(g_decArgo_cyclePatternNumFloat(idF, 2));
-                     
-                     if ((a_gpsLocCycleNum(idPrev) == a_profStruct.cycleNumber-1) && ...
-                           (a_gpsLocProfNum(idPrev) == lastPtnNumOfPrevCy))
-                        
-                        % the previous location is the location of the last
-                        % transmission of the previous cycle
-                        useIt = 1;
-                     end
-                  end
-               else
-                  if ((a_gpsLocCycleNum(idPrev) == a_profStruct.cycleNumber) && ...
-                        (a_gpsLocProfNum(idPrev) == a_profStruct.profileNumber-1))
-                     % the previous location is the location of the previous
-                     % profile (sub-cycle) of the current cycle
-                     useIt = 1;
-                  end
-               end
-            end
-            
-            if (useIt == 1)
-               
-               % directly use the previous location
-               a_profStruct.locationDate = a_gpsLocDate(idPrev);
-               a_profStruct.locationLon = a_gpsLocLon(idPrev);
-               a_profStruct.locationLat = a_gpsLocLat(idPrev);
-               a_profStruct.locationQc = num2str(a_gpsLocQc(idPrev));
-               
-            else
-               
-               % we must interpolate between the existing GPS locations
-               
-               % find the previous GPS location
-               prevLocDate = a_gpsLocDate(idPrev);
-               prevLocLon = a_gpsLocLon(idPrev);
-               prevLocLat = a_gpsLocLat(idPrev);
-                              
-               % find the next GPS location
-               nextLocDate = g_decArgo_dateDef;
-               idNext = find((a_gpsLocDate >= a_profStruct.date) & (a_gpsLocQc == 1));
-               if (~isempty(idNext))
-                  % next good GPS locations exist, use the first one
-                  [~, idMin] = min(a_gpsLocDate(idNext));
-                  nextLocDate = a_gpsLocDate(idNext(idMin));
-                  nextLocLon = a_gpsLocLon(idNext(idMin));
-                  nextLocLat = a_gpsLocLat(idNext(idMin));
-               end
-               
-               % interpolate between the 2 locations
-               if (nextLocDate ~= g_decArgo_dateDef)
-                  
-                  % interpolate the locations
-                  [interpLocLon, interpLocLat] = interpolate_between_2_locations(...
-                     prevLocDate, prevLocLon, prevLocLat, ...
-                     nextLocDate, nextLocLon, nextLocLat, ...
-                     a_profStruct.date);
-                  
-                  if (~isnan(interpLocLon))
-                     % assign the interpolated location to the profile
-                     a_profStruct.locationDate = a_profStruct.date;
-                     a_profStruct.locationLon = interpLocLon;
-                     a_profStruct.locationLat = interpLocLat;
-                     a_profStruct.locationQc = g_decArgo_qcStrInterpolated;
-                  else
-                     fprintf('WARNING: Float #%d Cycle #%d Profile #%d: time inconsistency detected while interpolating for profile location processing => profile not located\n', ...
-                        g_decArgo_floatNum, ...
-                        a_profStruct.cycleNumber, a_profStruct.profileNumber);
-                  end
                end
             end
          end

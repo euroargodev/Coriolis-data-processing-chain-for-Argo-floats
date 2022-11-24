@@ -34,6 +34,8 @@ global g_decArgo_phaseEndOfLife;
 
 % global default values
 global g_decArgo_dateDef;
+global g_decArgo_argosLonDef;
+global g_decArgo_argosLatDef;
 
 
 if (~isempty(a_apmtTech))
@@ -91,7 +93,57 @@ if (~isempty(a_apmtTech))
          gpsLocQc = [gpsLocQc; 0];
          gpsLocAccuracy = [gpsLocAccuracy; 'G'];
          gpsLocSbdFileDate = [gpsLocSbdFileDate; g_decArgo_dateDef];
+
+         % compute the JAMSTEC QC for the GPS locations of the current cycle
          
+         lastLocDateOfPrevCycle = g_decArgo_dateDef;
+         lastLocLonOfPrevCycle = g_decArgo_argosLonDef;
+         lastLocLatOfPrevCycle = g_decArgo_argosLatDef;
+         
+         cycleNumber = g_decArgo_cycleNumFloat;
+         if (~isempty(g_decArgo_patternNumFloat))
+            profNumber = g_decArgo_patternNumFloat;
+         else
+            profNumber = 0;
+         end
+         
+         % retrieve the last good GPS location of the previous surface phase
+         idF = find((gpsLocCycleNum == cycleNumber) & (gpsLocProfNum < profNumber));
+         if (~isempty(idF))
+            idF = idF(end);
+         else
+            idF = find(gpsLocCycleNum == cycleNumber-1);
+            if (~isempty(idF))
+               idF = idF(end);
+            end
+         end
+         
+         if (~isempty(idF))
+            prevLocDate = gpsLocDate(idF);
+            prevLocLon = gpsLocLon(idF);
+            prevLocLat = gpsLocLat(idF);
+            prevLocQc = gpsLocQc(idF);
+            
+            idGoodLoc = find(prevLocQc == 1);
+            if (~isempty(idGoodLoc))
+               lastLocDateOfPrevCycle = prevLocDate(idGoodLoc(end));
+               lastLocLonOfPrevCycle = prevLocLon(idGoodLoc(end));
+               lastLocLatOfPrevCycle = prevLocLat(idGoodLoc(end));
+            end
+         end
+         
+         idF = find((gpsLocCycleNum == cycleNumber) & (gpsLocProfNum == profNumber));
+         locDate = gpsLocDate(idF);
+         locLon = gpsLocLon(idF);
+         locLat = gpsLocLat(idF);
+         locAcc = gpsLocAccuracy(idF);
+         
+         [locQc] = compute_jamstec_qc( ...
+            locDate, locLon, locLat, locAcc, ...
+            lastLocDateOfPrevCycle, lastLocLonOfPrevCycle, lastLocLatOfPrevCycle, []);
+         
+         gpsLocQc(idF) = str2num(locQc')';
+
          % update GPS data global variable
          g_decArgo_gpsData{1} = gpsLocCycleNum;
          g_decArgo_gpsData{2} = gpsLocProfNum;
