@@ -2,13 +2,14 @@
 % Retrieve information on profile location of a nc mono-profile file.
 %
 % SYNTAX :
-%  [o_ncProfLoc] = get_nc_profile_location(a_ncPathFileName)
+%  [o_ncProfLocStr, o_ncProfQc] = get_nc_profile_location(a_ncPathFileName)
 % 
 % INPUT PARAMETERS :
 %   a_ncPathFileName : nc mono-profile file path name
 % 
 % OUTPUT PARAMETERS :
-%   o_ncProfLoc : information on profile location
+%   o_ncProfLocStr : information on profile location
+%   o_ncProfQc     : position QC of profile location
 % 
 % EXAMPLES :
 % 
@@ -18,10 +19,11 @@
 % RELEASES :
 %   09/07/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ncProfLoc] = get_nc_profile_location(a_ncPathFileName)
+function [o_ncProfLocStr, o_ncProfQc] = get_nc_profile_location(a_ncPathFileName)
 
 % output parameters initialization
-o_ncProfLoc = [];
+o_ncProfLocStr = [];
+o_ncProfQc = [];
 
 
 if (exist(a_ncPathFileName, 'file') == 2)
@@ -58,9 +60,10 @@ if (exist(a_ncPathFileName, 'file') == 2)
       end
    end
 
-   o_ncProfLoc = sprintf('%s %.3f %.3f %c %s', ...
+   o_ncProfLocStr = sprintf('%s %.3f %.3f %s', ...
    julian_2_gregorian_dec_argo(juldLocation), ...
-   latitude, longitude, positionQc, positioningSystem);
+   latitude, longitude, positioningSystem);
+   o_ncProfQc = positionQc;
 end
 
 return

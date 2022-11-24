@@ -384,14 +384,16 @@ for idProf = 1:length(tabProfiles)
             if (exist(ncPathFileName, 'file') == 2)
 
                % retrieve profile location of the nc file
-               ncProfLoc = get_nc_profile_location(ncPathFileName);
+               [ncProfLocStr, ncProfQc] = get_nc_profile_location(ncPathFileName);
 
                % compare profile location
                prof = tabProfiles(idProfInFile(1));
-               profLoc = sprintf('%s %.3f %.3f %c %s', ...
+               profLocStr = sprintf('%s %.3f %.3f %s', ...
                   julian_2_gregorian_dec_argo(prof.locationDate), ...
-                  prof.locationLat, prof.locationLon, prof.locationQc, prof.posSystem);
-               if (~strcmp(profLoc, ncProfLoc))
+                  prof.locationLat, prof.locationLon, prof.posSystem);
+               if ((((ncProfQc == '8') && (prof.locationQc ~= '8')) || ...
+                     ((ncProfQc ~= '8') && (prof.locationQc == '8'))) || ...
+                     ~strcmp(profLocStr, ncProfLocStr))
                   generate = 1;
                end
             end
