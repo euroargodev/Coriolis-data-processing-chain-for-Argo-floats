@@ -57,7 +57,8 @@ gpsLocQc = gpsData{7};
 for idProf = 1:length(a_tabProfiles)
    profile = a_tabProfiles(idProf);
    if ((profile.date ~= g_decArgo_dateDef) && ...
-         (profile.locationLon == g_decArgo_argosLonDef))
+         ((profile.locationLon == g_decArgo_argosLonDef) || ...
+         (profile.iridiumLocation == 1)))
 
       prevLocDate = g_decArgo_dateDef;
       nextLocDate = g_decArgo_dateDef;
@@ -85,6 +86,7 @@ for idProf = 1:length(a_tabProfiles)
       
       % interpolate between the 2 locations
       if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
+%             (((nextLocDate-prevLocDate) <= g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc) || (profile.locationQc == '2')))
          
          % interpolate the locations
          [interpLocLon, interpLocLat] = interpolate_between_2_locations(...

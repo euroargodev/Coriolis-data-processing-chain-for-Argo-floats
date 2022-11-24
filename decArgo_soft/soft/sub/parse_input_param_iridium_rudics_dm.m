@@ -60,7 +60,7 @@ if (~isempty(a_varargin))
                return
             end
          else
-            fprintf('WARNING: unexpected input argument (%s) => ignored\n', a_varargin{id});
+            fprintf('INFO: unexpected input argument (%s) => ignored\n', a_varargin{id});
          end
       end
    end

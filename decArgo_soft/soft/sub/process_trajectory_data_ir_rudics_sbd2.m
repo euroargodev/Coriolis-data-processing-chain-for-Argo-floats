@@ -136,6 +136,7 @@ global g_MC_SpyInAscProf;
 global g_MC_AscProf;
 global g_MC_LastAscPumpedCtd;
 global g_MC_AET;
+global g_MC_SpyAtSurface;
 global g_MC_TST;
 global g_MC_FMT;
 global g_MC_Surface;
@@ -874,6 +875,35 @@ for idCyc = 1:length(cycleNumList)
             end
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+
+            % spy pressure measurements during transmission
+            idPackData  = find( ...
+               (a_tabTrajIndex(:, 1) == 252) & ...
+               (a_tabTrajIndex(:, 2) == cycleNum) & ...
+               (a_tabTrajIndex(:, 3) == profNum) & ...
+               (a_tabTrajIndex(:, 4) == g_decArgo_phaseSatTrans));
+            
+            for idspyMeas = 1:length(idPackData)
+               id = idPackData(idspyMeas);
+               dates = a_tabTrajData{id}.dates;
+               data = a_tabTrajData{id}.data;
+               
+               for idM = 1:length(dates)
+                  measStruct = create_one_meas_float_time(g_MC_SpyAtSurface, dates(idM), g_JULD_STATUS_2, 0);
+                  idF = find(strcmp('PRES', {a_tabTrajData{id}.paramList.name}));
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
+                  measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+                  measData = [measData; measStruct];
+                  
+                  measStruct = create_one_meas_float_time(g_MC_SpyAtSurface, dates(idM), g_JULD_STATUS_2, 0);
+                  idF = setdiff(1:length(a_tabTrajData{id}.paramList), idF);
+                  measStruct.paramList = a_tabTrajData{id}.paramList(idF);
+                  measStruct.paramData = data(idM, idF);
+                  measStruct.cyclePhase = g_decArgo_phaseSatTrans;
+                  techNMeasStruct.tabMeas = [techNMeasStruct.tabMeas; measStruct];
+               end
+            end
             
             % transmission end time
             measStruct = create_one_meas_float_time(g_MC_TET, -1, g_JULD_STATUS_9, 0);

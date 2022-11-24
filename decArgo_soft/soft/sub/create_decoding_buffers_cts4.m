@@ -168,8 +168,26 @@ if (ismember(g_decArgo_floatNum, ...
             a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
          end
          
-         %          tabSession(find(ismember(tabSession, 128:130))) = 127;
-         %          tabSession(find(tabSession > 130)) = tabSession(find(tabSession > 130)) - 3;
+         idF = find(tabSession >= 129);
+         tabSession(idF) = tabSession(idF) + 1;
+         idF = find(((tabSession == 128) & (tabCyNum == 6500) & (tabPackType == 253) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans)) | ...
+            ((tabSession == 128) & (tabCyNum == 6500) & (tabPackType == 252) & (tabPhaseNumRaw ~= g_decArgo_phaseSurfWait)) | ...
+            ((tabSession == 128) & (tabCyNum == 6500) & (tabPackType ~= 253) & (tabPackType ~= 252)));
+         tabSession(idF) = 129;
+         tabBase(idF(1)) = 1;
+         tabDeep(idF) = 1;
+         
+         idF = find(ismember(tabSession, 127:130));
+         for id = idF
+            a_decodedData(id).cyProfPhaseList(6) = g_decArgo_dateDef;
+         end
+         
+         % two following cycle numbers are set only to avoid unused packets in
+         % the log file (these packet are not used because we don't know the
+         % reference date used in a "surface waiting period" phase to date a
+         % buoyancy action)
+         tabCyNum(18972:18973) = 6400;
+         tabCyNum(19275:19276) = 6500;
       case 2902239
          startId = find(tabDate == gregorian_2_julian_dec_argo('2019/01/15 18:11:13'), 1, 'first');
          stopId = find(tabDate == gregorian_2_julian_dec_argo('2019/01/15 18:11:13'), 1, 'last');
@@ -254,7 +272,7 @@ end
 rank = 1;
 sessionList = unique(tabSession);
 for sesNum = sessionList
-   
+      
    idBaseForSession = find((tabSession == sesNum) & (tabBase == 1), 1);
    if (tabPhaseNumRaw(idBaseForSession) == g_decArgo_phaseSatTrans)
       % deep session
@@ -393,47 +411,6 @@ if (ismember(a_decoderId, [111, 113]))
    idSurfSensorTech = find((tabPackType == 250) & (tabDeep == 0) & (tabCyNum > 0));
    tabRank(idSurfSensorTech) = -1;
 end
-
-% if (ismember(g_decArgo_floatNum, ...
-%       [6903551]))
-%    switch g_decArgo_floatNum
-%       case 6903551
-%          idS126 = find(tabSession == 126);
-%          rnk127 = unique(tabRank(idS126));
-%          rnk127(find(rnk127 < 0)) = [];
-%          
-%          tabRank(find(tabRank >= 128)) = tabRank(find(tabRank >= 128)) + 5;
-%          
-%          idS127Rnk1 = find((tabSession == 127) & (tabCyNum == 6400) & ...
-%             (tabDate >= gregorian_2_julian_dec_argo('2020/04/09 11:44:56')) & ...
-%             (tabDate <= gregorian_2_julian_dec_argo('2020/04/09 11:49:30')));
-%          tabRank(idS127Rnk1) = rnk127 + 1;
-%          
-%          idS127Rnk2 = find((tabSession == 127) & (tabCyNum == 6400) & ...
-%             (tabDate == gregorian_2_julian_dec_argo('2020/04/09 11:52:57')) & ...
-%             (tabPhaseNumRaw == g_decArgo_phaseSurfWait));
-%          tabRank(idS127Rnk2) = rnk127 + 2;
-%          
-%          idS127Rnk3 = find((tabSession == 127) & (tabCyNum == 6400) & ...
-%             (tabDate == gregorian_2_julian_dec_argo('2020/04/09 11:52:57')) & ...
-%             (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
-%          tabRank(idS127Rnk3) = rnk127 + 3;
-%          
-%          idS127Rnk34 = find((tabSession == 127) & (tabCyNum == 6500) & ...
-%             (tabDate >= gregorian_2_julian_dec_argo('2020/04/09 11:52:57')) & ...
-%             (tabDate <= gregorian_2_julian_dec_argo('2020/04/09 11:57:32')));
-%          idSep = find(tabPackType(idS127Rnk34) == 253);
-%          
-%          idS127Rnk3 = idS127Rnk34(1:idSep-1);
-%          tabRank(idS127Rnk3) = rnk127 + 4;
-% 
-%          idS127Rnk4 = idS127Rnk34(idSep);
-%          tabRank(idS127Rnk4) = rnk127 + 5;
-%          
-%          idS127Rnk5 = find((tabSession == 127) & (tabCyNum == 6600));
-%          tabRank(idS127Rnk5) = rnk127 + 6;
-%    end
-% end
 
 % sort rank numbers according to cycle numbers
 rank = 1;

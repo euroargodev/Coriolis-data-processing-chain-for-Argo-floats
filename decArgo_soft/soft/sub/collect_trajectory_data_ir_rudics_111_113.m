@@ -10,6 +10,7 @@
 %    a_descentToParkEndDate, ...
 %    a_descentToProfStartDate, a_descentToProfEndDate, ...
 %    a_ascentStartDate, a_ascentEndDate, ...
+%    a_transStartDate, ...
 %    a_firstEmerAscentDate, ...
 %    a_sensorTechCTD, a_deepCycleFlag)
 %
@@ -28,6 +29,7 @@
 %   a_descentToProfEndDate   : descent to profile end date
 %   a_ascentStartDate        : ascent start date
 %   a_ascentEndDate          : ascent end date
+%   a_transStartDate         : transmission start date
 %   a_firstEmerAscentDate    : first emergency ascent date
 %   a_sensorTechCTD          : CTD technical data
 %   a_deepCycleFlag          : 1 if it is a deep cycle, 0 if it is a surface one
@@ -52,6 +54,7 @@ function [o_tabTrajIndex, o_tabTrajData] = collect_trajectory_data_ir_rudics_111
    a_descentToParkEndDate, ...
    a_descentToProfStartDate, a_descentToProfEndDate, ...
    a_ascentStartDate, a_ascentEndDate, ...
+   a_transStartDate, ...
    a_firstEmerAscentDate, ...
    a_sensorTechCTD, a_deepCycleFlag)
 
@@ -68,6 +71,7 @@ global g_decArgo_phaseProfDrift;
 global g_decArgo_phaseAscProf;
 global g_decArgo_phaseAscEmerg;
 global g_decArgo_phaseSatTrans;
+global g_decArgo_phaseSurfWait;
 global g_decArgo_phaseEmergencyAsc;
 
 % current float WMO number
@@ -243,7 +247,8 @@ if (~isempty(a_floatPres) && ~isempty(a_cycleStartDate))
                   descentToProfEndDate = a_descentToProfEndDate(idTechToUse, 5);
                   ascentStartDate = a_ascentStartDate(idTechToUse, 5);
                   ascentEndDate = a_ascentEndDate(idTechToUse, 5) + 10/1440;
-                  
+                  transStartDate = a_transStartDate(idTechToUse, 5);
+
                   for id = 1:length(idPack)
                      idP = idPack(id);
                      
@@ -268,6 +273,8 @@ if (~isempty(a_floatPres) && ~isempty(a_cycleStartDate))
                            refDate = ascentStartDate;
                         case g_decArgo_phaseAscEmerg
                            refDate = ascentEndDate;
+                        case g_decArgo_phaseSatTrans
+                           refDate = transStartDate;
                         otherwise
                            fprintf('DEC_WARNING: Float #%d Cycle #%d: Phase %s not considered in Msg type 252\n', ...
                               g_decArgo_floatNum, ...
@@ -302,7 +309,7 @@ if (~isempty(a_floatPres) && ~isempty(a_cycleStartDate))
                         o_tabTrajData = [o_tabTrajData; {datedMeasStruct}];
                      end
                   end
-               end
+               end               
             end
          else
             

@@ -115,12 +115,66 @@ if (~isempty(idPosToUse))
    o_profile.locationLon = a_gpsLocLon(idPosToUse);
    o_profile.locationLat = a_gpsLocLat(idPosToUse);
    o_profile.locationQc = num2str(a_gpsLocQc(idPosToUse));
+   
+   % positioning system
    o_profile.posSystem = 'GPS';
 else
+   % no GPS fix exists
    
-   % there is no good GPS locations for this cycle
-   
-   % we will use the Iridium locations
+   if (o_profile.date ~= g_decArgo_dateDef)
+      
+      % we must interpolate between the existing GPS locations
+      prevLocDate = g_decArgo_dateDef;
+      nextLocDate = g_decArgo_dateDef;
+      
+      % find the previous GPS location
+      idPrev = find(a_gpsLocDate <= o_profile.date);
+      if (~isempty(idPrev))
+         idPrev = idPrev(end);
+         prevLocDate = a_gpsLocDate(idPrev);
+         prevLocLon = a_gpsLocLon(idPrev);
+         prevLocLat = a_gpsLocLat(idPrev);
+      end
+      
+      % find the next GPS location
+      idNext = find(a_gpsLocDate >= o_profile.date);
+      if (~isempty(idNext))
+         idNext = idNext(1);
+         nextLocDate = a_gpsLocDate(idNext);
+         nextLocLon = a_gpsLocLon(idNext);
+         nextLocLat = a_gpsLocLat(idNext);
+      end
+      
+      % interpolate between the 2 locations
+      if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
+         
+         % interpolate the locations
+         [interpLocLon, interpLocLat] = interpolate_between_2_locations(...
+            prevLocDate, prevLocLon, prevLocLat, ...
+            nextLocDate, nextLocLon, nextLocLat, ...
+            o_profile.date);
+         
+         if (~isnan(interpLocLon))
+            % assign the interpolated location to the profile
+            o_profile.locationDate = o_profile.date;
+            o_profile.locationLon = interpLocLon;
+            o_profile.locationLat = interpLocLat;
+            o_profile.locationQc = g_decArgo_qcStrInterpolated;
+            
+            % positioning system
+            o_profile.posSystem = 'GPS';
+         else
+            fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing => profile not located\n', ...
+               g_decArgo_floatNum, ...
+               o_profile.cycleNumber);
+         end
+      end
+   end
+end
+
+% we have not been able to set a location for the profile, we will use the
+% Iridium locations
+if (o_profile.locationDate == g_decArgo_dateDef)
    [locDate, locLon, locLat, locQc, lastCycleFlag] = ...
       compute_profile_location_from_iridium_locations_ir_sbd(a_iridiumData, o_profile.cycleNumber);
    if (~isempty(locDate))
@@ -130,6 +184,8 @@ else
       o_profile.locationLat = locLat;
       o_profile.locationQc = locQc;
       o_profile.iridiumLocation = 1;
+      
+      % positioning system
       o_profile.posSystem = 'IRIDIUM';
       
       % if the current cycle is the last received cycle, the location could
@@ -137,60 +193,6 @@ else
       % different rsync log files)
       if (lastCycleFlag == 1)
          o_profile.updated = 1;
-      end
-   else
-      
-      % the profile location is still missing
-      % we must interpolate between the existing GPS locations
-      
-      if (o_profile.date ~= g_decArgo_dateDef)
-         
-         % we must interpolate between the existing GPS locations
-         prevLocDate = g_decArgo_dateDef;
-         nextLocDate = g_decArgo_dateDef;
-         
-         % find the previous GPS location
-         idPrev = find(a_gpsLocDate <= o_profile.date);
-         if (~isempty(idPrev))
-            idPrev = idPrev(end);
-            prevLocDate = a_gpsLocDate(idPrev);
-            prevLocLon = a_gpsLocLon(idPrev);
-            prevLocLat = a_gpsLocLat(idPrev);
-         end
-         
-         % find the next GPS location
-         idNext = find(a_gpsLocDate >= o_profile.date);
-         if (~isempty(idNext))
-            idNext = idNext(1);
-            nextLocDate = a_gpsLocDate(idNext);
-            nextLocLon = a_gpsLocLon(idNext);
-            nextLocLat = a_gpsLocLat(idNext);
-         end
-         
-         % interpolate between the 2 locations
-         if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
-            
-            % interpolate the locations
-            [interpLocLon, interpLocLat] = interpolate_between_2_locations(...
-               prevLocDate, prevLocLon, prevLocLat, ...
-               nextLocDate, nextLocLon, nextLocLat, ...
-               o_profile.date);
-            
-            if (~isnan(interpLocLon))
-               % assign the interpolated location to the profile
-               o_profile.locationDate = o_profile.date;
-               o_profile.locationLon = interpLocLon;
-               o_profile.locationLat = interpLocLat;
-               o_profile.locationQc = g_decArgo_qcStrInterpolated;
-               
-               % positioning system
-               o_profile.posSystem = 'GPS';
-            else
-               fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing => profile not located\n', ...
-                  g_decArgo_floatNum, ...
-                  o_profile.cycleNumber);
-            end
-         end
       end
    end
 end

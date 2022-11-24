@@ -42,6 +42,8 @@
 %   07/08/2019 - RNU - V 1.7: for NetCDF-4 files, use 'defVarFill' function
 %                             instead of 'putAtt' to define the fill Value of a
 %                             variable
+%   04/22/2020 - RNU - V 1.8: added a CSV output file that recall the
+%                             INFO/WARNING/ERROR messages of the log file
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile(varargin)
 
@@ -71,7 +73,12 @@ DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF\';
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
-% base name of the temporary directory 
+% directory to store the CSV file (should be set to '' if output CSV file is not
+% needed)
+% DIR_CSV_FILE = ''; % if you don't need output CSV file
+DIR_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
+
+% base name of the temporary directory
 DIR_TMP = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TMP\';
 
 % merged profile reference file
@@ -91,7 +98,7 @@ CREATE_MULTI_PROF_FLAG = 1;
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.7 (version 18.02.2019 for ARGO_simplified_profile)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.8 (version 18.02.2019 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;
@@ -171,6 +178,13 @@ if ~(exist(DIR_LOG_FILE, 'dir') == 7)
    errorFlag = 1;
 end
 
+if (~isempty(DIR_CSV_FILE))
+   if ~(exist(DIR_CSV_FILE, 'dir') == 7)
+      fprintf('ERROR: CSV directory not found: %s\n', DIR_CSV_FILE);
+      errorFlag = 1;
+   end
+end
+
 if (errorFlag == 0)
    if (~isempty(floatList))
       
@@ -221,6 +235,11 @@ if (errorFlag == 0)
 end
 
 diary off;
+
+if (~isempty(DIR_CSV_FILE))
+   % generate CSV file (from log file contents)
+   generate_csv_file(logFile, DIR_CSV_FILE);
+end
 
 return
 
@@ -427,4 +446,104 @@ if (~isempty(o_inputDirName) && ~isempty(o_floatWmo))
    end
 end
       
+return
+
+% ------------------------------------------------------------------------------
+% Generate the output CSV file (from INFO/WARNING/ERROR messages of the log
+% file).
+%
+% SYNTAX :
+%  generate_csv_file(a_logFileName, a_csvDirName)
+%
+% INPUT PARAMETERS :
+%   a_logFileName : log file path name of the run
+%   a_csvDirName  : directory of CSV files
+%
+% OUTPUT PARAMETERS :
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   04/22/2020 - RNU - creation
+% ------------------------------------------------------------------------------
+function generate_csv_file(a_logFileName, a_csvDirName)
+
+% output CSV file name
+[~, logFileName, ~] = fileparts(a_logFileName);
+csvFileName = [a_csvDirName '/' logFileName '.csv'];
+
+
+% create CSV file
+fidOut = fopen(csvFileName, 'wt');
+if (fidOut == -1)
+   fprintf('ERROR: Unable to create output file: %s\n', csvFileName);
+   return
+end
+
+% put header
+header = 'MESSAGE TYPE;MESSAGE SOURCE;MESSAGE CONTENT';
+fprintf(fidOut, '%s\n', header);
+
+if (~isempty(a_logFileName))
+   % read log file
+   fId = fopen(a_logFileName, 'r');
+   if (fId == -1)
+      sprintf('ERROR: Unable to open file: %s\n', a_logFileName);
+      return
+   end
+   fileContents = textscan(fId, '%s', 'delimiter', '\n');
+   fclose(fId);
+   
+   if (~isempty(fileContents) && ~isempty(fileContents{:}))
+      % retrieve wanted messages
+      fileContents = fileContents{:};
+      idLine = 1;
+      while (1)
+         line = fileContents{idLine};
+         msgType = '';
+         msgSource = '';
+         msg = '';
+         if (strncmp(line, 'INFO: ', length('INFO: ')))
+            msgType = 'INFO';
+            msgSource = 'nc_create_synthetic_profile';
+            msg = line(length('INFO: ')+1:end);
+         elseif (strncmp(line, 'WARNING: ', length('WARNING: ')))
+            msgType = 'WARNING';
+            msgSource = 'nc_create_synthetic_profile';
+            msg = line(length('WARNING: ')+1:end);
+         elseif (strncmp(line, 'ERROR: ', length('ERROR: ')))
+            msgType = 'ERROR';
+            msgSource = 'nc_create_synthetic_profile';
+            msg = line(length('ERROR: ')+1:end);
+         elseif (strncmp(line, 'S-PROF_INFO: ', length('S-PROF_INFO: ')))
+            msgType = 'INFO';
+            msgSource = 'ARGO_simplified_profile';
+            msg = line(length('S-PROF_INFO: ')+1:end);
+         elseif (strncmp(line, 'S-PROF_WARNING: ', length('S-PROF_WARNING: ')))
+            msgType = 'WARNING';
+            msgSource = 'ARGO_simplified_profile';
+            msg = line(length('S-PROF_WARNING: ')+1:end);
+         elseif (strncmp(line, 'S-PROF_ERROR: ', length('S-PROF_ERROR: ')))
+            msgType = 'ERROR';
+            msgSource = 'ARGO_simplified_profile';
+            msg = line(length('S-PROF_ERROR: ')+1:end);
+         end
+         
+         if (~isempty(msgType))
+            fprintf(fidOut, '%s;%s;%s\n', msgType, msgSource, msg);
+         end
+         
+         idLine = idLine + 1;
+         if (idLine > length(fileContents))
+            break
+         end
+      end
+   end
+end
+
+fclose(fidOut);
+
 return
