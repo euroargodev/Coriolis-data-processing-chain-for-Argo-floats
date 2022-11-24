@@ -552,51 +552,24 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabDeep(idSet2) = 0;
          
          % cycle #28-30 deep cycle data AND second Iridium session data delayed
-         idSet = find(tabCyNum == 28);
-         tabGo(idSet) = 1;
-         idSet2 = idSet(end-1:end);
-         idSet1 = setdiff(idSet, idSet2);
-         tabDeep(idSet1) = 1;
-         rankRef = tabRank(idSet(end));
-         tabRank(tabRank > rankRef) = tabRank(tabRank > rankRef) + 2;
-         rankRef = tabRankByCycle(idSet(end));
-         tabRankByCycle(tabRankByCycle > rankRef) = tabRankByCycle(tabRankByCycle > rankRef) + 2;
-         rankRef = tabRankByDate(idSet(end));
-         tabRankByDate(tabRankByDate > rankRef) = tabRankByDate(tabRankByDate > rankRef) + 2;
-         tabRank(idSet2) = tabRank(idSet2) + 1;
-         tabRankByCycle(idSet2) = tabRankByCycle(idSet2) + 1;
-         tabRankByDate(idSet2) = tabRankByDate(idSet2) + 1;
-         tabCompleted(idSet2) = 1;
-
-         idSet = find(tabCyNum == 29);
-         tabGo(idSet) = 1;
-         idSet2 = idSet(end-1:end);
-         idSet1 = setdiff(idSet, idSet2);
-         tabDeep(idSet1) = 1;
-         rankRef = tabRank(idSet(end));
-         tabRank(tabRank > rankRef) = tabRank(tabRank > rankRef) + 2;
-         rankRef = tabRankByCycle(idSet(end));
-         tabRankByCycle(tabRankByCycle > rankRef) = tabRankByCycle(tabRankByCycle > rankRef) + 2;
-         rankRef = tabRankByDate(idSet(end));
-         tabRankByDate(tabRankByDate > rankRef) = tabRankByDate(tabRankByDate > rankRef) + 2;
-         tabRank(idSet2) = tabRank(idSet2) + 1;
-         tabRankByCycle(idSet2) = tabRankByCycle(idSet2) + 1;
-         tabRankByDate(idSet2) = tabRankByDate(idSet2) + 1;
-
-         idSet = find(tabCyNum == 30);
-         tabGo(idSet) = 1;
-         idSet2 = idSet(end-1:end);
-         idSet1 = setdiff(idSet, idSet2);
-         tabDeep(idSet1) = 1;
-         rankRef = tabRank(idSet(end));
-         tabRank(tabRank > rankRef) = tabRank(tabRank > rankRef) + 2;
-         rankRef = tabRankByCycle(idSet(end));
-         tabRankByCycle(tabRankByCycle > rankRef) = tabRankByCycle(tabRankByCycle > rankRef) + 2;
-         rankRef = tabRankByDate(idSet(end));
-         tabRankByDate(tabRankByDate > rankRef) = tabRankByDate(tabRankByDate > rankRef) + 2;
-         tabRank(idSet2) = tabRank(idSet2) + 1;
-         tabRankByCycle(idSet2) = tabRankByCycle(idSet2) + 1;
-         tabRankByDate(idSet2) = tabRankByDate(idSet2) + 1;
+         % cycle #32-36 deep cycle data AND second Iridium session data delayed
+         for cyNum = [28:30 32:36]
+            idSet = find(tabCyNum == cyNum);
+            tabGo(idSet) = 1;
+            idSet2 = idSet(end-1:end);
+            idSet1 = setdiff(idSet, idSet2);
+            tabDeep(idSet1) = 1;
+            rankRef = tabRank(idSet(end));
+            tabRank(tabRank > rankRef) = tabRank(tabRank > rankRef) + 2;
+            rankRef = tabRankByCycle(idSet(end));
+            tabRankByCycle(tabRankByCycle > rankRef) = tabRankByCycle(tabRankByCycle > rankRef) + 2;
+            rankRef = tabRankByDate(idSet(end));
+            tabRankByDate(tabRankByDate > rankRef) = tabRankByDate(tabRankByDate > rankRef) + 2;
+            tabRank(idSet2) = tabRank(idSet2) + 1;
+            tabRankByCycle(idSet2) = tabRankByCycle(idSet2) + 1;
+            tabRankByDate(idSet2) = tabRankByDate(idSet2) + 1;
+            tabCompleted(idSet2) = 1;
+         end
       case 6903793
          % data packets transmitted twice in the first EOL session (float
          % recovered)
