@@ -670,6 +670,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
       if (~isempty(tabTechNMeas))
          o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
       end
+      %       end
       
       % move the processed 'old' files into the archive directory (and delete the
       % associated SBD files)
@@ -695,46 +696,10 @@ for idSpoolFile = 1:length(tabAllFileNames)
    g_decArgo_nbOf30To49TypePacketReceived = 0;
    g_decArgo_nbOf50To55TypePacketReceived = 0;
    
-   % store the SBD data
-   sbdDataDate = [];
-   sbdDataData = [];
-   for idBufFile = 1:length(tabNewFileNames)
-      
-      sbdFileName = tabNewFileNames{idBufFile};
-      %       fprintf('SBD file : %s\n', sbdFileName);
-      if (g_decArgo_virtualBuff)
-         sbdFilePathName = [g_decArgo_archiveSbdDirectory '/' sbdFileName];
-      else
-         sbdFilePathName = [g_decArgo_bufferDirectory '/' sbdFileName];
-      end
-      sbdFileDate = tabNewFileDates(idBufFile);
-      sbdFileSize = tabNewFileSizes(idBufFile);
-      
-      if (sbdFileSize > 0)
-         
-         fId = fopen(sbdFilePathName, 'r');
-         if (fId == -1)
-            fprintf('ERROR: Float #%d: Error while opening file : %s\n', ...
-               g_decArgo_floatNum, ...
-               sbdFilePathName);
-         end
-         
-         [sbdData, sbdDataCount] = fread(fId);
-         
-         fclose(fId);
-         
-         info = get_bits(1, [8 16], sbdData);
-         if (~isempty(sbdDataData) && (size(sbdDataData, 2) < info(2)-1))
-            nbColToAdd = info(2)-1 - size(sbdDataData, 2);
-            sbdDataData = cat(2, sbdDataData, repmat(-1, size(sbdDataData, 1), nbColToAdd));
-         end
-         data = [info(1) info(2)-3 sbdData(4:info(2))'];
-         data = [data repmat(-1, 1, size(sbdDataData, 2)-length(data))];
-         sbdDataData = [sbdDataData; data];
-         sbdDataDate = [sbdDataDate; sbdFileDate];
-      end
-   end
-   
+   % read SBD data
+   [sbdDataDate, sbdDataData] = read_nova_iridium_sbd( ...
+      tabNewFileNames, tabNewFileDates, tabNewFileSizes, 0);
+
    % roughly check the received data
    if (~isempty(sbdDataData))
       
@@ -821,6 +786,61 @@ for idSpoolFile = 1:length(tabAllFileNames)
             remove_from_list_ir_sbd(tabNewFileNames, 'buffer', 1);
          else
             move_files_ir_sbd(tabNewFileNames, g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
+         end
+         
+      else
+         
+         % manage EOL anomaly (housekeeping packets of different cycle numbers
+         % and expecting 1 hydraulic packet never transmitted Ex: 6903192)
+         eolAnomaly = 0;
+         
+         if ((length(find(sbdDataData(:, 1) == 1)) > 1) && (~any(sbdDataData(:, 1) ~= 1)))
+            
+            cycleNumbers = decode_cycle_number_nva_data_ir_sbd(sbdDataData);       
+            if (length(unique(cycleNumbers)) > 1)
+               
+               uCycleNumbers = unique(cycleNumbers);
+               fprintf('INFO: Float #%d cycle #%d: EOL anomaly detected (cycle #%d housekeeping packet in the same buffer)\n', ...
+                  g_decArgo_floatNum, uCycleNumbers(1), uCycleNumbers(2));
+               eolAnomaly = 1;
+            end
+         end
+         
+         if (eolAnomaly)
+            
+            [tabProfiles, ...
+               tabTrajNMeas, tabTrajNCycle, ...
+               tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
+               decode_sbd_files( ...
+               tabNewFileNames(1), tabNewFileDates(1), tabNewFileSizes(1), ...
+               a_decoderId, a_launchDate, 0);
+            
+            if (~isempty(tabProfiles))
+               o_tabProfiles = [o_tabProfiles tabProfiles];
+            end
+            if (~isempty(tabTrajNMeas))
+               o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
+            end
+            if (~isempty(tabTrajNCycle))
+               o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];
+            end
+            if (~isempty(tabNcTechIndex))
+               o_tabNcTechIndex = [o_tabNcTechIndex; tabNcTechIndex];
+            end
+            if (~isempty(tabNcTechVal))
+               o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal'];
+            end
+            if (~isempty(tabTechNMeas))
+               o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+            end
+            
+            % move the processed 'new' files into the archive directory (and delete
+            % the associated SBD files)
+            if (g_decArgo_virtualBuff)
+               remove_from_list_ir_sbd(tabNewFileNames(1), 'buffer', 1);
+            else
+               move_files_ir_sbd(tabNewFileNames(1), g_decArgo_bufferDirectory, g_decArgo_archiveDirectory, 1, 1);
+            end
          end
       end
    end
@@ -982,50 +1002,8 @@ if (isempty(a_sbdFileNameList))
 end
 
 % read the SBD file data
-sbdDataDate = [];
-sbdDataData = [];
-for idFile = 1:length(a_sbdFileNameList)
-   
-   sbdFileName = a_sbdFileNameList{idFile};
-   if (g_decArgo_virtualBuff)
-      sbdFilePathName = [g_decArgo_archiveSbdDirectory '/' sbdFileName];
-   else
-      sbdFilePathName = [g_decArgo_bufferDirectory '/' sbdFileName];
-   end
-   
-   if (a_sbdFileSizeList(idFile) > 0)
-      
-      fId = fopen(sbdFilePathName, 'r');
-      if (fId == -1)
-         fprintf('ERROR: Float #%d: Error while opening file : %s\n', ...
-            g_decArgo_floatNum, ...
-            sbdFilePathName);
-      end
-      
-      [sbdData, sbdDataCount] = fread(fId);
-      
-      fclose(fId);
-      
-      info = get_bits(1, [8 16], sbdData);
-      if (~isempty(sbdDataData) && (size(sbdDataData, 2) < info(2)-1))
-         nbColToAdd = info(2)-1 - size(sbdDataData, 2);
-         sbdDataData = cat(2, sbdDataData, repmat(-1, size(sbdDataData, 1), nbColToAdd));
-      end
-      data = [info(1) info(2)-3 sbdData(4:info(2))'];
-      data = [data repmat(-1, 1, size(sbdDataData, 2)-length(data))];
-      sbdDataData = [sbdDataData; data];
-      sbdDataDate = [sbdDataDate; a_sbdFileDateList(idFile)];
-      
-   end
-   
-   % output CSV file
-   if (~isempty(g_decArgo_outputCsvFileId))
-      fprintf(g_decArgo_outputCsvFileId, '%d; -; info SBD file; File #%03d:   %s; Size: %d bytes; Nb Packets: 1\n', ...
-         g_decArgo_floatNum, ...
-         idFile, a_sbdFileNameList{idFile}, ...
-         a_sbdFileSizeList(idFile));
-   end
-end
+[sbdDataDate, sbdDataData] = read_nova_iridium_sbd( ...
+   a_sbdFileNameList, a_sbdFileDateList, a_sbdFileSizeList, 1);
 
 % decode the data
 
