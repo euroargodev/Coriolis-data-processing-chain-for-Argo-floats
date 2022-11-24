@@ -260,7 +260,27 @@ switch a_inputSensorName
       o_sensorDimLevel = [1 2 3];
       o_sensorMaker = [{'SBE'} {'SBE'} {'SBE'}];
       o_sensorModel = [{'SBE41CP'} {'SBE41CP'} {'SBE41CP'}];
-      
+      for idS = 1:length(o_sensorName)
+         [sensorModel] = get_sensor_model('CTD_PRES', a_floatNum, a_metaWmoList, a_metaData);
+         if (~isempty(sensorModel))
+            if (~strcmp(sensorModel, o_sensorModel{idS}))
+               fprintf('INFO: DB SENSOR_MODEL (''%s'') not replaced by default one (''%s'')\n', ...
+                  sensorModel, o_sensorModel{idS});
+               o_sensorModel(idS) = {sensorModel};
+            end
+         end
+      end
+      for idS = 1:length(o_sensorMaker)
+         [sensorMaker] = get_sensor_maker('CTD_PRES', a_floatNum, a_metaWmoList, a_metaData);
+         if (~isempty(sensorMaker))
+            if (~strcmp(sensorMaker, o_sensorMaker{idS}))
+               fprintf('INFO: DB SENSOR_Maker (''%s'') not replaced by default one (''%s'')\n', ...
+                  sensorMaker, o_sensorMaker{idS});
+               o_sensorMaker(idS) = {sensorMaker};
+            end
+         end
+      end
+
    case 'OPTODE'
       o_sensorName = {'OPTODE_DOXY'};
       o_sensorDimLevel = [101];
@@ -642,6 +662,32 @@ if (~isempty(idF1))
       o_sensorModel = strtrim(a_metaData{idForWmo(idF2), 4});
    else
       fprintf('ERROR: Sensor model not found for sensor %s of float %d\n', ...
+         a_sensorName, a_floatNum);
+   end
+else
+   fprintf('ERROR: Sensor %s not found for float %d\n', ...
+      a_sensorName, a_floatNum);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+function [o_sensorMaker] = get_sensor_maker(a_sensorName, a_floatNum, a_metaWmoList, a_metaData)
+
+o_sensorMaker = [];
+
+idForWmo = find(a_metaWmoList == a_floatNum);
+
+idF1 = find(strcmp(a_metaData(idForWmo, 4), a_sensorName) & ...
+   strcmp(a_metaData(idForWmo, 5), 'SENSOR'));
+if (~isempty(idF1))
+   dimLevel = a_metaData(idForWmo(idF1), 3);
+   idF2 = find(strcmp(a_metaData(idForWmo, 3), dimLevel) & ...
+      strcmp(a_metaData(idForWmo, 5), 'SENSOR_MAKER'));
+   if (~isempty(idF2))
+      o_sensorMaker = strtrim(a_metaData{idForWmo(idF2), 4});
+   else
+      fprintf('ERROR: Sensor maker not found for sensor %s of float %d\n', ...
          a_sensorName, a_floatNum);
    end
 else

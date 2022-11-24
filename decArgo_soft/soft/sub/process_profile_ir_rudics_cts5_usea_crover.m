@@ -69,6 +69,10 @@ global g_decArgo_cts5Treat_RW;
 global g_decArgo_cts5Treat_AM;
 global g_decArgo_cts5Treat_DW;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListCtd;
+global g_decArgo_addParamListCp;
+
 
 if (isempty(a_croverData))
    return
@@ -145,6 +149,10 @@ for idP = 1:length(a_croverData)
             
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDev;
+
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCp{end+1} = 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660_STD';
+            g_decArgo_addParamListCp = unique(g_decArgo_addParamListCp, 'stable');
             
          case g_decArgo_cts5Treat_AM_MD
             % CROVER (mean & median)
@@ -163,10 +171,17 @@ for idP = 1:length(a_croverData)
             
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndMedian;
-            
+
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
+            g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
+
+            g_decArgo_addParamListCp{end+1} = 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660_MED';
+            g_decArgo_addParamListCp = unique(g_decArgo_addParamListCp, 'stable');
+
          case g_decArgo_cts5Treat_AM_SD_MD
             % CROVER (mean & stDev & median)
-            
+
             % create parameters
             paramJuld = get_netcdf_param_attributes('JULD');
             paramPres = get_netcdf_param_attributes('PRES');
@@ -182,6 +197,15 @@ for idP = 1:length(a_croverData)
                         
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDevAndMedian;
+            
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
+            g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
+
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCp{end+1} = 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660_STD';
+            g_decArgo_addParamListCp{end+1} = 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660_MED';
+            g_decArgo_addParamListCp = unique(g_decArgo_addParamListCp, 'stable');
             
          otherwise
             fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Treatment #%d not managed - CROVER data ignored\n', ...

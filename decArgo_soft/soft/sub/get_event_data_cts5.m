@@ -49,6 +49,9 @@ g_decArgo_clockOffset = get_clock_offset_cts5_init_struct;
 global g_decArgo_clockOffsetForTrajNCy;
 g_decArgo_clockOffsetForTrajNCy = get_clock_offset_for_traj_n_cycle_cts5_init_struct;
 
+% array to store USEA technical data
+global g_decArgo_useaTechData;
+
 
 % get system file names
 eventFiles = manage_split_files({g_decArgo_archiveDirectory}, ...
@@ -89,6 +92,26 @@ for idFile = 1:nbEventFiles
    if (~ok)
       o_ok = ok;
       return
+   end
+end
+
+% for debugging purposes
+if (0)
+   fprintf('#;file set #;evt #;data;time\n');
+   for id = 1:size(g_decArgo_eventData, 1)
+      valStr = g_decArgo_eventData{id, 3};
+      if (~isempty(valStr))
+         valStr = g_decArgo_eventData{id, 3}{:};
+         if (~ischar(valStr))
+            valStr = num2str(valStr);
+         end
+      end
+      fprintf('%d;%d;%d;%s;%s\n', ...
+         id, ...
+         g_decArgo_eventData{id, 1}, ...
+         g_decArgo_eventData{id, 2}, ...
+         valStr, ...
+         julian_2_gregorian_dec_argo(g_decArgo_eventData{id, 4}));
    end
 end
 
@@ -171,6 +194,23 @@ if (~isempty(idPtn0))
    end
 end
 
+% fill unset lines from time shifts
+for idL = 1:size(cyclePatternNumFloat, 1)
+   if (any(isnan(cyclePatternNumFloat(idL, 3:5))))
+      if ((idL > 1) && (idL < size(cyclePatternNumFloat, 1)))
+         if (all(~isnan(cyclePatternNumFloat(idL-1, 3:5))) && ...
+               all(~isnan(cyclePatternNumFloat(idL+1, 3:5))))
+
+            dates = [g_decArgo_eventData{cyclePatternNumFloat(idL-1, 5):cyclePatternNumFloat(idL+1, 3), 6}];
+            [~, idMax] = max(diff(dates));
+            cyclePatternNumFloat(idL, 3) = cyclePatternNumFloat(idL-1, 5) + idMax;
+            cyclePatternNumFloat(idL, 4) = cyclePatternNumFloat(idL, 3);
+            cyclePatternNumFloat(idL, 5) = cyclePatternNumFloat(idL, 3);
+         end
+      end
+   end
+end
+
 for idL = 1:size(cyclePatternNumFloat, 1)-1
    cyNum = cyclePatternNumFloat(idL, 1);
    ptnNum = cyclePatternNumFloat(idL, 2);
@@ -207,6 +247,212 @@ for idC = 1:length(idFClockOffset)
    g_decArgo_clockOffset.juldFloat = [g_decArgo_clockOffset.juldFloat g_decArgo_eventData{idFClockOffset(idC), 6}];
    g_decArgo_clockOffset.clockOffset = [g_decArgo_clockOffset.clockOffset ...
       g_decArgo_eventData{idFClockOffset(idC), 6}-g_decArgo_eventData{idFClockOffset(idC), 5}{:}];
+end
+
+% retrieve clock offset information from technical data
+techClockOffset = [];
+if (~isempty(g_decArgo_useaTechData))
+
+   for idF = 1:size(g_decArgo_useaTechData, 1)
+      apmtTechData = g_decArgo_useaTechData{idF, 4};
+      if (isfield(apmtTechData, 'GPS'))
+         gpsData = apmtTechData.GPS;
+         juldUtc = gpsData.data{1};
+         clockOffset = gpsData.data{4};
+         if (isempty(techClockOffset))
+            techClockOffset = get_clock_offset_cts5_init_struct;
+         end
+         techClockOffset.cycleNum = [techClockOffset.cycleNum g_decArgo_useaTechData{idF, 1}];
+         techClockOffset.patternNum = [techClockOffset.patternNum g_decArgo_useaTechData{idF, 2}];
+         techClockOffset.juldUtc = [techClockOffset.juldUtc juldUtc];
+         techClockOffset.juldFloat = [techClockOffset.juldFloat juldUtc + clockOffset/86400];
+         % it has been checked that clock offset should be computed from the
+         % dates (instead of directly using transmitted clockOffset of TECH data) 
+         techClockOffset.clockOffset = [techClockOffset.clockOffset ...
+            gregorian_2_julian_dec_argo(julian_2_gregorian_dec_argo(juldUtc + clockOffset/86400)) - ...
+            gregorian_2_julian_dec_argo(julian_2_gregorian_dec_argo(juldUtc))];
+      end
+   end
+end
+
+% merge with clock information reported in technical data
+if (~isempty(techClockOffset))
+
+   evtClockOffset = g_decArgo_clockOffset;
+   g_decArgo_clockOffset = get_clock_offset_cts5_init_struct;
+
+   evtJuldUtc = julian_2_epoch70(evtClockOffset.juldUtc);
+   techJuldUtc = julian_2_epoch70(techClockOffset.juldUtc);
+   allJuldUtc = [ ...
+      [evtJuldUtc' ones(length(evtJuldUtc), 1)*1 (1:length(evtJuldUtc))']; ...
+      [techJuldUtc' ones(length(techJuldUtc), 1)*2 (1:length(techJuldUtc))']];
+   [~, idSort] = sort(allJuldUtc(:, 1));
+   allJuldUtc = allJuldUtc(idSort, :);
+
+   uAllJuldUtc = unique(allJuldUtc(:, 1));
+   for idJ = 1:length(uAllJuldUtc)
+      idF = find(allJuldUtc(:, 1) == uAllJuldUtc(idJ));
+      if (length(idF) == 1)
+         if (allJuldUtc(idF, 2) == 1)
+            cycleNum = evtClockOffset.cycleNum(allJuldUtc(idF, 3));
+            patternNum = evtClockOffset.patternNum(allJuldUtc(idF, 3));
+            juldUtc = evtClockOffset.juldUtc(allJuldUtc(idF, 3));
+            juldFloat = evtClockOffset.juldFloat(allJuldUtc(idF, 3));
+            clockOffset = evtClockOffset.clockOffset(allJuldUtc(idF, 3));
+         else
+            cycleNum = techClockOffset.cycleNum(allJuldUtc(idF, 3));
+            patternNum = techClockOffset.patternNum(allJuldUtc(idF, 3));
+            juldUtc = techClockOffset.juldUtc(allJuldUtc(idF, 3));
+            juldFloat = techClockOffset.juldFloat(allJuldUtc(idF, 3));
+            clockOffset = techClockOffset.clockOffset(allJuldUtc(idF, 3));
+         end
+      else
+         types = allJuldUtc(idF, 2);
+         if (any(types == 1) && any(types == 2))
+            idF1 = find(types == 1);
+            cycleNumEvt = evtClockOffset.cycleNum(allJuldUtc(idF(idF1), 3));
+            patternNumEvt = evtClockOffset.patternNum(allJuldUtc(idF(idF1), 3));
+            juldUtcEvt = evtClockOffset.juldUtc(allJuldUtc(idF(idF1), 3));
+            juldFloatEvt = evtClockOffset.juldFloat(allJuldUtc(idF(idF1), 3));
+            clockOffsetEvt = evtClockOffset.clockOffset(allJuldUtc(idF(idF1), 3));
+
+            idF2 = find(types == 2);
+            cycleNumTech = techClockOffset.cycleNum(allJuldUtc(idF(idF2), 3));
+            patternNumTech = techClockOffset.patternNum(allJuldUtc(idF(idF2), 3));
+            juldUtcTech = techClockOffset.juldUtc(allJuldUtc(idF(idF2), 3));
+            juldFloatTech = techClockOffset.juldFloat(allJuldUtc(idF(idF2), 3));
+            clockOffsetTech = techClockOffset.clockOffset(allJuldUtc(idF(idF2), 3));
+
+            idFE = find((cycleNumEvt ~= -1) & (patternNumEvt ~= -1), 1);
+            idFT = find((cycleNumTech ~= -1) & (patternNumTech ~= -1), 1);
+            if (~isempty(idFE))
+               cycleNum = cycleNumEvt(idFE);
+               patternNum = patternNumEvt(idFE);
+               juldUtc = juldUtcEvt(idFE);
+               juldFloat = juldFloatEvt(idFE);
+               clockOffset = clockOffsetEvt(idFE);
+            elseif (~isempty(idFT))
+               cycleNum = cycleNumTech(idFT);
+               patternNum = patternNumTech(idFT);
+               juldUtc = juldUtcTech(idFT);
+               juldFloat = juldFloatTech(idFT);
+               clockOffset = clockOffsetTech(idFT);
+            else
+               idFE = find(cycleNumEvt ~= -1, 1);
+               idFT = find(cycleNumTech ~= -1, 1);
+               if (~isempty(idFE))
+                  cycleNum = cycleNumEvt(idFE);
+                  patternNum = patternNumEvt(idFE);
+                  juldUtc = juldUtcEvt(idFE);
+                  juldFloat = juldFloatEvt(idFE);
+                  clockOffset = clockOffsetEvt(idFE);
+               elseif (~isempty(idFT))
+                  cycleNum = cycleNumTech(idFT);
+                  patternNum = patternNumTech(idFT);
+                  juldUtc = juldUtcTech(idFT);
+                  juldFloat = juldFloatTech(idFT);
+                  clockOffset = clockOffsetTech(idFT);
+               else
+                  cycleNum = cycleNumEvt(1);
+                  patternNum = patternNumEvt(1);
+                  juldUtc = juldUtcEvt(1);
+                  juldFloat = juldFloatEvt(1);
+                  clockOffset = clockOffsetEvt(1);
+               end
+            end
+         else
+            fprintf('DEC_ERROR: Duplicates in Evt or Tech dates while merging clock offsets\n');
+            if (all(types == 1))
+               cycleNum = evtClockOffset.cycleNum(allJuldUtc(idF1, 3));
+               patternNum = evtClockOffset.patternNum(allJuldUtc(idF1, 3));
+               juldUtc = evtClockOffset.juldUtc(allJuldUtc(idF1, 3));
+               juldFloat = evtClockOffset.juldFloat(allJuldUtc(idF1, 3));
+               clockOffset = evtClockOffset.clockOffset(allJuldUtc(idF1, 3));
+            else
+               cycleNum = techClockOffset.cycleNum(allJuldUtc(idF2, 3));
+               patternNum = techClockOffset.patternNum(allJuldUtc(idF2, 3));
+               juldUtc = techClockOffset.juldUtc(allJuldUtc(idF2, 3));
+               juldFloat = techClockOffset.juldFloat(allJuldUtc(idF2, 3));
+               clockOffset = techClockOffset.clockOffset(allJuldUtc(idF2, 3));
+            end
+         end
+      end
+
+      g_decArgo_clockOffset.cycleNum = [g_decArgo_clockOffset.cycleNum cycleNum];
+      g_decArgo_clockOffset.patternNum = [g_decArgo_clockOffset.patternNum patternNum];
+      g_decArgo_clockOffset.juldUtc = [g_decArgo_clockOffset.juldUtc juldUtc];
+      g_decArgo_clockOffset.juldFloat = [g_decArgo_clockOffset.juldFloat juldFloat];
+      g_decArgo_clockOffset.clockOffset = [g_decArgo_clockOffset.clockOffset clockOffset];
+   end
+
+   % to check the merge operation
+   if (0)
+      uJuldUtc = unique(g_decArgo_clockOffset.juldUtc);
+      for idJ = 1:length(uJuldUtc)
+         cycleNum = [];
+         cycleNumE = [];
+         cycleNumT = [];
+         idF = find(g_decArgo_clockOffset.juldUtc == uJuldUtc(idJ));
+         if (~isempty(idF))
+            cycleNum = g_decArgo_clockOffset.cycleNum(idF);
+            patternNum = g_decArgo_clockOffset.patternNum(idF);
+            juldUtc = g_decArgo_clockOffset.juldUtc(idF);
+            juldFloat = g_decArgo_clockOffset.juldFloat(idF);
+            clockOffset = g_decArgo_clockOffset.clockOffset(idF);
+         end
+         idF = find(evtClockOffset.juldUtc == uJuldUtc(idJ));
+         if (~isempty(idF))
+            cycleNumE = evtClockOffset.cycleNum(idF);
+            patternNumE = evtClockOffset.patternNum(idF);
+            juldUtcE = evtClockOffset.juldUtc(idF);
+            juldFloatE = evtClockOffset.juldFloat(idF);
+            clockOffsetE = evtClockOffset.clockOffset(idF);
+         end
+         idF = find(techClockOffset.juldUtc == uJuldUtc(idJ));
+         if (~isempty(idF))
+            cycleNumT = techClockOffset.cycleNum(idF);
+            patternNumT = techClockOffset.patternNum(idF);
+            juldUtcT = techClockOffset.juldUtc(idF);
+            juldFloatT = techClockOffset.juldFloat(idF);
+            clockOffsetT = techClockOffset.clockOffset(idF);
+         end
+         if (~isempty(cycleNum) && ~isempty(cycleNumE) && ~isempty(cycleNumT))
+            fprintf('%d;%d;%s;%s;%d;@;%d;%d;%s;%s;%d;@;%d;%d;%s;%s;%d\n', ...
+               cycleNum, patternNum, ...
+               julian_2_gregorian_dec_argo(juldUtc), ...
+               julian_2_gregorian_dec_argo(juldFloat), ...
+               round(clockOffset*86400, 0), ...
+               cycleNumE, patternNumE, ...
+               julian_2_gregorian_dec_argo(juldUtcE), ...
+               julian_2_gregorian_dec_argo(juldFloatE), ...
+               round(clockOffsetE*86400, 0), ...
+               cycleNumT, patternNumT, ...
+               julian_2_gregorian_dec_argo(juldUtcT), ...
+               julian_2_gregorian_dec_argo(juldFloatT), ...
+               round(clockOffsetT*86400, 0));
+         elseif (~isempty(cycleNum) && ~isempty(cycleNumE))
+            fprintf('%d;%d;%s;%s;%d;@;%d;%d;%s;%s;%d;@\n', ...
+               cycleNum, patternNum, ...
+               julian_2_gregorian_dec_argo(juldUtc), ...
+               julian_2_gregorian_dec_argo(juldFloat), ...
+               round(clockOffset*86400, 0), ...
+               cycleNumE, patternNumE, ...
+               julian_2_gregorian_dec_argo(juldUtcE), ...
+               julian_2_gregorian_dec_argo(juldFloatE), ...
+               round(clockOffsetE*86400, 0));
+         elseif (~isempty(cycleNum) && ~isempty(cycleNumT))
+            fprintf('%d;%d;%s;%s;%d;@;;;;;;@;%d;%d;%s;%s;%d\n', ...
+               cycleNum, patternNum, ...
+               julian_2_gregorian_dec_argo(juldUtc), ...
+               julian_2_gregorian_dec_argo(juldFloat), ...
+               round(clockOffset*86400, 0), ...
+               cycleNumT, patternNumT, ...
+               julian_2_gregorian_dec_argo(juldUtcT), ...
+               julian_2_gregorian_dec_argo(juldFloatT), ...
+               round(clockOffsetT*86400, 0));
+         end
+      end
+   end
 end
 
 % collect clock offset information (to set  CLOCK_OFFSET(N_CYCLE))

@@ -1,10 +1,9 @@
 % ------------------------------------------------------------------------------
-% Parse APMT technical files.
+% Parse one APMT technical file.
 %
 % SYNTAX :
-%  [o_techData, o_timeData, ...
-%    o_ncTechData, o_ncTrajData, o_ncMetaData] = read_apmt_technical(...
-%    a_inputFilePathName, a_decoderId)
+%  [o_techData, o_timeData, o_ncTechData, o_ncTrajData, o_ncMetaData] = ...
+%    read_apmt_technical_file(a_inputFilePathName, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_inputFilePathName : APMT technical file path name
@@ -23,11 +22,10 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   02/21/2017 - RNU - creation
+%   02/01/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_techData, o_timeData, ...
-   o_ncTechData, o_ncTrajData, o_ncMetaData] = read_apmt_technical(...
-   a_inputFilePathName, a_decoderId)
+function [o_techData, o_timeData, o_ncTechData, o_ncTrajData, o_ncMetaData] = ...
+   read_apmt_technical_file(a_inputFilePathName, a_decoderId)
 
 % output parameters initialization
 o_techData = [];

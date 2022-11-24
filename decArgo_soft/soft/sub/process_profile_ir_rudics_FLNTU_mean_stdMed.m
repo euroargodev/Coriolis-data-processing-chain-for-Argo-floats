@@ -57,6 +57,10 @@ global g_decArgo_treatRaw;
 global g_decArgo_treatAverage;
 global g_decArgo_treatAverageAndStDev;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListChla;
+global g_decArgo_addParamListTurbidity;
+
 
 % unpack the input data
 a_dataFLNTUMeanDate = a_dataFLNTUMean{1};
@@ -263,6 +267,15 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                
                % treatment type
                profStruct.treatType = g_decArgo_treatAverageAndStDev;
+
+               % parameter added "on the fly" to meta-data file
+               g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_CHLA_STD';
+               g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_CHLA_MED';
+               g_decArgo_addParamListChla = unique(g_decArgo_addParamListChla, 'stable');
+
+               g_decArgo_addParamListTurbidity{end+1} = 'SIDE_SCATTERING_TURBIDITY_STD';
+               g_decArgo_addParamListTurbidity{end+1} = 'SIDE_SCATTERING_TURBIDITY_MED';
+               g_decArgo_addParamListTurbidity = unique(g_decArgo_addParamListTurbidity, 'stable');
             end
          end
       end

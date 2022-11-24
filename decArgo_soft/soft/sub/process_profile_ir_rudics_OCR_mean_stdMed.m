@@ -57,6 +57,9 @@ global g_decArgo_treatRaw;
 global g_decArgo_treatAverage;
 global g_decArgo_treatAverageAndStDev;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListRadiometry;
+
 
 % unpack the input data
 a_dataOCRMeanDate = a_dataOCRMean{1};
@@ -288,9 +291,20 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                dates(find(dates == paramJuld.fillValue)) = [];
                profStruct.minMeasDate = min(dates);
                profStruct.maxMeasDate = max(dates);
-               
+
                % treatment type
                profStruct.treatType = g_decArgo_treatAverageAndStDev;
+
+               % parameter added "on the fly" to meta-data file
+               g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE380_STD';
+               g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE380_MED';
+               g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE412_STD';
+               g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE412_MED';
+               g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE490_STD';
+               g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE490_MED';
+               g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_PAR_STD';
+               g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_PAR_MED';
+               g_decArgo_addParamListRadiometry = unique(g_decArgo_addParamListRadiometry, 'stable');
             end
          end
       end

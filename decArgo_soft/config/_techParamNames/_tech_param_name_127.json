@@ -1206,5 +1206,29 @@
       "TECH_PARAM_MSG_LABEL" : "End of life",
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_EndOfLifeAlarm_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float switches to the End Of Life mode. When reported as a NUMBER, it provides the reason of the End Of Life (see float manual for details)."
+   },
+   "TECH_PARAM_152" :
+   {
+      "TECH_PARAM_DEC_ID" : "250",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "GPS time offset for BGC times",
+      "TECH_PARAM_NAME" : "TECH_AUX_TIME_GpsTimeOffsetForBgcTimeAdj_seconds",
+      "TECH_PARAM_DESCRIPTION" : "GPS time offset used to adjust all BGC times of the cycle (it is the GPS time offset set before transmission of the previous cycle)."
+   },
+   "TECH_PARAM_153" :
+   {
+      "TECH_PARAM_DEC_ID" : "251",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "Time offset for descending profile BGC times",
+      "TECH_PARAM_NAME" : "TECH_AUX_TIME_DescProfTimeOffsetForBgcTimeAdj_seconds",
+      "TECH_PARAM_DESCRIPTION" : "Estimated time offset used to adjust descending profile BGC times."
+   },
+   "TECH_PARAM_154" :
+   {
+      "TECH_PARAM_DEC_ID" : "252",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "Time offset for ascending profile BGC times",
+      "TECH_PARAM_NAME" : "TECH_AUX_TIME_AscProfTimeOffsetForBgcTimeAdj_seconds",
+      "TECH_PARAM_DESCRIPTION" : "Estimated time offset used to adjust ascending profile BGC times."
    }
 }

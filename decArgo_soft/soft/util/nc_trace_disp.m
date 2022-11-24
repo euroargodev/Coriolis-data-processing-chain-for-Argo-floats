@@ -19,8 +19,48 @@
 % ------------------------------------------------------------------------------
 function nc_trace_disp(varargin)
 
+% to switch between Coriolis and JPR configurations
+CORIOLIS_CONFIGURATION_FLAG = 1;
+
 global g_NTD_NC_DIR;
 global g_NTD_PDF_DIR;
+
+if (CORIOLIS_CONFIGURATION_FLAG)
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % CORIOLIS CONFIGURATION - START
+
+   % top directory of NetCDF files to plot
+   g_NTD_NC_DIR = '/home/coriolis_exp/binlx/co04/co0414/co041402/data/nc/';
+
+   % directory to store pdf output
+   g_NTD_PDF_DIR = '/home/coriolis_exp/binlx/co04/co0414/co041402/data/pdf/';
+
+   % default list of floats to plot
+   FLOAT_LIST_FILE_NAME = '/home/idmtmp7/vincent/matlab/list/new_iridium.txt';
+
+   % CORIOLIS CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+else
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % JPR CONFIGURATION - START
+
+   % top directory of NetCDF files to plot
+   g_NTD_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+
+   % directory to store pdf output
+   g_NTD_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+
+   % default list of floats to plot
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+
+   % JPR CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+end
+
 global g_NTD_FIG_HANDLE;
 global g_NTD_ID_FLOAT;
 global g_NTD_FLOAT_LIST;
@@ -34,17 +74,6 @@ global g_NTD_LOAD_FLOAT;
 
 global g_NTD_ZOOM_MODE;
 global g_NTD_COMPUTE_BOUNDARIES;
-
-% top directory of NetCDF files to plot
-g_NTD_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-
-% directory to store pdf output
-g_NTD_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
-
-% default list of floats to plot
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
 
 % number of displacements to plot
 g_NTD_DEFAULT_NB_PLOT_CYCLE = 5;

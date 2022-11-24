@@ -20,17 +20,41 @@
 % ------------------------------------------------------------------------------
 function generate_csv_meta(varargin)
 
-% meta-data file exported from Coriolis data base
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\deep_norway_6903557.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\5900A05_DBexport.txt';
-dataBaseFileName = 'C:\Users\jprannou\Downloads\new_iridium_meta.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_5.47_with_DO_3902110.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_RBR_6903075_6903076.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_Provor5.76_20210311.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF9i_6903708_6903711.txt';
+% to switch between Coriolis and JPR configurations
+CORIOLIS_CONFIGURATION_FLAG = 1;
 
-% directory to store the log and csv files
-DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
+if (CORIOLIS_CONFIGURATION_FLAG)
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % CORIOLIS CONFIGURATION - START
+
+   % meta-data file exported from Coriolis data base
+   dataBaseFileName = '/home/idmtmp7/vincent/matlab/DB_export/new_iridium_meta.txt';
+   % dataBaseFileName = '/home/idmtmp7/vincent/matlab/DB_export/new_argos_meta.txt';
+   % dataBaseFileName = '/home/idmtmp7/vincent/matlab/DB_export/new_arvorcm_meta.txt';
+   % dataBaseFileName = '/home/idmtmp7/vincent/matlab/DB_export/new_apex_meta.txt';
+
+   % directory to store the log and csv files
+   DIR_LOG_CSV_FILE = '/home/coriolis_exp/binlx/co04/co0414/co041402/data/log';
+
+   % CORIOLIS CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+else
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % JPR CONFIGURATION - START
+
+   % meta-data file exported from Coriolis data base
+   dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF9i_6903708_6903711.txt';
+
+   % directory to store the log and csv files
+   DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
+
+   % JPR CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+end
 
 % mode processing flags
 global g_decArgo_realtimeFlag;

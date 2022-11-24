@@ -83,6 +83,14 @@ global g_decArgo_sensorList;
 % data to their correct cycle)
 global g_decArgo_trajDataFromApmtTech;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListOxygen;
+global g_decArgo_addParamListPh;
+global g_decArgo_addParamListChla;
+global g_decArgo_addParamListBackscattering;
+global g_decArgo_addParamListCdom;
+global g_decArgo_addParamListRadiometry;
+
 FITLM_MATLAB_FUNCTION_NOT_AVAILABLE = 0;
 
 
@@ -356,6 +364,13 @@ for idP = 1:length(payloadProfiles)
                case g_decArgo_treatMedian
                   payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
                      {'TEMP_DOXY_MED'} {'C1PHASE_DOXY_MED'} {'C2PHASE_DOXY_MED'}};
+
+                  % parameter added "on the fly" to meta-data file
+                  g_decArgo_addParamListOxygen{end+1} = 'C1PHASE_DOXY_MED';
+                  g_decArgo_addParamListOxygen{end+1} = 'C2PHASE_DOXY_MED';
+                  g_decArgo_addParamListOxygen{end+1} = 'TEMP_DOXY_MED';
+                  g_decArgo_addParamListOxygen = unique(g_decArgo_addParamListOxygen, 'stable');
+
                case g_decArgo_treatMax
                   payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
                      {'TEMP_DOXY_MAX'} {'C1PHASE_DOXY_MAX'} {'C2PHASE_DOXY_MAX'}};
@@ -365,6 +380,12 @@ for idP = 1:length(payloadProfiles)
                case g_decArgo_treatStDev
                   payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
                      {'TEMP_DOXY_STD'} {'C1PHASE_DOXY_STD'} {'C2PHASE_DOXY_STD'}};
+
+                  % parameter added "on the fly" to meta-data file
+                  g_decArgo_addParamListOxygen{end+1} = 'C1PHASE_DOXY_STD';
+                  g_decArgo_addParamListOxygen{end+1} = 'C2PHASE_DOXY_STD';
+                  g_decArgo_addParamListOxygen{end+1} = 'TEMP_DOXY_STD';
+                  g_decArgo_addParamListOxygen = unique(g_decArgo_addParamListOxygen, 'stable');
             end
          else
             payloadProfile.paramNameDecArgo = {{'JULD'} ...
@@ -381,6 +402,14 @@ for idP = 1:length(payloadProfiles)
                   payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
                      {'RAW_DOWNWELLING_IRRADIANCE380_MED'} {'RAW_DOWNWELLING_IRRADIANCE412_MED'} ...
                      {'RAW_DOWNWELLING_IRRADIANCE490_MED'} {'RAW_DOWNWELLING_PAR_MED'}};
+
+                  % parameter added "on the fly" to meta-data file
+                  g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE380_MED';
+                  g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE412_MED';
+                  g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE490_MED';
+                  g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_PAR_MED';
+                  g_decArgo_addParamListRadiometry = unique(g_decArgo_addParamListRadiometry, 'stable');
+
                case g_decArgo_treatMax
                   payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
                      {'RAW_DOWNWELLING_IRRADIANCE380_MAX'} {'RAW_DOWNWELLING_IRRADIANCE412_MAX'} ...
@@ -393,6 +422,14 @@ for idP = 1:length(payloadProfiles)
                   payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
                      {'RAW_DOWNWELLING_IRRADIANCE380_STD'} {'RAW_DOWNWELLING_IRRADIANCE412_STD'} ...
                      {'RAW_DOWNWELLING_IRRADIANCE490_STD'} {'RAW_DOWNWELLING_PAR_STD'}};
+
+                  % parameter added "on the fly" to meta-data file
+                  g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE380_STD';
+                  g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE412_STD';
+                  g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE490_STD';
+                  g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_PAR_STD';
+                  g_decArgo_addParamListRadiometry = unique(g_decArgo_addParamListRadiometry, 'stable');
+
             end
          else
             payloadProfile.paramNameDecArgo = {{'JULD'} ...
@@ -408,6 +445,17 @@ for idP = 1:length(payloadProfiles)
                case g_decArgo_treatMedian
                   payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
                      {'FLUORESCENCE_CHLA_MED'} {'BETA_BACKSCATTERING700_MED'} {'FLUORESCENCE_CDOM_MED'}};
+
+                  % parameter added "on the fly" to meta-data file
+                  g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_CHLA_MED';
+                  g_decArgo_addParamListChla = unique(g_decArgo_addParamListChla, 'stable');
+
+                  g_decArgo_addParamListBackscattering{end+1} = 'BETA_BACKSCATTERING700_MED';
+                  g_decArgo_addParamListBackscattering = unique(g_decArgo_addParamListBackscattering, 'stable');
+
+                  g_decArgo_addParamListCdom{end+1} = 'FLUORESCENCE_CDOM_MED';
+                  g_decArgo_addParamListCdom = unique(g_decArgo_addParamListCdom, 'stable');
+
                case g_decArgo_treatMax
                   payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
                      {'FLUORESCENCE_CHLA_MAX'} {'BETA_BACKSCATTERING700_MAX'} {'FLUORESCENCE_CDOM_MAX'}};
@@ -417,6 +465,17 @@ for idP = 1:length(payloadProfiles)
                case g_decArgo_treatStDev
                   payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
                      {'FLUORESCENCE_CHLA_STD'} {'BETA_BACKSCATTERING700_STD'} {'FLUORESCENCE_CDOM_STD'}};
+
+                  % parameter added "on the fly" to meta-data file
+                  g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_CHLA_STD';
+                  g_decArgo_addParamListChla = unique(g_decArgo_addParamListChla, 'stable');
+
+                  g_decArgo_addParamListBackscattering{end+1} = 'BETA_BACKSCATTERING700_STD';
+                  g_decArgo_addParamListBackscattering = unique(g_decArgo_addParamListBackscattering, 'stable');
+
+                  g_decArgo_addParamListCdom{end+1} = 'FLUORESCENCE_CDOM_STD';
+                  g_decArgo_addParamListCdom = unique(g_decArgo_addParamListCdom, 'stable');
+                  
             end
          else
             payloadProfile.paramNameDecArgo = {{'JULD'} ...
@@ -494,6 +553,14 @@ for idP = 1:length(payloadProfiles)
                case g_decArgo_treatMedian
                   payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
                      {'VRS_PH_MED'} {'VK_PH_MED'} {'IK_PH_MED'} {'IB_PH_MED'}};
+
+                  % parameter added "on the fly" to meta-data file
+                  g_decArgo_addParamListPh{end+1} = 'VRS_PH_MED';
+                  g_decArgo_addParamListPh{end+1} = 'VK_PH_MED';
+                  g_decArgo_addParamListPh{end+1} = 'IK_PH_MED';
+                  g_decArgo_addParamListPh{end+1} = 'IB_PH_MED';
+                  g_decArgo_addParamListPh = unique(g_decArgo_addParamListPh, 'stable');
+                  
                case g_decArgo_treatMax
                   payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
                      {'VRS_PH_MAX'} {'VK_PH_MAX'} {'IK_PH_MAX'} {'IB_PH_MAX'}};
@@ -503,6 +570,13 @@ for idP = 1:length(payloadProfiles)
                case g_decArgo_treatStDev
                   payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
                      {'VRS_PH_STD'} {'VK_PH_STD'} {'IK_PH_STD'} {'IB_PH_STD'}};
+
+                  % parameter added "on the fly" to meta-data file
+                  g_decArgo_addParamListPh{end+1} = 'VRS_PH_STD';
+                  g_decArgo_addParamListPh{end+1} = 'VK_PH_STD';
+                  g_decArgo_addParamListPh{end+1} = 'IK_PH_STD';
+                  g_decArgo_addParamListPh{end+1} = 'IB_PH_STD';
+                  g_decArgo_addParamListPh = unique(g_decArgo_addParamListPh, 'stable');
             end
          else
             payloadProfile.paramNameDecArgo = {{'JULD'} ...

@@ -21,18 +21,41 @@
 % ------------------------------------------------------------------------------
 function generate_json_float_info()
 
-% common float information file
-floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_NOVA.txt';
-% floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_APX.txt';
-floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_PRV.txt';
-% floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_REM_sbd.txt';
-% floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_APMT.txt';
-floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_APX_IR.txt';
-% floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_Arvor_C.txt';
-% floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_NEMO.txt';
+% to switch between Coriolis and JPR configurations
+CORIOLIS_CONFIGURATION_FLAG = 1;
 
-% directory of individual json float information files
-outputDirName = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\json_float_info_files_' datestr(now, 'yyyymmddTHHMMSS')];
+if (CORIOLIS_CONFIGURATION_FLAG)
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % CORIOLIS CONFIGURATION - START
+
+   % common float information file
+   % floatInfoFileName = '/home/idmtmp7/vincent/matlab/new_rem_meta_tempo.txt';
+   floatInfoFileName = '/home/idmtmp7/vincent/matlab/_provor_float_info.txt';
+   % floatInfoFileName = '/home/idmtmp7/vincent/matlab/_apex_float_info.txt';
+   % floatInfoFileName = '/home/idmtmp7/vincent/matlab/_nova_floats_info.txt';
+
+   % directory of individual json float information files
+   outputDirName = ['/home/idmtmp7/vincent/matlab/json_float_info_' datestr(now, 'yyyymmddTHHMMSS')];
+
+   % CORIOLIS CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+else
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % JPR CONFIGURATION - START
+
+   % common float information file
+   floatInfoFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\floats_info_PRV.txt';
+
+   % directory of individual json float information files
+   outputDirName = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\json_float_info_files_' datestr(now, 'yyyymmddTHHMMSS')];
+
+   % JPR CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+end
 
 if ~(exist(floatInfoFileName, 'file') == 2)
    fprintf('ERROR: Float information file not found: %s\n', floatInfoFileName);

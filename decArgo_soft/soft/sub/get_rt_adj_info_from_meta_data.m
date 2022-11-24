@@ -34,6 +34,7 @@ if (isfield(a_metaData, 'RT_OFFSET'))
    o_rtOffsetInfo.value = [];
    o_rtOffsetInfo.drift = [];
    o_rtOffsetInfo.inclineT = [];
+   o_rtOffsetInfo.doCorPres = [];
    o_rtOffsetInfo.adjError = [];
    o_rtOffsetInfo.adjErrorStr = [];
    o_rtOffsetInfo.adjErrorMethod = [];
@@ -51,6 +52,7 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       tabValue = [];
       tabDrift = [];
       tabInclineT = [];
+      tabDoCorPres = [];
       tabAdjError = [];
       tabAdjErrorStr = [];
       tabAdjErrorMethod = [];
@@ -91,6 +93,16 @@ if (isfield(a_metaData, 'RT_OFFSET'))
             else
                tabInclineT = [tabInclineT 0];
             end
+            if (isfield(rtData, 'COR'))
+               if (isfield(rtData.COR, ['COR_' paramNum]))
+                  doCorPres = str2double(rtData.COR.(['COR_' paramNum]));
+                  tabDoCorPres = [tabDoCorPres doCorPres];
+               else
+                  tabDoCorPres = [tabDoCorPres nan];
+               end
+            else
+               tabDoCorPres = [tabDoCorPres nan];
+            end
             if (isfield(rtData, 'ADJUSTED_ERROR'))
                if (isfield(rtData.ADJUSTED_ERROR, ['ADJUSTED_ERROR_' paramNum]))
                   adjError = str2double(rtData.ADJUSTED_ERROR.(['ADJUSTED_ERROR_' paramNum]));
@@ -120,9 +132,20 @@ if (isfield(a_metaData, 'RT_OFFSET'))
             
             % direct copy of DB information (to be reported in case of linear
             % adjustment)
-            tabEquation = [tabEquation {a_metaData.CALIB_RT_EQUATION.(['CALIB_RT_EQUATION_' num2str(idF)])}];
-            tabCoef = [tabCoef {a_metaData.CALIB_RT_COEFFICIENT.(['CALIB_RT_COEFFICIENT_' num2str(idF)])}];
-            tabComment = [tabComment {a_metaData.CALIB_RT_COMMENT.(['CALIB_RT_COMMENT_' num2str(idF)])}];
+            % be careful: the order in CALIB_RT_PARAMETER and RT_OFFSET.PARAM
+            % are not necessarily the same
+            % look for current PARAM number in CALIB_RT_PARAMETER => paramNum2
+            paramNum2 = '';
+            fieldNames2 = fields(a_metaData.CALIB_RT_PARAMETER);
+            for id = 1:length(fieldNames2)
+               if (strcmp(a_metaData.CALIB_RT_PARAMETER.(['CALIB_RT_PARAMETER_' num2str(id)]), param))
+                  paramNum2 = id;
+                  break
+               end
+            end
+            tabEquation = [tabEquation {a_metaData.CALIB_RT_EQUATION.(['CALIB_RT_EQUATION_' num2str(paramNum2)])}];
+            tabCoef = [tabCoef {a_metaData.CALIB_RT_COEFFICIENT.(['CALIB_RT_COEFFICIENT_' num2str(paramNum2)])}];
+            tabComment = [tabComment {a_metaData.CALIB_RT_COMMENT.(['CALIB_RT_COMMENT_' num2str(paramNum2)])}];
          end
       end
       [tabDate, idSorted] = sort(tabDate);
@@ -130,6 +153,7 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       tabValue = tabValue(idSorted);
       tabDrift = tabDrift(idSorted);
       tabInclineT = tabInclineT(idSorted);
+      tabDoCorPres = tabDoCorPres(idSorted);
       tabAdjError = tabAdjError(idSorted);
       tabAdjErrorStr = tabAdjErrorStr(idSorted);
       tabAdjErrorMethod = tabAdjErrorMethod(idSorted);
@@ -143,6 +167,7 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       o_rtOffsetInfo.value{end+1} = tabValue;
       o_rtOffsetInfo.drift{end+1} = tabDrift;
       o_rtOffsetInfo.inclineT{end+1} = tabInclineT;
+      o_rtOffsetInfo.doCorPres{end+1} = tabDoCorPres;
       o_rtOffsetInfo.adjError{end+1} = tabAdjError;
       o_rtOffsetInfo.adjErrorStr{end+1} = tabAdjErrorStr;
       o_rtOffsetInfo.adjErrorMethod{end+1} = tabAdjErrorMethod;

@@ -121,6 +121,8 @@
 %                             locations
 %                             TEST 7 (regional range test) don't use Iridium
 %                             locations to determine region area
+%   01/03/2022 - RNU - V 3.4: Exclude NaN values from get_gebco_elev_point
+%                             output
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -159,7 +161,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '3.3';
+g_decArgo_addRtqcToTrajVersion = '3.4';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -906,7 +908,7 @@ if (testFlagList(4) == 1)
             
          if (~isempty(elev))
             % apply the test
-            if (mean(mean(elev)) >= 0)
+            if (mean(mean(elev(~isnan(elev)))) >= 0)
                positionQc(idNoDef(idPos)) = set_qc(positionQc(idNoDef(idPos)), g_decArgo_qcStrBad);
                
                testFailedList(4) = 1;

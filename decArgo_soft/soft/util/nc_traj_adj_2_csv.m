@@ -1280,7 +1280,7 @@ outputPathFileName = [outputPath '/' ourputFileName];
 fprintf('Converting: %s to %s\n', inputFileName, ourputFileName);
 
 % read the trajectory file contents
-[nMeasData, nCycleData, calibrationData, historyData] = read_file_traj_3_2(a_inputPathFileName);
+[nMeasData, nCycleData, paramCalibData, juldCalibData, historyData] = read_file_traj_3_2(a_inputPathFileName);
 
 % create CSV file
 fidOut = fopen(outputPathFileName, 'wt');
@@ -1671,56 +1671,80 @@ for cycleNumber = -1:max(cycles)
 end
 
 % print CALIBRATION data
-if (0)
-   idVal = find(strcmp(calibrationData, 'SCIENTIFIC_CALIB_PARAMETER') == 1, 1);
-   calibParam = calibrationData{idVal+1};
-   idVal = find(strcmp(calibrationData, 'SCIENTIFIC_CALIB_EQUATION') == 1, 1);
-   calibEquation = calibrationData{idVal+1};
-   idVal = find(strcmp(calibrationData, 'SCIENTIFIC_CALIB_COEFFICIENT') == 1, 1);
-   calibCoef = calibrationData{idVal+1};
-   idVal = find(strcmp(calibrationData, 'SCIENTIFIC_CALIB_COMMENT') == 1, 1);
-   calibComment = calibrationData{idVal+1};
-   idVal = find(strcmp(calibrationData, 'SCIENTIFIC_CALIB_DATE') == 1, 1);
-   calibDae = calibrationData{idVal+1};
+if (1)
+   % print PARAM CALIBRATION data
+   idVal = find(strcmp(paramCalibData, 'SCIENTIFIC_CALIB_PARAMETER') == 1, 1);
+   calibParam = paramCalibData{idVal+1};
+   idVal = find(strcmp(paramCalibData, 'SCIENTIFIC_CALIB_EQUATION') == 1, 1);
+   calibEquation = paramCalibData{idVal+1};
+   idVal = find(strcmp(paramCalibData, 'SCIENTIFIC_CALIB_COEFFICIENT') == 1, 1);
+   calibCoef = paramCalibData{idVal+1};
+   idVal = find(strcmp(paramCalibData, 'SCIENTIFIC_CALIB_COMMENT') == 1, 1);
+   calibComment = paramCalibData{idVal+1};
+   idVal = find(strcmp(paramCalibData, 'SCIENTIFIC_CALIB_DATE') == 1, 1);
+   calibDae = paramCalibData{idVal+1};
    
    [~, nParam, nCalib] = size(calibParam);
    
    for idC = 1:nCalib
-      fprintf(fidOut, ' %s; CALIBRATION; %d; SCIENTIFIC_CALIB_PARAMETER', ...
+      fprintf(fidOut, ' %s; PARAM_CALIBRATION; %d; SCIENTIFIC_CALIB_PARAMETER', ...
          nMeasData.platformNumber, idC);
       for idP = 1:nParam
          fprintf(fidOut, '; %s', ...
             strtrim(calibParam(:, idP, idC)'));
       end
       fprintf(fidOut, '\n');
-      fprintf(fidOut, ' %s; CALIBRATION; %d; SCIENTIFIC_CALIB_EQUATION', ...
+      fprintf(fidOut, ' %s; PARAM_CALIBRATION; %d; SCIENTIFIC_CALIB_EQUATION', ...
          nMeasData.platformNumber, idC);
       for idP = 1:nParam
          fprintf(fidOut, '; %s', ...
             strtrim(calibEquation(:, idP, idC)'));
       end
       fprintf(fidOut, '\n');
-      fprintf(fidOut, ' %s; CALIBRATION; %d; SCIENTIFIC_CALIB_COEFFICIENT', ...
+      fprintf(fidOut, ' %s; PARAM_CALIBRATION; %d; SCIENTIFIC_CALIB_COEFFICIENT', ...
          nMeasData.platformNumber, idC);
       for idP = 1:nParam
          fprintf(fidOut, '; %s', ...
             strtrim(calibCoef(:, idP, idC)'));
       end
       fprintf(fidOut, '\n');
-      fprintf(fidOut, ' %s; CALIBRATION; %d; SCIENTIFIC_CALIB_COMMENT', ...
+      fprintf(fidOut, ' %s; PARAM_CALIBRATION; %d; SCIENTIFIC_CALIB_COMMENT', ...
          nMeasData.platformNumber, idC);
       for idP = 1:nParam
          fprintf(fidOut, '; %s', ...
             strtrim(calibComment(:, idP, idC)'));
       end
       fprintf(fidOut, '\n');
-      fprintf(fidOut, ' %s; CALIBRATION; %d; SCIENTIFIC_CALIB_DATE', ...
+      fprintf(fidOut, ' %s; PARAM_CALIBRATION; %d; SCIENTIFIC_CALIB_DATE', ...
          nMeasData.platformNumber, idC);
       for idP = 1:nParam
          fprintf(fidOut, '; %s', ...
             strtrim(calibDae(:, idP, idC)'));
       end
       fprintf(fidOut, '\n');
+   end
+   
+   % print JULD CALIBRATION data
+   idVal = find(strcmp(juldCalibData, 'JULD_CALIB_EQUATION') == 1, 1);
+   calibEquation = juldCalibData{idVal+1};
+   idVal = find(strcmp(juldCalibData, 'JULD_CALIB_COEFFICIENT') == 1, 1);
+   calibCoef = juldCalibData{idVal+1};
+   idVal = find(strcmp(juldCalibData, 'JULD_CALIB_COMMENT') == 1, 1);
+   calibComment = juldCalibData{idVal+1};
+   idVal = find(strcmp(juldCalibData, 'JULD_CALIB_DATE') == 1, 1);
+   calibDae = juldCalibData{idVal+1};
+   
+   [~, nCalib] = size(calibEquation);
+   
+   for idC = 1:nCalib
+      fprintf(fidOut, ' %s; JULD_CALIBRATION; %d; JULD_CALIB_EQUATION; %s\n', ...
+         nMeasData.platformNumber, idC, strtrim(calibEquation(:, idC)'));
+      fprintf(fidOut, ' %s; JULD_CALIBRATION; %d; JULD_CALIB_COEFFICIENT; %s\n', ...
+         nMeasData.platformNumber, idC, strtrim(calibCoef(:, idC)'));
+      fprintf(fidOut, ' %s; JULD_CALIBRATION; %d; JULD_CALIB_COMMENT; %s\n', ...
+         nMeasData.platformNumber, idC, strtrim(calibComment(:, idC)'));
+      fprintf(fidOut, ' %s; JULD_CALIBRATION; %d; JULD_CALIB_DATE; %s\n', ...
+         nMeasData.platformNumber, idC, strtrim(calibDae(:, idC)'));
    end
    
    % print HISTORY data
@@ -1794,7 +1818,7 @@ outputPathFileName = [outputPath '/' ourputFileName];
 fprintf('Converting: %s to %s\n', inputFileName, ourputFileName);
 
 % read the trajectory file contents
-[nMeasData, nCycleData, calibrationData, historyData] = read_file_traj_3_2(a_inputPathFileName);
+[nMeasData, nCycleData, paramCalibData, juldCalibData, historyData] = read_file_traj_3_2(a_inputPathFileName);
 
 % create CSV file
 fidOut = fopen(outputPathFileName, 'wt');
@@ -2202,51 +2226,51 @@ for cycleNumber = -1:max(cycles)
    end
 end
 
-if (0)
-   % print CALIBRATION data
-   idVal = find(strcmp(calibrationData, 'SCIENTIFIC_CALIB_PARAMETER') == 1, 1);
-   calibParam = calibrationData{idVal+1};
-   idVal = find(strcmp(calibrationData, 'SCIENTIFIC_CALIB_EQUATION') == 1, 1);
-   calibEquation = calibrationData{idVal+1};
-   idVal = find(strcmp(calibrationData, 'SCIENTIFIC_CALIB_COEFFICIENT') == 1, 1);
-   calibCoef = calibrationData{idVal+1};
-   idVal = find(strcmp(calibrationData, 'SCIENTIFIC_CALIB_COMMENT') == 1, 1);
-   calibComment = calibrationData{idVal+1};
-   idVal = find(strcmp(calibrationData, 'SCIENTIFIC_CALIB_DATE') == 1, 1);
-   calibDae = calibrationData{idVal+1};
+if (1)
+   % print PARAM CALIBRATION data
+   idVal = find(strcmp(paramCalibData, 'SCIENTIFIC_CALIB_PARAMETER') == 1, 1);
+   calibParam = paramCalibData{idVal+1};
+   idVal = find(strcmp(paramCalibData, 'SCIENTIFIC_CALIB_EQUATION') == 1, 1);
+   calibEquation = paramCalibData{idVal+1};
+   idVal = find(strcmp(paramCalibData, 'SCIENTIFIC_CALIB_COEFFICIENT') == 1, 1);
+   calibCoef = paramCalibData{idVal+1};
+   idVal = find(strcmp(paramCalibData, 'SCIENTIFIC_CALIB_COMMENT') == 1, 1);
+   calibComment = paramCalibData{idVal+1};
+   idVal = find(strcmp(paramCalibData, 'SCIENTIFIC_CALIB_DATE') == 1, 1);
+   calibDae = paramCalibData{idVal+1};
    
    [~, nParam, nCalib] = size(calibParam);
    
    for idC = 1:nCalib
-      fprintf(fidOut, ' %s; CALIBRATION; %d; SCIENTIFIC_CALIB_PARAMETER', ...
+      fprintf(fidOut, ' %s; PARAM_CALIBRATION; %d; SCIENTIFIC_CALIB_PARAMETER', ...
          nMeasData.platformNumber, idC);
       for idP = 1:nParam
          fprintf(fidOut, '; %s', ...
             strtrim(calibParam(:, idP, idC)'));
       end
       fprintf(fidOut, '\n');
-      fprintf(fidOut, ' %s; CALIBRATION; %d; SCIENTIFIC_CALIB_EQUATION', ...
+      fprintf(fidOut, ' %s; PARAM_CALIBRATION; %d; SCIENTIFIC_CALIB_EQUATION', ...
          nMeasData.platformNumber, idC);
       for idP = 1:nParam
          fprintf(fidOut, '; %s', ...
             strtrim(calibEquation(:, idP, idC)'));
       end
       fprintf(fidOut, '\n');
-      fprintf(fidOut, ' %s; CALIBRATION; %d; SCIENTIFIC_CALIB_COEFFICIENT', ...
+      fprintf(fidOut, ' %s; PARAM_CALIBRATION; %d; SCIENTIFIC_CALIB_COEFFICIENT', ...
          nMeasData.platformNumber, idC);
       for idP = 1:nParam
          fprintf(fidOut, '; %s', ...
             strtrim(calibCoef(:, idP, idC)'));
       end
       fprintf(fidOut, '\n');
-      fprintf(fidOut, ' %s; CALIBRATION; %d; SCIENTIFIC_CALIB_COMMENT', ...
+      fprintf(fidOut, ' %s; PARAM_CALIBRATION; %d; SCIENTIFIC_CALIB_COMMENT', ...
          nMeasData.platformNumber, idC);
       for idP = 1:nParam
          fprintf(fidOut, '; %s', ...
             strtrim(calibComment(:, idP, idC)'));
       end
       fprintf(fidOut, '\n');
-      fprintf(fidOut, ' %s; CALIBRATION; %d; SCIENTIFIC_CALIB_DATE', ...
+      fprintf(fidOut, ' %s; PARAM_CALIBRATION; %d; SCIENTIFIC_CALIB_DATE', ...
          nMeasData.platformNumber, idC);
       for idP = 1:nParam
          fprintf(fidOut, '; %s', ...
@@ -2255,6 +2279,29 @@ if (0)
       fprintf(fidOut, '\n');
    end
    
+   % print JULD CALIBRATION data
+   idVal = find(strcmp(juldCalibData, 'JULD_CALIB_EQUATION') == 1, 1);
+   calibEquation = juldCalibData{idVal+1};
+   idVal = find(strcmp(juldCalibData, 'JULD_CALIB_COEFFICIENT') == 1, 1);
+   calibCoef = juldCalibData{idVal+1};
+   idVal = find(strcmp(juldCalibData, 'JULD_CALIB_COMMENT') == 1, 1);
+   calibComment = juldCalibData{idVal+1};
+   idVal = find(strcmp(juldCalibData, 'JULD_CALIB_DATE') == 1, 1);
+   calibDae = juldCalibData{idVal+1};
+   
+   [~, nCalib] = size(calibEquation);
+   
+   for idC = 1:nCalib
+      fprintf(fidOut, ' %s; JULD_CALIBRATION; %d; JULD_CALIB_EQUATION; %s\n', ...
+         nMeasData.platformNumber, idC, strtrim(calibEquation(:, idC)'));
+      fprintf(fidOut, ' %s; JULD_CALIBRATION; %d; JULD_CALIB_COEFFICIENT; %s\n', ...
+         nMeasData.platformNumber, idC, strtrim(calibCoef(:, idC)'));
+      fprintf(fidOut, ' %s; JULD_CALIBRATION; %d; JULD_CALIB_COMMENT; %s\n', ...
+         nMeasData.platformNumber, idC, strtrim(calibComment(:, idC)'));
+      fprintf(fidOut, ' %s; JULD_CALIBRATION; %d; JULD_CALIB_DATE; %s\n', ...
+         nMeasData.platformNumber, idC, strtrim(calibDae(:, idC)'));
+   end
+
    % print HISTORY data
    nHistory = 0;
    idVal = find(strcmp(historyData, 'HISTORY_INSTITUTION') == 1, 1);

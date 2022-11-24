@@ -100,10 +100,22 @@ global g_decArgo_paramProfAdjInfo;
 global g_decArgo_paramProfAdjId;
 global g_decArgo_paramTrajAdjInfo;
 global g_decArgo_paramTrajAdjId;
+global g_decArgo_juldTrajAdjInfo;
+global g_decArgo_juldTrajAdjId;
 
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamNbSampleCtd;
 global g_decArgo_addParamNbSampleSfet;
+global g_decArgo_addParamListCtd;
+global g_decArgo_addParamListOxygen;
+global g_decArgo_addParamListPh;
+global g_decArgo_addParamListChla;
+global g_decArgo_addParamListBackscattering;
+global g_decArgo_addParamListCdom;
+global g_decArgo_addParamListRadiometry;
+global g_decArgo_addParamListCp;
+global g_decArgo_addParamListTurbidity;
+
 
 % get floats information
 if (g_decArgo_realtimeFlag == 0)
@@ -135,9 +147,20 @@ for idFloat = 1:nbFloats
    g_decArgo_paramProfAdjId = 1;
    g_decArgo_paramTrajAdjInfo = [];
    g_decArgo_paramTrajAdjId = 1;
+   g_decArgo_juldTrajAdjInfo = [];
+   g_decArgo_juldTrajAdjId = 1;
 
    g_decArgo_addParamNbSampleCtd = 0;
    g_decArgo_addParamNbSampleSfet = 0;
+   g_decArgo_addParamListCtd = [];
+   g_decArgo_addParamListOxygen = [];
+   g_decArgo_addParamListPh = [];
+   g_decArgo_addParamListChla = [];
+   g_decArgo_addParamListBackscattering = [];
+   g_decArgo_addParamListCdom = [];
+   g_decArgo_addParamListRadiometry = [];
+   g_decArgo_addParamListCp = [];
+   g_decArgo_addParamListTurbidity = [];
 
    floatNum = a_floatList(idFloat);
    g_decArgo_floatNum = floatNum;

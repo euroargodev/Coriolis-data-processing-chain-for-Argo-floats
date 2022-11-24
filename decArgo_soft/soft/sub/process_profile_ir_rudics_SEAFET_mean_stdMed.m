@@ -57,6 +57,9 @@ global g_decArgo_treatRaw;
 global g_decArgo_treatAverage;
 global g_decArgo_treatAverageAndStDev;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListPh;
+
 
 % unpack the input data
 a_dataSEAFETMeanDate = a_dataSEAFETMean{1};
@@ -239,6 +242,11 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                
                % treatment type
                profStruct.treatType = g_decArgo_treatAverageAndStDev;
+
+               % parameter added "on the fly" to meta-data file
+               g_decArgo_addParamListPh{end+1} = 'VRS_PH_STD';
+               g_decArgo_addParamListPh{end+1} = 'VRS_PH_MED';
+               g_decArgo_addParamListPh = unique(g_decArgo_addParamListPh, 'stable');
             end
          end
       end

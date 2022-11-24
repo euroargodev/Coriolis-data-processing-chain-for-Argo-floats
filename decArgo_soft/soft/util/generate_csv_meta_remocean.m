@@ -20,27 +20,62 @@
 % ------------------------------------------------------------------------------
 function generate_csv_meta_remocean(varargin)
 
-% calibration coefficients decoded from data
-calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
+% to switch between Coriolis and JPR configurations
+CORIOLIS_CONFIGURATION_FLAG = 1;
 
-% show mode state decoded from data
-showModeFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\ShowMode\show_mode.txt';
+if (CORIOLIS_CONFIGURATION_FLAG)
 
-% SUNA output pixel numbers decoded from data
-outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % CORIOLIS CONFIGURATION - START
 
-% list of sensors mounted on floats
-% SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
-SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\IN\decArgo_config_floats\argoFloatInfo\float_sensor_list.txt';
+   % calibration coefficients decoded from data
+   calibFileName = '/home/coriolis_dev/gestion/exploitation/argo/flotteurs-coriolis/Bgc-Argo/CTS4/DataFromFloatToMeta/CalibCoef/calib_coef.txt';
 
-% meta-data file exported from Coriolis data base
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\cts4_norway_20190604.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\cts4_norway_6903551.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_EuroSea_6.13_all.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\CTS4_6.14_with_2BB_6904134_DBexport.txt';
+   % show mode state decoded from data
+   showModeFileName = '/home/coriolis_dev/gestion/exploitation/argo/flotteurs-coriolis/Bgc-Argo/CTS4/DataFromFloatToMeta/ShowMode/show_mode.txt';
 
-% directory to store the log and csv files
-DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+   % SUNA output pixel numbers decoded from data
+   outputPixelFileName = '/home/coriolis_dev/gestion/exploitation/argo/flotteurs-coriolis/Bgc-Argo/CTS4/DataFromFloatToMeta/SunaOutputPixel/output_pixel.txt';
+
+   % list of sensors mounted on floats
+   SENSOR_LIST_FILE_NAME = '/home/coriolis_exp/binlx/co04/co0414/co041404/decArgo_config_floats/argoFloatInfo/float_sensor_list.txt';
+
+   % meta-data file exported from Coriolis data base
+   dataBaseFileName = '/home/idmtmp7/vincent/matlab/DB_export/new_rem_meta.txt';
+
+   % directory to store the log and csv files
+   DIR_LOG_CSV_FILE = '/home/coriolis_exp/binlx/co04/co0414/co041402/data/csv';
+
+   % CORIOLIS CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+else
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % JPR CONFIGURATION - START
+
+   % calibration coefficients decoded from data
+   calibFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
+
+   % show mode state decoded from data
+   showModeFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\ShowMode\show_mode.txt';
+
+   % SUNA output pixel numbers decoded from data
+   outputPixelFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\SunaOutputPixel\output_pixel.txt';
+
+   % list of sensors mounted on floats
+   SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\IN\decArgo_config_floats\argoFloatInfo\float_sensor_list.txt';
+
+   % meta-data file exported from Coriolis data base
+   dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\CTS4_6.14_with_2BB_6904134_DBexport.txt';
+
+   % directory to store the log and csv files
+   DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+
+   % JPR CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+end
 
 % mode processing flags
 global g_decArgo_realtimeFlag;
@@ -295,7 +330,27 @@ switch a_inputSensorName
       o_sensorDimLevel = [1 2 3];
       o_sensorMaker = [{'SBE'} {'SBE'} {'SBE'}];
       o_sensorModel = [{'SBE41CP'} {'SBE41CP'} {'SBE41CP'}];
-      
+      for idS = 1:length(o_sensorName)
+         [sensorModel] = get_sensor_model('CTD_PRES', a_floatNum, a_metaWmoList, a_metaData);
+         if (~isempty(sensorModel))
+            if (~strcmp(sensorModel, o_sensorModel{idS}))
+               fprintf('INFO: DB SENSOR_MODEL (''%s'') not replaced by default one (''%s'')\n', ...
+                  sensorModel, o_sensorModel{idS});
+               o_sensorModel(idS) = {sensorModel};
+            end
+         end
+      end
+      for idS = 1:length(o_sensorMaker)
+         [sensorMaker] = get_sensor_maker('CTD_PRES', a_floatNum, a_metaWmoList, a_metaData);
+         if (~isempty(sensorMaker))
+            if (~strcmp(sensorMaker, o_sensorMaker{idS}))
+               fprintf('INFO: DB SENSOR_Maker (''%s'') not replaced by default one (''%s'')\n', ...
+                  sensorMaker, o_sensorMaker{idS});
+               o_sensorMaker(idS) = {sensorMaker};
+            end
+         end
+      end
+
    case 'OPTODE'
       o_sensorName = {'OPTODE_DOXY'};
       o_sensorDimLevel = [101];
@@ -753,6 +808,32 @@ if (~isempty(idF1))
       o_sensorModel = strtrim(a_metaData{idForWmo(idF2), 4});
    else
       fprintf('ERROR: Sensor model not found for sensor %s of float %d\n', ...
+         a_sensorName, a_floatNum);
+   end
+else
+   fprintf('ERROR: Sensor %s not found for float %d\n', ...
+      a_sensorName, a_floatNum);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+function [o_sensorMaker] = get_sensor_maker(a_sensorName, a_floatNum, a_metaWmoList, a_metaData)
+
+o_sensorMaker = [];
+
+idForWmo = find(a_metaWmoList == a_floatNum);
+
+idF1 = find(strcmp(a_metaData(idForWmo, 4), a_sensorName) & ...
+   strcmp(a_metaData(idForWmo, 5), 'SENSOR'));
+if (~isempty(idF1))
+   dimLevel = a_metaData(idForWmo(idF1), 3);
+   idF2 = find(strcmp(a_metaData(idForWmo, 3), dimLevel) & ...
+      strcmp(a_metaData(idForWmo, 5), 'SENSOR_MAKER'));
+   if (~isempty(idF2))
+      o_sensorMaker = strtrim(a_metaData{idForWmo(idF2), 4});
+   else
+      fprintf('ERROR: Sensor maker not found for sensor %s of float %d\n', ...
          a_sensorName, a_floatNum);
    end
 else

@@ -382,14 +382,19 @@ for idCyc = 1:length(cycleNumList)
          dates = a_tabTrajData{id}{:}.dates;
          datesAdj = a_tabTrajData{id}{:}.datesAdj;
          data = a_tabTrajData{id}{:}.data;
+         dataAdj = a_tabTrajData{id}{:}.dataAdj;
          
          for idM = 1:length(dates)
             if (dates(idM) == paramJuld.fillValue)
                measStruct = get_traj_one_meas_init_struct();
                measStruct.paramList = a_tabTrajData{id}{:}.paramList;
+               measStruct.paramDataMode = a_tabTrajData{id}{:}.paramDataMode;
                measStruct.paramNumberWithSubLevels = a_tabTrajData{id}{:}.paramNumberWithSubLevels;
                measStruct.paramNumberOfSubLevels = a_tabTrajData{id}{:}.paramNumberOfSubLevels;
                measStruct.paramData = data(idM, :);
+               if (~isempty(dataAdj))
+                  measStruct.paramDataAdj = dataAdj(idM, :);
+               end
                if (~isempty(a_tabTrajData{id}{:}.ptsForDoxy))
                   measStruct.ptsForDoxy = a_tabTrajData{id}{:}.ptsForDoxy(idM, :);
                end
@@ -400,9 +405,13 @@ for idCyc = 1:length(cycleNumList)
                [measStruct, ~] = create_one_meas_float_time_bis(g_MC_DriftAtPark, ...
                   dates(idM), datesAdj(idM), g_JULD_STATUS_2);
                measStruct.paramList = a_tabTrajData{id}{:}.paramList;
+               measStruct.paramDataMode = a_tabTrajData{id}{:}.paramDataMode;
                measStruct.paramNumberWithSubLevels = a_tabTrajData{id}{:}.paramNumberWithSubLevels;
                measStruct.paramNumberOfSubLevels = a_tabTrajData{id}{:}.paramNumberOfSubLevels;
                measStruct.paramData = data(idM, :);
+               if (~isempty(dataAdj))
+                  measStruct.paramDataAdj = dataAdj(idM, :);
+               end
                if (~isempty(a_tabTrajData{id}{:}.ptsForDoxy))
                   measStruct.ptsForDoxy = a_tabTrajData{id}{:}.ptsForDoxy(idM, :);
                end
@@ -483,9 +492,11 @@ for idCyc = 1:length(cycleNumList)
          (a_tabTrajIndex(:, 4) == g_decArgo_phaseParkDrift));
       
       paramList = [];
+      paramDataMode = [];
       paramNumberWithSubLevels = [];
       paramNumberOfSubLevels = [];
       paramData = [];
+      paramDataAdj = [];
       for idMeas = 1:length(idPackData)
          id = idPackData(idMeas);
          
@@ -501,14 +512,19 @@ for idCyc = 1:length(cycleNumList)
          listParam = a_tabTrajData{id}{:}.paramList;
          for idParam = 1:length(listParam)
             paramName = listParam(idParam).name;
-            
+
             if (~isempty(paramList))
-               
+
                idF1 = find(strcmp(paramName, {paramList.name}) == 1);
                if (isempty(idF1))
-                  
+
                   paramList = [paramList a_tabTrajData{id}{:}.paramList(idParam)];
-                  
+                  if (isempty(a_tabTrajData{id}{:}.paramDataMode))
+                     paramDataMode = [paramDataMode ' '];
+                  else
+                     paramDataMode = [paramDataMode a_tabTrajData{id}{:}.paramDataMode(idParam)];
+                  end
+
                   nbSubLevels = 1;
                   idF2 = find(a_tabTrajData{id}{:}.paramNumberWithSubLevels == idParam);
                   if (~isempty(idF2))
@@ -519,24 +535,47 @@ for idCyc = 1:length(cycleNumList)
                   
                   paramData = [paramData {a_tabTrajData{id}{:}.data(:, ...
                      (idParam+offsetInDataArray):(idParam+offsetInDataArray)+(nbSubLevels-1))}];
+                  if (isempty(a_tabTrajData{id}{:}.dataAdj))
+                     paramDataAdj = [paramDataAdj { ...
+                        repmat(a_tabTrajData{id}{:}.paramList(idParam).fillValue, size(a_tabTrajData{id}{:}.data, 1), nbSubLevels)}];
+                  else
+                     paramDataAdj = [paramDataAdj {a_tabTrajData{id}{:}.dataAdj(:, ...
+                        (idParam+offsetInDataArray):(idParam+offsetInDataArray)+(nbSubLevels-1))}];
+                  end
                   offsetInDataArray = offsetInDataArray + (nbSubLevels-1);
                else
-                  
+
+                  if (~isempty(a_tabTrajData{id}{:}.paramDataMode))
+                     paramDataMode(idF1) = a_tabTrajData{id}{:}.paramDataMode(idParam);
+                  end
+
                   nbSubLevels = 1;
                   idF2 = find(a_tabTrajData{id}{:}.paramNumberWithSubLevels == idParam);
                   if (~isempty(idF2))
                      nbSubLevels = a_tabTrajData{id}{:}.paramNumberOfSubLevels(idF2);
                   end
-                  
+
                   data = a_tabTrajData{id}{:}.data(:, ...
                      (idParam+offsetInDataArray):(idParam+offsetInDataArray)+(nbSubLevels-1));
-                  
+                  if (isempty(a_tabTrajData{id}{:}.dataAdj))
+                     dataAdj = repmat(a_tabTrajData{id}{:}.paramList(idParam).fillValue, size(a_tabTrajData{id}{:}.data, 1), nbSubLevels);
+                  else
+                     dataAdj = a_tabTrajData{id}{:}.dataAdj(:, ...
+                        (idParam+offsetInDataArray):(idParam+offsetInDataArray)+(nbSubLevels-1));
+                  end
+
                   paramData{idF1} = [paramData{idF1}; data];
+                  paramDataAdj{idF1} = [paramDataAdj{idF1}; dataAdj];
                   offsetInDataArray = offsetInDataArray + (nbSubLevels-1);
                end
             else
                
                paramList = [paramList a_tabTrajData{id}{:}.paramList(idParam)];
+               if (isempty(a_tabTrajData{id}{:}.paramDataMode))
+                  paramDataMode = [paramDataMode ' '];
+               else
+                  paramDataMode = [paramDataMode a_tabTrajData{id}{:}.paramDataMode(idParam)];
+               end
                
                nbSubLevels = 1;
                idF2 = find(a_tabTrajData{id}{:}.paramNumberWithSubLevels == idParam);
@@ -548,6 +587,13 @@ for idCyc = 1:length(cycleNumList)
                
                paramData = [paramData {a_tabTrajData{id}{:}.data(:, ...
                   (idParam+offsetInDataArray):(idParam+offsetInDataArray)+(nbSubLevels-1))}];
+               if (isempty(a_tabTrajData{id}{:}.dataAdj))
+                  paramDataAdj = [paramDataAdj { ...
+                     repmat(a_tabTrajData{id}{:}.paramList(idParam).fillValue, size(a_tabTrajData{id}{:}.data, 1), nbSubLevels)}];
+               else
+                  paramDataAdj = [paramDataAdj {a_tabTrajData{id}{:}.dataAdj(:, ...
+                     (idParam+offsetInDataArray):(idParam+offsetInDataArray)+(nbSubLevels-1))}];
+               end
                offsetInDataArray = offsetInDataArray + (nbSubLevels-1);
                
             end
@@ -557,9 +603,11 @@ for idCyc = 1:length(cycleNumList)
       % compute the averaged values
       nbParamRpp = 0;
       paramListRpp = [];
+      paramDataModeRpp = [];
       paramNumberWithSubLevelsRpp = [];
       paramNumberOfSubLevelsRpp = [];
       paramDataRpp = [];
+      paramDataAdjRpp = [];
       for idParam = 1:length(paramList)
          
          nbSubLevels = 1;
@@ -589,7 +637,26 @@ for idCyc = 1:length(cycleNumList)
             end
             paramDataRpp = [paramDataRpp meanData];
          end
-         
+
+         if (~isempty(strtrim(paramDataMode)))
+
+            dataAdj = paramDataAdj{idParam};
+            meanDataAdj = [];
+            for idSL = 1:nbSubLevels
+               dataCol = dataAdj(:, idSL);
+               dataCol(find(dataCol == paramList(idParam).fillValue)) = [];
+               if (~isempty(dataCol))
+                  meanDataAdj = [meanDataAdj mean(dataCol)];
+               else
+                  meanDataAdj = [meanDataAdj paramList(idParam).fillValue];
+               end
+            end
+
+            if (~isempty(meanDataAdj))
+               paramDataModeRpp = [paramDataModeRpp paramDataMode(idParam)];
+               paramDataAdjRpp = [paramDataAdjRpp meanDataAdj];
+            end
+         end
       end
       
       if (~isempty(paramDataRpp))
@@ -597,9 +664,11 @@ for idCyc = 1:length(cycleNumList)
          measStruct = get_traj_one_meas_init_struct();
          measStruct.measCode = g_MC_RPP;
          measStruct.paramList = paramListRpp;
+         measStruct.paramDataMode = paramDataModeRpp;
          measStruct.paramNumberWithSubLevels = paramNumberWithSubLevelsRpp;
          measStruct.paramNumberOfSubLevels = paramNumberOfSubLevelsRpp;
          measStruct.paramData = paramDataRpp;
+         measStruct.paramDataAdj = paramDataAdjRpp;
          measStruct.cyclePhase = g_decArgo_phaseParkDrift;
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
          

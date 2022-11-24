@@ -1,9 +1,11 @@
 % ------------------------------------------------------------------------------
 % Génération d'un fichier GE de trajectoire d'un flotteur à partir des données
 % du fichier _traj.nc.
+% Similaire à ge_generate_traj_from_nc mais ici on considère également les
+% positions Iridium.
 %
 % SYNTAX :
-%   ge_generate_traj_from_nc ou ge_generate_traj_from_nc(6900189, 7900118)
+%   ge_generate_traj_from_nc_all ou ge_generate_traj_from_nc_all(6900189, 7900118)
 %
 % INPUT PARAMETERS :
 %   varargin : éventuellement la liste des numéros de flotteurs à traiter
@@ -16,15 +18,16 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   01/01/2009 - RNU - creation
+%   01/31/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function ge_generate_traj_from_nc(varargin)
+function ge_generate_traj_from_nc_all(varargin)
 
 global g_dateDef;
-global g_decArgo_ncArgosLonDef;
-global g_decArgo_ncArgosLatDef;
 global g_MC_Launch;
 global g_MC_Surface;
+
+% default values initialization
+init_default_values;
 
 % initialisation des valeurs par défaut
 init_valdef;
@@ -33,39 +36,17 @@ init_valdef;
 init_measurement_codes;
 
 
-% flag d'exclusion des localisations Argos du fichier GE généré
-ARGOS_LOC = 1;
+% flag d'exclusion des localisations Argos/Gps du fichier GE généré
+ARGOS_GPS_LOC_FLAG = 1;
+
+% flag d'exclusion des localisations Iridium du fichier GE généré
+IRIDIUM_LOC_FLAG = 1;
 
 % liste des flotteurs à considérer
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_201.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_202.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\TrajChecker\_arvor_ir_decId_203.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.43.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.44.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_5.45.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.74.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.75.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_psal_30.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_082807_020110.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_incois.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_212.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_214.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_216.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_217.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.11.3.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_6.11_all.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
 
 % répertoire des fichiers NetCDF
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\Apx_Ir_rudics_&_Navis_20170817\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\NOVA_DOVA_check_20180824\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\IN\';
 
 % répertoire de production des fichier KML
 DIR_OUTPUT_KML_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -103,9 +84,11 @@ else
 end
 
 % fichiers temporaires de stockage
-outputTempLaunchFileName = [tmpDirName '/' 'ge_generate_traj_from_nc_LAUNCH'];
-outputTempLocFileName = [tmpDirName '/' 'ge_generate_traj_from_nc_LOC'];
-outputTempTrajFileName = [tmpDirName '/' 'ge_generate_traj_from_nc_TRAJ'];
+outputTempLaunchFileName = [tmpDirName '/' 'ge_generate_traj_from_nc_all_LAUNCH'];
+outputTempLocFileName = [tmpDirName '/' 'ge_generate_traj_from_nc_all_LOC'];
+outputTempLocIrFileName = [tmpDirName '/' 'ge_generate_traj_ir_from_nc_all_LOC'];
+outputTempTrajFileName = [tmpDirName '/' 'ge_generate_traj_from_nc_all_TRAJ'];
+outputTempTrajIrFileName = [tmpDirName '/' 'ge_generate_traj_ir_from_nc_all_TRAJ'];
 
 % création et ouverture du fichier de sortie
 if (nargin == 0)
@@ -115,7 +98,7 @@ else
    name = sprintf('_%d', floatList);
 end
 
-kmlFileName = ['ge_generate_traj_from_nc' name '_' ident '.kml'];
+kmlFileName = ['ge_generate_traj_from_nc_all' name '_CEP_MIN_AVG_' ident '.kml'];
 kmzFileName = [kmlFileName(1:end-4) '.kmz'];
 outputFileName = [DIR_OUTPUT_KML_FILES kmlFileName];
 
@@ -136,7 +119,9 @@ for idFloat = 1:nbFloats
    % variable de stockage du code kml
    kmlStrLaunch = [];
    kmlStrLoc = [];
+   kmlStrLocIr = [];
    kmlStrTraj = [];
+   kmlStrTrajIr = [];
 
    floatNumStr = num2str(floatList(idFloat));
    fprintf('\n%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
@@ -177,7 +162,7 @@ for idFloat = 1:nbFloats
       fprintf('\n');
       fprintf('ERROR: Fichier de meta-données (%s) attendu en version 3.1 (mais FORMAT_VERSION = %s)\n', ...
          metaFileName, metaFileFormatVersion);
-%       return
+      return
    end   
    
    metaStruct = [];
@@ -219,6 +204,8 @@ for idFloat = 1:nbFloats
       {'LONGITUDE'} ...
       {'POSITION_ACCURACY'} ...
       {'POSITION_QC'} ...
+      {'AXES_ERROR_ELLIPSE_MAJOR'} ...
+      {'AXES_ERROR_ELLIPSE_MINOR'} ...
       ];
    [trajData] = get_data_from_nc_file(trajFileName, wantedVars);
       
@@ -230,7 +217,7 @@ for idFloat = 1:nbFloats
       fprintf('\n');
       fprintf('ERROR: Fichier de trajectoire (%s) attendu en version 3.1 (mais FORMAT_VERSION = %s)\n', ...
          trajFileName, formatVersion);
-%       return
+      return
    end
    
    idVal = find(strcmp('CYCLE_NUMBER', trajData(1:2:end)) == 1, 1);
@@ -257,6 +244,12 @@ for idFloat = 1:nbFloats
    idVal = find(strcmp('POSITION_QC', trajData(1:2:end)) == 1, 1);
    positionQC = trajData{2*idVal};
    
+   idVal = find(strcmp('AXES_ERROR_ELLIPSE_MAJOR', trajData(1:2:end)) == 1, 1);
+   errorEllipseMaj = trajData{2*idVal};
+   
+   idVal = find(strcmp('AXES_ERROR_ELLIPSE_MINOR', trajData(1:2:end)) == 1, 1);
+   errorEllipseMin = trajData{2*idVal};
+
    % merge JULD et JULD_ADJUSTED
    idF = find(juldAdj ~= 999999);
    juld(idF) = juldAdj(idF);
@@ -264,8 +257,6 @@ for idFloat = 1:nbFloats
 
    % date de lâcher
    launchDateJuld = g_dateDef;
-   launchLatitudeMeta = g_decArgo_ncArgosLatDef;
-   launchLongitudeMeta = g_decArgo_ncArgosLonDef;
    idF = find(measCode == g_MC_Launch);
    if (~isempty(idF))
       launchDateJuld = juld(idF);
@@ -273,8 +264,24 @@ for idFloat = 1:nbFloats
       launchLongitudeMeta = longitude(idF);
    end
 
-   % on ne conserve que les positions Argos du fichier trajectoires (i.e. celles
-   % qui ont une localisation)
+   % selection des positions Iridium
+   cycleNumberIr = [];
+   juldIr = [];
+   latitudeIr = [];
+   longitudeIr = [];
+   positionAccuracyIr = [];
+   idF = find((measCode == g_MC_Surface) & (positionAccuracy == 'I'));
+   if (~isempty(idF))
+      cycleNumberIr = cycleNumber(idF);
+      juldIr = juld(idF);
+      latitudeIr = latitude(idF);
+      longitudeIr = longitude(idF);
+      positionAccuracyIr = positionAccuracy(idF);
+      errorEllipseMajIr = errorEllipseMaj(idF);
+   end
+
+   % on ne conserve que les positions Argos/Gps du fichier trajectoires
+   % (i.e. celles qui ont une localisation)
    idF = find((measCode == g_MC_Surface) & (positionAccuracy ~= 'I'));
    if (~isempty(idF))
       cycleNumber = cycleNumber(idF);
@@ -287,18 +294,18 @@ for idFloat = 1:nbFloats
 
    % sélection des cycles
    % sélection des positions Argos de qualité
-%    idGoodPos = find( ...
-%       (positionAccuracy == '1') | ...
-%       (positionAccuracy == '2') | ...
-%       (positionAccuracy == '3') | ...
-%       (positionAccuracy == 'G') | ...
-%       (positionQC == '1') | ...
-%       (positionQC == '2'));
-%    cycleNumber = cycleNumber(idGoodPos);
-%    juld = juld(idGoodPos);
-%    longitude = longitude(idGoodPos);
-%    latitude = latitude(idGoodPos);
-%    positionAccuracy = positionAccuracy(idGoodPos);
+   %    idGoodPos = find( ...
+   %       (positionAccuracy == '1') | ...
+   %       (positionAccuracy == '2') | ...
+   %       (positionAccuracy == '3') | ...
+   %       (positionAccuracy == 'G') | ...
+   %       (positionQC == '1') | ...
+   %       (positionQC == '2'));
+   %    cycleNumber = cycleNumber(idGoodPos);
+   %    juld = juld(idGoodPos);
+   %    longitude = longitude(idGoodPos);
+   %    latitude = latitude(idGoodPos);
+   %    positionAccuracy = positionAccuracy(idGoodPos);
 
    % position de lâcher du flotteur
    if (launchDateJuld ~= g_dateDef)
@@ -328,12 +335,22 @@ for idFloat = 1:nbFloats
       9, 9, '<name>', floatNumStr, '</name>', 10, ...
       ];
 
+   kmlStrLocIr = [kmlStrLocIr, ...
+      9, '<Folder>', 10, ...
+      9, 9, '<name>', floatNumStr, '</name>', 10, ...
+      ];
+
+   kmlStrTrajIr = [kmlStrTrajIr, ...
+      9, '<Folder>', 10, ...
+      9, 9, '<name>', floatNumStr, '</name>', 10, ...
+      ];
+   
    kmlStrTraj = [kmlStrTraj, ...
       9, '<Folder>', 10, ...
       9, 9, '<name>', floatNumStr, '</name>', 10, ...
       ];
 
-   % traitement des cycles
+   % traitement des cycles (positions Argos/Gps)
    cycleNumbers = unique(cycleNumber);
    nbCycle = length(cycleNumbers);
    for idCycle = 1:nbCycle
@@ -349,7 +366,7 @@ for idFloat = 1:nbFloats
 
          % POSITIONS ARGOS
          
-         if (ARGOS_LOC == 1)
+         if (ARGOS_GPS_LOC_FLAG == 1)
 
             kmlStrLoc = [kmlStrLoc, ...
                9, '<Folder>', 10, ...
@@ -364,7 +381,7 @@ for idFloat = 1:nbFloats
                argosPosDescription = [argosPosDescription, ...
                   sprintf('DATE               : %s\n', julian_2_gregorian_dec_argo(juldCy(idPos)))];
                argosPosDescription = [argosPosDescription, ...
-                  sprintf('ARGOS CLASS        : %c\n', positionAccuracyCy(idPos))];
+                  sprintf('LOC CLASS          : %c\n', positionAccuracyCy(idPos))];
 
                timeSpanStart = datestr(juldCy(idPos)+referenceDate, 'yyyy-mm-ddTHH:MM:SSZ');
 
@@ -422,12 +439,155 @@ for idFloat = 1:nbFloats
          prevDate = juldCy(end);
       end
    end
-   
+
+   % traitement des cycles (positions Iridium)
+   if (IRIDIUM_LOC_FLAG == 1)
+
+      prevLon = launchLongitudeMeta;
+      prevLat = launchLatitudeMeta;
+
+      cycleNumbersIr = unique(cycleNumberIr);
+      nbCycle = length(cycleNumbersIr);
+      for idCycle = 1:nbCycle
+         cycleNum = cycleNumbersIr(idCycle);
+
+         idCy = find(cycleNumberIr == cycleNum);
+         juldCy = juldIr(idCy);
+         longitudeCy = longitudeIr(idCy);
+         latitudeCy = latitudeIr(idCy);
+         positionAccuracyCy = positionAccuracyIr(idCy);
+         errorEllipseMajCy = errorEllipseMajIr(idCy);
+
+         if (~isempty(juldCy))
+
+            % réduction du nombre de positions Iridium
+
+            %             % suppression des doublons (lon, lat)
+            %             locTab = [juldCy longitudeCy latitudeCy double(errorEllipseMajCy)];
+            %             uLocTab = unique(locTab(:, [2 3]), 'rows', 'stable');
+            %             idOk = [];
+            %             for idLoc = 1:size(uLocTab, 1)
+            %                idL = find((locTab(:, 2) == uLocTab(idLoc, 1)) & (locTab(:, 3) == uLocTab(idLoc, 2)));
+            %                minCep = min(locTab(idL, 4));
+            %                idL2 = find(locTab(idL, 4) == minCep);
+            %                minDate = min(locTab(idL(idL2), 1));
+            %                idL3 = find(locTab(idL(idL2), 1) == minDate);
+            %                idOk = [idOk idL(idL2(idL3))];
+            %             end
+            %
+            %             juldCy = juldCy(idOk);
+            %             longitudeCy = longitudeCy(idOk);
+            %             latitudeCy = latitudeCy(idOk);
+            %             errorEllipseMajCy = errorEllipseMajCy(idOk);
+
+            % on ne garde que les positions avec le CEP min
+            minCep = min(errorEllipseMajCy);
+            idOk = find(errorEllipseMajCy == minCep);
+            juldCy = juldCy(idOk);
+            longitudeCy = longitudeCy(idOk);
+            latitudeCy = latitudeCy(idOk);
+            errorEllipseMajCy = errorEllipseMajCy(idOk);
+
+            % on effectue une moyenne pondérée des positions
+            weight = 1./(errorEllipseMajCy.*errorEllipseMajCy);
+            juldCy = mean(juldCy);
+            longitudeCy = sum(longitudeCy.*weight)/sum(weight);
+            latitudeCy = sum(latitudeCy.*weight)/sum(weight);
+            errorEllipseMajCy = errorEllipseMajCy(1);
+
+            % POSITIONS Iridium
+
+            kmlStrLocIr = [kmlStrLocIr, ...
+               9, '<Folder>', 10, ...
+               9, 9, '<name>', sprintf('cycle %d', cycleNum), '</name>', 10, ...
+               ];
+
+            nbPos = length(juldCy);
+            for idPos = 1:nbPos
+               irPosDescription = [];
+               irPosDescription = [irPosDescription, ...
+                  sprintf('POSITION (lon, lat): %8.3f, %7.3f\n', longitudeCy(idPos), latitudeCy(idPos))];
+               irPosDescription = [irPosDescription, ...
+                  sprintf('DATE               : %s\n', julian_2_gregorian_dec_argo(juldCy(idPos)))];
+               irPosDescription = [irPosDescription, ...
+                  sprintf('LOC CLASS          : I\n')];
+               irPosDescription = [irPosDescription, ...
+                  sprintf('CEP RADIUS (km)    : %d\n', errorEllipseMajCy(idPos)/1000)];
+
+               timeSpanStart = datestr(juldCy(idPos)+referenceDate, 'yyyy-mm-ddTHH:MM:SSZ');
+
+               kmlStrLocIr = [kmlStrLocIr, ge_create_pos( ...
+                  longitudeCy(idPos), latitudeCy(idPos), ...
+                  irPosDescription, ...
+                  sprintf('%d_%d (%d)', cycleNum, idPos, errorEllipseMajCy(idPos)/1000), ...
+                  sprintf('#CUR_ARGOS_POS_%c', positionAccuracyCy(idPos)), ...
+                  timeSpanStart, '')];
+            end
+
+            kmlStrLocIr = [kmlStrLocIr, ...
+               9, '</Folder>', 10, ...
+               ];
+
+            % TRAJECTOIRE Iridium
+
+            kmlStrTrajIr = [kmlStrTrajIr, ...
+               9, '<Folder>', 10, ...
+               9, 9, '<name>', sprintf('cycle %d', cycleNum), '</name>', 10, ...
+               ];
+
+            argosLineDescription = '';
+            timeSpanStart = datestr(juldCy(1)+referenceDate, 'yyyy-mm-ddTHH:MM:SSZ');
+            kmlStrTrajIr = [kmlStrTrajIr, ge_create_line2( ...
+               longitudeCy, latitudeCy, ...
+               argosLineDescription, ...
+               '', ...
+               '0', ...
+               '#CUR_IRIDIUM_TRAJ', ...
+               timeSpanStart, '')];
+
+            % DEPLACEMENT
+            lonArrow(1) = prevLon;
+            latArrow(1) = prevLat;
+            lonArrow(2) = longitudeCy(1);
+            latArrow(2) = latitudeCy(1);
+
+            dispDescription = '';
+            timeSpanStart = datestr(prevDate+referenceDate, 'yyyy-mm-ddTHH:MM:SSZ');
+            timeSpanEnd = datestr(juldCy(1)+referenceDate, 'yyyy-mm-ddTHH:MM:SSZ');
+
+            kmlStrTrajIr = [kmlStrTrajIr, ge_create_line2( ...
+               lonArrow, latArrow, ...
+               dispDescription, ...
+               '', ...
+               '0', ...
+               '#CUR_IRIDIUM_DISP', ...
+               timeSpanStart, '')];
+
+            kmlStrTrajIr = [kmlStrTrajIr, ...
+               9, '</Folder>', 10, ...
+               ];
+
+            prevLon = longitudeCy(end);
+            prevLat = latitudeCy(end);
+            prevDate = juldCy(end);
+
+         end
+      end
+   end
+
    kmlStrLoc = [kmlStrLoc, ...
       9, '</Folder>', 10, ...
       ];
 
+   kmlStrLocIr = [kmlStrLocIr, ...
+      9, '</Folder>', 10, ...
+      ];
+
    kmlStrTraj = [kmlStrTraj, ...
+      9, '</Folder>', 10, ...
+      ];
+
+   kmlStrTrajIr = [kmlStrTrajIr, ...
       9, '</Folder>', 10, ...
       ];
    
@@ -440,13 +600,31 @@ for idFloat = 1:nbFloats
    fprintf(fidOutTmp, '%s', kmlStrLaunch);
    fclose(fidOutTmp);
 
-   if (ARGOS_LOC == 1)
+   if (ARGOS_GPS_LOC_FLAG == 1)
       fidOutTmp = fopen([outputTempLocFileName floatNumStr '.tmp'], 'wt');
       if (fidOutTmp == -1)
          fprintf('Impossible de créer le fichier %s\n', outputTempLocFileName);
          return
       end
       fprintf(fidOutTmp, '%s', kmlStrLoc);
+      fclose(fidOutTmp);
+   end
+
+   if (IRIDIUM_LOC_FLAG == 1)
+      fidOutTmp = fopen([outputTempLocIrFileName floatNumStr '.tmp'], 'wt');
+      if (fidOutTmp == -1)
+         fprintf('Impossible de créer le fichier %s\n', outputTempLocIrFileName);
+         return
+      end
+      fprintf(fidOutTmp, '%s', kmlStrLocIr);
+      fclose(fidOutTmp);
+
+      fidOutTmp = fopen([outputTempTrajIrFileName floatNumStr '.tmp'], 'wt');
+      if (fidOutTmp == -1)
+         fprintf('Impossible de créer le fichier %s\n', outputTempTrajIrFileName);
+         return
+      end
+      fprintf(fidOutTmp, '%s', kmlStrTrajIr);
       fclose(fidOutTmp);
    end
 
@@ -487,7 +665,7 @@ kmlStr = [ ...
    ];
 fprintf(fidOut, '%s', kmlStr);
 
-if (ARGOS_LOC == 1)
+if (ARGOS_GPS_LOC_FLAG == 1)
    kmlStr = [ ...
       9, '<Folder>', 10, ...
       9, 9, '<name>floats Argos or GPS positions</name>', 10, ...
@@ -516,9 +694,66 @@ if (ARGOS_LOC == 1)
    fprintf(fidOut, '%s', kmlStr);
 end
 
+if (IRIDIUM_LOC_FLAG == 1)
+   kmlStr = [ ...
+      9, '<Folder>', 10, ...
+      9, 9, '<name>floats Iridium positions</name>', 10, ...
+      ];
+   fprintf(fidOut, '%s', kmlStr);
+   for idFloat = 1:nbFloats
+      floatNumStr = num2str(floatList(idFloat));
+      outputTempFileName = [outputTempLocIrFileName floatNumStr '.tmp'];
+      fidOutTmp = fopen(outputTempFileName, 'r');
+      if (fidOutTmp == -1)
+         fprintf('Impossible de créer le fichier %s\n', outputTempFileName);
+         return
+      end
+      while 1
+         line = fgetl(fidOutTmp);
+         if (~ischar(line))
+            break
+         end
+         fprintf(fidOut, '%s\n', line);
+      end
+      fclose(fidOutTmp);
+   end
+   kmlStr = [ ...
+      9, '</Folder>', 10, ...
+      ];
+   fprintf(fidOut, '%s', kmlStr);
+
+   kmlStr = [ ...
+      9, '<Folder>', 10, ...
+      9, 9, '<name>floats Iridium trajectories</name>', 10, ...
+      ];
+   fprintf(fidOut, '%s', kmlStr);
+   for idFloat = 1:nbFloats
+      floatNumStr = num2str(floatList(idFloat));
+      outputTempFileName = [outputTempTrajIrFileName floatNumStr '.tmp'];
+      fidOutTmp = fopen(outputTempFileName, 'r');
+      if (fidOutTmp == -1)
+         fprintf('Impossible de créer le fichier %s\n', outputTempFileName);
+         return
+      end
+      while 1
+         line = fgetl(fidOutTmp);
+         if (~ischar(line))
+            break
+         end
+         fprintf(fidOut, '%s\n', line);
+      end
+      fclose(fidOutTmp);
+   end
+   kmlStr = [ ...
+      9, '</Folder>', 10, ...
+      ];
+   fprintf(fidOut, '%s', kmlStr);
+
+end
+
 kmlStr = [ ...
    9, '<Folder>', 10, ...
-   9, 9, '<name>floats trajectories</name>', 10, ...
+   9, 9, '<name>floats Argos or GPS trajectories</name>', 10, ...
    ];
 fprintf(fidOut, '%s', kmlStr);
 for idFloat = 1:nbFloats

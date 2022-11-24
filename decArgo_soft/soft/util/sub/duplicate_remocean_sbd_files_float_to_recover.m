@@ -2,7 +2,7 @@
 % Duplicate newly received files from remocean float.
 %
 % SYNTAX :
-%  duplicate_remocean_sbd_files_float_to_recover( ...
+%  [o_foundFlag] = duplicate_remocean_sbd_files_float_to_recover( ...
 %    a_floatWmo, a_floatLoginName, a_rsyncDir, a_spoolDir, a_outputDir, a_maxFileAge)
 %
 % INPUT PARAMETERS :
@@ -14,6 +14,7 @@
 %   a_maxFileAge     : max age (in hours) of the files to consider
 %
 % OUTPUT PARAMETERS :
+%   o_foundFlag : 1 if the float directory has been found, 0 otherwise
 %
 % EXAMPLES :
 %
@@ -23,8 +24,16 @@
 % RELEASES :
 %   05/20/2021 - RNU - creation
 % ------------------------------------------------------------------------------
-function duplicate_remocean_sbd_files_float_to_recover( ...
+function [o_foundFlag] = duplicate_remocean_sbd_files_float_to_recover( ...
    a_floatWmo, a_floatLoginName, a_rsyncDir, a_spoolDir, a_outputDir, a_maxFileAge)
+
+% output parameters initialization
+o_foundFlag = 0;
+
+if ~(exist([a_rsyncDir '/' a_floatLoginName '/'], 'dir') == 7)
+   return
+end
+o_foundFlag = 1;
 
 if ~(exist(a_outputDir, 'dir') == 7)
    fprintf('Creating directory: %s\n', a_outputDir);

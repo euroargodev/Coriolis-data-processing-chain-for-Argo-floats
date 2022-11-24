@@ -732,6 +732,22 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(idStart:idStop) = -1;
          tabRankByCycle(idStart:idStop) = -1;
          tabRankByDate(idStart:idStop) = -1;
+         % during EOL some transmissions are with multiple PARAM packets
+         idF = find(tabEolFlag == 1);
+         for id = 1:length(idF)
+            idProg1 = find((tabRank == tabRank(idF(id))) & (tabPackType == 5));
+            if (length(idProg1) > 1)
+               tabRank(idProg1(2:end)) = -1;
+               tabRankByCycle(idProg1(2:end)) = -1;
+               tabRankByDate(idProg1(2:end)) = -1;
+            end
+            idProg2 = find((tabRank == tabRank(idF(id))) & (tabPackType == 7));
+            if (length(idProg2) > 1)
+               tabRank(idProg2(2:end)) = -1;
+               tabRankByCycle(idProg2(2:end)) = -1;
+               tabRankByDate(idProg2(2:end)) = -1;
+            end
+         end
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS

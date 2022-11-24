@@ -24,7 +24,7 @@ FLOAT_LIST_FILE_NAME = '';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 
 % directory of XML report files files
-DIR_INPUT_XML_FILES = 'C:\Users\jprannou\_DATA\XML_report\XML\';
+DIR_INPUT_XML_FILES = 'C:\Users\jprannou\_DATA\XML_report\XLM_A_TRAITER\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';

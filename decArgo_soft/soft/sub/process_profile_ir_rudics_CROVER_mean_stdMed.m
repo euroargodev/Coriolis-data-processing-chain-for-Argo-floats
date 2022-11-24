@@ -57,6 +57,9 @@ global g_decArgo_treatRaw;
 global g_decArgo_treatAverage;
 global g_decArgo_treatAverageAndStDev;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListCp;
+
 
 % unpack the input data
 a_dataCROVERMeanDate = a_dataCROVERMean{1};
@@ -248,9 +251,14 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                dates(find(dates == paramJuld.fillValue)) = [];
                profStruct.minMeasDate = min(dates);
                profStruct.maxMeasDate = max(dates);
-               
+
                % treatment type
                profStruct.treatType = g_decArgo_treatAverageAndStDev;
+
+               % parameter added "on the fly" to meta-data file
+               g_decArgo_addParamListCp{end+1} = 'CP660_STD';
+               g_decArgo_addParamListCp{end+1} = 'CP660_MED';
+               g_decArgo_addParamListCp = unique(g_decArgo_addParamListCp, 'stable');
             end
          end
       end

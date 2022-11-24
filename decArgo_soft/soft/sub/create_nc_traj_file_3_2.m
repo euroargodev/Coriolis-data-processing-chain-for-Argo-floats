@@ -58,6 +58,9 @@ global g_decArgo_ncDateDef;
 % to store information on PARAM adjustment
 global g_decArgo_paramTrajAdjInfo;
 
+% to store information on JULD adjustment
+global g_decArgo_juldTrajAdjInfo;
+
 
 % verbose mode flag
 VERBOSE_MODE = 1;
@@ -277,8 +280,11 @@ if (nCycle == 0)
 end
 nCycleDimId = netcdf.defDim(fCdf, 'N_CYCLE', nCycle);
 
-nbCalib = max(1, size(g_decArgo_paramTrajAdjInfo, 1));
-nCalibDimId = netcdf.defDim(fCdf, 'N_CALIB', nbCalib);
+nbCalibParam = max(1, size(g_decArgo_paramTrajAdjInfo, 1));
+nCalibParamDimId = netcdf.defDim(fCdf, 'N_CALIB_PARAM', nbCalibParam);
+
+nbCalibJuld = max(1, size(g_decArgo_juldTrajAdjInfo, 1));
+nCalibJuldDimId = netcdf.defDim(fCdf, 'N_CALIB_JULD', nbCalibJuld);
 
 nHistoryDim = 1;
 if (~isempty(histoInstitution))
@@ -1391,27 +1397,45 @@ netcdf.putAtt(fCdf, dataModeVarId, 'conventions', 'R : real time; D : delayed mo
 netcdf.putAtt(fCdf, dataModeVarId, '_FillValue', ' ');
 
 % scientific calibration information
-scientificCalibParameterVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_PARAMETER', 'NC_CHAR', fliplr([nCalibDimId nParamDimId string64DimId]));
+scientificCalibParameterVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_PARAMETER', 'NC_CHAR', fliplr([nCalibParamDimId nParamDimId string64DimId]));
 netcdf.putAtt(fCdf, scientificCalibParameterVarId, 'long_name', 'List of parameters with calibration information');
 netcdf.putAtt(fCdf, scientificCalibParameterVarId, 'conventions', 'Argo reference table 3');
 netcdf.putAtt(fCdf, scientificCalibParameterVarId, '_FillValue', ' ');
 
-scientificCalibEquationVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_EQUATION', 'NC_CHAR', fliplr([nCalibDimId nParamDimId string256DimId]));
+scientificCalibEquationVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_EQUATION', 'NC_CHAR', fliplr([nCalibParamDimId nParamDimId string256DimId]));
 netcdf.putAtt(fCdf, scientificCalibEquationVarId, 'long_name', 'Calibration equation for this parameter');
 netcdf.putAtt(fCdf, scientificCalibEquationVarId, '_FillValue', ' ');
 
-scientificCalibCoefficientVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_COEFFICIENT', 'NC_CHAR', fliplr([nCalibDimId nParamDimId string256DimId]));
+scientificCalibCoefficientVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_COEFFICIENT', 'NC_CHAR', fliplr([nCalibParamDimId nParamDimId string256DimId]));
 netcdf.putAtt(fCdf, scientificCalibCoefficientVarId, 'long_name', 'Calibration coefficients for this equation');
 netcdf.putAtt(fCdf, scientificCalibCoefficientVarId, '_FillValue', ' ');
 
-scientificCalibCommentVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_COMMENT', 'NC_CHAR', fliplr([nCalibDimId nParamDimId string256DimId]));
+scientificCalibCommentVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_COMMENT', 'NC_CHAR', fliplr([nCalibParamDimId nParamDimId string256DimId]));
 netcdf.putAtt(fCdf, scientificCalibCommentVarId, 'long_name', 'Comment applying to this parameter calibration');
 netcdf.putAtt(fCdf, scientificCalibCommentVarId, '_FillValue', ' ');
 
-scientificCalibDateVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_DATE', 'NC_CHAR', fliplr([nCalibDimId nParamDimId dateTimeDimId]));
+scientificCalibDateVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_DATE', 'NC_CHAR', fliplr([nCalibParamDimId nParamDimId dateTimeDimId]));
 netcdf.putAtt(fCdf, scientificCalibDateVarId, 'long_name', 'Date of calibration');
 netcdf.putAtt(fCdf, scientificCalibDateVarId, 'conventions', 'YYYYMMDDHHMISS');
 netcdf.putAtt(fCdf, scientificCalibDateVarId, '_FillValue', ' ');
+
+% JULD calibration information
+juldCalibEquationVarId = netcdf.defVar(fCdf, 'JULD_CALIB_EQUATION', 'NC_CHAR', fliplr([nCalibJuldDimId string256DimId]));
+netcdf.putAtt(fCdf, juldCalibEquationVarId, 'long_name', 'Calibration equation for JULD');
+netcdf.putAtt(fCdf, juldCalibEquationVarId, '_FillValue', ' ');
+
+juldCalibCoefficientVarId = netcdf.defVar(fCdf, 'JULD_CALIB_COEFFICIENT', 'NC_CHAR', fliplr([nCalibJuldDimId string256DimId]));
+netcdf.putAtt(fCdf, juldCalibCoefficientVarId, 'long_name', 'Calibration coefficients for JULD equation');
+netcdf.putAtt(fCdf, juldCalibCoefficientVarId, '_FillValue', ' ');
+
+juldCalibCommentVarId = netcdf.defVar(fCdf, 'JULD_CALIB_COMMENT', 'NC_CHAR', fliplr([nCalibJuldDimId string256DimId]));
+netcdf.putAtt(fCdf, juldCalibCommentVarId, 'long_name', 'Comment applying to JULD calibration');
+netcdf.putAtt(fCdf, juldCalibCommentVarId, '_FillValue', ' ');
+
+juldCalibDateVarId = netcdf.defVar(fCdf, 'JULD_CALIB_DATE', 'NC_CHAR', fliplr([nCalibJuldDimId dateTimeDimId]));
+netcdf.putAtt(fCdf, juldCalibDateVarId, 'long_name', 'Date of JULD calibration');
+netcdf.putAtt(fCdf, juldCalibDateVarId, 'conventions', 'YYYYMMDDHHMISS');
+netcdf.putAtt(fCdf, juldCalibDateVarId, '_FillValue', ' ');
 
 % history information
 historyInstitutionVarId = netcdf.defVar(fCdf, 'HISTORY_INSTITUTION', 'NC_CHAR', fliplr([nHistoryDimId string4DimId]));
@@ -2242,7 +2266,7 @@ for idParam = 1:length(measUniqueParamName)
       valueStr = valueStr(1:paramNameLength);
    end
    
-   for idCalib = 1:nbCalib
+   for idCalib = 1:nbCalibParam
       netcdf.putVar(fCdf, scientificCalibParameterVarId, ...
          fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(valueStr)]), valueStr');
    end
@@ -2250,7 +2274,7 @@ end
 
 % set SCIENTIFIC_CALIB_* variables
 if (~isempty(g_decArgo_paramTrajAdjInfo))
-   for idCalib = 1:nbCalib
+   for idCalib = 1:nbCalibParam
       
       adjType = g_decArgo_paramTrajAdjInfo{idCalib, 2};
       cyList = g_decArgo_paramTrajAdjInfo{idCalib, 3};
@@ -2265,16 +2289,46 @@ if (~isempty(g_decArgo_paramTrajAdjInfo))
       
       idParam = find(strcmp(measUniqueParamName, param));
       netcdf.putVar(fCdf, scientificCalibEquationVarId, ...
-         fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(equation)]), equation');
+         fliplr([idCalib-1 idParam-1 0]), fliplr([1 1 length(equation)]), equation');
       netcdf.putVar(fCdf, scientificCalibCoefficientVarId, ...
-         fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(coefficient)]), coefficient');
+         fliplr([idCalib-1 idParam-1 0]), fliplr([1 1 length(coefficient)]), coefficient');
       if (~isempty(comment))
          netcdf.putVar(fCdf, scientificCalibCommentVarId, ...
-            fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(comment)]), comment');
+            fliplr([idCalib-1 idParam-1 0]), fliplr([1 1 length(comment)]), comment');
       end
       if (~isempty(date))
          netcdf.putVar(fCdf, scientificCalibDateVarId, ...
-            fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(date)]), date');
+            fliplr([idCalib-1 idParam-1 0]), fliplr([1 1 length(date)]), date');
+      end
+   end
+end
+
+% set JULD_CALIB_* variables
+if (~isempty(g_decArgo_juldTrajAdjInfo))
+   for idCalib = 1:nbCalibJuld
+      
+      adjType = g_decArgo_juldTrajAdjInfo{idCalib, 2};
+      cyList = g_decArgo_juldTrajAdjInfo{idCalib, 3};
+      param = g_decArgo_juldTrajAdjInfo{idCalib, 4};
+      equation = g_decArgo_juldTrajAdjInfo{idCalib, 5};
+      coefficient = g_decArgo_juldTrajAdjInfo{idCalib, 6};
+      comment = g_decArgo_juldTrajAdjInfo{idCalib, 7};
+      if (adjType == 1)
+         comment = [comment sprintf(' performed on cycles %d to %d.', min(cyList), max(cyList))];
+      end
+      date = g_decArgo_juldTrajAdjInfo{idCalib, 8};
+      
+      netcdf.putVar(fCdf, juldCalibEquationVarId, ...
+         fliplr([idCalib-1 0]), fliplr([1 length(equation)]), equation');
+      netcdf.putVar(fCdf, juldCalibCoefficientVarId, ...
+         fliplr([idCalib-1 0]), fliplr([1 length(coefficient)]), coefficient');
+      if (~isempty(comment))
+         netcdf.putVar(fCdf, juldCalibCommentVarId, ...
+            fliplr([idCalib-1 0]), fliplr([1 length(comment)]), comment');
+      end
+      if (~isempty(date))
+         netcdf.putVar(fCdf, juldCalibDateVarId, ...
+            fliplr([idCalib-1 0]), fliplr([1 length(date)]), date');
       end
    end
 end

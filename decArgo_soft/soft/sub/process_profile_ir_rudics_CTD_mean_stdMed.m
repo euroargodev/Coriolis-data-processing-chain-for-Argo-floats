@@ -64,6 +64,9 @@ global g_decArgo_treatAverageAndStDev;
 global g_decArgo_jsonMetaData;
 g_decArgo_jsonMetaData = [];
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListCtd;
+
 
 % get the pressure cut-off for CTD ascending profile (from the CTD technical
 % data)
@@ -325,6 +328,14 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                
                % treatment type
                profStruct.treatType = g_decArgo_treatAverageAndStDev;
+
+               % parameter added "on the fly" to meta-data file
+               g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
+               g_decArgo_addParamListCtd{end+1} = 'TEMP_STD';
+               g_decArgo_addParamListCtd{end+1} = 'TEMP_MED';
+               g_decArgo_addParamListCtd{end+1} = 'PSAL_STD';
+               g_decArgo_addParamListCtd{end+1} = 'PSAL_MED';
+               g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
             end
          end
       end

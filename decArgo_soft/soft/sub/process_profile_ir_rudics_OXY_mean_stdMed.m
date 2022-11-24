@@ -59,6 +59,9 @@ global g_decArgo_treatRaw;
 global g_decArgo_treatAverage;
 global g_decArgo_treatAverageAndStDev;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListOxygen;
+
 
 % unpack the input data
 a_dataOXYMeanDate = a_dataOXYMean{1};
@@ -328,6 +331,15 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                
                % treatment type
                profStruct.treatType = g_decArgo_treatAverageAndStDev;
+
+               % parameter added "on the fly" to meta-data file
+               g_decArgo_addParamListOxygen{end+1} = 'C1PHASE_DOXY_STD';
+               g_decArgo_addParamListOxygen{end+1} = 'C1PHASE_DOXY_MED';
+               g_decArgo_addParamListOxygen{end+1} = 'C2PHASE_DOXY_STD';
+               g_decArgo_addParamListOxygen{end+1} = 'C2PHASE_DOXY_MED';
+               g_decArgo_addParamListOxygen{end+1} = 'TEMP_DOXY_STD';
+               g_decArgo_addParamListOxygen{end+1} = 'TEMP_DOXY_MED';
+               g_decArgo_addParamListOxygen = unique(g_decArgo_addParamListOxygen, 'stable');
             end
          end
       end

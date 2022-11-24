@@ -25,16 +25,15 @@ function [o_gregorianDate] = julian_2_gregorian_dec_argo(a_julDay)
 global g_decArgo_dateDef;
 
 % output parameters initialization
-o_gregorianDate = [];
+o_gregorianDate = repmat('9999/99/99 99:99:99', length(a_julDay), 1);
 
-[dayNum, dd, mm, yyyy, HH, MI, SS] = format_juld_dec_argo(a_julDay);
+idOk = find(~isnan(a_julDay) & (a_julDay ~= g_decArgo_dateDef));
+[dayNum, dd, mm, yyyy, HH, MI, SS] = format_juld_dec_argo(a_julDay(idOk));
 
 for idDate = 1:length(dayNum)
-   if (a_julDay(idDate) ~= g_decArgo_dateDef)
-      o_gregorianDate = [o_gregorianDate; sprintf('%04d/%02d/%02d %02d:%02d:%02d', ...
-         yyyy(idDate), mm(idDate), dd(idDate), HH(idDate), MI(idDate), SS(idDate))];
-   else
-      o_gregorianDate = [o_gregorianDate; '9999/99/99 99:99:99'];
+   if (a_julDay(idOk(idDate)) ~= g_decArgo_dateDef)
+      o_gregorianDate(idOk(idDate), :) = sprintf('%04d/%02d/%02d %02d:%02d:%02d', ...
+         yyyy(idDate), mm(idDate), dd(idDate), HH(idDate), MI(idDate), SS(idDate));
    end
 end
 

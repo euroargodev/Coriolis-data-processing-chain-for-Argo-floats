@@ -7,7 +7,7 @@
 %  [o_DOXY_ADJUSTED, o_DOXY_ADJUSTED_ERROR] = compute_DOXY_ADJUSTED_profile( ...
 %    a_PRES, a_TEMP, a_PSAL, a_DOXY, ...
 %    a_PRES_fillValue, a_TEMP_fillValue, a_PSAL_fillValue, a_DOXY_fillValue, ...
-%    a_slope, a_offset, a_doDrift, a_doInclineT, a_launchDate, a_adjError, a_adjDate, a_profOptode)   
+%    a_doCorPres, a_slope, a_offset, a_doDrift, a_doInclineT, a_launchDate, a_adjError, a_adjDate, a_profOptode)   
 %
 % INPUT PARAMETERS :
 %   a_PRES           : input PRES data
@@ -19,6 +19,7 @@
 %   a_PSAL_fillValue : fill value for input PSAL data
 %   a_DOXY_fillValue : fill value for input DOXY data
 %   a_DOXY_fillValue : fill value for input DOXY data
+%   a_doCorPres      : coefficient for DOXY correction f(PRES) - in CASE 3_2_2 only
 %   a_slope          : slope of PPOX_DOXY adjustment
 %   a_offset         : slope of PPOX_DOXY adjustment
 %   a_doDrift        : drift to be used for PPOX_DOXY adjustment
@@ -43,7 +44,7 @@
 function [o_DOXY_ADJUSTED, o_DOXY_ADJUSTED_ERROR] = compute_DOXY_ADJUSTED_profile( ...
    a_PRES, a_TEMP, a_PSAL, a_DOXY, ...
    a_PRES_fillValue, a_TEMP_fillValue, a_PSAL_fillValue, a_DOXY_fillValue, ...
-   a_slope, a_offset, a_doDrift, a_doInclineT, a_launchDate, a_adjError, a_adjDate, a_profOptode)   
+   a_doCorPres, a_slope, a_offset, a_doDrift, a_doInclineT, a_launchDate, a_adjError, a_adjDate, a_profOptode)   
    
 % output parameters initialization
 o_DOXY_ADJUSTED = ones(length(a_DOXY), 1)*a_DOXY_fillValue;
@@ -90,6 +91,11 @@ if (~isempty(idNoDef))
    tempValues = a_TEMP(idNoDef);
    psalValues = a_PSAL(idNoDef);
    doxyValues = a_DOXY(idNoDef);
+
+   % correction of DOXY due to pressure (in CASE 3_2_2 only)
+   if (~isnan(a_doCorPres))
+      doxyValues = doxyValues .* (1 + a_doCorPres*presValues/1000);
+   end
 
    % convert DOXY into DOXY_in_molar_units
    % units convertion (micromol/kg to micromol/L)

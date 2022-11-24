@@ -57,6 +57,9 @@ global g_decArgo_phaseAscProf;
 global g_decArgo_treatAverage;
 global g_decArgo_treatAverageAndStDev;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListChla;
+
 
 % unpack the input data
 a_dataCYCLOPSMeanDate = a_dataCYCLOPSMean{1};
@@ -236,6 +239,11 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                
                % treatment type
                profStruct.treatType = g_decArgo_treatAverageAndStDev;
+
+               % parameter added "on the fly" to meta-data file
+               g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_VOLTAGE_CHLA_STD';
+               g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_VOLTAGE_CHLA_MED';
+               g_decArgo_addParamListChla = unique(g_decArgo_addParamListChla, 'stable');
             end
          end
       end

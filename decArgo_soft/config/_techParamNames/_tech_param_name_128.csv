@@ -151,3 +151,6 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 181;TECH_AUX;Date de detection de glace;TECH_AUX_CLOCK_IceDetection_YYYYMMDDHHMMSS;Time of ice detection.
 182;TECH_AUX;Immersion de detection de glace;TECH_AUX_PRES_IceDetection_dbar;Pressure of ice detection.
 183;TECH_AUX;End of life;TECH_AUX_CLOCK_EndOfLifeAlarm_YYYYMMDDHHMMSS;Alarm raised when the float switches to the End Of Life mode. When reported as a NUMBER, it provides the reason of the End Of Life (see float manual for details).
+250;TECH_AUX;GPS time offset for BGC times;TECH_AUX_TIME_GpsTimeOffsetForBgcTimeAdj_seconds;GPS time offset used to adjust all BGC times of the cycle (it is the GPS time offset set before transmission of the previous cycle).
+251;TECH_AUX;Time offset for descending profile BGC times;TECH_AUX_TIME_DescProfTimeOffsetForBgcTimeAdj_seconds;Estimated time offset used to adjust descending profile BGC times.
+252;TECH_AUX;Time offset for ascending profile BGC times;TECH_AUX_TIME_AscProfTimeOffsetForBgcTimeAdj_seconds;Estimated time offset used to adjust ascending profile BGC times.

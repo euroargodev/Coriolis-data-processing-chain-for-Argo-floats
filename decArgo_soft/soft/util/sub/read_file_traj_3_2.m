@@ -2,17 +2,19 @@
 % Read a NetCDF trajectory file contents.
 %
 % SYNTAX :
-%  [o_nMeasData, o_nCycleData, o_calibrationData, o_historyData] = ...
+%  [o_nMeasData, o_nCycleData, ...
+%    o_paramCalibrationData, o_juldCalibrationData, o_historyData] = ...
 %    read_file_traj_3_2(a_inputPathFileName)
 %
 % INPUT PARAMETERS :
 %   a_inputPathFileName : trajectory file path name
 %
 % OUTPUT PARAMETERS :
-%   o_nMeasData       : N_MEASUREMENT data
-%   o_nCycleData      : N_CYCLE data
-%   o_calibrationData : CALIBRATION data
-%   o_historyData     : HISTORY data
+%   o_nMeasData            : N_MEASUREMENT data
+%   o_nCycleData           : N_CYCLE data
+%   o_paramCalibrationData : PARAMETER CALIBRATION data
+%   o_juldCalibrationData  : JULD CALIBRATION data
+%   o_historyData          : HISTORY data
 %
 % EXAMPLES :
 %
@@ -22,13 +24,15 @@
 % RELEASES :
 %   06/28/2021 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_nMeasData, o_nCycleData, o_calibrationData, o_historyData] = ...
+function [o_nMeasData, o_nCycleData, ...
+   o_paramCalibrationData, o_juldCalibrationData, o_historyData] = ...
    read_file_traj_3_2(a_inputPathFileName)
 
 % output parameters initialization
 o_nMeasData = [];
 o_nCycleData = [];
-o_calibrationData = [];
+o_paramCalibrationData = [];
+o_juldCalibrationData = [];
 o_historyData = [];
 
 % global default values
@@ -308,9 +312,10 @@ if (SORT_PARAM == 1)
       {'PH_IN_SITU_TOTAL'}; ...
       {'VRS_PH'}; ...
       {'PH_IN_SITU_FREE'}; ...
-      {'NB_SAMPLE_SFET'}; ...      
+      {'NB_SAMPLE_SFET'}; ...
       {'TURBIDITY'}; ...
       {'SIDE_SCATTERING_TURBIDITY'}; ...
+      {'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660'}; ...
       {'CP660'}; ...
       {'NITRATE'}; ...
       {'BISULFIDE'}; ...
@@ -598,7 +603,7 @@ else
    end
 end
 
-% retrieve CALIBRATION information
+% retrieve PARAMETER CALIBRATION information
 calibItemList = [ ...
    {'SCIENTIFIC_CALIB_PARAMETER'} ...
    {'SCIENTIFIC_CALIB_EQUATION'} ...
@@ -615,8 +620,28 @@ for idC = 1:length(calibItemList)
          varName, inputFileName);
       varValue = [];
    end
-   o_calibrationData{end+1} = varName;
-   o_calibrationData{end+1} = varValue;
+   o_paramCalibrationData{end+1} = varName;
+   o_paramCalibrationData{end+1} = varValue;
+end
+
+% retrieve JULD CALIBRATION information
+calibItemList = [ ...
+   {'JULD_CALIB_EQUATION'} ...
+   {'JULD_CALIB_COEFFICIENT'} ...
+   {'JULD_CALIB_COMMENT'} ...
+   {'JULD_CALIB_DATE'} ...
+   ];
+for idC = 1:length(calibItemList)
+   varName = calibItemList{idC};
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+      varValue = [];
+   end
+   o_juldCalibrationData{end+1} = varName;
+   o_juldCalibrationData{end+1} = varValue;
 end
 
 % retrieve HISTORY information

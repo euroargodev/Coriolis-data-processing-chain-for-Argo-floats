@@ -1164,7 +1164,7 @@ for idProf = 1:length(a_tabProfiles)
                      end
                      
                   else % of if (size(paramData, 2) == 1)
-                     
+
                      netcdf.putVar(fCdf, profParamVarId, fliplr([profPos 0 0]), fliplr([1 size(paramData)]), paramData(measIds, :)');
                      
                      if (~isempty(profParamQcVarId))

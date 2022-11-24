@@ -69,6 +69,11 @@ global g_decArgo_cts5Treat_RW;
 global g_decArgo_cts5Treat_AM;
 global g_decArgo_cts5Treat_DW;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListCtd;
+global g_decArgo_addParamListChla;
+global g_decArgo_addParamListBackscattering;
+
 
 if (isempty(a_ecoData))
    return
@@ -149,6 +154,13 @@ for idP = 1:length(a_ecoData)
             
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDev;
+
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_CHLA_STD';
+            g_decArgo_addParamListChla = unique(g_decArgo_addParamListChla, 'stable');
+
+            g_decArgo_addParamListBackscattering{end+1} = 'BETA_BACKSCATTERING700_STD';
+            g_decArgo_addParamListBackscattering = unique(g_decArgo_addParamListBackscattering, 'stable');
             
          case g_decArgo_cts5Treat_AM_MD
             % ECO (mean & median)
@@ -170,6 +182,16 @@ for idP = 1:length(a_ecoData)
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndMedian;
             
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
+            g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
+
+            g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_CHLA_MED';
+            g_decArgo_addParamListChla = unique(g_decArgo_addParamListChla, 'stable');
+
+            g_decArgo_addParamListBackscattering{end+1} = 'BETA_BACKSCATTERING700_MED';
+            g_decArgo_addParamListBackscattering = unique(g_decArgo_addParamListBackscattering, 'stable');
+
          case g_decArgo_cts5Treat_AM_SD_MD
             % ECO (mean & stDev & median)
             
@@ -192,7 +214,19 @@ for idP = 1:length(a_ecoData)
                         
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDevAndMedian;
-            
+
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
+            g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
+
+            g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_CHLA_STD';
+            g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_CHLA_MED';
+            g_decArgo_addParamListChla = unique(g_decArgo_addParamListChla, 'stable');
+
+            g_decArgo_addParamListBackscattering{end+1} = 'BETA_BACKSCATTERING700_STD';
+            g_decArgo_addParamListBackscattering{end+1} = 'BETA_BACKSCATTERING700_MED';
+            g_decArgo_addParamListBackscattering = unique(g_decArgo_addParamListBackscattering, 'stable');
+
          otherwise
             fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Treatment #%d not managed - ECO data ignored\n', ...
                g_decArgo_floatNum, ...

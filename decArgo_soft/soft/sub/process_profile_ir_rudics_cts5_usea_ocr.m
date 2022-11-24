@@ -69,6 +69,10 @@ global g_decArgo_cts5Treat_RW;
 global g_decArgo_cts5Treat_AM;
 global g_decArgo_cts5Treat_DW;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListCtd;
+global g_decArgo_addParamListRadiometry;
+
 
 if (isempty(a_ocrData))
    return
@@ -155,7 +159,14 @@ for idP = 1:length(a_ocrData)
             
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDev;
-            
+
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE380_STD';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE412_STD';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE490_STD';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_PAR_STD';
+            g_decArgo_addParamListRadiometry = unique(g_decArgo_addParamListRadiometry, 'stable');
+
          case g_decArgo_cts5Treat_AM_MD
             % OCR (mean & median)
             
@@ -176,13 +187,23 @@ for idP = 1:length(a_ocrData)
                paramPres paramIr1 paramIr2 paramIr3 paramPar ...
                paramPresMed paramIr1Med paramIr2Med paramIr3Med paramParMed ...
                ];
-            
+
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndMedian;
-            
+
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
+            g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
+
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE380_MED';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE412_MED';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE490_MED';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_PAR_MED';
+            g_decArgo_addParamListRadiometry = unique(g_decArgo_addParamListRadiometry, 'stable');
+
          case g_decArgo_cts5Treat_AM_SD_MD
             % OCR (mean & stDev & median)
-            
+
             % create parameters
             paramJuld = get_netcdf_param_attributes('JULD');
             paramPres = get_netcdf_param_attributes('PRES');
@@ -205,10 +226,24 @@ for idP = 1:length(a_ocrData)
                paramIr1StDev paramIr2StDev paramIr3StDev paramParStDev ...
                paramPresMed paramIr1Med paramIr2Med paramIr3Med paramParMed ...
                ];
-            
+
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDevAndMedian;
-            
+
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
+            g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
+
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE380_STD';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE380_MED';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE412_STD';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE412_MED';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE490_STD';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE490_MED';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_PAR_STD';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_PAR_MED';
+            g_decArgo_addParamListRadiometry = unique(g_decArgo_addParamListRadiometry, 'stable');
+
          otherwise
             fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Treatment #%d not managed - OCR data ignored\n', ...
                g_decArgo_floatNum, ...

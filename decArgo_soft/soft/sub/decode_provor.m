@@ -101,6 +101,8 @@ global g_decArgo_paramProfAdjInfo;
 global g_decArgo_paramProfAdjId;
 global g_decArgo_paramTrajAdjInfo;
 global g_decArgo_paramTrajAdjId;
+global g_decArgo_juldTrajAdjInfo;
+global g_decArgo_juldTrajAdjId;
 
 % lists of managed decoders
 global g_decArgo_decoderIdListNkeCts4Ice;
@@ -152,6 +154,8 @@ for idFloat = 1:nbFloats
    g_decArgo_paramProfAdjId = 1;
    g_decArgo_paramTrajAdjInfo = [];
    g_decArgo_paramTrajAdjId = 1;
+   g_decArgo_juldTrajAdjInfo = [];
+   g_decArgo_juldTrajAdjId = 1;
    
    g_decArgo_addParamNbSampleCtd = 0;
    g_decArgo_addParamNbSampleSfet = 0;

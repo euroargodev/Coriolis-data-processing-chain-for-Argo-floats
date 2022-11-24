@@ -52,7 +52,11 @@ for idProf = 1:length(a_tabProfiles)
    if (~isempty(profStruct.dataQc))
       profStruct.dataQc = cat(2, ones(size(profStruct.dataQc, 1), 1)*g_decArgo_qcDef, profStruct.dataQc);
    end
-   
+
+   if (~isempty(profStruct.paramDataMode))
+      profStruct.paramDataMode = [' ' profStruct.paramDataMode];
+   end
+
    if (~isempty(profStruct.dataAdj))
       mtimeDataAdj = ones(size(profStruct.dataAdj, 1), 1)*paramMtime.fillValue;
       profStruct.dataAdj = cat(2, mtimeDataAdj, double(profStruct.dataAdj));

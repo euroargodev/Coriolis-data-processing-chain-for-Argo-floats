@@ -58,6 +58,11 @@ global g_decArgo_treatRaw;
 global g_decArgo_treatAverage;
 global g_decArgo_treatAverageAndStDev;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListChla;
+global g_decArgo_addParamListBackscattering;
+global g_decArgo_addParamListCdom;
+
 
 % unpack the input data
 a_dataECO3MeanDate = a_dataECO3Mean{1};
@@ -286,6 +291,19 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                
                % treatment type
                profStruct.treatType = g_decArgo_treatAverageAndStDev;
+
+               % parameter added "on the fly" to meta-data file
+               g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_CHLA_STD';
+               g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_CHLA_MED';
+               g_decArgo_addParamListChla = unique(g_decArgo_addParamListChla, 'stable');
+
+               g_decArgo_addParamListBackscattering{end+1} = 'BETA_BACKSCATTERING700_STD';
+               g_decArgo_addParamListBackscattering{end+1} = 'BETA_BACKSCATTERING700_MED';
+               g_decArgo_addParamListBackscattering = unique(g_decArgo_addParamListBackscattering, 'stable');
+
+               g_decArgo_addParamListCdom{end+1} = 'FLUORESCENCE_CDOM_STD';
+               g_decArgo_addParamListCdom{end+1} = 'FLUORESCENCE_CDOM_MED';
+               g_decArgo_addParamListCdom = unique(g_decArgo_addParamListCdom, 'stable');
             end
          end
       end

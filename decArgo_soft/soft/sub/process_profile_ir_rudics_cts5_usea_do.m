@@ -69,6 +69,10 @@ global g_decArgo_cts5Treat_RW;
 global g_decArgo_cts5Treat_AM;
 global g_decArgo_cts5Treat_DW;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListCtd;
+global g_decArgo_addParamListOxygen;
+
 
 if (isempty(a_doData))
    return
@@ -152,6 +156,12 @@ for idP = 1:length(a_doData)
             
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDev;
+
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListOxygen{end+1} = 'C1PHASE_DOXY_STD';
+            g_decArgo_addParamListOxygen{end+1} = 'C2PHASE_DOXY_STD';
+            g_decArgo_addParamListOxygen{end+1} = 'TEMP_DOXY_STD';
+            g_decArgo_addParamListOxygen = unique(g_decArgo_addParamListOxygen, 'stable');
             
          case g_decArgo_cts5Treat_AM_MD
             % DO (mean & median)
@@ -174,6 +184,15 @@ for idP = 1:length(a_doData)
             
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndMedian;
+            
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
+            g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
+            
+            g_decArgo_addParamListOxygen{end+1} = 'C1PHASE_DOXY_MED';
+            g_decArgo_addParamListOxygen{end+1} = 'C2PHASE_DOXY_MED';
+            g_decArgo_addParamListOxygen{end+1} = 'TEMP_DOXY_MED';
+            g_decArgo_addParamListOxygen = unique(g_decArgo_addParamListOxygen, 'stable');
             
          case g_decArgo_cts5Treat_AM_SD_MD
             % DO (mean & stDev & median)
@@ -201,6 +220,18 @@ for idP = 1:length(a_doData)
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDevAndMedian;
             
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
+            g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
+            
+            g_decArgo_addParamListOxygen{end+1} = 'C1PHASE_DOXY_STD';
+            g_decArgo_addParamListOxygen{end+1} = 'C1PHASE_DOXY_MED';
+            g_decArgo_addParamListOxygen{end+1} = 'C2PHASE_DOXY_STD';
+            g_decArgo_addParamListOxygen{end+1} = 'C2PHASE_DOXY_MED';
+            g_decArgo_addParamListOxygen{end+1} = 'TEMP_DOXY_STD';
+            g_decArgo_addParamListOxygen{end+1} = 'TEMP_DOXY_MED';
+            g_decArgo_addParamListOxygen = unique(g_decArgo_addParamListOxygen, 'stable');
+
          otherwise
             fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Treatment #%d not managed - DO data ignored\n', ...
                g_decArgo_floatNum, ...

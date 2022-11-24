@@ -30,7 +30,7 @@ function generate_json_float_meta_prv_argos()
 % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\1901181AndFriends_meta_20161208.txt';
 % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\SOS_VB_20170331\new_argos_meta.txt';
 % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEMPO_check_generate_meta\database_export\float_metadata.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\Desktop\NMDIS\meta_from_co_DB_20150217.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_case_3_2_2.txt';
 
 % list of concerned floats
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_argos_all.txt';

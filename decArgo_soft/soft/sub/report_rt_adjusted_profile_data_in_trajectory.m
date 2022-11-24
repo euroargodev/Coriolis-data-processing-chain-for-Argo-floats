@@ -243,12 +243,12 @@ for idP = 1:length(adjParamaNameList)
                profDataAdjQc = unique(profDataAdjQc);
                profDataAdjError = unique(profDataAdjError);
             else
-               fprintf('WARNING: Float #%d cycle #%d%c: one MEAS found multiple (%d) times in profile\n', ...
-                  g_decArgo_floatNum, a_profile.outputCycleNumber, a_profile.direction, length(idLevel));
+               %                fprintf('WARNING: Float #%d cycle #%d%c: one MEAS found multiple (%d) times in profile\n', ...
+               %                   g_decArgo_floatNum, a_profile.outputCycleNumber, a_profile.direction, length(idLevel));
                break
             end
          else
-            
+
             % create array for adjusted data
             paramFillValue = get_prof_param_fill_value(o_nMeas);
             if (isempty(o_nMeas.paramDataAdj))

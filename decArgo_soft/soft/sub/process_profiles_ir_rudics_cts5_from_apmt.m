@@ -68,6 +68,9 @@ global g_decArgo_cts5Treat_RW;
 global g_decArgo_cts5Treat_AM;
 global g_decArgo_cts5Treat_SS;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListCtd;
+
 
 if (isempty(a_ctdData))
    return
@@ -185,6 +188,11 @@ for idP = 1:length(a_ctdData)
             
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDev;
+
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCtd{end+1} = 'TEMP_STD';
+            g_decArgo_addParamListCtd{end+1} = 'PSAL_STD';
+            g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
             
          case g_decArgo_cts5Treat_AM_MD
             % CTD (mean & median)
@@ -202,6 +210,12 @@ for idP = 1:length(a_ctdData)
             
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndMedian;
+
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
+            g_decArgo_addParamListCtd{end+1} = 'TEMP_MED';
+            g_decArgo_addParamListCtd{end+1} = 'PSAL_MED';
+            g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
             
          case g_decArgo_cts5Treat_AM_SD_MD
             % CTD (mean & stDev & median)
@@ -221,6 +235,14 @@ for idP = 1:length(a_ctdData)
             
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDevAndMedian;
+
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
+            g_decArgo_addParamListCtd{end+1} = 'TEMP_STD';
+            g_decArgo_addParamListCtd{end+1} = 'TEMP_MED';
+            g_decArgo_addParamListCtd{end+1} = 'PSAL_STD';
+            g_decArgo_addParamListCtd{end+1} = 'PSAL_MED';
+            g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
       end
       
       profStruct.dateList = paramJuld;

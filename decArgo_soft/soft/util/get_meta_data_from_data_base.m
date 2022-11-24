@@ -18,36 +18,57 @@
 % ------------------------------------------------------------------------------
 function get_meta_data_from_data_base()
 
-% meta-data file exported from Coriolis data base
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\ASFAR\DBexport_ASFAR_fromVB20151029.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor-Cm-Bio\DBexport_arvorCM_fromVB20151030.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\export_meta_APEX_from_VB_20150703.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecNova_info\_configParamNames\NOVA_DBExport_20160226.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_ARVOR_I_5-43_21060628.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-55_20160701.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_4-54_20160701.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_export_apex102015_20161006.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBExport_CTS5_20161209.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\APMT\CTS5_float_config\DBexport_CTS5_lot2_20170228.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Arvor_Ice-5.45\DBexport_ArvorIce_5.45.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\Provor_Do_Ir-5.74\DBexport_CTS3DO_5.74.txt';
-% dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_IR\apex_rudics_meta_20170412.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_BioIndia_6.11_from_VB_20180319.txt';
-dataBaseFileName = 'C:\Users\jprannou\Desktop\Nouveau dossier\new_argos_meta.txt';
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_USEA_HB_6904117.txt';
+% to switch between Coriolis and JPR configurations
+CORIOLIS_CONFIGURATION_FLAG = 1;
 
-% list of concerned floats
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_asfar.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_062608.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061609.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_021009.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_061810.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_093008.txt';
-floatListFileName = '';
+if (CORIOLIS_CONFIGURATION_FLAG)
 
-% directory to store the log and csv file
-DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % CORIOLIS CONFIGURATION - START
 
+   % meta-data file exported from Coriolis data base
+   % dataBaseFileName = '/home/idmtmp7/vincent/matlab/DB_export/new_nova_meta.txt';
+   dataBaseFileName = '/home/idmtmp7/vincent/matlab/DB_export/new_iridium_meta.txt';
+   % dataBaseFileName = '/home/idmtmp7/vincent/matlab/DB_export/new_argos_meta.txt';
+   % dataBaseFileName = '/home/idmtmp7/vincent/matlab/DB_export/new_arvorcm_meta.txt';
+   % dataBaseFileName = '/home/idmtmp7/vincent/matlab/DB_export/new_rem_meta.txt';
+   % dataBaseFileName = '/home/idmtmp7/vincent/matlab/DB_export/new_apex_meta.txt';
+   % dataBaseFileName = '/home/idmtmp7/vincent/matlab/DB_export/new_nemo_meta.txt';
+
+   % list of concerned floats
+   % floatListFileName = '/home/idmtmp7/vincent/matlab/list/new_arvorcm.txt';
+   % floatListFileName = '/home/idmtmp7/vincent/matlab/list/new_argos.txt';
+   % floatListFileName = '/home/idmtmp7/vincent/matlab/list/new_rem.txt';
+   floatListFileName = '/home/idmtmp7/vincent/matlab/list/new_iridium.txt';
+   % floatListFileName = '/home/idmtmp7/vincent/matlab/list/new_nova.txt';
+   % floatListFileName = '/home/idmtmp7/vincent/matlab/list/new_apex.txt';
+   % floatListFileName = '/home/idmtmp7/vincent/matlab/list/new_nemo.txt';
+
+   % directory to store the log and csv file
+   DIR_LOG_CSV_FILE = '/home/coriolis_exp/binlx/co04/co0414/co041402/data/csv';
+
+   % CORIOLIS CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+else
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % JPR CONFIGURATION - START
+
+   % meta-data file exported from Coriolis data base
+   dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_USEA_HB_6904117.txt';
+
+   % list of concerned floats
+   floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_093008.txt';
+   floatListFileName = '';
+
+   % directory to store the log and csv file
+   DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+
+   % JPR CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+end
 
 % create and start log file recording
 logFile = [DIR_LOG_CSV_FILE '/' 'get_meta_data_from_data_base_' datestr(now, 'yyyymmddTHHMMSS') '.log'];

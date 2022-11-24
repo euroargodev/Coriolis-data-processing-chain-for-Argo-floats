@@ -322,12 +322,14 @@ for idDrift = 1:length(a_tabDrift)
       drift.profileNumber, drift.phaseNumber);
    
    datedMeasStruct.paramList = drift.paramList;
+   datedMeasStruct.paramDataMode = drift.paramDataMode;
    datedMeasStruct.paramNumberWithSubLevels = drift.paramNumberWithSubLevels;
    datedMeasStruct.paramNumberOfSubLevels = drift.paramNumberOfSubLevels;
    datedMeasStruct.dateList = drift.dateList;
    datedMeasStruct.dates = drift.dates;
    datedMeasStruct.datesAdj = drift.datesAdj;
    datedMeasStruct.data = drift.data;
+   datedMeasStruct.dataAdj = drift.dataAdj;
    datedMeasStruct.ptsForDoxy = drift.ptsForDoxy;
    datedMeasStruct.sensorNumber = drift.sensorNumber;
    

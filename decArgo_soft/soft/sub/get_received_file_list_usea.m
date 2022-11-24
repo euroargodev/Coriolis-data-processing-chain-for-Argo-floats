@@ -32,6 +32,12 @@ global g_decArgo_archiveDirectory;
 % type of files to consider
 global g_decArgo_fileTypeListCts5;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
+% current cycle number
+global g_decArgo_cycleNum;
+
 
 if (isempty(a_ptnNum))
    
@@ -70,6 +76,45 @@ else
          o_receivedFileList{end+1} = inputFiles(iF).name;
       end
    end
+end
+
+% if a #01 file is alone or if any #0i expected file is missing dont consider
+% associated files
+if (~isempty(o_receivedFileList))
+   idMultiple = cellfun(@(x) strfind(o_receivedFileList, x), {'#'}, 'UniformOutput', 0);
+   idMultiple = find(~cellfun(@isempty, idMultiple{:}) == 1);
+   idDel = [];
+   for idFile = idMultiple
+      fileName = o_receivedFileList{idFile};
+      idFD = strfind(fileName, '#');
+      fileName = fileName(1:idFD);
+      idM = cellfun(@(x) strfind(o_receivedFileList, x), {fileName}, 'UniformOutput', 0);
+      idM = find(~cellfun(@isempty, idM{:}) == 1);
+      if (length(idM) == 1)
+         fprintf('DEC_ERROR: Float #%d Cycle #%d: file ''%s'' is alone - not decoded\n', ...
+            g_decArgo_floatNum, ...
+            g_decArgo_cycleNum, ...
+            o_receivedFileList{idFile});
+         idDel = [idDel idFile];
+      else
+         for id = 1:length(idM)
+            fileName2 = sprintf('%s%02d', fileName, id);
+            idM2 = cellfun(@(x) strfind(o_receivedFileList, x), {fileName2}, 'UniformOutput', 0);
+            if (~isempty(idM2))
+               idM2 = find(~cellfun(@isempty, idM2{:}) == 1);
+            end
+            if (isempty(idM2))
+               fprintf('DEC_ERROR: Float #%d Cycle #%d: file ''%s'' is missing - associated files not decoded\n', ...
+                  g_decArgo_floatNum, ...
+                  g_decArgo_cycleNum, ...
+                  fileName2);
+               idDel = [idDel idM];
+               break
+            end
+         end
+      end
+   end
+   o_receivedFileList(unique(idDel)) = [];
 end
 
 for idF = 1:length(o_receivedFileList)

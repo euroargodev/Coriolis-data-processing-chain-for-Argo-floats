@@ -113,6 +113,7 @@ global g_decArgo_cycleNum;
 
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamNbSampleCtd;
+global g_decArgo_addParamListCtd;
 
 
 PATTERN1 = 'Sbe41cpSerNo';
@@ -242,12 +243,16 @@ if (~isempty(profHrPres))
    
    % add parameter variables to the data structure
    o_profHrData.paramList = [paramPres paramTemp paramSal paramFrequencyDoxy paramNbSampleCtd];
-   
+
    % add parameter data to the data structure
    o_profHrData.data = [profHrPres profHrTemp profHrSal profHrFrequencyDoxy profHrNbSample];
    o_profHrData.data = flipud(o_profHrData.data);
-   
+
    g_decArgo_addParamNbSampleCtd = 1;
+
+   % parameter added "on the fly" to meta-data file
+   g_decArgo_addParamListCtd{end+1} = 'NB_SAMPLE_CTD';
+   g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
 end
 
 return
@@ -296,6 +301,7 @@ global g_decArgo_cycleNum;
 
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamNbSampleCtd;
+global g_decArgo_addParamListCtd;
 
 
 PATTERN1 = 'Sbe41cpSerNo';
@@ -417,6 +423,10 @@ if (~isempty(profHrPres))
    o_profHrData.data = flipud(o_profHrData.data);
    
    g_decArgo_addParamNbSampleCtd = 1;
+
+   % parameter added "on the fly" to meta-data file
+   g_decArgo_addParamListCtd{end+1} = 'NB_SAMPLE_CTD';
+   g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
 end
 
 return
@@ -465,6 +475,7 @@ global g_decArgo_cycleNum;
 
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamNbSampleCtd;
+global g_decArgo_addParamListCtd;
 
 
 PATTERN1 = 'Sbe41cpSerNo';
@@ -586,6 +597,10 @@ if (~isempty(profHrPres))
    o_profHrData.data = flipud(o_profHrData.data);
    
    g_decArgo_addParamNbSampleCtd = 1;
+
+   % parameter added "on the fly" to meta-data file
+   g_decArgo_addParamListCtd{end+1} = 'NB_SAMPLE_CTD';
+   g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
 end
 
 return

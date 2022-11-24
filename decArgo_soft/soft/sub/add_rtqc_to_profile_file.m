@@ -194,10 +194,12 @@
 %   16/08/2021 - RNU - V 5.5: To follow Virginie Racapé's recomendation,
 %                             TEST 25: MEDD test is not performed on (PRES,
 %                             TEMP_DOXY) profiles
-%   10/28/2021 - RNU - V 3.6: Code improvement:
+%   10/28/2021 - RNU - V 5.6: Code improvement:
 %                             - improve efficiency in retrieveing paramDataMode
 %                             - improve efficiency while reporting profile QC in
 %                             trajectory
+%   01/03/2022 - RNU - V 5.7: Exclude NaN values from get_gebco_elev_point
+%                             output
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -237,7 +239,7 @@ global g_rtqc_trajData;
 
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '5.6';
+g_decArgo_addRtqcToProfileVersion = '5.7';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -1706,7 +1708,7 @@ if (testFlagList(4) == 1)
                positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrGood);
                testDoneList(4, idProf) = 1;
                % apply the test
-               if (mean(mean(elev)) >= 0)
+               if (mean(mean(elev(~isnan(elev)))) >= 0)
                   if (positionQc(idProf) ~= g_decArgo_qcStrInterpolated)
                      positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrBad);
                   else

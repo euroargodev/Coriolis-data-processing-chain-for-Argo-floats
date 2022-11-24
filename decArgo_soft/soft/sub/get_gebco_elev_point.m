@@ -76,7 +76,13 @@ maxLon = max(lon);
 for idP = 1:length(a_lat)
    
    idLigStart = find(lat <= a_lat(idP), 1, 'last');
+   if (isempty(idLigStart))
+      idLigStart = 1;
+   end
    idLigEnd = find(lat >= a_lat(idP), 1, 'first');
+   if (isempty(idLigEnd))
+      idLigEnd = length(lat);
+   end
    %    latVal = lat(fliplr(idLigStart:idLigEnd));
    
    % a_lon(idP) is in the [-180, 180[ interval

@@ -2092,12 +2092,12 @@ alarmPresSwitch.name{end+1} = 'pressure switch alarm received';
 alarmPresSwitch.tech{end+1} = get_cts5_tech_data_init_struct(170, 'Pressure switch alarm received');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-alarmRTC = init_basic_struct;
-alarmRTC.pattern = 'EMAP';
-alarmRTC.count = 0;
-alarmRTC.id{end+1} = 1;
-alarmRTC.name{end+1} = 'EMAP alarm received';
-alarmRTC.tech{end+1} = get_cts5_tech_data_init_struct(238, 'EMAP alarm received');
+alarmEMAP = init_basic_struct;
+alarmEMAP.pattern = 'EMAP';
+alarmEMAP.count = 0;
+alarmEMAP.id{end+1} = 1;
+alarmEMAP.name{end+1} = 'EMAP alarm received';
+alarmEMAP.tech{end+1} = get_cts5_tech_data_init_struct(238, 'EMAP alarm received');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 alarmIceIsa = init_basic_struct;
@@ -2540,6 +2540,7 @@ o_techInfoStruct.ALARM{end+1} = alarmADC;
 o_techInfoStruct.ALARM{end+1} = alarmFile;
 o_techInfoStruct.ALARM{end+1} = alarmRTC;
 o_techInfoStruct.ALARM{end+1} = alarmPresSwitch;
+o_techInfoStruct.ALARM{end+1} = alarmEMAP;
 o_techInfoStruct.ALARM{end+1} = alarmIceIsa;
 o_techInfoStruct.ALARM{end+1} = alarmIceCollision;
 o_techInfoStruct.ALARM{end+1} = alarmIceAbort;

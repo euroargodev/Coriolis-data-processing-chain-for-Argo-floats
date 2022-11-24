@@ -69,6 +69,10 @@ global g_decArgo_cts5Treat_RW;
 global g_decArgo_cts5Treat_AM;
 global g_decArgo_cts5Treat_DW;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListCtd;
+global g_decArgo_addParamListPh;
+
 
 if (isempty(a_sbephData))
    return
@@ -142,10 +146,14 @@ for idP = 1:length(a_sbephData)
             profStruct.paramList = [ ...
                paramPres paramVrsPh paramVrsPhStDev ...
                ];
-            
+
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDev;
-            
+
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListPh{end+1} = 'VRS_PH_STD';
+            g_decArgo_addParamListPh = unique(g_decArgo_addParamListPh, 'stable');
+
          case g_decArgo_cts5Treat_AM_MD
             % SBEPH (mean & median)
             
@@ -163,6 +171,13 @@ for idP = 1:length(a_sbephData)
             
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndMedian;
+            
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
+            g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
+
+            g_decArgo_addParamListPh{end+1} = 'VRS_PH_MED';
+            g_decArgo_addParamListPh = unique(g_decArgo_addParamListPh, 'stable');
             
          case g_decArgo_cts5Treat_AM_SD_MD
             % SBEPH (mean & stDev & median)
@@ -182,6 +197,14 @@ for idP = 1:length(a_sbephData)
                         
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDevAndMedian;
+
+            % parameter added "on the fly" to meta-data file
+            g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
+            g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
+
+            g_decArgo_addParamListPh{end+1} = 'VRS_PH_STD';
+            g_decArgo_addParamListPh{end+1} = 'VRS_PH_MED';
+            g_decArgo_addParamListPh = unique(g_decArgo_addParamListPh, 'stable');
             
          otherwise
             fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Treatment #%d not managed - SBEPH data ignored\n', ...

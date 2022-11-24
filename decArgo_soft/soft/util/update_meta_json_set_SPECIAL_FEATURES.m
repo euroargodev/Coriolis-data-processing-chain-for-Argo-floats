@@ -1,9 +1,9 @@
 % ------------------------------------------------------------------------------
-% Update the META.json files for DEPLOYMENT_CRUISE_ID information.
+% Update the META.json files for SPECIAL_FEATURES information.
 %
 % SYNTAX :
-%   update_meta_json_set_DEPLOYMENT_CRUISE_ID or
-%   update_meta_json_set_DEPLOYMENT_CRUISE_ID(6900189, 7900118)
+%   update_meta_json_set_SPECIAL_FEATURES or
+%   update_meta_json_set_SPECIAL_FEATURES(6900189, 7900118)
 %
 % INPUT PARAMETERS :
 %   varargin : WMO number of floats to process
@@ -16,19 +16,19 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   12/21/2021 - RNU - creation
+%   01/10/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function update_meta_json_set_DEPLOYMENT_CRUISE_ID(varargin)
+function update_meta_json_set_SPECIAL_FEATURES(varargin)
 
 % list of floats to process (if empty, all encountered files will be checked)
 FLOAT_LIST_FILE_NAME = '';
 
 % directory of META.json files to update
-DIR_INPUT_OUTPUT_JSON_FILES = 'C:\Users\jprannou\_DATA\OUT\test_update_meta_json\IN_OUT\';
 DIR_INPUT_OUTPUT_JSON_FILES = 'C:\Users\jprannou\_DATA\IN\decArgo_config_floats\json_float_meta\';
+% DIR_INPUT_OUTPUT_JSON_FILES = 'C:\Users\jprannou\_DATA\OUT\test_update_meta_json\IN_OUT\';
 
-% input CSV file of CRUISE_NAME values to use
-DIR_INPUT_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\DB_export_CRUISE_NAME.csv';
+% input CSV file of SPECIAL_FEATURES values to use
+DIR_INPUT_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\DB_export_SPECIAL_FEATURES.csv';
 
 % temporary directory used to update the files
 DIR_TMP = 'C:\Users\jprannou\_DATA\OUT\tmp\';
@@ -52,6 +52,10 @@ g_couf_reportData.float = [];
 
 % store the start time of the run
 currentTime = datestr(now, 'yyyymmddTHHMMSSZ');
+
+% create and start log file recording
+logFile = [DIR_LOG_FILE '/' 'update_meta_json_set_SPECIAL_FEATURES_' currentTime '.log'];
+diary(logFile);
 
 % startTime
 ticStartTime = tic;
@@ -110,21 +114,17 @@ try
       return
    end
 
-   idF = find(strcmp(inputData(:, 2), '429'));
+   idF = find(strcmp(inputData(:, 2), '1254'));
    wmoList = cellfun(@str2num, inputData(idF, 1));
    dataList = inputData(idF, 4);
 
    % create a temporary directory for this run
-   tmpDir = [DIR_TMP '/' 'update_meta_json_set_DEPLOYMENT_CRUISE_ID_' currentTime];
+   tmpDir = [DIR_TMP '/' 'update_meta_json_set_SPECIAL_FEATURES_' currentTime];
    status = mkdir(tmpDir);
    if (status ~= 1)
       fprintf('ERROR: cannot create temporary directory (%s)\n', tmpDir);
    end
-   
-   % create and start log file recording
-   logFile = [DIR_LOG_FILE '/' 'update_meta_json_set_DEPLOYMENT_CRUISE_ID_' currentTime '.log'];
-   diary(logFile);
-   
+      
    % META.json files
    floatFiles = dir([DIR_INPUT_OUTPUT_JSON_FILES '/*_meta.json']);
    for idFile = 1:length(floatFiles)
@@ -151,8 +151,8 @@ try
          if (length(idF) == 1)
 
             dataFloat = strtrim(dataList{idF});
-            if (length(dataFloat) > 32)
-               fprintf('ERROR: Float %d: length (%d) of input data (''%s'') exceeds max allowed length (32)\n', ...
+            if (length(dataFloat) > 1024)
+               fprintf('ERROR: Float %d: length (%d) of input data (''%s'') exceeds max allowed length (1024)\n', ...
                   floatWmo, ...
                   length(dataFloat), ...
                   dataFloat);
@@ -217,7 +217,7 @@ return
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   12/21/2021 - RNU - creation
+%   01/10/2022 - RNU - creation
 % ------------------------------------------------------------------------------
 function process_json_file(a_jsonPathFileName, a_tmpDir, a_inputData)
 
@@ -231,7 +231,7 @@ if (exist(a_jsonPathFileName, 'file') == 2)
    % get information to see if the file should be updated
    updateNeeded = 0;
    metaData = loadjson(a_jsonPathFileName);
-   if (~strcmp(strtrim(metaData.DEPLOYMENT_CRUISE_ID), a_inputData))
+   if (~strcmp(strtrim(metaData.SPECIAL_FEATURES), a_inputData))
       updateNeeded = 1;
    end
    
@@ -239,7 +239,7 @@ if (exist(a_jsonPathFileName, 'file') == 2)
    if (updateNeeded == 1)
       
       fprintf('File to update: %s\n', a_jsonPathFileName);
-      fprintf('DEPLOYMENT_CRUISE_ID = ''%s'' => ''%s''\n', metaData.DEPLOYMENT_CRUISE_ID, a_inputData);
+      fprintf('SPECIAL_FEATURES = ''%s'' => ''%s''\n', metaData.SPECIAL_FEATURES, a_inputData);
       
       % make a copy of the file in the temporary directory
       [~, fileName, fileExt] = fileparts(a_jsonPathFileName);
@@ -291,7 +291,7 @@ return
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   12/21/2021 - RNU - creation
+%   01/10/2022 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_ok] = update_file(a_jsonPathFileName, a_inputData)
 
@@ -320,7 +320,7 @@ if (exist(a_jsonPathFileName, 'file') == 2)
 
    fclose(fIdIn);
 
-   idL = cellfun(@(x) strfind(text, x), {'"DEPLOYMENT_CRUISE_ID" :'}, 'UniformOutput', 0);
+   idL = cellfun(@(x) strfind(text, x), {'"SPECIAL_FEATURES" :'}, 'UniformOutput', 0);
    if (~isempty([idL{:}]))
       idLine = find(~cellfun(@isempty, idL{:}) == 1);
       lineVal = text{idLine};
@@ -384,7 +384,7 @@ newChild.appendChild(docNode.createTextNode('coXXXXXX '));
 docRootNode.appendChild(newChild);
 
 newChild = docNode.createElement('comment');
-newChild.appendChild(docNode.createTextNode('Argo Coriolis update META.json tool (update_meta_json_set_DEPLOYMENT_CRUISE_ID)'));
+newChild.appendChild(docNode.createTextNode('Argo Coriolis update META.json tool (update_meta_json_set_SPECIAL_FEATURES)'));
 docRootNode.appendChild(newChild);
 
 newChild = docNode.createElement('date');
@@ -580,7 +580,7 @@ if (~isempty(a_logFileName))
    fileContents = textscan(fId, '%s', 'delimiter', '\n');
    fclose(fId);
    
-   if (~isempty(fileContents))
+   if (~isempty(fileContents) && ~isempty(fileContents{:}))
       % retrieve wanted messages
       fileContents = fileContents{:};
       idLine = 1;

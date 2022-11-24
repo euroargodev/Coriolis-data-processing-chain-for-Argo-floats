@@ -351,7 +351,7 @@ for idParam = 1:length(parameterList)
    paramName = parameterList{idParam};
    paramInfo = get_netcdf_param_attributes(paramName);
    profData = [profData o_profData.(paramName)];
-   profDataFv = [profDataFv paramInfo.fillValue];
+   profDataFv = [profDataFv double(paramInfo.fillValue)];
 end
 for idLev = size(profData, 1):-1:1
    if (sum(profData(idLev, :) == profDataFv) ~= size(profData, 2))

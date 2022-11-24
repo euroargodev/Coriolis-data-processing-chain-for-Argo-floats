@@ -93,6 +93,8 @@ global g_decArgo_calibInfo;
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamNbSampleCtd;
 global g_decArgo_addParamNbSampleSfet;
+global g_decArgo_addParamListCtd;
+global g_decArgo_addParamListPh;
 
 
 if (isempty(a_scienceLogFileList))
@@ -609,6 +611,10 @@ if (~isempty(ctdCp))
    o_profCtdCp.paramList = [paramPres paramTemp paramSal paramNbSampleCtd];
    o_profCtdCp.data = ctdCp(:, 2:end);
    g_decArgo_addParamNbSampleCtd = 1;
+
+   % parameter added "on the fly" to meta-data file
+   g_decArgo_addParamListCtd{end+1} = 'NB_SAMPLE_CTD';
+   g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
 end
 
 if (~isempty(ctdCpH))
@@ -618,6 +624,13 @@ if (~isempty(ctdCpH))
    o_profCtdCpH.data(isnan(o_profCtdCpH.data(:, 5)), 5) = paramVrsPh.fillValue;
    g_decArgo_addParamNbSampleCtd = 1;
    g_decArgo_addParamNbSampleSfet = 1;
+
+   % parameter added "on the fly" to meta-data file
+   g_decArgo_addParamListCtd{end+1} = 'NB_SAMPLE_CTD';
+   g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
+
+   g_decArgo_addParamListPh{end+1} = 'NB_SAMPLE_SFET';
+   g_decArgo_addParamListPh = unique(g_decArgo_addParamListPh, 'stable');
 end
 
 if (~isempty(flbb))

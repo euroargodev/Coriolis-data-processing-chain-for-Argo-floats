@@ -51,6 +51,7 @@ if (~isempty(idF))
    rtOffsetValue = [];
    rtOffsetDrift = [];
    rtOffsetInclineT = [];
+   rtOffsetCor = [];
    idF = find(strcmp(a_metaData(a_idForWmo, 5), 'CALIB_RT_COEFFICIENT') == 1);
    for id = 1:length(idF)
       dimLevel = str2num(a_metaData{a_idForWmo(idF(id)), 3});
@@ -58,6 +59,7 @@ if (~isempty(idF))
       fieldNameSlope = ['SLOPE_' num2str(dimLevel)];
       fieldNameDrift = ['DRIFT_' num2str(dimLevel)];
       fieldNameInclineT = ['INCLINE_' num2str(dimLevel)];
+      fieldNameCor = ['COR_' num2str(dimLevel)];
       coefStrOri = a_metaData{a_idForWmo(idF(id)), 4};
       coefStr = regexprep(coefStrOri, ' ', '');
       if (any(strfind(coefStr, 'a0')))
@@ -81,17 +83,19 @@ if (~isempty(idF))
             return
          end
       else
-         % expecting a0 and a1 coefficients
          idPos1 = strfind(coefStr, 'slope=');
          idPos2 = strfind(coefStr, ',offset=');
          idPos3 = strfind(coefStr, ',drift=');
          idPos4 = strfind(coefStr, ',incline_t=');
+         idPos5 = strfind(coefStr, ',do_cor_pres=');
          if (~isempty(idPos1) && ~isempty(idPos2))
             rtOffsetSlope.(fieldNameSlope) = coefStr(idPos1+6:idPos2-1);
             if (~isempty(idPos3))
                rtOffsetValue.(fieldNameValue) = coefStr(idPos2+8:idPos3-1);
             elseif (~isempty(idPos4))
                rtOffsetValue.(fieldNameValue) = coefStr(idPos2+8:idPos4-1);
+            elseif (~isempty(idPos5))
+               rtOffsetValue.(fieldNameValue) = coefStr(idPos2+8:idPos5-1);
             else
                rtOffsetValue.(fieldNameValue) = coefStr(idPos2+8:end);
             end
@@ -118,7 +122,11 @@ if (~isempty(idF))
                rtOffsetDrift.(fieldNameDrift) = '0';
             end
             if (~isempty(idPos4))
-               rtOffsetInclineT.(fieldNameInclineT) = coefStr(idPos4+11:end);
+               if (~isempty(idPos5))
+                  rtOffsetInclineT.(fieldNameInclineT) = coefStr(idPos4+11:idPos5-1);
+               else
+                  rtOffsetInclineT.(fieldNameInclineT) = coefStr(idPos4+11:end);
+               end
                [~, statusInclineT] = str2num(rtOffsetInclineT.(fieldNameInclineT));
                if (statusInclineT == 0)
                   fprintf('ERROR: non numerical CALIB_RT_COEFFICIENT for float %d (''%s'') - exit\n', ...
@@ -127,6 +135,15 @@ if (~isempty(idF))
                end
             else
                rtOffsetInclineT.(fieldNameInclineT) = '0';
+            end
+            if (~isempty(idPos5))
+               rtOffsetCor.(fieldNameCor) = coefStr(idPos5+13:end);
+               [~, statusCor] = str2num(rtOffsetCor.(fieldNameCor));
+               if (statusCor == 0)
+                  fprintf('ERROR: non numerical CALIB_RT_COEFFICIENT for float %d (''%s'') - exit\n', ...
+                     floatNum, coefStrOri);
+                  return
+               end
             end
             dimLevelValueSlope = [dimLevelValueSlope dimLevel];
          else
@@ -219,6 +236,9 @@ if (~isempty(idF))
    end
    if (~isempty(rtOffsetInclineT))
       rtOffsetData.INCLINE = rtOffsetInclineT;
+   end
+   if (~isempty(rtOffsetCor))
+      rtOffsetData.COR = rtOffsetCor;
    end
    if (~isempty(rtOffsetAdjError))
       rtOffsetData.ADJUSTED_ERROR = rtOffsetAdjError;

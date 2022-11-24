@@ -1423,7 +1423,7 @@ for idProf = 1:length(a_profData)
       if (~ismember(profParamList{idParam}, paramList))
          paramList = [paramList profParamList(idParam)];
          paramInfo = get_netcdf_param_attributes(profParamList{idParam});
-         paramFillValue = [paramFillValue paramInfo.fillValue];
+         paramFillValue = [paramFillValue double(paramInfo.fillValue)];
          paramDataMode = [paramDataMode a_profData(idProf).paramDataMode(idParam)];
       end
    end

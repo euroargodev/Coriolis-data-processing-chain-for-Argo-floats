@@ -681,7 +681,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       add_configuration_number_ir_rudics_cts5( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
    
-   % add MTIME to AUX profiles
+   % add MTIME to profiles
    o_tabProfiles = finalize_profile_ir_rudics_cts5(o_tabProfiles);
    
    % merge multiple N_CYCLE and N_MEAS records for a given output cycle number
@@ -980,7 +980,7 @@ for typeNum = typeOrderList
                
                [apmtTech, apmtTimeFromTech, ...
                   ncApmtTech, apmtTrajFromTech, apmtMetaFromTech] = ...
-                  read_apmt_technical([fileNameInfo{4} fileNameInfo{1}], a_decoderId);
+                  read_apmt_technical_file([fileNameInfo{4} fileNameInfo{1}], a_decoderId);
                g_decArgo_apmtMetaFromTech = [g_decArgo_apmtMetaFromTech apmtMetaFromTech];
                if (~isempty(g_decArgo_patternNumFloat))
                   g_decArgo_apmtTimeFromTech = cat(1, g_decArgo_apmtTimeFromTech, ...

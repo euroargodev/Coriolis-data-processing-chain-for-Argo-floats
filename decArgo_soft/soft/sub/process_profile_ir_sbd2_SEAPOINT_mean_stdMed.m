@@ -57,6 +57,9 @@ global g_decArgo_phaseAscProf;
 global g_decArgo_treatAverage;
 global g_decArgo_treatAverageAndStDev;
 
+% parameter added "on the fly" to meta-data file
+global g_decArgo_addParamListTurbidity;
+
 
 % unpack the input data
 a_dataSEAPOINTMeanDate = a_dataSEAPOINTMean{1};
@@ -236,6 +239,11 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                
                % treatment type
                profStruct.treatType = g_decArgo_treatAverageAndStDev;
+
+               % parameter added "on the fly" to meta-data file
+               g_decArgo_addParamListTurbidity{end+1} = 'VOLTAGE_TURBIDITY_STD';
+               g_decArgo_addParamListTurbidity{end+1} = 'VOLTAGE_TURBIDITY_MED';
+               g_decArgo_addParamListTurbidity = unique(g_decArgo_addParamListTurbidity, 'stable');
             end
          end
       end

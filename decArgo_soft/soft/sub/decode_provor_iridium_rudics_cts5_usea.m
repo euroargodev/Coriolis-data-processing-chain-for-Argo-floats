@@ -156,11 +156,6 @@ global g_decArgo_firstCycleNumFloatNew;
 global g_decArgo_argoCycleNumForFirstCycleNumFloatNew;
 g_decArgo_argoCycleNumForFirstCycleNumFloatNew = [];
 
-% due to payload issue, we should store all time information (to assign payload
-% data to their correct cycle)
-global g_decArgo_trajDataFromApmtTech;
-g_decArgo_trajDataFromApmtTech = [];
-
 % meta-data retrieved from APMT tech files
 global g_decArgo_apmtMetaFromTech;
 g_decArgo_apmtMetaFromTech = [];
@@ -240,7 +235,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 end
 
 if (g_decArgo_delayedModeFlag)
-   
+
    fprintf('ERROR: Float #%d is expected to be processed in Real Time Mode\n', ...
       a_floatNum);
    o_tabProfiles = [];
@@ -250,30 +245,30 @@ if (g_decArgo_delayedModeFlag)
    o_tabNcTechVal = [];
    o_structConfig = [];
    return
-   
+
 end
 
 if (g_decArgo_realtimeFlag)
-   
+
    % new files have been collected with rsync, we are going to decode
    % all (archived and newly received) files
-   
+
    % duplicate the files colleted with rsync into the archive directory
    fileIdList = find(g_decArgo_rsyncFloatWmoList == a_floatNum);
-   
+
    nbFilesTot = 0;
    for idF = 1:length(fileIdList)
-      
+
       sbdFilePathName = [g_decArgo_dirInputRsyncData '/' ...
          g_decArgo_rsyncFloatSbdFileList{fileIdList(idF)}];
       [pathstr, sbdFileName, ext] = fileparts(sbdFilePathName);
       nbFiles = duplicate_files_ir_cts5({[sbdFileName ext]}, pathstr, g_decArgo_archiveDirectory, a_floatNum);
       nbFilesTot = nbFilesTot + nbFiles;
    end
-   
+
    fprintf('RSYNC_INFO: Duplicated %d files from rsync dir to float archive dir\n', ...
       nbFilesTot);
-   
+
    % set file prefix
    g_decArgo_filePrefixCts5 = get_file_prefix_cts5(g_decArgo_archiveDirectory);
 end
@@ -304,6 +299,9 @@ end
 % get payload configuration files
 [floatCycleList, g_decArgo_cyclePatternNumFloat] = get_cycle_ptn_cts5_usea;
 
+% read and store technical data (in g_decArgo_useaTechData)
+read_apmt_technical_data(g_decArgo_cyclePatternNumFloat, g_decArgo_filePrefixCts5, a_decoderId);
+
 % retrieve event data
 ok = get_event_data_cts5(g_decArgo_cyclePatternNumFloat, a_launchDate, a_decoderId);
 if (~ok)
@@ -314,32 +312,32 @@ end
 stop = 0;
 for idFlCy = 1:length(floatCycleList)
    floatCyNum = floatCycleList(idFlCy);
-   
+
    if (floatCyNum < g_decArgo_firstCycleNumFloat)
       continue
    end
-   
+
    if (floatCyNum == g_decArgo_firstCycleNumFloat)
       g_decArgo_cycleNum = 0;
    end
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % get files (without pattern #) to process
-   
+
    fileToProcess = get_received_file_list_usea(floatCyNum, [], g_decArgo_filePrefixCts5);
-   
+
    if (~isempty(fileToProcess))
       fprintf('\nDEC_INFO: Float #%d: Processing cycle #%d (float cycle #%d)\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, floatCyNum);
-      
+
       if (g_decArgo_realtimeFlag == 1)
          % update the reports structure cycle list
          g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
       end
    end
-   
+
    if (~stop)
-      
+
       g_decArgo_eventDataTech = [];
       g_decArgo_eventDataParamTech = [];
       g_decArgo_eventDataTraj = [];
@@ -350,49 +348,89 @@ for idFlCy = 1:length(floatCycleList)
       g_decArgo_cycleNumFloatStr = num2str(floatCyNum);
       g_decArgo_patternNumFloat = [];
       g_decArgo_patternNumFloatStr = '-';
-      
+
       [tabProfiles, ...
-         tabTrajNMeas, tabTrajNCycle, ...
+         tabDrift, tabSurf, subSurfaceMeas, trajDataFromApmtTech, ...
          tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
-         decode_files(fileToProcess, a_decoderId, g_decArgo_firstCycleNumCts5);
-      
-      if (~isempty(tabProfiles))
-         o_tabProfiles = [o_tabProfiles tabProfiles];
+         decode_files(fileToProcess, a_decoderId);
+
+      if (isempty(g_decArgo_outputCsvFileId))
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         % ADJUST BGC TIMES
+
+         if (ismember(a_decoderId, [126:128]))
+            [tabProfiles, tabDrift, tabSurf, tabNcTechIndex2, tabNcTechVal2] = ...
+               adjust_bgc_time_cts5_usea(tabProfiles, tabDrift, tabSurf, trajDataFromApmtTech);
+            if (~isempty(tabNcTechIndex2))
+               tabNcTechIndex = [tabNcTechIndex; tabNcTechIndex2];
+               tabNcTechVal = [tabNcTechVal; tabNcTechVal2];
+            end
+         end
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         % ADJUST BGC PRES
+
+         % adjust BGC pressures sampled during drift phase
+         % and SUNA profile pressures
+         if (ismember(a_decoderId, [126:128]))
+            [tabProfiles, tabDrift] = adjust_bgc_pres_cts5_usea(tabProfiles, tabDrift);
+         end
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         % TRAJ NetCDF file
+
+         % collect trajectory data for TRAJ NetCDF file
+         [tabTrajIndex, tabTrajData] = collect_trajectory_data_cts5_usea( ...
+            tabProfiles, tabDrift, tabSurf, trajDataFromApmtTech, subSurfaceMeas);
+
+         % process trajectory data for TRAJ NetCDF file
+         [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_cts5_usea( ...
+            tabTrajIndex, tabTrajData, g_decArgo_firstCycleNumFloat);
+
+         % sort trajectory data structures according to the predefined
+         % measurement code order
+         %    [tabTrajNMeas] = sort_trajectory_data_cyprofnum(tabTrajNMeas, a_decoderId);
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+         if (~isempty(tabProfiles))
+            o_tabProfiles = [o_tabProfiles tabProfiles];
+         end
+         if (~isempty(tabTrajNMeas))
+            o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
+         end
+         if (~isempty(tabTrajNCycle))
+            o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];
+         end
+         if (~isempty(tabNcTechIndex))
+            o_tabNcTechIndex = [o_tabNcTechIndex; tabNcTechIndex];
+            o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal];
+         end
+         if (~isempty(tabTechNMeas))
+            o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+         end
       end
-      if (~isempty(tabTrajNMeas))
-         o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
-      end
-      if (~isempty(tabTrajNCycle))
-         o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];
-      end
-      if (~isempty(tabNcTechIndex))
-         o_tabNcTechIndex = [o_tabNcTechIndex; tabNcTechIndex];
-         o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal];
-      end
-      if (~isempty(tabTechNMeas))
-         o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
-      end
-      
+
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % get files (with pattern #) to process
       idF = find(g_decArgo_cyclePatternNumFloat(:, 1) == floatCyNum);
       for idFlCyPtn = 1:length(idF)
          floatPtnNum = g_decArgo_cyclePatternNumFloat(idF(idFlCyPtn), 2);
-         
+
          % retrieve useful information from event data
          decode_event_data_cts5(floatCyNum, floatPtnNum);
-         
+
          % get files to process
          fileToProcess = get_received_file_list_usea(floatCyNum, floatPtnNum, g_decArgo_filePrefixCts5);
-         
+
          if (~stop)
-            
+
             if (floatPtnNum > 0)
                g_decArgo_cycleNum = g_decArgo_cycleNum + 1;
-               
+
                fprintf('\nDEC_INFO: Float #%d: Processing cycle #%d (float cycle #%d)\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum, floatCyNum);
-               
+
                if (g_decArgo_realtimeFlag == 1)
                   % update the reports structure cycle list
                   g_decArgo_reportStruct.cycleList = [g_decArgo_reportStruct.cycleList g_decArgo_cycleNum];
@@ -400,27 +438,67 @@ for idFlCy = 1:length(floatCycleList)
             end
             g_decArgo_patternNumFloat = floatPtnNum;
             g_decArgo_patternNumFloatStr = num2str(floatPtnNum);
-            
+
             [tabProfiles, ...
-               tabTrajNMeas, tabTrajNCycle, ...
+               tabDrift, tabSurf, subSurfaceMeas, trajDataFromApmtTech, ...
                tabNcTechIndex, tabNcTechVal, tabTechNMeas] = ...
-               decode_files(fileToProcess, a_decoderId, g_decArgo_firstCycleNumCts5);
-            
-            if (~isempty(tabProfiles))
-               o_tabProfiles = [o_tabProfiles tabProfiles];
-            end
-            if (~isempty(tabTrajNMeas))
-               o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
-            end
-            if (~isempty(tabTrajNCycle))
-               o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];
-            end
-            if (~isempty(tabNcTechIndex))
-               o_tabNcTechIndex = [o_tabNcTechIndex; tabNcTechIndex];
-               o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal];
-            end
-            if (~isempty(tabTechNMeas))
-               o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+               decode_files(fileToProcess, a_decoderId);
+
+            if (isempty(g_decArgo_outputCsvFileId))
+
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+               % ADJUST BGC TIMES
+
+               if (ismember(a_decoderId, [126:128]))
+                  [tabProfiles, tabDrift, tabSurf, tabNcTechIndex2, tabNcTechVal2] = ...
+                     adjust_bgc_time_cts5_usea(tabProfiles, tabDrift, tabSurf, trajDataFromApmtTech);
+                  if (~isempty(tabNcTechIndex2))
+                     tabNcTechIndex = [tabNcTechIndex; tabNcTechIndex2];
+                     tabNcTechVal = [tabNcTechVal; tabNcTechVal2];
+                  end
+               end
+
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+               % ADJUST BGC PRES
+
+               % adjust BGC pressures sampled during drift phase
+               % and SUNA profile pressures
+               if (ismember(a_decoderId, [126:128]))
+                  [tabProfiles, tabDrift] = adjust_bgc_pres_cts5_usea(tabProfiles, tabDrift);
+               end
+
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+               % TRAJ NetCDF file
+
+               % collect trajectory data for TRAJ NetCDF file
+               [tabTrajIndex, tabTrajData] = collect_trajectory_data_cts5_usea( ...
+                  tabProfiles, tabDrift, tabSurf, trajDataFromApmtTech, subSurfaceMeas);
+
+               % process trajectory data for TRAJ NetCDF file
+               [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_cts5_usea( ...
+                  tabTrajIndex, tabTrajData, g_decArgo_firstCycleNumFloat);
+
+               % sort trajectory data structures according to the predefined
+               % measurement code order
+               %    [tabTrajNMeas] = sort_trajectory_data_cyprofnum(tabTrajNMeas, a_decoderId);
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+               if (~isempty(tabProfiles))
+                  o_tabProfiles = [o_tabProfiles tabProfiles];
+               end
+               if (~isempty(tabTrajNMeas))
+                  o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
+               end
+               if (~isempty(tabTrajNCycle))
+                  o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];
+               end
+               if (~isempty(tabNcTechIndex))
+                  o_tabNcTechIndex = [o_tabNcTechIndex; tabNcTechIndex];
+                  o_tabNcTechVal = [o_tabNcTechVal; tabNcTechVal];
+               end
+               if (~isempty(tabTechNMeas))
+                  o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
+               end
             end
          end
       end
@@ -430,34 +508,34 @@ end
 if (isempty(g_decArgo_outputCsvFileId))
 
    % output NetCDF files
-   
+
    % add interpolated profile locations
    [o_tabProfiles] = fill_empty_profile_locations_ir_rudics(o_tabProfiles, g_decArgo_gpsData, ...
       o_tabTrajNMeas, o_tabTrajNCycle);
-   
+
    % cut CTD profile at the cut-off pressure of the CTD pump
    [o_tabProfiles] = cut_ctd_profile_ir_rudics(o_tabProfiles);
-   
+
    % create output float configuration
    [o_structConfig] = create_output_float_config_ir_rudics_cts5_usea(a_decoderId);
-   
+
    % add configuration number and output cycle number
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
       add_configuration_number_ir_rudics_cts5( ...
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
-   
-   % add MTIME to AUX profiles
+
+   % add MTIME to profiles
    o_tabProfiles = finalize_profile_ir_rudics_cts5(o_tabProfiles);
-   
+
    % merge multiple N_CYCLE and N_MEAS records for a given output cycle number
    % and add not present (but expected for this float family) Measurement Codes
    [o_tabTrajNMeas, o_tabTrajNCycle] = finalize_trajectory_data_ir_rudics_cts5( ...
       o_tabTrajNMeas, o_tabTrajNCycle);
-   
+
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
    % consistent
    [o_tabTrajNMeas, o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNMeas, o_tabTrajNCycle);
-   
+
    % perform PARAMETER adjustment
    [o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle] = ...
       compute_rt_adjusted_param(o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, a_launchDate, 1, a_decoderId);
@@ -469,17 +547,17 @@ if (isempty(g_decArgo_outputCsvFileId))
    end
 
    if (g_decArgo_realtimeFlag == 1)
-      
+
       % save the list of already processed rsync log files in the history
       % directory of the float
       write_processed_rsync_log_file_ir_rudics_sbd_sbd2(a_floatNum, 'processed', ...
          g_decArgo_rsyncLogFileUnderProcessList);
-      
+
       % save the list of used rsync log files in the history directory of the float
       write_processed_rsync_log_file_ir_rudics_sbd_sbd2(a_floatNum, 'used', ...
          unique(g_decArgo_rsyncLogFileUsedList));
    end
-   
+
    % add float cycle and pattern number + Ice detected bit to the NetCDF
    % technical data
    [o_tabNcTechIndex, o_tabNcTechVal] = ...
@@ -494,22 +572,23 @@ return
 %
 % SYNTAX :
 %  [o_tabProfiles, ...
-%    o_tabTrajNMeas, o_tabTrajNCycle, ...
+%    o_tabDrift, o_tabSurf, o_subSurfaceMeas, o_trajDataFromApmtTech, ...
 %    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
-%    decode_files(a_fileNameList, a_decoderId, a_firstCycleNum)
+%    decode_files(a_fileNameList, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_fileNameList  : list of files to decode
 %   a_decoderId     : float decoder Id
-%   a_firstCycleNum : number of the first cycle to consider
 %
 % OUTPUT PARAMETERS :
-%   o_tabProfiles    : decoded profiles
-%   o_tabTrajNMeas   : decoded trajectory N_MEASUREMENT data
-%   o_tabTrajNCycle  : decoded trajectory N_CYCLE data
-%   o_tabNcTechIndex : decoded technical index information
-%   o_tabNcTechVal   : decoded technical data
-%   o_tabTechNMeas   : decoded technical N_MEASUREMENT data
+%   o_tabProfiles          : decoded profiles
+%   o_tabDrift             : decoded drift measurement data
+%   o_tabSurf              : decoded surface measurement data
+%   o_subSurfaceMeas       : decoded unique sub surface measurement
+%   o_trajDataFromApmtTech : decoded TRAJ relevent technical data
+%   o_tabNcTechIndex       : decoded technical index information
+%   o_tabNcTechVal         : decoded technical data
+%   o_tabTechNMeas         : decoded technical N_MEASUREMENT data
 %
 % EXAMPLES :
 %
@@ -520,14 +599,16 @@ return
 %   09/22/2020 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, ...
-   o_tabTrajNMeas, o_tabTrajNCycle, ...
+   o_tabDrift, o_tabSurf, o_subSurfaceMeas, o_trajDataFromApmtTech, ...
    o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = ...
-   decode_files(a_fileNameList, a_decoderId, a_firstCycleNum)
+   decode_files(a_fileNameList, a_decoderId)
 
 % output parameters initialization
 o_tabProfiles = [];
-o_tabTrajNMeas = [];
-o_tabTrajNCycle = [];
+o_tabDrift = [];
+o_tabSurf = [];
+o_subSurfaceMeas = [];
+o_trajDataFromApmtTech = [];
 o_tabNcTechIndex = [];
 o_tabNcTechVal = [];
 o_tabTechNMeas = [];
@@ -566,10 +647,6 @@ global g_decArgo_filePrefixCts5;
 
 % type of files to consider
 global g_decArgo_fileTypeListCts5;
-
-% due to payload issue, we should store all time information (to assign payload
-% data to their correct cycle)
-global g_decArgo_trajDataFromApmtTech;
 
 % meta-data retrieved from APMT tech files
 global g_decArgo_apmtMetaFromTech;
@@ -656,85 +733,84 @@ ramsesData = [];
 mpeData = [];
 
 techDataFromApmtTech = [];
-trajDataFromApmtTech = [];
 timeDataFromApmtTech = [];
 for typeNum = typeOrderList
 
    idFileForType = find(fileTypes == typeNum);
    if (~isempty(idFileForType))
-      
+
       fileNamesForType = fileNames(idFileForType);
       for idFile = 1:length(fileNamesForType)
-         
+
          % manage split files
          [~, fileName, fileExtension] = fileparts(fileNamesForType{idFile});
          fileNameInfo = manage_split_files({g_decArgo_archiveDirectory}, ...
             {[fileName '*' fileExtension]}, a_decoderId);
-         
+
          % decode files
          switch (typeNum)
-            
+
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             case 1
                % '*_apmt*.ini'
-               
+
                % apmt configuration file
-               
+
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
-               
+
                % read apmt configuration
                apmtConfig = read_apmt_config([fileNameInfo{4} fileNameInfo{1}], a_decoderId);
-               
+
                % update current configuration
                update_float_config_ir_rudics_cts5_usea(apmtConfig);
-               
+
                if (~isempty(g_decArgo_outputCsvFileId))
-                  
+
                   for idFile2 = 1:length(fileNameInfo{2})
                      fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                         fileNameInfo{2}{idFile2});
                   end
-                  
+
                   % print apmt configuration in CSV file
                   print_apmt_config_in_csv_file_ir_rudics_cts5(apmtConfig);
-                  
+
                   % print updated configuration in CSV file
                   print_config_in_csv_file_ir_rudics_cts5('Updated_config');
                end
-               
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             case {3, 4, 5}
                % '*_autotest_*.txt'
                % '*_technical*.txt'
                % '*_default_*.txt'
-               
+
                % apmt technical information
-               
+
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
-               
+
                [apmtTech, apmtTimeFromTech, ...
                   ncApmtTech, apmtTrajFromTech, apmtMetaFromTech] = ...
-                  read_apmt_technical([fileNameInfo{4} fileNameInfo{1}], a_decoderId);
+                  get_apmt_technical_file(fileNameInfo{1});
                g_decArgo_apmtMetaFromTech = [g_decArgo_apmtMetaFromTech apmtMetaFromTech];
                if (~isempty(g_decArgo_patternNumFloat))
                   g_decArgo_apmtTimeFromTech = cat(1, g_decArgo_apmtTimeFromTech, ...
                      [g_decArgo_cycleNumFloat g_decArgo_patternNumFloat {apmtTimeFromTech}]);
                end
-               
+
                % store GPS data
                store_gps_data_ir_rudics_cts5(apmtTech, typeNum);
-               
+
                if (~isempty(g_decArgo_outputCsvFileId))
-                  
+
                   for idFile2 = 1:length(fileNameInfo{2})
                      fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                         fileNameInfo{2}{idFile2});
                   end
-                  
+
                   print_apmt_tech_in_csv_file_ir_rudics_cts5(apmtTech, typeNum);
-                  
+
                   % store TIME information
                   if (~isempty(apmtTimeFromTech))
                      cycleNumFloat = g_decArgo_cycleNumFloat;
@@ -745,9 +821,9 @@ for typeNum = typeOrderList
                      timeDataFromApmtTech = [timeDataFromApmtTech;
                         [cycleNumFloat patternNumFloat {apmtTimeFromTech}]];
                   end
-                  
+
                else
-                  
+
                   % store TECH and TRAJ information
                   if (~isempty(apmtTrajFromTech) || ~isempty(ncApmtTech))
                      cycleNumFloat = g_decArgo_cycleNumFloat;
@@ -767,92 +843,89 @@ for typeNum = typeOrderList
                            [cycleNumFloat patternNumFloat cyclePhase {ncApmtTech}]];
                      end
                      if (~isempty(apmtTrajFromTech))
-                        trajDataFromApmtTech = [trajDataFromApmtTech;
+                        o_trajDataFromApmtTech = [o_trajDataFromApmtTech;
                            [cycleNumFloat patternNumFloat cyclePhase {apmtTrajFromTech}]];
-                        
-                        g_decArgo_trajDataFromApmtTech = [g_decArgo_trajDataFromApmtTech;
-                           [cycleNumFloat patternNumFloat g_decArgo_cycleNum {apmtTrajFromTech}]];
                      end
                   end
                end
-               
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             case 6
                % '*_sbe41*.hex'
-               
+
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
                apmtCtd = decode_apmt_ctd([fileNameInfo{4} fileNameInfo{1}], a_decoderId);
-               
+
                if (~isempty(g_decArgo_outputCsvFileId))
-                  
+
                   for idFile2 = 1:length(fileNameInfo{2})
                      fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                         fileNameInfo{2}{idFile2});
                   end
-                  
+
                   print_data_in_csv_file_ir_rudics_cts5_CTD(apmtCtd);
                end
-               
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             case 7
                % '*_do*.hex'
-               
+
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
                apmtDo = decode_apmt_do([fileNameInfo{4} fileNameInfo{1}]);
-               
+
                if (~isempty(g_decArgo_outputCsvFileId))
-                  
+
                   for idFile2 = 1:length(fileNameInfo{2})
                      fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                         fileNameInfo{2}{idFile2});
                   end
-                  
+
                   print_data_in_csv_file_ir_rudics_cts5_DO(apmtDo);
                end
-               
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             case 8
                % '*_eco*.hex'
-               
+
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
                apmtEco = decode_apmt_eco([fileNameInfo{4} fileNameInfo{1}]);
-               
+
                if (~isempty(g_decArgo_outputCsvFileId))
-                  
+
                   for idFile2 = 1:length(fileNameInfo{2})
                      fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                         fileNameInfo{2}{idFile2});
                   end
-                  
+
                   print_data_in_csv_file_ir_rudics_cts5_ECO(apmtEco);
                end
-               
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             case 9
                % '*_ocr*.hex'
-               
+
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
                apmtOcr = decode_apmt_ocr([fileNameInfo{4} fileNameInfo{1}]);
-               
+
                if (~isempty(g_decArgo_outputCsvFileId))
-                  
+
                   for idFile2 = 1:length(fileNameInfo{2})
                      fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                         fileNameInfo{2}{idFile2});
                   end
-                  
+
                   print_data_in_csv_file_ir_rudics_cts5_OCR(apmtOcr);
                end
-               
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             case {10, 11}
                % '*_uvp6_blk*.hex'
                % '*_uvp6_lpm*.hex'
-               
+
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
                [uvpLpmDataDec, uvpBlackDataDec] = decode_apmt_uvp([fileNameInfo{4} fileNameInfo{1}]);
                if (~isempty(uvpLpmDataDec))
@@ -861,77 +934,77 @@ for typeNum = typeOrderList
                if (~isempty(uvpBlackDataDec))
                   uvpBlackData = uvpBlackDataDec;
                end
-               
+
                if (~isempty(g_decArgo_outputCsvFileId))
-                  
+
                   for idFile2 = 1:length(fileNameInfo{2})
                      fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                         fileNameInfo{2}{idFile2});
                   end
-                  
+
                   print_data_in_csv_file_ir_rudics_cts5_UVP(uvpLpmDataDec, uvpBlackDataDec);
                end
-               
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             case 12
                % '*_crover*.hex'
-               
+
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
                apmtCrover = decode_apmt_crover([fileNameInfo{4} fileNameInfo{1}]);
-               
+
                if (~isempty(g_decArgo_outputCsvFileId))
-                  
+
                   for idFile2 = 1:length(fileNameInfo{2})
                      fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                         fileNameInfo{2}{idFile2});
                   end
-                  
+
                   print_data_in_csv_file_ir_rudics_cts5_CROVER(apmtCrover);
                end
-               
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             case 13
                % '*_sbeph*.hex'
-               
+
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
                apmtSbeph = decode_apmt_sbeph([fileNameInfo{4} fileNameInfo{1}]);
-               
+
                if (~isempty(g_decArgo_outputCsvFileId))
-                  
+
                   for idFile2 = 1:length(fileNameInfo{2})
                      fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                         fileNameInfo{2}{idFile2});
                   end
-                  
+
                   print_data_in_csv_file_ir_rudics_cts5_SBEPH(apmtSbeph);
                end
-               
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             case 14
                % '*_suna*.hex'
-               
+
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
                apmtSuna = decode_apmt_suna([fileNameInfo{4} fileNameInfo{1}]);
-               
+
                if (~isempty(g_decArgo_outputCsvFileId))
-                  
+
                   for idFile2 = 1:length(fileNameInfo{2})
                      fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                         fileNameInfo{2}{idFile2});
                   end
-                  
+
                   print_data_in_csv_file_ir_rudics_cts5_SUNA(apmtSuna);
                end
-               
+
                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             case {15, 16}
                % '*_opus_blk*.hex'
                % '*_opus_lgt*.hex'
-               
+
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
                [opusLightDataDec, opusBlackDataDec] = decode_apmt_opus([fileNameInfo{4} fileNameInfo{1}]);
                if (~isempty(opusLightDataDec))
@@ -940,9 +1013,9 @@ for typeNum = typeOrderList
                if (~isempty(opusBlackDataDec))
                   opusBlackData = opusBlackDataDec;
                end
-               
+
                if (~isempty(g_decArgo_outputCsvFileId))
-                  
+
                   for idFile2 = 1:length(fileNameInfo{2})
                      fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
@@ -950,40 +1023,40 @@ for typeNum = typeOrderList
                   end
                   print_data_in_csv_file_ir_rudics_cts5_OPUS(opusLightDataDec, opusBlackDataDec);
                end
-               
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             case 17
                % '*_ramses*.hex'
-               
+
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
                ramsesData = decode_apmt_ramses([fileNameInfo{4} fileNameInfo{1}]);
-               
+
                if (~isempty(g_decArgo_outputCsvFileId))
-                  
+
                   for idFile2 = 1:length(fileNameInfo{2})
                      fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                         fileNameInfo{2}{idFile2});
                   end
-                  
+
                   print_data_in_csv_file_ir_rudics_cts5_RAMSES(ramsesData);
                end
 
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             case 18
                % '*_mpe*.hex'
-               
+
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
                mpeData = decode_apmt_mpe([fileNameInfo{4} fileNameInfo{1}]);
-               
+
                if (~isempty(g_decArgo_outputCsvFileId))
-                  
+
                   for idFile2 = 1:length(fileNameInfo{2})
                      fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; File name; -; %s\n', ...
                         g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                         fileNameInfo{2}{idFile2});
                   end
-                  
+
                   print_data_in_csv_file_ir_rudics_cts5_MPE(mpeData);
                end
 
@@ -992,10 +1065,10 @@ for typeNum = typeOrderList
                   fileNamesForType{idFile});
          end
       end
-      
+
       fileNames(idFileForType) = [];
       fileTypes(idFileForType) = [];
-      
+
       if (isempty(fileNames))
          break
       end
@@ -1008,7 +1081,7 @@ if (~isempty(fileNames))
 end
 
 if (~isempty(g_decArgo_outputCsvFileId))
-   
+
    % print time data in csv file
    print_dates_in_csv_file_ir_rudics_cts5_usea( ...
       timeDataFromApmtTech, apmtCtd, apmtDo, apmtEco, apmtOcr, uvpLpmData, uvpBlackData, ...
@@ -1017,342 +1090,251 @@ end
 
 % output NetCDF data
 if (isempty(g_decArgo_outputCsvFileId))
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % PROF NetCDF data
-   
-   % process profile data from apmt
-   tabDrift = [];
-   tabSurf = [];
-   subSurfaceMeas = [];
-   
-   %%%%%%%%%%%%%%%%%%%%
    if (~isempty(apmtCtd))
-      
+
       % create profiles (as they are transmitted)
-      [tabProfilesCtd, tabDriftCtd, tabSurfCtd, subSurfaceMeas] = ...
+      [tabProfilesCtd, tabDriftCtd, tabSurfCtd, o_subSurfaceMeas] = ...
          process_profile_ir_rudics_cts5_usea_ctd(apmtCtd, apmtTimeFromTech, g_decArgo_gpsData);
-      tabDrift = [tabDrift tabDriftCtd];
-      tabSurf = [tabSurf tabSurfCtd];
-      
+
       % merge profiles (all data from a given sensor together)
       [tabProfilesCtd] = merge_profile_meas_ir_rudics_cts5_usea_ctd(tabProfilesCtd);
-      
+
       % add the vertical sampling scheme from configuration information
       [tabProfilesCtd] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_ctd(tabProfilesCtd);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfilesCtd];
+      o_tabDrift = [o_tabDrift tabDriftCtd];
+      o_tabSurf = [o_tabSurf tabSurfCtd];
    end
-   
-   %%%%%%%%%%%%%%%%%%%%
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    if (~isempty(apmtDo))
-      
+
       % create profiles (as they are transmitted)
       [tabProfilesDo, tabDriftDo, tabSurfDo] = ...
          process_profile_ir_rudics_cts5_usea_do(apmtDo, apmtTimeFromTech, g_decArgo_gpsData);
-      tabDrift = [tabDrift tabDriftDo];
-      tabSurf = [tabSurf tabSurfDo];
-      
+
       % merge profiles (all data from a given sensor together)
       [tabProfilesDo] = merge_profile_meas_ir_rudics_cts5_usea_do(tabProfilesDo);
-      
+
       % add the vertical sampling scheme from configuration information
       [tabProfilesDo] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesDo);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfilesDo];
+      o_tabDrift = [o_tabDrift tabDriftDo];
+      o_tabSurf = [o_tabSurf tabSurfDo];
    end
-   
-   %%%%%%%%%%%%%%%%%%%%
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    if (~isempty(apmtOcr))
-      
+
       % create profiles (as they are transmitted)
       [tabProfilesOcr, tabDriftOcr, tabSurfOcr] = ...
          process_profile_ir_rudics_cts5_usea_ocr(apmtOcr, apmtTimeFromTech, g_decArgo_gpsData);
-      tabDrift = [tabDrift tabDriftOcr];
-      tabSurf = [tabSurf tabSurfOcr];
-            
+
       % merge profiles (all data from a given sensor together)
       [tabProfilesOcr] = merge_profile_meas_ir_rudics_cts5_usea_ocr(tabProfilesOcr);
-      
+
       % add the vertical sampling scheme from configuration information
       [tabProfilesOcr] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesOcr);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfilesOcr];
-   end   
-   
-   %%%%%%%%%%%%%%%%%%%%
+      o_tabDrift = [o_tabDrift tabDriftOcr];
+      o_tabSurf = [o_tabSurf tabSurfOcr];
+   end
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    if (~isempty(apmtEco))
-      
+
       % create profiles (as they are transmitted)
       [tabProfilesEco, tabDriftEco, tabSurfEco] = ...
          process_profile_ir_rudics_cts5_usea_eco(apmtEco, apmtTimeFromTech, g_decArgo_gpsData);
-      tabDrift = [tabDrift tabDriftEco];
-      tabSurf = [tabSurf tabSurfEco];
-      
-      if (~isempty(tabSurfEco))
-         % only OPTODE and OCR sensor surface mesurements are implement in
-         % compute_surface_derived_parameters_ir_rudics_cts5
-         fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface ECO data processing not implemented yet\n', ...
-            g_decArgo_floatNum, ...
-            g_decArgo_cycleNum, ...
-            g_decArgo_cycleNumFloat, ...
-            g_decArgo_patternNumFloat);
-      end
-      
+
       % merge profiles (all data from a given sensor together)
       [tabProfilesEco] = merge_profile_meas_ir_rudics_cts5_usea_eco(tabProfilesEco);
-      
+
       % add the vertical sampling scheme from configuration information
       [tabProfilesEco] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesEco);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfilesEco];
+      o_tabDrift = [o_tabDrift tabDriftEco];
+      o_tabSurf = [o_tabSurf tabSurfEco];
    end
-   
-   %%%%%%%%%%%%%%%%%%%%
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    if (~isempty(apmtSbeph))
-      
+
       % create profiles (as they are transmitted)
       [tabProfilesSbeph, tabDriftSbeph, tabSurfSbeph] = ...
          process_profile_ir_rudics_cts5_usea_sbeph(apmtSbeph, apmtTimeFromTech, g_decArgo_gpsData);
-      tabDrift = [tabDrift tabDriftSbeph];
-      tabSurf = [tabSurf tabSurfSbeph];
-      
-      if (~isempty(tabSurfSbeph))
-         % only OPTODE and OCR sensor surface mesurements are implement in
-         % compute_surface_derived_parameters_ir_rudics_cts5
-         fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface SBEPH data processing not implemented yet\n', ...
-            g_decArgo_floatNum, ...
-            g_decArgo_cycleNum, ...
-            g_decArgo_cycleNumFloat, ...
-            g_decArgo_patternNumFloat);
-      end
-      
+
       % merge profiles (all data from a given sensor together)
       [tabProfilesSbeph] = merge_profile_meas_ir_rudics_cts5_usea_sbeph(tabProfilesSbeph);
-      
+
       % add the vertical sampling scheme from configuration information
       [tabProfilesSbeph] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesSbeph);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfilesSbeph];
+      o_tabDrift = [o_tabDrift tabDriftSbeph];
+      o_tabSurf = [o_tabSurf tabSurfSbeph];
    end
-   
-   %%%%%%%%%%%%%%%%%%%%
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    if (~isempty(apmtCrover))
-      
+
       % create profiles (as they are transmitted)
       [tabProfilesCrover, tabDriftCrover, tabSurfCrover] = ...
          process_profile_ir_rudics_cts5_usea_crover(apmtCrover, apmtTimeFromTech, g_decArgo_gpsData);
-      tabDrift = [tabDrift tabDriftCrover];
-      tabSurf = [tabSurf tabSurfCrover];
-      
-      if (~isempty(tabSurfCrover))
-         % only OPTODE and OCR sensor surface mesurements are implement in
-         % compute_surface_derived_parameters_ir_rudics_cts5
-         fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface CROVER data processing not implemented yet\n', ...
-            g_decArgo_floatNum, ...
-            g_decArgo_cycleNum, ...
-            g_decArgo_cycleNumFloat, ...
-            g_decArgo_patternNumFloat);
-      end
-      
+
       % merge profiles (all data from a given sensor together)
       [tabProfilesCrover] = merge_profile_meas_ir_rudics_cts5_usea_crover(tabProfilesCrover);
-      
+
       % add the vertical sampling scheme from configuration information
       [tabProfilesCrover] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesCrover);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfilesCrover];
+      o_tabDrift = [o_tabDrift tabDriftCrover];
+      o_tabSurf = [o_tabSurf tabSurfCrover];
    end
-   
-   %%%%%%%%%%%%%%%%%%%%
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    if (~isempty(apmtSuna))
-      
+
       % create profiles (as they are transmitted)
       [tabProfilesSuna, tabDriftSuna, tabSurfSuna] = ...
          process_profile_ir_rudics_cts5_usea_suna(apmtSuna, apmtTimeFromTech, g_decArgo_gpsData);
-      tabDrift = [tabDrift tabDriftSuna];
-      tabSurf = [tabSurf tabSurfSuna];
-      
-      if (~isempty(tabSurfSuna))
-         % only OPTODE and OCR sensor surface mesurements are implement in
-         % compute_surface_derived_parameters_ir_rudics_cts5
-         fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface SUNA data processing not implemented yet\n', ...
-            g_decArgo_floatNum, ...
-            g_decArgo_cycleNum, ...
-            g_decArgo_cycleNumFloat, ...
-            g_decArgo_patternNumFloat);
-      end
-      
+
       % merge profiles (all data from a given sensor together)
       [tabProfilesSuna] = merge_profile_meas_ir_rudics_cts5_usea_suna(tabProfilesSuna);
-      
+
       % add the vertical sampling scheme from configuration information
       [tabProfilesSuna] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesSuna);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfilesSuna];
+      o_tabDrift = [o_tabDrift tabDriftSuna];
+      o_tabSurf = [o_tabSurf tabSurfSuna];
    end
-   
-   %%%%%%%%%%%%%%%%%%%%
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    if (~isempty(uvpLpmData))
-      
+
       % create profiles (as they are transmitted)
       [tabProfilesUvpLpm, tabDriftUvpLpm, tabSurfUvpLpm] = ...
          process_profile_ir_rudics_cts5_usea_uvp_lpm(uvpLpmData, apmtTimeFromTech, g_decArgo_gpsData);
-      tabDrift = [tabDrift tabDriftUvpLpm];
-      tabSurf = [tabSurf tabSurfUvpLpm];
-      
-      %       if (~isempty(tabSurfUvpLpm))
-      %          % only OPTODE and OCR sensor surface mesurements are implement in
-      %          % compute_surface_derived_parameters_ir_rudics_cts5
-      %          fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface UVP-LPM data processing not implemented yet\n', ...
-      %             g_decArgo_floatNum, ...
-      %             g_decArgo_cycleNum, ...
-      %             g_decArgo_cycleNumFloat, ...
-      %             g_decArgo_patternNumFloat);
-      %       end
-      
+
       % merge profiles (all data from a given sensor together)
       [tabProfilesUvpLpm] = merge_profile_meas_ir_rudics_cts5_usea_uvp_lpm(tabProfilesUvpLpm);
-      
+
       % add the vertical sampling scheme from configuration information
       [tabProfilesUvpLpm] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesUvpLpm);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfilesUvpLpm];
+      o_tabDrift = [o_tabDrift tabDriftUvpLpm];
+      o_tabSurf = [o_tabSurf tabSurfUvpLpm];
    end
-   
-   %%%%%%%%%%%%%%%%%%%%
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    if (~isempty(uvpBlackData))
-      
+
       % create profiles (as they are transmitted)
       [tabProfilesUvpBlack, tabDriftUvpBlack, tabSurfUvpBlack] = ...
          process_profile_ir_rudics_cts5_usea_uvp_black(uvpBlackData, apmtTimeFromTech, g_decArgo_gpsData);
-      tabDrift = [tabDrift tabDriftUvpBlack];
-      tabSurf = [tabSurf tabSurfUvpBlack];
-      
-      %       if (~isempty(tabSurfUvpBlack))
-      %          % only OPTODE and OCR sensor surface mesurements are implement in
-      %          % compute_surface_derived_parameters_ir_rudics_cts5
-      %          fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface UVP-BLACK data processing not implemented yet\n', ...
-      %             g_decArgo_floatNum, ...
-      %             g_decArgo_cycleNum, ...
-      %             g_decArgo_cycleNumFloat, ...
-      %             g_decArgo_patternNumFloat);
-      %       end
-      
+
       % merge profiles (all data from a given sensor together)
       [tabProfilesUvpBlack] = merge_profile_meas_ir_rudics_cts5_usea_uvp_black(tabProfilesUvpBlack);
-      
+
       % add the vertical sampling scheme from configuration information
       [tabProfilesUvpBlack] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesUvpBlack);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfilesUvpBlack];
+      o_tabDrift = [o_tabDrift tabDriftUvpBlack];
+      o_tabSurf = [o_tabSurf tabSurfUvpBlack];
    end
-   
-   %%%%%%%%%%%%%%%%%%%%
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    if (~isempty(opusLightData))
-      
+
       % create profiles (as they are transmitted)
       [tabProfilesOpusLight, tabDriftOpusLight, tabSurfOpusLight] = ...
          process_profile_ir_rudics_cts5_usea_opus_light(opusLightData, apmtTimeFromTech, g_decArgo_gpsData);
-      tabDrift = [tabDrift tabDriftOpusLight];
-      tabSurf = [tabSurf tabSurfOpusLight];
-      
-      %       if (~isempty(tabSurfOpusLight))
-      %          % only OPTODE and OCR sensor surface mesurements are implement in
-      %          % compute_surface_derived_parameters_ir_rudics_cts5
-      %          fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface OPUS-LIGHT data processing not implemented yet\n', ...
-      %             g_decArgo_floatNum, ...
-      %             g_decArgo_cycleNum, ...
-      %             g_decArgo_cycleNumFloat, ...
-      %             g_decArgo_patternNumFloat);
-      %       end
-      
+
       % merge profiles (all data from a given sensor together)
       [tabProfilesOpusLight] = merge_profile_meas_ir_rudics_cts5_usea_opus_light(tabProfilesOpusLight);
-      
+
       % add the vertical sampling scheme from configuration information
       [tabProfilesOpusLight] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesOpusLight);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfilesOpusLight];
-   end   
-   
-   %%%%%%%%%%%%%%%%%%%%
+      o_tabDrift = [o_tabDrift tabDriftOpusLight];
+      o_tabSurf = [o_tabSurf tabSurfOpusLight];
+   end
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    if (~isempty(opusBlackData))
-      
+
       % create profiles (as they are transmitted)
       [tabProfilesOpusBlack, tabDriftOpusBlack, tabSurfOpusBlack] = ...
          process_profile_ir_rudics_cts5_usea_opus_black(opusBlackData, apmtTimeFromTech, g_decArgo_gpsData);
-      tabDrift = [tabDrift tabDriftOpusBlack];
-      tabSurf = [tabSurf tabSurfOpusBlack];
-      
-      %       if (~isempty(tabSurfOpusBlack))
-      %          % only OPTODE and OCR sensor surface mesurements are implement in
-      %          % compute_surface_derived_parameters_ir_rudics_cts5
-      %          fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface OPUS-BLACK data processing not implemented yet\n', ...
-      %             g_decArgo_floatNum, ...
-      %             g_decArgo_cycleNum, ...
-      %             g_decArgo_cycleNumFloat, ...
-      %             g_decArgo_patternNumFloat);
-      %       end
-      
+
       % merge profiles (all data from a given sensor together)
       [tabProfilesOpusBlack] = merge_profile_meas_ir_rudics_cts5_usea_opus_black(tabProfilesOpusBlack);
-      
+
       % add the vertical sampling scheme from configuration information
       [tabProfilesOpusBlack] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesOpusBlack);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfilesOpusBlack];
+      o_tabDrift = [o_tabDrift tabDriftOpusBlack];
+      o_tabSurf = [o_tabSurf tabSurfOpusBlack];
    end
-   
-   %%%%%%%%%%%%%%%%%%%%
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    if (~isempty(ramsesData))
-      
+
       % create profiles (as they are transmitted)
       [tabProfilesRamses, tabDriftRamses, tabSurfRamses] = ...
          process_profile_ir_rudics_cts5_usea_ramses(ramsesData, apmtTimeFromTech, g_decArgo_gpsData);
-      tabDrift = [tabDrift tabDriftRamses];
-      tabSurf = [tabSurf tabSurfRamses];
-      
-      %       if (~isempty(tabSurfRamses))
-      %          % only OPTODE and OCR sensor surface mesurements are implement in
-      %          % compute_surface_derived_parameters_ir_rudics_cts5
-      %          fprintf('DEC_ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): surface RAMSES data processing not implemented yet\n', ...
-      %             g_decArgo_floatNum, ...
-      %             g_decArgo_cycleNum, ...
-      %             g_decArgo_cycleNumFloat, ...
-      %             g_decArgo_patternNumFloat);
-      %       end
-      
+
       % merge profiles (all data from a given sensor together)
       [tabProfilesRamses] = merge_profile_meas_ir_rudics_cts5_usea_ramses(tabProfilesRamses);
-      
+
       % add the vertical sampling scheme from configuration information
       [tabProfilesRamses] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesRamses);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfilesRamses];
+      o_tabDrift = [o_tabDrift tabDriftRamses];
+      o_tabSurf = [o_tabSurf tabSurfRamses];
    end
-   
-   %%%%%%%%%%%%%%%%%%%%
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    if (~isempty(mpeData))
-      
+
       % create profiles (as they are transmitted)
       [tabProfilesMpe, tabDriftMpe, tabSurfMpe] = ...
          process_profile_ir_rudics_cts5_usea_mpe(mpeData, apmtTimeFromTech, g_decArgo_gpsData);
-      tabDrift = [tabDrift tabDriftMpe];
-      tabSurf = [tabSurf tabSurfMpe];
-            
+
       % merge profiles (all data from a given sensor together)
       [tabProfilesMpe] = merge_profile_meas_ir_rudics_cts5_usea_mpe(tabProfilesMpe);
-      
+
       % add the vertical sampling scheme from configuration information
       [tabProfilesMpe] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesMpe);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfilesMpe];
+      o_tabDrift = [o_tabDrift tabDriftMpe];
+      o_tabSurf = [o_tabSurf tabSurfMpe];
    end
 
-   %%%%%%%%%%%%%%%%%%%%
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
    % compute derived parameters of the profiles
    [o_tabProfiles] = compute_profile_derived_parameters_ir_rudics(o_tabProfiles, a_decoderId);
+
+   % compute derived parameters of the park phase
+   [o_tabDrift] = compute_drift_derived_parameters_ir_rudics(o_tabDrift, a_decoderId);
+
+   % compute derived parameters of the surface phase
+   [o_tabSurf] = compute_surface_derived_parameters_ir_rudics_cts5(o_tabSurf, a_decoderId);
 
    print = 0;
    if (print == 1)
@@ -1374,49 +1356,17 @@ if (isempty(g_decArgo_outputCsvFileId))
          end
       end
    end
-   
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % TRAJ NetCDF file
-   
-   % compute derived parameters of the park phase
-   [tabDrift] = compute_drift_derived_parameters_ir_rudics(tabDrift, a_decoderId);
-   
-   % compute derived parameters of the surface phase
-   [tabSurf] = compute_surface_derived_parameters_ir_rudics_cts5(tabSurf, a_decoderId);
-   
-   % collect trajectory data for TRAJ NetCDF file
-   [tabTrajIndex, tabTrajData] = collect_trajectory_data_cts5_usea( ...
-      o_tabProfiles, tabDrift, tabSurf, trajDataFromApmtTech, subSurfaceMeas);
-   
-   % process trajectory data for TRAJ NetCDF file
-   [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_cts5_usea( ...
-      tabTrajIndex, tabTrajData, a_firstCycleNum);
-   
-   % sort trajectory data structures according to the predefined
-   % measurement code order
-   %    [tabTrajNMeas] = sort_trajectory_data_cyprofnum(tabTrajNMeas, a_decoderId);
-   
-   o_tabTrajNMeas = [o_tabTrajNMeas tabTrajNMeas];
-   o_tabTrajNCycle = [o_tabTrajNCycle tabTrajNCycle];
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % TECH NetCDF file
-   
+
    % collect technical data (and merge Tech and Event technical data)
-   [tabNcTechIndex, tabNcTechVal, tabTechNMeas] = collect_technical_data_cts5_usea(techDataFromApmtTech);
-   
-   if (~isempty(tabNcTechIndex))
-      o_tabNcTechIndex = [o_tabNcTechIndex tabNcTechIndex];
-      o_tabNcTechVal = [o_tabNcTechVal tabNcTechVal];
-   end
-   if (~isempty(tabTechNMeas))
-      o_tabTechNMeas = [o_tabTechNMeas tabTechNMeas];
-   end
-   
+   [o_tabNcTechIndex, o_tabNcTechVal, o_tabTechNMeas] = collect_technical_data_cts5_usea(techDataFromApmtTech);
+
 end
 
-if (~isempty(o_tabProfiles) || ~isempty(o_tabTrajNMeas) || ...
-      ~isempty(o_tabTrajNCycle) || ~isempty(o_tabNcTechIndex) || ...
+if (~isempty(o_tabProfiles) || ~isempty(o_tabDrift) || ...
+      ~isempty(o_tabSurf) || ~isempty(o_tabNcTechIndex) || ...
       ~isempty(o_tabNcTechVal) || ~isempty(o_tabTechNMeas))
    g_decArgo_generateNcFlag = 1;
 end

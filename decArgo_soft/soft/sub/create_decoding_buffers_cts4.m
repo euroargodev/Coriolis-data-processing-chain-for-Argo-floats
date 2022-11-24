@@ -1285,31 +1285,27 @@ end
 
 return
 
-% % ------------------------------------------------------------------------------
-% % Convert packet type number into description string.
-% %
-% % SYNTAX :
-% %  [o_packTypeDesc] = get_pack_type_desc( ...
-% %    a_packType, a_sensorType, a_sensorDataType, a_phaseNum, a_decoderId)
-% %
-% % INPUT PARAMETERS :
-% %   a_packType       : packet type number
-% %   a_sensorType     : packet sensor type number
-% %   a_sensorDataType : packet sensor data type number
-% %   a_phaseNum       : packet phase number
-% %   a_decoderId      : float decoder Id
-% %
-% % OUTPUT PARAMETERS :
-% %   o_packTypeDesc : packet type description
-% %
-% % EXAMPLES :
-% %
-% % SEE ALSO :
-% % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% % ------------------------------------------------------------------------------
-% % RELEASES :
-% %   01/10/2019 - RNU - creation
-% % ------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------
+% Set a new cycle number value in the decoded data structures.
+%
+% SYNTAX :
+%  [o_decodedData] = modify_cycle_num(a_decodedData, a_newCyNum)
+%
+% INPUT PARAMETERS :
+%   a_decodedData : input decoded data
+%   a_newCyNum    : new cycle number to set
+%
+% OUTPUT PARAMETERS :
+%   o_decodedData : output decoded data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/25/2022 - RNU - creation
+% ------------------------------------------------------------------------------
 function [o_decodedData] = modify_cycle_num(a_decodedData, a_newCyNum)
 
 % output parameter initialization

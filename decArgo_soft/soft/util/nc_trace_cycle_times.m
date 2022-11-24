@@ -19,31 +19,63 @@
 % ------------------------------------------------------------------------------
 function nc_trace_cycle_times(varargin)
 
+% to switch between Coriolis and JPR configurations
+CORIOLIS_CONFIGURATION_FLAG = 1;
+
 global g_NTCT_NC_DIR;
 global g_NTCT_NC_DIR_AUX;
 global g_NTCT_PDF_DIR;
+
+if (CORIOLIS_CONFIGURATION_FLAG)
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % CORIOLIS CONFIGURATION - START
+
+   % top directory of NetCDF files to plot (TRAJ and META)
+   g_NTCT_NC_DIR = '/home/coriolis_exp/binlx/co04/co0414/co041402/data/nc/';
+
+   % top directory of NetCDF auxiliary files to plot (TECH_AUX)
+   g_NTCT_NC_DIR_AUX = '/home/coriolis_exp/binlx/co04/co0414/co041402/data/nc/';
+
+   % directory to store pdf output
+   g_NTCT_PDF_DIR = '/home/coriolis_exp/binlx/co04/co0414/co041402/data/pdf/';
+
+   % default list of floats to plot
+   FLOAT_LIST_FILE_NAME = '/home/idmtmp7/vincent/matlab/list/new_iridium.txt';
+   % FLOAT_LIST_FILE_NAME = '/home/idmtmp7/vincent/matlab/list/new_rem.txt';
+
+   % CORIOLIS CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+else
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % JPR CONFIGURATION - START
+
+   % top directory of NetCDF files to plot (TRAJ and META)
+   g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+
+   % top directory of NetCDF auxiliary files to plot (TECH_AUX)
+   g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+
+   % directory to store pdf output
+   g_NTCT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\pdf\';
+
+   % default list of floats to plot
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\cts5_usea.txt';
+
+   % JPR CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+end
+
 global g_NTCT_BATHY;
 global g_NTCT_SURF;
 global g_NTCT_PRINT;
 global g_NTCT_FLOAT_LIST;
 global g_NTCT_FIG_HANDLE;
 global g_NTCT_FLOAT_ID;
-
-% top directory of NetCDF files to plot (TRAJ and META)
-g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-
-% top directory of NetCDF auxiliary files to plot (TECH_AUX)
-g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-
-% directory to store pdf output
-g_NTCT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\pdf\';
-
-% default list of floats to plot
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_arvor_deep_215_216_218_grounded.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_apx_rudics.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\provor_5.76.txt';
+global g_NTCT_PRES_DATA_MODE;
 
 fprintf('Plot management:\n');
 fprintf('   Right Arrow  : next float\n');
@@ -64,6 +96,9 @@ g_NTCT_SURF = 0;
 
 % no pdf generation
 g_NTCT_PRINT = 0;
+
+% choose PRES data mode: 0 for merged PRES and PRES_ADJUSTED, 1 for PRES only
+g_NTCT_PRES_DATA_MODE = 1;
 
 % default values initialization
 init_default_values;
@@ -141,6 +176,7 @@ global g_NTCT_PRINT;
 global g_NTCT_FLOAT_LIST;
 global g_NTCT_FIG_HANDLE;
 global g_NTCT_FLOAT_ID;
+global g_NTCT_PRES_DATA_MODE;
 
 global g_NTCT_cycles;
 global g_NTCT_cycle;
@@ -393,13 +429,15 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
    % merge JULD and JULD_ADJUSTED
    idF = find(juldAdj ~= 999999);
    juld(idF) = juldAdj(idF);
-   juld(find(juld == 999999)) = g_dateDef;
-   
+   juld(juld == 999999) = g_dateDef;
+
    % merge PRES and PRES_ADJUSTED
-   idF = find(presAdj ~= 99999);
-   pres(idF) = presAdj(idF);
-   pres(find(pres == 99999)) = g_presDef;
-   
+   if (g_NTCT_PRES_DATA_MODE == 0)
+      idF = find(presAdj ~= 99999);
+      pres(idF) = presAdj(idF);
+   end
+   pres(pres == 99999) = g_presDef;
+
    % retrieve fixes
    idF = find((juld ~= g_dateDef) & (latitude ~= 99999) & (longitude ~= 99999));
    posJuld = juld(idF);
