@@ -358,7 +358,8 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabSession(id) = sessionNum122 + 11;
          tabBase(id) = 0;
       case 6902849
-         % delayed transmission of second Iridium session of cycle #217, 221
+         % delayed transmission of second Iridium session of cycle #217, 221,
+         % 276
          id = find((tabCyNum == 217) & (tabPackType == 0));
          idForSession = find(tabSession == tabSession(id(1)));
          tabBase(id(1)) = 1;
@@ -368,6 +369,14 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabSession(idForSession(end)+1:end) = tabSession(idForSession(end)+1:end) + 3;
          
          id = find((tabCyNum == 221) & (tabPackType == 0));
+         idForSession = find(tabSession == tabSession(id(1)));
+         tabBase(id(1)) = 1;
+         tabSession(id(1):id(2)-1) = tabSession(id(1):id(2)-1) + 1;
+         tabBase(id(2)) = 1;
+         tabSession(id(2):idForSession(end)) = tabSession(id(2):idForSession(end)) + 2;
+         tabSession(idForSession(end)+1:end) = tabSession(idForSession(end)+1:end) + 3;
+
+         id = find((tabCyNum == 276) & (tabPackType == 0));
          idForSession = find(tabSession == tabSession(id(1)));
          tabBase(id(1)) = 1;
          tabSession(id(1):id(2)-1) = tabSession(id(1):id(2)-1) + 1;
@@ -606,7 +615,8 @@ end
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
       6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771, 7900543, ...
-      6900790, 6901880, 6903229, 6903795, 6903703, 6902802, 6902861, 7900522]))
+      6900790, 6901880, 6903229, 6903795, 6903703, 6902802, 6902861, 7900522, ...
+      6902989]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -727,6 +737,12 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRankByCycle(id) = tabRankByCycle(idF120(1));
          tabRankByDate(id) = tabRankByDate(idF120(1)); 
          tabSession(idF120) = tabSession(idF120(1));
+         idF120 = find(tabCyNum == 120);
+         tabRank(idF120) = tabRank(idF120(1));
+         tabRankByCycle(idF120) = tabRankByCycle(idF120(1));
+         tabRankByDate(idF120) = tabRankByDate(idF120(1)); 
+         tabSession(idF120) = tabSession(idF120(1));
+         tabCompleted(idF120) = 1;
       case 6903229
          % cycle #120 in 2 sessions
          idRef120 = find((tabCyNum == 120) & (tabBase == 1));
@@ -853,6 +869,46 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRankByDate(tabCyNum == 107) = tabRankByDate(id);   
          tabSession(tabCyNum == 107) = tabSession(id);   
          tabCompleted(tabCyNum == 107) = 1;
+      case 6902989
+         % for delayed cycle #115, second Iridium session is also
+         % transmitted, it should be in dedicated buffer
+         id115 = find(tabCyNum == 115);
+         idF = find((tabCyNum == 115) & (tabPackType == 0));
+         id115_2 = idF(2);
+         tabDeep(id115(1):id115_2-1) = 1;
+         tabCompleted(id115(1):id115_2-1) = 1;
+         tabGo(id115(1):id115_2-1) = 1;
+
+         rank115 = tabRank(id115(1));
+         rankByCycle115 = tabRankByCycle(id115(1));
+         idShift = find(tabRank > rank115);
+         tabRank(idShift) = tabRank(idShift) + 1;
+         idShift = find(tabRankByCycle > rankByCycle115);
+         tabRankByCycle(idShift) = tabRankByCycle(idShift) + 1;
+         tabRank(id115_2:id115(end)) = rank115 + 1;
+         tabRankByCycle(id115_2:id115(end)) = rankByCycle115 + 1;
+         tabGo(id115_2:id115(end)) = 1;
+         tabCompleted(id115_2:id115(end)) = 1;
+
+         % for delayed cycle #116, second Iridium session is also
+         % transmitted, it should be in dedicated buffer
+         id116 = find(tabCyNum == 116);
+         idF = find((tabCyNum == 116) & (tabPackType == 0));
+         id116_2 = idF(2);
+         tabDeep(id116(1):id116_2-1) = 1;
+         tabCompleted(id116(1):id116_2-1) = 1;
+         tabGo(id116(1):id116_2-1) = 1;
+
+         rank116 = tabRank(id116(1));
+         rankByCycle116 = tabRankByCycle(id116(1));
+         idShift = find(tabRank > rank116);
+         tabRank(idShift) = tabRank(idShift) + 1;
+         idShift = find(tabRankByCycle > rankByCycle116);
+         tabRankByCycle(idShift) = tabRankByCycle(idShift) + 1;
+         tabRank(id116_2:id116(end)) = rank116 + 1;
+         tabRankByCycle(id116_2:id116(end)) = rankByCycle116 + 1;
+         tabGo(id116_2:id116(end)) = 1;
+         tabCompleted(id116_2:id116(end)) = 1;
    end
 
    % UNCOMMENT TO SEE UPDATED INFORMATION ON BUFFERS
@@ -1132,21 +1188,21 @@ idPackAsc = find((a_tabPackType(a_idForCheck) == 3) | (a_tabPackType(a_idForChec
 if ((length(idPackTech1) > 1) || (length(idPackTech2) > 1) || (length(idPackProg) > 1))
    if (length(idPackTech1) > 1)
       % specific
-      if (~ismember(g_decArgo_floatNum, [6902802, 6902861]))
+      if (~ismember(g_decArgo_floatNum, [6902802, 6902861, 6902989]))
          fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#1 packet in the buffer\n', ...
             g_decArgo_floatNum, a_cycleNum, length(idPackTech1));
       end
    end
    if (length(idPackTech2) > 1)
       % specific
-      if (~ismember(g_decArgo_floatNum, [6902802, 6902861]))
+      if (~ismember(g_decArgo_floatNum, [6902802, 6902861, 6902989]))
          fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Tech#2 packet in the buffer\n', ...
             g_decArgo_floatNum, a_cycleNum, length(idPackTech2));
       end
    end
    if (length(idPackProg) > 1)
       % specific
-      if (~ismember(g_decArgo_floatNum, [6902802, 6902861]))
+      if (~ismember(g_decArgo_floatNum, [6902802, 6902861, 6902989]))
          fprintf('ERROR: Float #%d Cycle #%3d : multiple (%d) Prog#1 packet in the buffer\n', ...
             g_decArgo_floatNum, a_cycleNum, length(idPackProg));
       end
