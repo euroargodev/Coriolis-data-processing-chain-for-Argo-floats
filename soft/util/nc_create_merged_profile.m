@@ -36,13 +36,13 @@ g_cocm_netCDF4FlagForMultiProf = 1;
 FLOAT_LIST_FILE_NAME = '';
 
 % top directory of input NetCDF files
-DIR_INPUT_NC_FILES = 'H:\archive_201801\coriolis\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\SYNTHETIC_PROFILE\';
+% DIR_INPUT_NC_FILES = 'H:\archive_201801\coriolis\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\SYNTHETIC_PROFILE\';
 
 % top directory of output NetCDF files
-% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF_classic\';
-DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF_netcdf4_classic\';
+% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_M-PROF_netcdf4_classic\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -105,7 +105,16 @@ if (nargin == 0)
    end
 else
    % floats to process come from input parameters
-   floatList = cell2mat(varargin);
+   if (iscellstr(varargin))
+      if (nargin == 1)
+         floatList = str2double(cell2mat(varargin));
+      else
+         fprintf('ERROR: Inconsistent input parameter\n');
+         errorFlag = 1;
+      end
+   else
+      floatList = cell2mat(varargin);
+   end
 end
 
 % create and start log file recording
