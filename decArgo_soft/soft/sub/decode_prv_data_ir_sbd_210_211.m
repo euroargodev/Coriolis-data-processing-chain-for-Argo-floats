@@ -238,7 +238,8 @@ for idMes = 1:size(a_tabData, 1)
             % orientation bytes are never updated (always set to 0)
             % we use the Iridium location to set the sign of the lat/lon
             idF = find(([g_decArgo_iridiumMailData.timeOfSessionJuld] >= min(a_tabDataDates)) & ...
-               ([g_decArgo_iridiumMailData.timeOfSessionJuld] <= max(a_tabDataDates)));
+               ([g_decArgo_iridiumMailData.timeOfSessionJuld] <= max(a_tabDataDates)) & ...
+               ([g_decArgo_iridiumMailData.cepRadius] ~= 0));
             if (isempty(idF))
                fprintf('ERROR: Float #%d: Unable to retrieve associated Iridium file => GPS location orientation can be erroneous\n', ...
                   g_decArgo_floatNum);

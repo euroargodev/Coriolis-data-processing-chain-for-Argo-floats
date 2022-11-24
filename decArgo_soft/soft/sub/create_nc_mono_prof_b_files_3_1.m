@@ -1850,6 +1850,7 @@ for idProf = 1:length(tabProfiles)
                   paramEquation = '';
                   paramCoefficient = '';
                   paramComment = '';
+                  paramDate = '';
                   if (prof.direction == 'A')
                      direction = 2;
                   else
@@ -1863,18 +1864,23 @@ for idProf = 1:length(tabProfiles)
                      paramEquation = paramAdjInfo{idF, 3};
                      paramCoefficient = paramAdjInfo{idF, 4};
                      paramComment = paramAdjInfo{idF, 5};
+                     if (size(paramAdjInfo, 2) > 5)
+                        paramDate = paramAdjInfo{idF, 6};
+                     end
                   end
                   
-                  if (isempty(ncCreationDate))
-                     date = currentDate;
-                  else
-                     date = ncCreationDate;
+                  if (isempty(paramDate))
+                     if (isempty(ncCreationDate))
+                        paramDate = currentDate;
+                     else
+                        paramDate = ncCreationDate;
+                     end
                   end
                   tabParam = decAdjustedParamNameList(idDecAdjParam);
                   tabEquation = {{paramEquation}};
                   tabCoefficient = {{paramCoefficient}};
                   tabComment = {{paramComment}};
-                  tabDate = {{date}};
+                  tabDate = {{paramDate}};
                   
                   % store calibration information for this profile
                   profCalibInfo = [];
@@ -1892,20 +1898,20 @@ for idProf = 1:length(tabProfiles)
             if (~isempty(find(strcmp({prof.paramList.name}, 'PRES') == 1, 1)))
                
                comment = '';
-               date = '';
+               paramDate = '';
                if (adjustedProfilesList(idP) == 1)
                   comment = 'Not applicable';
                   if (isempty(ncCreationDate))
-                     date = currentDate;
+                     paramDate = currentDate;
                   else
-                     date = ncCreationDate;
+                     paramDate = ncCreationDate;
                   end
                end
                tabParam = {'PRES'};
                tabEquation = {{comment}};
                tabCoefficient = {{comment}};
                tabComment = {{'Adjusted values are provided in the core profile file'}};
-               tabDate = {{date}};
+               tabDate = {{paramDate}};
                
                % store calibration information for this profile
                profCalibInfo = [];

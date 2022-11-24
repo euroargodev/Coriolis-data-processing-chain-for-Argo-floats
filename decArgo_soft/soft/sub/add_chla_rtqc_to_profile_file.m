@@ -11,7 +11,8 @@
 %    a_darkChla, a_scaleChla, a_lastDarkChla, ...
 %    a_profPres, a_profPresQc, a_presDataFillValue, ...
 %    a_profTemp, a_profTempQc, a_tempDataFillValue, ...
-%    a_profPsal, a_profPsalQc, a_psalDataFillValue)
+%    a_profPsal, a_profPsalQc, a_psalDataFillValue, ...
+%    a_lon, a_lat)
 %
 % INPUT PARAMETERS :
 %   a_floatNum                  : float WMO number
@@ -43,6 +44,8 @@
 %   a_profPsal                  : salinities of the CTD profile
 %   a_profPsalQc                : salinity Qcs of the CTD profile
 %   a_psalDataFillValue         : fill value of the PSAL parameter
+%   a_lon                       : longitude of the profile
+%   a_lat                       : latitude of the profile
 %
 % OUTPUT PARAMETERS :
 %   o_profChlaQc    : Qcs of the CHLA parameter profile
@@ -67,7 +70,8 @@ function [o_profChlaQc, o_profChlaAdj, o_profChlaAdjQc, o_chlaAdjInfo] = ...
    a_darkChla, a_scaleChla, a_lastDarkChla, ...
    a_profPres, a_profPresQc, a_presDataFillValue, ...
    a_profTemp, a_profTempQc, a_tempDataFillValue, ...
-   a_profPsal, a_profPsalQc, a_psalDataFillValue)
+   a_profPsal, a_profPsalQc, a_psalDataFillValue, ...
+   a_lon, a_lat)
 
 % output parameters initialization
 o_profChlaQc = [];
@@ -154,12 +158,10 @@ if (~isempty(idNoDefAndGood))
       
       % compute potential density around 10 m
       [~, idMin] = min(abs(profPres-10));
-      potTemp = tetai(profPres(idMin), profTemp(idMin), profPsal(idMin), 0);
-      [~, sigma10] = swstat90(profPsal(idMin), potTemp, 0);
+      sigma10 = potential_density_gsw(profPres(idMin), profTemp(idMin), profPsal(idMin), 0, a_lon, a_lat);    
       
       % compute potential temperature and potential density
-      potTemp = tetai(profPres, profTemp, profPsal, 0);
-      [~, sigma] = swstat90(profPsal, potTemp, 0);
+      sigma = potential_density_gsw(profPres, profTemp, profPsal, 0, a_lon, a_lat)';
       
       idF = find((sigma - sigma10) > MLD_LIMIT);
       if (~isempty(idF))

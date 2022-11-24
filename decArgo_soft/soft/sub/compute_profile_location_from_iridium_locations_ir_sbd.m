@@ -43,25 +43,14 @@ o_lastCycleFlag = [];
 
 
 % process the contents of the Iridium mail associated to the current cycle
-idFCyNum = find([a_iridiumMailData.cycleNumber] == a_cycleNumber);
+idFCyNum = find(([a_iridiumMailData.cycleNumber] == a_cycleNumber) & ...
+   ([a_iridiumMailData.cepRadius] ~= 0));
 if (~isempty(idFCyNum))
    timeList = [a_iridiumMailData(idFCyNum).timeOfSessionJuld];
    latList = [a_iridiumMailData(idFCyNum).unitLocationLat];
    lonList = [a_iridiumMailData(idFCyNum).unitLocationLon];
    radiusList = [a_iridiumMailData(idFCyNum).cepRadius];
-   
-   % CEP Radius is initialized to 0 (so that the Iridium location is not
-   % considered if not present in the mail; Ex: co_20190527T062249Z_300234065420780_000939_000000_10565.txt)
-   % note also that NOVA/DOVA Iridium data (recieved from Paul Lane in CSV
-   % files) have CEP Radius set to 0
-   idDel = find(radiusList == 0);
-   if (~isempty(idDel))
-      timeList(idDel) = [];
-      latList(idDel) = [];
-      lonList(idDel) = [];
-      radiusList(idDel) = [];
-   end
-   
+      
    % longitudes must be in the [-180, 180[ interval
    % (see cycle #18 of float #6903190)
    idToShift = find(lonList >= 180);

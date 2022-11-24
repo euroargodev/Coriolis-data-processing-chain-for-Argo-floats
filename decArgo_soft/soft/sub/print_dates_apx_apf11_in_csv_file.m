@@ -322,6 +322,23 @@ if (~isempty(a_cycleTimeData))
       allTabLabel = [allTabLabel {'CONTINUOUS_PROFILE_END_DATE'}];
       allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
    end
+   if (~isempty(a_cycleTimeData.ascentAbortDate))
+      allTabDate = [allTabDate a_cycleTimeData.ascentAbortDate];
+      allTabDateAdj = [allTabDateAdj a_cycleTimeData.ascentAbortAdjDate];
+      if (isempty(a_cycleTimeData.ascentAbortAdjDate))
+         allTabDateAdj = [allTabDateAdj g_decArgo_dateDef];
+      end
+      allTabPres = [allTabPres a_cycleTimeData.ascentAbortPres];
+      if (isempty(a_cycleTimeData.ascentAbortPres))
+         allTabPres = [allTabPres g_decArgo_presDef];
+      end
+      allTabPresAdj = [allTabPresAdj a_cycleTimeData.ascentAbortAdjPres];
+      if (isempty(a_cycleTimeData.ascentAbortAdjPres))
+         allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
+      end
+      allTabLabel = [allTabLabel {'ASCENT_ABORT_DATE (system_log)'}];
+      allTabCyNum = [allTabCyNum g_decArgo_cycleNum];
+   end
    if (~isempty(a_cycleTimeData.ascentEndDateSci))
       allTabDate = [allTabDate a_cycleTimeData.ascentEndDateSci];
       allTabDateAdj = [allTabDateAdj a_cycleTimeData.ascentEndAdjDateSci];

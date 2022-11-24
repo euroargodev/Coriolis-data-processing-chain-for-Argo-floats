@@ -64,8 +64,14 @@ global g_decArgo_applyRtqc;
 % Argos (1), Iridium RUDICS (2), Iridium SBD (3) or Iridium SBD2 (4) float
 global g_decArgo_floatTransType;
 
+% array to store surface data of Argos floats
+global g_decArgo_floatSurfData;
+
 % array to store GPS data
 global g_decArgo_gpsData;
+
+% array to store Iridium mail contents
+global g_decArgo_iridiumMailData;
 
 % global default values
 global g_decArgo_dateDef;
@@ -76,6 +82,11 @@ global g_decArgo_virtualBuff;
 g_decArgo_virtualBuff = 1;
 global g_decArgo_spoolFileList;
 global g_decArgo_bufFileList;
+
+% float launch information
+global g_decArgo_floatLaunchDate;
+global g_decArgo_floatLaunchLon;
+global g_decArgo_floatLaunchLat;
 
 
 % get floats information
@@ -90,8 +101,17 @@ end
 nbFloats = length(a_floatList);
 for idFloat = 1:nbFloats
    
+   % these 3 global variables need to be initialized for each float
+   % (even if not used, they are checked in 
+   g_decArgo_floatSurfData = [];
+   g_decArgo_gpsData = [];
+   g_decArgo_iridiumMailData = [];
+   
    g_decArgo_spoolFileList = [];
    g_decArgo_bufFileList = [];
+   g_decArgo_floatLaunchDate = '';
+   g_decArgo_floatLaunchLon = '';
+   g_decArgo_floatLaunchLat = '';
 
    floatNum = a_floatList(idFloat);
    
@@ -120,6 +140,10 @@ for idFloat = 1:nbFloats
       floatEndDate = listEndDate(idF);
       floatDmFlag = listDmFlag(idF);
       
+      g_decArgo_floatLaunchDate = floatLaunchDate;
+      g_decArgo_floatLaunchLon = floatLaunchLon;
+      g_decArgo_floatLaunchLat = floatLaunchLat;
+      
       %       if (floatEndDate == g_decArgo_dateDef)
       %          if ((g_decArgo_floatTransType == 3) || (g_decArgo_floatTransType == 4))
       %
@@ -147,6 +171,10 @@ for idFloat = 1:nbFloats
          fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
          continue
       end
+      
+      g_decArgo_floatLaunchDate = floatLaunchDate;
+      g_decArgo_floatLaunchLon = floatLaunchLon;
+      g_decArgo_floatLaunchLat = floatLaunchLat;
    end
    
    % check that it is a PROVOR float
@@ -188,14 +216,14 @@ for idFloat = 1:nbFloats
       
       % create the float surface data structure used to compute profile
       % time and location
-      floatSurfData = get_float_surf_data_init_struct;
+      g_decArgo_floatSurfData = get_float_surf_data_init_struct;
       
       % add launch information to the surface data structure
-      floatSurfData.launchDate = floatLaunchDate;
-      floatSurfData.launchLon = floatLaunchLon;
-      floatSurfData.launchLat = floatLaunchLat;
+      g_decArgo_floatSurfData.launchDate = floatLaunchDate;
+      g_decArgo_floatSurfData.launchLon = floatLaunchLon;
+      g_decArgo_floatSurfData.launchLat = floatLaunchLat;
       
-      floatSurfData.cycleDuration = double(floatCycleTime);
+      g_decArgo_floatSurfData.cycleDuration = double(floatCycleTime);
       
       [tabProfiles, ...
          tabTrajNMeas, tabTrajNCycle, ...
@@ -204,14 +232,13 @@ for idFloat = 1:nbFloats
          floatNum, floatCycleList, floatExcludedCycleList, ...
          floatDecId, str2num(floatArgosId), floatFrameLen, ...
          floatCycleTime, floatDriftSamplingPeriod, ...
-         floatDelay, floatRefDay, floatSurfData, floatEndDate);
+         floatDelay, floatRefDay, floatEndDate);
       
    elseif (g_decArgo_floatTransType == 2)
       
       % Iridium RUDICS floats
       
       % update GPS data global variable
-      g_decArgo_gpsData = [];
       if (floatLaunchLon ~= g_decArgo_argosLonDef)
          g_decArgo_gpsData{1} = -1;
          g_decArgo_gpsData{2} = -1;
@@ -262,7 +289,6 @@ for idFloat = 1:nbFloats
       % Iridium SBD floats
       
       % update GPS data global variable
-      g_decArgo_gpsData = [];
       if (floatLaunchLon ~= g_decArgo_argosLonDef)
          g_decArgo_gpsData{1} = -1;
          g_decArgo_gpsData{2} = -1;
@@ -311,7 +337,6 @@ for idFloat = 1:nbFloats
       % Iridium SBD ProvBioII floats
       
       % update GPS data global variable
-      g_decArgo_gpsData = [];
       if (floatLaunchLon ~= g_decArgo_argosLonDef)
          g_decArgo_gpsData{1} = -1;
          g_decArgo_gpsData{2} = -1;

@@ -130,7 +130,6 @@ global g_decArgo_rsyncLogFileUsedList;
 
 % array to store Iridium mail contents
 global g_decArgo_iridiumMailData;
-g_decArgo_iridiumMailData = [];
 
 
 REPROCESS = 1; % to skip .log and .msg generation step (in debug mode)

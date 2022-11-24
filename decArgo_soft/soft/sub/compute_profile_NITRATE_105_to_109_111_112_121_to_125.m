@@ -262,12 +262,14 @@ if (~isempty(idNoDef))
    
    % Equation #6
    % compute potential temperature and potential density
-   tpot = tetai(ctdData(:, 1), ctdData(:, 2), ctdData(:, 3), 0);
-   [null, sigma0] = swstat90(ctdData(:, 3), tpot, 0);
-   rho = (sigma0+1000)/1000;
+   [measLon, measLat] = get_meas_location(a_profSuna.cycleNumber, a_profSuna.profileNumber, a_profSuna);
+   rho = potential_density_gsw(ctdData(:, 1), ctdData(:, 2), ctdData(:, 3), 0, measLon, measLat);
+   rho = rho/1000;
    
    % compute NITRATE data (units convertion: micromol/L to micromol/kg)
-   o_NITRATE(idNoDef) = tabMolarNitrate ./ rho;
+   nitrateValues = tabMolarNitrate ./ rho;
+   idNoNan = find(~isnan(nitrateValues));
+   o_NITRATE(idNoDef(idNoNan)) = nitrateValues(idNoNan);
    o_rmsError(idNoDef) = tabRmsError;
 
    % replace complex values with fillValue (ex: 6901865 #34)
@@ -347,9 +349,9 @@ if (0)
       fprintf(fidOut, 'PIXEL BEGIN; %g\n', pixelBegin);
       fprintf(fidOut, 'PIXEL END; %g\n', pixelEnd);
       
-      tpot = tetai(a_ctdData(:, 1), a_ctdData(:, 2), a_ctdData(:, 3), 0);
-      [null, sigma0] = swstat90(a_ctdData(:, 3), tpot, 0);
-      rhoOri = (sigma0+1000)/1000;
+      [measLon, measLat] = get_meas_location(a_profSuna.cycleNumber, a_profSuna.profileNumber, a_profSuna);
+      rhoOri = potential_density_gsw(a_ctdData(:, 1), a_ctdData(:, 2), a_ctdData(:, 3), 0, measLon, measLat);
+      rhoOri = rhoOri/1000;
       
       fprintf(fidOut, 'CTD DATA\n');
       fprintf(fidOut, 'PRES; TEMP; PSAL; RHO\n');

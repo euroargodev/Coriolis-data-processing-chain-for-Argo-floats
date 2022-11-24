@@ -113,7 +113,6 @@ global g_decArgo_gpsData;
 
 % array to store Iridium mail contents
 global g_decArgo_iridiumMailData;
-g_decArgo_iridiumMailData = [];
 
 % already processed rsync log information
 global g_decArgo_rsyncLogFileUnderProcessList;

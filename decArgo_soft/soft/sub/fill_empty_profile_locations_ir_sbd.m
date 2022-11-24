@@ -39,10 +39,6 @@ global g_decArgo_qcStrInterpolated;
 global g_decArgo_dateDef;
 global g_decArgo_argosLonDef;
 
-% maximum time difference (in days) between 2 GPS locations used to replace
-% Iridium profile locations by interpolated GPS profile locations
-global g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc;
-
 
 % update GPS position QC information if needed
 if (any((a_gpsData{1} ~= -1) & (a_gpsData{7} == 0)))
@@ -61,8 +57,7 @@ gpsLocQc = gpsData{7};
 for idProf = 1:length(a_tabProfiles)
    profile = a_tabProfiles(idProf);
    if ((profile.date ~= g_decArgo_dateDef) && ...
-         ((profile.locationLon == g_decArgo_argosLonDef) || ...
-         (profile.iridiumLocation == 1)))
+         (profile.locationLon == g_decArgo_argosLonDef))
 
       prevLocDate = g_decArgo_dateDef;
       nextLocDate = g_decArgo_dateDef;
@@ -89,9 +84,7 @@ for idProf = 1:length(a_tabProfiles)
       end
       
       % interpolate between the 2 locations
-      if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef) && ...
-            ((nextLocDate-prevLocDate) <= g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc))
-%             (((nextLocDate-prevLocDate) <= g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc) || (profile.locationQc == '2')))
+      if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
          
          % interpolate the locations
          [interpLocLon, interpLocLat] = interpolate_between_2_locations(...

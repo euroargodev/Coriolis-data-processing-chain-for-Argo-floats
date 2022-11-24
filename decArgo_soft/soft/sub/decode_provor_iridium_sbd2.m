@@ -137,7 +137,6 @@ g_decArgo_noDataFlag = 0;
 
 % array to store Iridium mail contents
 global g_decArgo_iridiumMailData;
-g_decArgo_iridiumMailData = [];
 
 % array to store ko sensor states
 global g_decArgo_koSensorState;

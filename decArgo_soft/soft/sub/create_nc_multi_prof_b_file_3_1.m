@@ -1008,7 +1008,7 @@ if (nbProfParam > 0)
       dbAdjustedParamNameList = []; % for RT adjustments stored in the DB
       decAdjustedParamIdList = []; % for RT adjustments performed by the decoder
       decAdjustedParamNameList = []; % for RT adjustments performed by the decoder
-      specificAdjParamList = [{'CHLA'} {'NITRATE'}];
+      specificAdjParamList = [{'CHLA'} {'NITRATE'} {'DOXY'}];
       specificAdjParamFlag = zeros(size(specificAdjParamList));
       for idParam = 1:length(parameterList)
          
@@ -1141,6 +1141,13 @@ if (nbProfParam > 0)
                               paramAdjDataQcStr = repmat(g_decArgo_qcStrDef, size(paramAdjData, 1), 1);
                               paramAdjDataQcStr(find(paramAdjData ~= profParam.fillValue)) = g_decArgo_qcStrNoQc;
                               netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjData)]), paramAdjDataQcStr(measIds));
+                              
+                              if (~isempty(prof.dataAdjError))
+                                 paramAdjDataError = prof.dataAdjError(:, idParam);
+                                 if (any(paramAdjDataError ~= profParam.fillValue))
+                                    netcdf.putVar(fCdf, profParamAdjErrVarId, fliplr([profPos 0]), fliplr([1 length(paramAdjDataError)]), paramAdjDataError(measIds));
+                                 end
+                              end
                            end
                         end
                      end
@@ -1287,6 +1294,13 @@ if (nbProfParam > 0)
                                  end
                               end
                               netcdf.putVar(fCdf, profParamAdjQcVarId, fliplr([profPos 0]), fliplr([1 size(paramAdjData, 1)]), paramAdjDataQcStr(measIds));
+                              
+                              if (~isempty(prof.dataAdjError))
+                                 paramAdjDataError = prof.dataAdjError(:, firstCol:lastCol);
+                                 if (any(paramAdjDataError ~= profParam.fillValue))
+                                    netcdf.putVar(fCdf, profParamAdjErrVarId, fliplr([profPos 0 0]), fliplr([1 size(paramAdjDataError)]), paramAdjDataError(measIds, :)');
+                                 end
+                              end
                            end
                         end
                      end
@@ -1299,7 +1313,7 @@ if (nbProfParam > 0)
       % for RT DB adjustments:
       % - set DATA_MODE and PARAMETER_DATA_MODE
       % - retrieve SCIENTIFIC_CALIB_* from DB (meta.json file)
-      specificAdjParamList = [{'CHLA'} {'NITRATE'}];
+      specificAdjParamList = [{'CHLA'} {'NITRATE'} {'DOXY'}];
       specificAdjParamFlag = zeros(size(specificAdjParamList));
       if (adjustedProfilesList(idP) == 1)
          netcdf.putVar(fCdf, dataModeVarId, profPos, 1, 'A');
@@ -1458,6 +1472,7 @@ if (nbProfParam > 0)
             paramEquation = '';
             paramCoefficient = '';
             paramComment = '';
+            paramDate = '';
             if (prof.direction == 'A')
                direction = 2;
             else
@@ -1471,18 +1486,23 @@ if (nbProfParam > 0)
                paramEquation = paramAdjInfo{idF, 3};
                paramCoefficient = paramAdjInfo{idF, 4};
                paramComment = paramAdjInfo{idF, 5};
+               if (size(paramAdjInfo, 2) > 5)
+                  paramDate = paramAdjInfo{idF, 6};
+               end
             end
             
-            if (isempty(ncCreationDate))
-               date = currentDate;
-            else
-               date = ncCreationDate;
+            if (isempty(paramDate))
+               if (isempty(ncCreationDate))
+                  paramDate = currentDate;
+               else
+                  paramDate = ncCreationDate;
+               end
             end
             tabParam = decAdjustedParamNameList(idDecAdjParam);
             tabEquation = {{paramEquation}};
             tabCoefficient = {{paramCoefficient}};
             tabComment = {{paramComment}};
-            tabDate = {{date}};
+            tabDate = {{paramDate}};
             
             % store calibration information for this profile
             profCalibInfo = [];
@@ -1500,20 +1520,20 @@ if (nbProfParam > 0)
       if (~isempty(find(strcmp({prof.paramList.name}, 'PRES') == 1, 1)))
          
          comment = '';
-         date = '';
+         paramDate = '';
          if (adjustedProfilesList(idP) == 1)
             comment = 'Not applicable';
             if (isempty(ncCreationDate))
-               date = currentDate;
+               paramDate = currentDate;
             else
-               date = ncCreationDate;
+               paramDate = ncCreationDate;
             end
          end
          tabParam = {'PRES'};
          tabEquation = {{comment}};
          tabCoefficient = {{comment}};
          tabComment = {{'Adjusted values are provided in the core profile file'}};
-         tabDate = {{date}};
+         tabDate = {{paramDate}};
          
          % store calibration information for this profile
          profCalibInfo = [];

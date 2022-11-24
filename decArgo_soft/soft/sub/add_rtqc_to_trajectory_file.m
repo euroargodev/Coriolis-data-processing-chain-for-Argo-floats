@@ -98,6 +98,9 @@
 %   09/23/2019 - RNU - V 2.7: Added "Global range test" for DOWN_IRRADIANCE380,
 %                             DOWN_IRRADIANCE412, DOWN_IRRADIANCE443, 
 %                             DOWN_IRRADIANCE490 and DOWNWELLING_PAR.
+%   02/25/2020 - RNU - V 2.8: Updated to cope with version 3.3 of core Argo
+%                             Quality Control Manual:
+%                              - Test 6: Global range test modified (for PRES).
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -136,7 +139,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '2.7';
+g_decArgo_addRtqcToTrajVersion = '2.8';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -1055,8 +1058,8 @@ if (testFlagList(6) == 1)
       end
       
       paramTestMinMax = [ ...
-         {-5} {''}; ... % PRES
-         {-5} {''}; ... % PRES2
+         {''} {''}; ... % PRES => specific: if PRES < –5dbar, then PRES_QC = '4', TEMP_QC = '4', PSAL_QC = '4' elseif –5dbar <= PRES <= –2.4dbar, then PRES_QC = '3', TEMP_QC = '3', PSAL_QC = '3'.
+         {''} {''}; ... % PRES2 => specific: if PRES < –5dbar, then PRES_QC = '4', TEMP_QC = '4', PSAL_QC = '4' elseif –5dbar <= PRES <= –2.4dbar, then PRES_QC = '3', TEMP_QC = '3', PSAL_QC = '3'.
          {-2.5} {40}; ... % TEMP
          {-2.5} {40}; ... % TEMP2
          {-2.5} {40}; ... % TEMP_DOXY
@@ -1089,30 +1092,117 @@ if (testFlagList(6) == 1)
             idNoDef = find(data ~= paramFillValue);
             if (~isempty(idNoDef))
                
-               % initialize Qc flag
-               dataQc(idNoDef) = set_qc(dataQc(idNoDef), g_decArgo_qcStrGood);
-               eval([ncTrajParamXDataQcList{idParam} ' = dataQc;']);
-               
-               % apply the test
-               paramTestMin = paramTestMinMax{id, 1};
-               paramTestMax = paramTestMinMax{id, 2};
-               if (~isempty(paramTestMax))
-                  idToFlag = find((data(idNoDef) < paramTestMin) | ...
-                     (data(idNoDef) > paramTestMax));
-               else
-                  idToFlag = find(data(idNoDef) < paramTestMin);
-               end
-               if (~isempty(idToFlag))
-                  flagValue = g_decArgo_qcStrBad;
-                  if (strncmp(paramTestList{id}, 'BBP', length('BBP')))
-                     flagValue = g_decArgo_qcStrCorrectable;
-                  end
-                  dataQc(idNoDef(idToFlag)) = set_qc(dataQc(idNoDef(idToFlag)), flagValue);
+               if (~strncmp(paramTestList{id}, 'PRES', length('PRES')))
+                  % initialize Qc flag
+                  dataQc(idNoDef) = set_qc(dataQc(idNoDef), g_decArgo_qcStrGood);
                   eval([ncTrajParamXDataQcList{idParam} ' = dataQc;']);
                   
-                  testFailedList(6) = 1;
+                  % apply the test
+                  paramTestMin = paramTestMinMax{id, 1};
+                  paramTestMax = paramTestMinMax{id, 2};
+                  if (~isempty(paramTestMax))
+                     idToFlag = find((data(idNoDef) < paramTestMin) | ...
+                        (data(idNoDef) > paramTestMax));
+                  else
+                     idToFlag = find(data(idNoDef) < paramTestMin);
+                  end
+                  if (~isempty(idToFlag))
+                     flagValue = g_decArgo_qcStrBad;
+                     if (strncmp(paramTestList{id}, 'BBP', length('BBP')))
+                        flagValue = g_decArgo_qcStrCorrectable;
+                     end
+                     dataQc(idNoDef(idToFlag)) = set_qc(dataQc(idNoDef(idToFlag)), flagValue);
+                     eval([ncTrajParamXDataQcList{idParam} ' = dataQc;']);
+                     
+                     testFailedList(6) = 1;
+                  end
+                  testDoneList(6) = 1;
+               else
+                  % specific to PRES parameter
+                  idPres = idParam;
+                  idPresNoDef = idNoDef;
+                  presData = data;
+                  presDataQc = dataQc;
+                  testDoneList(6) = 1;
+
+                  tempData = [];
+                  psalData = [];
+                  if (strncmp(paramTestList{id}, 'PRES2', length('PRES2')))
+                     if (idD == 1)
+                        idTemp = find(strcmp('TEMP2', ncTrajParamXNameList) == 1, 1);
+                        idPsal = find(strcmp('PSAL2', ncTrajParamXNameList) == 1, 1);
+                     else
+                        idTemp = find(strcmp('TEMP2_ADJUSTED', ncTrajParamXNameList) == 1, 1);
+                        idPsal = find(strcmp('PSAL2_ADJUSTED', ncTrajParamXNameList) == 1, 1);
+                     end
+                  else
+                     if (idD == 1)
+                        idTemp = find(strcmp('TEMP', ncTrajParamXNameList) == 1, 1);
+                        idPsal = find(strcmp('PSAL', ncTrajParamXNameList) == 1, 1);
+                     else
+                        idTemp = find(strcmp('TEMP_ADJUSTED', ncTrajParamXNameList) == 1, 1);
+                        idPsal = find(strcmp('PSAL_ADJUSTED', ncTrajParamXNameList) == 1, 1);
+                     end
+                  end
+
+                  if (~isempty(idTemp))
+                     tempData = eval(ncTrajParamXDataList{idTemp});
+                     tempDataQc = eval(ncTrajParamXDataQcList{idTemp});
+                     tempDataFillValue = ncTrajParamXFillValueList{idTemp};
+                  end
+                  
+                  if (~isempty(idPsal))
+                     psalData = eval(ncTrajParamXDataList{idPsal});
+                     psalDataQc = eval(ncTrajParamXDataQcList{idPsal});
+                     psalDataFillValue = ncTrajParamXFillValueList{idPsal};
+                  end
+                  
+                  % initialize Qc flag
+                  presDataQc(idPresNoDef) = set_qc(presDataQc(idPresNoDef), g_decArgo_qcStrGood);
+                  eval([ncTrajParamXDataQcList{idPres} ' = presDataQc;']);
+                  
+                  % apply the test
+                  for idT = 1:2
+                     if (idT == 1)
+                        idPresToFlag = find(presData(idPresNoDef) < -5);
+                        flagValue = g_decArgo_qcStrBad;
+                     else
+                        idPresToFlag = find((presData(idPresNoDef) >= -5) & ...
+                           (presData(idPresNoDef) <= -2.4));
+                        flagValue = g_decArgo_qcStrCorrectable;
+                     end
+                     
+                     if (~isempty(idPresToFlag))
+                        presDataQc(idPresNoDef(idPresToFlag)) = set_qc(presDataQc(idPresNoDef(idPresToFlag)), flagValue);
+                        eval([ncTrajParamXDataQcList{idPres} ' = presDataQc;']);
+                        testFailedList(6) = 1;
+                        
+                        if (~isempty(tempData))
+                           idTempNoDef = find(tempData ~= tempDataFillValue);
+                           idTempToFlag = idTempNoDef(find(ismember(idTempNoDef, idPresNoDef(idPresToFlag))));
+                           if (~isempty(idTempToFlag))
+                              % initialize Qc flags
+                              tempDataQc(idTempNoDef) = set_qc(tempDataQc(idTempNoDef), g_decArgo_qcStrGood);
+                              % set Qc flags according to test result
+                              tempDataQc(idTempToFlag) = set_qc(tempDataQc(idTempToFlag), flagValue);
+                              eval([ncTrajParamXDataQcList{idTemp} ' = tempDataQc;']);
+                           end
+                        end
+                        
+                        if (~isempty(psalData))
+                           idPsalNoDef = find(psalData ~= psalDataFillValue);
+                           idPsalToFlag = idPsalNoDef(find(ismember(idPsalNoDef, idPresNoDef(idPresToFlag))));
+                           if (~isempty(idPsalToFlag))
+                              % initialize Qc flags
+                              psalDataQc(idPsalNoDef) = set_qc(psalDataQc(idPsalNoDef), g_decArgo_qcStrGood);
+                              % set Qc flags according to test result
+                              psalDataQc(idPsalToFlag) = set_qc(psalDataQc(idPsalToFlag), flagValue);
+                              eval([ncTrajParamXDataQcList{idPsal} ' = psalDataQc;']);
+                           end
+                        end
+                     end
+                  end
                end
-               testDoneList(6) = 1;
             end
          end
       end

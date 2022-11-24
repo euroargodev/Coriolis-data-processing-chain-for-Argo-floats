@@ -41,9 +41,9 @@ if (s == 60)
    end
 end
 if (isempty(sign))
-   o_time = sprintf('%02d:%02d', h*24+m, s);
+   o_time = sprintf('%02d:%02d', h*60+m, s);
 else
-   o_time = sprintf('%c %02d:%02d', sign, h*24+m, s);
+   o_time = sprintf('%c %02d:%02d', sign, h*60+m, s);
 end
 
 return

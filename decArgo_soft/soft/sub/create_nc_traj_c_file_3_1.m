@@ -1402,7 +1402,7 @@ end
 measPos = 0;
 for idNM = 1:length(a_tabTrajNMeas)
    nMeas = a_tabTrajNMeas(idNM);
-   
+
    if (isempty(nMeas.tabMeas))
       continue
    end
@@ -1426,7 +1426,6 @@ for idNM = 1:length(a_tabTrajNMeas)
    end
    
    for idM = 1:length(nMeas.tabMeas)
-      
       meas = nMeas.tabMeas(idM);
 
       data{cycleNumberVarId+1}(idM) = nMeas.outputCycleNumber;

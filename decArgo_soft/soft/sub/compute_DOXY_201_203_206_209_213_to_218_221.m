@@ -136,10 +136,14 @@ if (~isempty(idNoDef))
       );
    
    % units convertion (micromol/L to micromol/kg)
-   rho = potential_density(presValues, tempValues, psalValues);
+   [measLon, measLat] = get_meas_location(g_decArgo_cycleNum, -1, '');
+   rho = potential_density_gsw(presValues, tempValues, psalValues, 0, measLon, measLat);
+   rho = rho/1000;
+
    oxyValues = oxygenPresComp ./ rho;
+   idNoNan = find(~isnan(oxyValues));
    
-   o_doxyValues(idNoDef) = oxyValues;   
+   o_doxyValues(idNoDef(idNoNan)) = oxyValues(idNoNan);
 end
 
 return

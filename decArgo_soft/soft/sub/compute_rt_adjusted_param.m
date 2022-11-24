@@ -65,12 +65,16 @@ function [o_tabProfiles] = compute_rt_adjusted_doxy(a_tabProfiles)
 % output parameters initialization
 o_tabProfiles = a_tabProfiles;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 % arrays to store RT offset information
 global g_decArgo_rtOffsetInfo;
 
 % global default values
 global g_decArgo_dateDef;
 global g_decArgo_nbHourForProfDateCompInRtOffsetAdj;
+global g_decArgo_janFirst1950InMatlab;
 
 % to store information on DOXY adjustment
 global g_decArgo_paramAdjInfo;
@@ -89,15 +93,23 @@ if (noDoxyProfile)
 end
 
 % retrieve information on DOXY adjustement in RT_OFFSET information of META.json file
-doSlope = [];
-doOffset = [];
-doDate = [];
+doSlope = '';
+doOffset = '';
+doDate = '';
+doAdjError = '';
+doAdjErrMethod = '';
 if (~isempty(g_decArgo_rtOffsetInfo))
    for idF = 1:length(g_decArgo_rtOffsetInfo.param)
       if (strcmp(g_decArgo_rtOffsetInfo.param{idF}, 'DOXY'))
+         % mandatory fields
          doSlope = g_decArgo_rtOffsetInfo.slope{idF};
          doOffset = g_decArgo_rtOffsetInfo.value{idF};
          doDate = g_decArgo_rtOffsetInfo.date{idF};
+         % not mandatory fields
+         if (isfield(g_decArgo_rtOffsetInfo, 'adjError'))
+            doAdjError = g_decArgo_rtOffsetInfo.adjError{idF};
+            doAdjErrMethod = g_decArgo_rtOffsetInfo.adjErrorMethod{idF};
+         end
          break
       end
    end
@@ -110,7 +122,7 @@ if (~isempty(doSlope))
       profile = o_tabProfiles(idProf);
       if (any(strcmp({profile.paramList.name}, 'DOXY')) && ...
             (profile.date ~= g_decArgo_dateDef) && ...
-            ((profile.date - g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= doDate))
+            ((profile.date + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= doDate))
          
          % retrieve associated profiles (needed for 'real' BGC floats since
          % PTS are in separate profiles)
@@ -119,7 +131,7 @@ if (~isempty(doSlope))
             ([o_tabProfiles.sensorNumber] < 100)); % AUX profiles should not be considered
          
          % adjust DOXY for this profile
-         [ok, profile] = adjust_doxy_profile(profile, o_tabProfiles(setdiff(idProfs, idProf)), doSlope, doOffset);
+         [ok, profile] = adjust_doxy_profile(profile, o_tabProfiles(setdiff(idProfs, idProf)), doSlope, doOffset, doAdjError);
          if (ok)
             o_tabProfiles(idProf) = profile;
             
@@ -133,11 +145,35 @@ if (~isempty(doSlope))
             else
                direction = 1;
             end
+            
+            equation = 'PPOX_DOXY_ADJUSTED = PPOX_DOXY * SLOPE + OFFSET';
+            coefficient = sprintf('SLOPE = %g, OFFSET = %g', doSlope, doOffset);
+            comment = '';
+            if (~isnan(doAdjError))
+               switch (doAdjErrMethod)
+                  case '1_1'
+                     comment = sprintf(['DOXY_ADJUSTED is estimated from an adjustment ' ...
+                        'of in water PSAT or PPOX float data at surface by comparison to WOA PSAT ' ...
+                        'climatology or WOA PPOX in using PSATWOA and TEMP and PSALfloat at 1 atm, ' ...
+                        'DOXY_ADJUSTED_ERROR is estimated from a PPOX_ERROR of %g mbar.'], doAdjError);
+                  case '2_1'
+                     comment = sprintf(['DOXY_ADJUSTED is estimated from an adjustment ' ...
+                        'of in air PPOX float data by comparison to NCEP reanalysis, ' ...
+                        'DOXY_ADJUSTED_ERROR is recomputed from a PPOX_ERROR = %g mbar.'], doAdjError);
+                  case '3_1'
+                     comment = sprintf(['DOXY_ADJUSTED is estimated from the last valid cycle ' ...
+                        'with DM adjustment, DOXY_ADJUSTED_ERROR is recomputed from a ' ...
+                        'PPOX_ERROR = %g mbar.'], doAdjError);
+                  otherwise
+                     fprintf('ERROR: Float #%d Cycle #%d%c: input CALIB_RT_ADJ_ERROR_METHOD (''%s'') of DOXY adjustment is not implemented yet => SCIENTIFIC_CALIB_COMMENT of DOXY parameter not set\n', ...
+                        g_decArgo_floatNum, ...
+                        profile.outputCycleNumber, profile.direction, doAdjErrMethod);
+               end
+            end
+            date = datestr(doDate+g_decArgo_janFirst1950InMatlab, 'yyyymmddHHMMSS');
+
             g_decArgo_paramAdjInfo.DOXY = [g_decArgo_paramAdjInfo.DOXY;
-               profile.outputCycleNumber direction ...
-               {'PPOX_DOXY_ADJUSTED = PPOX_DOXY * SLOPE + OFFSET'} ...
-               {sprintf('SLOPE = %g, OFFSET = %g', doSlope, doOffset)} ...
-               {'DOXY_ADJUSTED is estimated from an adjustment of PPOX_DOXY at surface on WOA climatology'}];
+               profile.outputCycleNumber direction {equation} {coefficient} {comment} {date}];
          end
       end
    end
@@ -149,7 +185,8 @@ return
 % Perform real time adjustment on one DOXY profile data.
 %
 % SYNTAX :
-%  [o_ok, o_profile] = adjust_doxy_profile(a_profile, a_tabProfiles, a_slope, a_offset)
+%  [o_ok, o_profile] = adjust_doxy_profile(a_profile, a_tabProfiles, ...
+%    a_slope, a_offset, a_adjError)
 %
 % INPUT PARAMETERS :
 %   a_profile     : input DOXY profile structure
@@ -157,6 +194,7 @@ return
 %                   direction as the DOXY one
 %   a_slope       : slope to be used for PPOX_DOXY adjustment
 %   a_offset      : offset to be used for PPOX_DOXY adjustment
+%   a_adjError    : error on PPOX_DOXY adjusted values
 %
 % OUTPUT PARAMETERS :
 %   o_ok      : 1 if the adjustment has been performed, 0 otherwise
@@ -170,7 +208,8 @@ return
 % RELEASES :
 %   07/03/2019 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ok, o_profile] = adjust_doxy_profile(a_profile, a_tabProfiles, a_slope, a_offset)
+function [o_ok, o_profile] = adjust_doxy_profile(a_profile, a_tabProfiles, ...
+   a_slope, a_offset, a_adjError)
 
 % output parameters initialization
 o_ok = 0;
@@ -284,27 +323,35 @@ end
 if (~isempty(presValues))
    
    % adjust DOXY data
-   doxyAdjValues = compute_DOXY_ADJUSTED( ...
+   [doxyAdjValues, doxyAdjErrValues] = compute_DOXY_ADJUSTED( ...
       presValues, tempValues, psalValues, doxyValues, ...
       paramPres.fillValue, paramTemp.fillValue, paramPsal.fillValue, paramDoxy.fillValue, ...
-      a_slope, a_offset);
+      a_slope, a_offset, a_adjError, a_profile);
    
    % create array for adjusted data
    profile = a_profile;
+   paramFillValue = [];
+   for idParam = 1:length(profile.paramList)
+      paramInfo = get_netcdf_param_attributes(profile.paramList(idParam).name);
+      paramFillValue = [paramFillValue paramInfo.fillValue];
+   end
    if (isempty(profile.dataAdj))
-      paramFillValue = [];
-      for idParam = 1:length(profile.paramList)
-         paramInfo = get_netcdf_param_attributes(profile.paramList(idParam).name);
-         paramFillValue = [paramFillValue paramInfo.fillValue];
-      end
       profile.dataAdj = repmat(double(paramFillValue), size(profile.data, 1), 1);
+   end
+   if (isempty(profile.dataAdjQc))
       profile.dataAdjQc = ones(size(profile.dataAdj))*g_decArgo_qcDef;
+   end
+   if (isempty(profile.dataAdjError) && ~isempty(doxyAdjErrValues))
+      profile.dataAdjError = repmat(double(paramFillValue), size(profile.data, 1), 1);
    end
    
    % store adjusted data
    idNoDef = find(doxyAdjValues ~= paramDoxy.fillValue);
    profile.dataAdj(:, idDoxy) = doxyAdjValues;
    profile.dataAdjQc(idNoDef, idDoxy) = g_decArgo_qcNoQc;
+   if (~isempty(doxyAdjErrValues))
+      profile.dataAdjError(:, idDoxy) = doxyAdjErrValues;
+   end
    
    % output parameters
    o_ok = 1;

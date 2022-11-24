@@ -4,13 +4,13 @@
 % SYNTAX :
 %  [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
 %    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profOcr504I, ...
-%    o_grounding, o_buoyancy, ...
+%    o_grounding, o_iceDetection, o_buoyancy, ...
 %    o_vitalsData, ...
 %    o_cycleClockOffset, o_cycleTimeData] = ...
 %    adjust_clock_offset_apx_apf11_ir( ...
 %    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
 %    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, ...
-%    a_grounding, a_buoyancy, ...
+%    a_grounding, a_iceDetection, a_buoyancy, ...
 %    a_vitalsData, ...
 %    a_cycleTimeData, ...
 %    a_clockOffsetData)
@@ -26,6 +26,7 @@
 %   a_profFlbbCd      : input FLBB_CD data
 %   a_profOcr504I     : input OCR_504I data
 %   a_grounding       : input grounding data
+%   a_iceDetection    : input ice detection data
 %   a_buoyancy        : input buoyancy data
 %   a_vitalsData      : input vitals data
 %   a_cycleTimeData   : input cycle timings data
@@ -42,6 +43,7 @@
 %   o_profFlbbCd       : output FLBB_CD data
 %   o_profOcr504I      : output OCR_504I data
 %   o_grounding        : output grounding data
+%   o_iceDetection     : output ice detection data
 %   o_buoyancy         : output buoyancy data
 %   o_vitalsData       : output vitals data
 %   o_cycleClockOffset : applied clock offset
@@ -57,13 +59,13 @@
 % ------------------------------------------------------------------------------
 function [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profOcr504I, ...
-   o_grounding, o_buoyancy, ...
+   o_grounding, o_iceDetection, o_buoyancy, ...
    o_vitalsData, ...
    o_cycleClockOffset, o_cycleTimeData] = ...
    adjust_clock_offset_apx_apf11_ir( ...
    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, ...
-   a_grounding, a_buoyancy, ...
+   a_grounding, a_iceDetection, a_buoyancy, ...
    a_vitalsData, ...
    a_cycleTimeData, ...
    a_clockOffsetData)
@@ -79,6 +81,7 @@ o_profCtdCpH = a_profCtdCpH;
 o_profFlbbCd = a_profFlbbCd;
 o_profOcr504I = a_profOcr504I;
 o_grounding = a_grounding;
+o_iceDetection = a_iceDetection;
 o_buoyancy = a_buoyancy;
 o_vitalsData = a_vitalsData;
 o_cycleClockOffset = 0;
@@ -106,6 +109,30 @@ o_cycleClockOffset = get_clock_offset_value_apx_apf11_ir(a_clockOffsetData, a_cy
 % clock adjustment of grounding information
 for idG = 1:size(o_grounding, 1)
    o_grounding(idG, 2) = adjust_time(o_grounding(idG, 1), o_cycleClockOffset);
+end
+
+% clock adjustment of ice information
+if (~isempty(o_iceDetection))
+   for idI = 1:length(o_iceDetection.thermalDetect.sampleTime)
+      o_iceDetection.thermalDetect.sampleTimeAdj(idI) = ...
+         adjust_time(o_iceDetection.thermalDetect.sampleTime(idI), o_cycleClockOffset);
+   end
+   if (~isempty(o_iceDetection.thermalDetect.medianTempTime))
+      o_iceDetection.thermalDetect.medianTempTimeAdj = ...
+         adjust_time(o_iceDetection.thermalDetect.medianTempTime, o_cycleClockOffset);
+   end
+   if (~isempty(o_iceDetection.thermalDetect.detectTime))
+      o_iceDetection.thermalDetect.detectTimeAdj = ...
+         adjust_time(o_iceDetection.thermalDetect.detectTime, o_cycleClockOffset);
+   end
+   for idI = 1:length(o_iceDetection.breakupDetect.detectTime)
+      o_iceDetection.breakupDetect.detectTimeAdj(idI) = ...
+         adjust_time(o_iceDetection.breakupDetect.detectTime(idI), o_cycleClockOffset);
+   end
+   if (~isempty(o_iceDetection.ascent.abortTypeTime))
+      o_iceDetection.ascent.abortTypeTimeAdj = ...
+         adjust_time(o_iceDetection.ascent.abortTypeTime, o_cycleClockOffset);
+   end
 end
 
 % clock adjustment of buoyancy information
@@ -145,6 +172,7 @@ if (~isempty(o_cycleTimeData))
    [o_cycleTimeData.ascentEndAdjDate] = adjust_time(o_cycleTimeData.ascentEndDate, o_cycleClockOffset);
    [o_cycleTimeData.transStartAdjDate] = adjust_time(o_cycleTimeData.transStartDate, o_cycleClockOffset);
    [o_cycleTimeData.transEndAdjDate] = adjust_time(o_cycleTimeData.transEndDate, o_cycleClockOffset);
+   [o_cycleTimeData.ascentAbortAdjDate] = adjust_time(o_cycleTimeData.ascentAbortDate, o_cycleClockOffset);
 end
 
 return
@@ -214,9 +242,16 @@ function [o_timeAdj] = adjust_time(a_time, a_clockOffset)
 % output parameters initialization
 o_timeAdj = [];
 
+% default values
+global g_decArgo_dateDef;
+
 
 if (~isempty(a_time))
-   o_timeAdj = a_time - a_clockOffset/86400;
+   if (a_time ~= g_decArgo_dateDef)
+      o_timeAdj = a_time - a_clockOffset/86400;
+   else
+      o_timeAdj = g_decArgo_dateDef;
+   end
 end
 
 return

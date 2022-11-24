@@ -464,7 +464,7 @@ netcdf.putVar(fCdf, dateUpdateVarId, currentDate);
 % fill technical parameter variables
 paramPos = 0;
 for outputCycleNumber = min(a_tabNcTechIndex(:, 6)):max(a_tabNcTechIndex(:, 6))
-   
+
    % list of concerned parameters
    idParam = find(a_tabNcTechIndex(:, 6) == outputCycleNumber);
    

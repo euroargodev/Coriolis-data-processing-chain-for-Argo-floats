@@ -171,6 +171,11 @@ for idFile = 1:length(a_scienceLogFileList)
                                  o_cycleTimeData.parkEndDateSci = msg{idM, 1};
                               case 5
                                  o_cycleTimeData.ascentStartDateSci = msg{idM, 1};
+                                 % when PARK _PRES = PROF_PRES, 'Profiling
+                                 % Mission' corresponds to PARK_END_DATE
+                                 if (isempty(o_cycleTimeData.parkEndDateSci))
+                                    o_cycleTimeData.parkEndDateSci = o_cycleTimeData.ascentStartDateSci;
+                                 end
                               case 6
                                  o_cycleTimeData.continuousProfileStartDateSci = msg{idM, 1};
                               case 7

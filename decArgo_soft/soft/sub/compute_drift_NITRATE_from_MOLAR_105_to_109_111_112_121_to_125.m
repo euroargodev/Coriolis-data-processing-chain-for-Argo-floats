@@ -5,7 +5,7 @@
 %  [o_NITRATE] = compute_drift_NITRATE_from_MOLAR_105_to_109_111_112_121_to_125(a_MOLAR_NITRATE, ...
 %    a_MOLAR_NITRATE_fill_value, a_NITRATE_fill_value, ...
 %    a_MOLAR_NITRATE_dates, a_ctdDates, a_ctdData, ...
-%    a_PRES_fill_value, a_TEMP_fill_value, a_PSAL_fill_value)
+%    a_PRES_fill_value, a_TEMP_fill_value, a_PSAL_fill_value, a_profSuna)
 %
 % INPUT PARAMETERS :
 %   a_MOLAR_NITRATE            : input MOLAR_NITRATE data
@@ -17,6 +17,7 @@
 %   a_PRES_fill_value          : fill value for input PRES data
 %   a_TEMP_fill_value          : fill value for input TEMP data
 %   a_PSAL_fill_value          : fill value for input PSAL data
+%   a_profSuna                 : input SUNA profile structure
 %
 % OUTPUT PARAMETERS :
 %   o_NITRATE : output NITRATE data
@@ -32,7 +33,7 @@
 function [o_NITRATE] = compute_drift_NITRATE_from_MOLAR_105_to_109_111_112_121_to_125(a_MOLAR_NITRATE, ...
    a_MOLAR_NITRATE_fill_value, a_NITRATE_fill_value, ...
    a_MOLAR_NITRATE_dates, a_ctdDates, a_ctdData, ...
-   a_PRES_fill_value, a_TEMP_fill_value, a_PSAL_fill_value)
+   a_PRES_fill_value, a_TEMP_fill_value, a_PSAL_fill_value, a_profSuna)
 
 % output parameters initialization
 o_NITRATE = ones(length(a_MOLAR_NITRATE), 1)*a_NITRATE_fill_value;
@@ -49,12 +50,14 @@ if (~isempty(ctdLinkData))
       (a_MOLAR_NITRATE == a_MOLAR_NITRATE_fill_value)));
    
    % compute potential temperature and potential density
-   tpot = tetai(ctdLinkData(idNoDef, 1), ctdLinkData(idNoDef, 2), ctdLinkData(idNoDef, 3), 0);
-   [null, sigma0] = swstat90(ctdLinkData(idNoDef, 3), tpot, 0);
-   rho = (sigma0+1000)/1000;
+   [measLon, measLat] = get_meas_location(a_profSuna.cycleNumber, a_profSuna.profileNumber, a_profSuna);
+   rho = potential_density_gsw(ctdLinkData(idNoDef, 1), ctdLinkData(idNoDef, 2), ctdLinkData(idNoDef, 3), 0, measLon, measLat);
+   rho = rho/1000;
    
    % compute output data (units convertion: micromol/L to micromol/kg)
-   o_NITRATE(idNoDef) = a_MOLAR_NITRATE(idNoDef) ./ rho;
+   nitrateValues = a_MOLAR_NITRATE(idNoDef) ./ rho;
+   idNoNan = find(~isnan(nitrateValues));
+   o_NITRATE(idNoDef(idNoNan)) = nitrateValues(idNoNan);
 end
                
 return

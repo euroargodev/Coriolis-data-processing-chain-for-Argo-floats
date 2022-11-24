@@ -2,16 +2,25 @@
 % Based on copy_iridium_mail_files_float, this tool is used to duplicate recived
 % Iridium mail files for a float to be recovered at sea:
 %  1- It makes a copy of the archived Iridium mail files from
-%     DIR_INPUT_RSYNC_DATA to OUTPUT_DIR
-%  2- It looks for newly received Iridium mail files from SPOOL_DIR, renames
-%     them and stores to OUTPUT_DIR
+%     DIR_INPUT_RSYNC_DATA to DIR_OUTPUT_DATA
+%  2- It looks for newly received Iridium mail files from DIR_INPUT_SPOOL_DATA,
+%     renames them and stores them to DIR_OUTPUT_DATA
 %
 % SYNTAX :
-%   copy_iridium_mail_files_float_to_recover or
-%   copy_iridium_mail_files_float_to_recover(6900189, 7900118)
+%   input parameters should be provided in pairs
+%   ('argument_name','argument_value')
 %
 % INPUT PARAMETERS :
-%   varargin : WMO number of floats to process
+%   input parameter names are not case sensitive.
+%   mandatory input parameter:
+%      floatWmo   : float WMO number
+%   not mandatory input parameters:
+%      rsyncDir      : RSYNC data directory
+%      spoolDir      : SPOOL directory
+%      floatInfoFile : float information file name
+%      outputDir     : OUTPUT file directory
+%      logDir        : LOG file directory
+%      maxAge        : max age (in hour) of the files to consider
 %
 % OUTPUT PARAMETERS :
 %
@@ -22,21 +31,25 @@
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/23/2017 - RNU - creation
+%   03/06/2020 - RNU - added input parameters
 % ------------------------------------------------------------------------------
 function copy_iridium_mail_files_float_to_recover(varargin)
 
-% mode processing flags
-global g_decArgo_realtimeFlag;
-global g_decArgo_delayedModeFlag;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DEFAULT CONFIGURATION - START
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% default values initialization
-init_default_values;
+% rsync directory
+DIR_INPUT_RSYNC_DATA = 'C:\Users\jprannou\_DATA\IN\RSYNC\CTS3\rsync_data\';
 
 % spool directory
-SPOOL_DIR = 'C:\Users\jprannou\Desktop\message\';
+DIR_INPUT_SPOOL_DATA = 'C:\Users\jprannou\_DATA\TEST\SPOOL\';
+
+% float information file name
+FLOAT_INFORMATION_FILE_NAME = 'C:\Users\jprannou\_DATA\IN\decArgo_config_floats\argoFloatInfo\_provor_floats_information_co.txt';
 
 % directory to store duplicated mail files
-OUTPUT_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\tmp_3901863\';
+DIR_OUTPUT_DATA = 'C:\Users\jprannou\_DATA\TEST\OUTPUT\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -44,49 +57,84 @@ DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 % maximum age of files to consider (in hours
 MAX_FILE_AGE_IN_HOUR = 1;
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DEFAULT CONFIGURATION - END
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% default values initialization
+init_default_values;
+
+rsyncDirName = DIR_INPUT_RSYNC_DATA;
+spoolDirName = DIR_INPUT_SPOOL_DATA;
+floatInformationFileName = FLOAT_INFORMATION_FILE_NAME;
+outputDirName = DIR_OUTPUT_DATA;
+logFileDirName = DIR_LOG_FILE;
+maxFileAgeInHour = MAX_FILE_AGE_IN_HOUR;
+
+% get input parameters
+[errorFlag, floatWmo, maxAge, floatInfoFile, ...
+   rsyncDir, spoolDir, outputDir, logDir] = parse_input_param(varargin);
+if (errorFlag == 1)
+   return
+end
+if (~isempty(rsyncDir))
+   rsyncDirName = rsyncDir;
+end
+if (~isempty(spoolDir))
+   spoolDirName = spoolDir;
+end
+if (~isempty(floatInfoFile))
+   floatInformationFileName = floatInfoFile;
+end
+if (~isempty(outputDir))
+   outputDirName = outputDir;
+end
+if (~isempty(logDir))
+   logFileDirName = logDir;
+end
+if (~isempty(maxAge))
+   maxFileAgeInHour = maxAge;
+end
+
+% check input parameters
+if ~(exist(rsyncDirName, 'dir') == 7)
+   fprintf('ERROR: Directory not found: %s => exit\n', rsyncDirName);
+   return
+end
+if ~(exist(spoolDirName, 'dir') == 7)
+   fprintf('ERROR: Directory not found: %s => exit\n', spoolDirName);
+   return
+end
+if ~(exist(floatInformationFileName, 'file') == 2)
+   fprintf('ERROR: File not found: %s => exit\n', floatInformationFileName);
+   return
+end
+
+if ~(exist(logFileDirName, 'dir') == 7)
+   fprintf('Creating directory: %s\n', logFileDirName);
+   mkdir(logFileDirName);
+end
 
 % create and start log file recording
-logFile = [DIR_LOG_FILE '/' 'copy_iridium_mail_files_float_to_recover' datestr(now, 'yyyymmddTHHMMSS') '.log'];
+logFile = [logFileDirName '/' 'copy_iridium_mail_files_float_to_recover' datestr(now, 'yyyymmddTHHMMSS') '.log'];
 diary(logFile);
 tic;
 
-% checks
-if ~(exist(SPOOL_DIR, 'dir') == 7)
-   fprintf('Directory not found: %s\n', SPOOL_DIR);
-   return
-end
-if ~(exist(OUTPUT_DIR, 'dir') == 7)
-   fprintf('Creating directory: %s\n', OUTPUT_DIR);
-   mkdir(OUTPUT_DIR);
-end
+% print input parameters
+fprintf('INPUT PARAMETERS\n');
+fprintf('   floatWmo     : %d\n', floatWmo);
+fprintf('   rsyncDir     : %s\n', rsyncDirName);
+fprintf('   spoolDir     : %s\n', spoolDirName);
+fprintf('   floatInfoFile: %s\n', floatInformationFileName);
+fprintf('   outputDir    : %s\n', outputDirName);
+fprintf('   logDir       : %s\n', logFileDirName);
+fprintf('   maxAge       : %d\n', maxFileAgeInHour);
+fprintf('\n');
 
-% configuration parameters
-configVar = [];
-configVar{end+1} = 'FLOAT_LIST_FILE_NAME';
-configVar{end+1} = 'FLOAT_INFORMATION_FILE_NAME';
-configVar{end+1} = 'DIR_INPUT_RSYNC_DATA';
-
-% get configuration parameters
-g_decArgo_realtimeFlag = 0;
-g_decArgo_delayedModeFlag = 0;
-[configVal, unusedVarargin, inputError] = get_config_dec_argo(configVar, []);
-floatListFileName = configVal{1};
-floatInformationFileName = configVal{2};
-inputDirName = configVal{3};
-outputDirName = OUTPUT_DIR;
-
-if (nargin == 0)
-   % floats to process come from floatListFileName
-   if ~(exist(floatListFileName, 'file') == 2)
-      fprintf('File not found: %s\n', floatListFileName);
-      return
-   end
-   
-   fprintf('Floats from list: %s\n', floatListFileName);
-   floatList = load(floatListFileName);
-else
-   % floats to process come from input parameters
-   floatList = cell2mat(varargin);
+if ~(exist(outputDirName, 'dir') == 7)
+   fprintf('Creating directory: %s\n', outputDirName);
+   mkdir(outputDirName);
 end
 
 % read the list to associate a WMO number to a login name
@@ -101,90 +149,84 @@ end
 % current date
 curUtcDate = now_utc;
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % copy SBD files
-nbFloats = length(floatList);
-for idFloat = 1:nbFloats
+
+% find the imei of the float
+[floatImei] = find_login_name(floatWmo, numWmo, tabImei);
+if (isempty(floatImei))
+   return
+end
+
+% create the output directory of this float
+floatOutputDirName = [outputDirName '/' floatImei '_' num2str(floatWmo)];
+if ~(exist(floatOutputDirName, 'dir') == 7)
+   mkdir(floatOutputDirName);
+end
+floatOutputDirName = [floatOutputDirName '/archive/'];
+if ~(exist(floatOutputDirName, 'dir') == 7)
+   mkdir(floatOutputDirName);
+end
+
+% copy files from DIR_INPUT_RSYNC_DATA
+fprintf('DIR_INPUT_RSYNC_DATA files (%s):\n', rsyncDirName);
+mailFile = dir([rsyncDirName '/' floatImei '/' sprintf('co*_%s_*.txt', floatImei)]);
+for idFile = 1:length(mailFile)
+   mailFileName = mailFile(idFile).name;
+   mailFilePathName = [rsyncDirName '/' floatImei '/' mailFileName];
    
-   floatNum = floatList(idFloat);
-   floatNumStr = num2str(floatNum);
-   fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
-   
-   % find the imei of the float
-   [floatImei] = find_login_name(floatNum, numWmo, tabImei);
-   if (isempty(floatImei))
-      return
-   end
-   
-   % create the output directory of this float
-   floatOutputDirName = [outputDirName '/' floatImei '_' floatNumStr];
-   if ~(exist(floatOutputDirName, 'dir') == 7)
-      mkdir(floatOutputDirName);
-   end
-   floatOutputDirName = [floatOutputDirName '/archive/'];
-   if ~(exist(floatOutputDirName, 'dir') == 7)
-      mkdir(floatOutputDirName);
-   end
-   
-   % copy files from DIR_INPUT_RSYNC_DATA
-   fprintf('DIR_INPUT_RSYNC_DATA files (%s):\n', inputDirName);
-   mailFile = dir([inputDirName '/' floatImei '/' sprintf('co*_%s_*.txt', floatImei)]);
-   for idFile = 1:length(mailFile)
-      mailFileName = mailFile(idFile).name;
-      mailFilePathName = [inputDirName '/' floatImei '/' mailFileName];
-      
-      if ((curUtcDate - mailFile(idFile).datenum) <= MAX_FILE_AGE_IN_HOUR/24)
-         mailFilePathNameOut = [floatOutputDirName '/' mailFileName];
-         if (exist(mailFilePathNameOut, 'file') == 2)
-            % when the file already exists, check (with its date) if it needs to be
-            % updated
-            mailFileOut = dir(mailFilePathNameOut);
-            if (~strcmp(mailFile(idFile).date, mailFileOut.date))
-               copy_file(mailFilePathName, floatOutputDirName);
-               fprintf('   %s => copy\n', mailFileName);
-            else
-               fprintf('   %s => unchanged\n', mailFileName);
-            end
-         else
-            % copy the file if it doesn't exist
+   if ((curUtcDate - mailFile(idFile).datenum) <= maxFileAgeInHour/24)
+      mailFilePathNameOut = [floatOutputDirName '/' mailFileName];
+      if (exist(mailFilePathNameOut, 'file') == 2)
+         % when the file already exists, check (with its date) if it needs to be
+         % updated
+         mailFileOut = dir(mailFilePathNameOut);
+         if (~strcmp(mailFile(idFile).date, mailFileOut.date))
             copy_file(mailFilePathName, floatOutputDirName);
             fprintf('   %s => copy\n', mailFileName);
+         else
+            fprintf('   %s => unchanged\n', mailFileName);
          end
+      else
+         % copy the file if it doesn't exist
+         copy_file(mailFilePathName, floatOutputDirName);
+         fprintf('   %s => copy\n', mailFileName);
       end
    end
-   
-   % copy files from SPOOL_DIR
-   fprintf('SPOOL_DIR files (%s):\n', SPOOL_DIR);
-   mailFile = dir([SPOOL_DIR '/' 'co*.txt']);
-   for idFile = 1:length(mailFile)
-      if ((curUtcDate - mailFile(idFile).datenum) <= MAX_FILE_AGE_IN_HOUR/24)
-         mailFileName = mailFile(idFile).name;
-         mailFilePathName = [SPOOL_DIR '/' mailFileName];
+end
+
+% copy files from SPOOL_DIR
+fprintf('SPOOL_DIR files (%s):\n', spoolDirName);
+mailFile = dir([spoolDirName '/' 'co*.txt']);
+for idFile = 1:length(mailFile)
+   if ((curUtcDate - mailFile(idFile).datenum) <= maxFileAgeInHour/24)
+      mailFileName = mailFile(idFile).name;
+      mailFilePathName = [spoolDirName '/' mailFileName];
+      
+      [imei, timeOfSession, momsn, mtmsn, lineNum] = find_info_in_file(mailFilePathName);
+      if (~isempty(imei) && ~isempty(timeOfSession) && ~isempty(momsn) && ~isempty(mtmsn))
          
-         [imei, timeOfSession, momsn, mtmsn, lineNum] = find_info_in_file(mailFilePathName);
-         if (~isempty(imei) && ~isempty(timeOfSession) && ~isempty(momsn) && ~isempty(mtmsn))
+         if (num2str(imei) == floatImei)
             
-            if (num2str(imei) == floatImei)
-               
-               idFUs = strfind(mailFileName, '_');
-               idFExt = strfind(mailFileName, '.txt');
-               pidNum = mailFileName(idFUs(end)+1:idFExt-1);
-               
-               newfilename = [sprintf('co_%sZ_%d_%06d_%06d_', ...
-                  datestr(timeOfSession + 712224, 'yyyymmddTHHMMSS'), ...
-                  imei, momsn, mtmsn) pidNum '.txt'];
-               
-               mailFilePathNameOut = [floatOutputDirName '/' newfilename];
-               if (exist(mailFilePathNameOut, 'file') == 2)
-                  fprintf('   %s => unchanged\n', newfilename);
-               else
-                  % copy the file if it doesn't exist
-                  copy_file(mailFilePathName, mailFilePathNameOut);
-                  fprintf('   %s => copy\n', newfilename);
-               end
+            idFUs = strfind(mailFileName, '_');
+            idFExt = strfind(mailFileName, '.txt');
+            pidNum = mailFileName(idFUs(end)+1:idFExt-1);
+            
+            newfilename = [sprintf('co_%sZ_%d_%06d_%06d_', ...
+               datestr(timeOfSession + 712224, 'yyyymmddTHHMMSS'), ...
+               imei, momsn, mtmsn) pidNum '.txt'];
+            
+            mailFilePathNameOut = [floatOutputDirName '/' newfilename];
+            if (exist(mailFilePathNameOut, 'file') == 2)
+               fprintf('   %s => unchanged\n', newfilename);
+            else
+               % copy the file if it doesn't exist
+               copy_file(mailFilePathName, mailFilePathNameOut);
+               fprintf('   %s => copy\n', newfilename);
             end
-         else
-            fprintf('ERROR: Missing information in file: %s\n', mailFilePathName);
          end
+      else
+         fprintf('ERROR: Missing information in file: %s\n', mailFilePathName);
       end
    end
 end
@@ -193,6 +235,95 @@ ellapsedTime = toc;
 fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
+
+return
+
+% ------------------------------------------------------------------------------
+% Parse input parameters.
+%
+% SYNTAX :
+%  [o_errorFlag, o_floatWmo, o_maxAge, o_floatInfoFile, ...
+%    o_rsyncDir, o_spoolDir, o_outputDir, o_logDir] = parse_input_param(a_varargin)
+%
+% INPUT PARAMETERS :
+%   a_varargin : input parameters
+%
+% OUTPUT PARAMETERS :
+%   o_errorFlag     : error reporting flag
+%   o_floatWmo      : float WMO
+%   o_maxAge        : max age (in hour) of the files to consider
+%   o_floatInfoFile : float information file name
+%   o_rsyncDir      : RSYNC data directory
+%   o_spoolDir      : SPOOL directory
+%   o_outputDir     : OUTPUT file directory
+%   o_logDir        : LOG file directory
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   03/06/2020 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_errorFlag, o_floatWmo, o_maxAge, o_floatInfoFile, ...
+   o_rsyncDir, o_spoolDir, o_outputDir, o_logDir] = parse_input_param(a_varargin)
+
+% output parameters initialization
+o_errorFlag = 1;
+o_floatWmo = [];
+o_maxAge = [];
+o_floatInfoFile = [];
+o_rsyncDir = [];
+o_spoolDir = [];
+o_outputDir = [];
+o_logDir = [];
+
+
+% ignore empty input parameters
+idDel = [];
+for id = 1:length(a_varargin)
+   if (isempty(a_varargin{id}))
+      idDel = [idDel id];
+   end
+end
+a_varargin(idDel) = [];
+
+% check input parameters
+if (~isempty(a_varargin))
+   if (rem(length(a_varargin), 2) ~= 0)
+      fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') => exit\n');
+      return
+   else
+      for id = 1:2:length(a_varargin)
+         if (strcmpi(a_varargin{id}, 'floatWmo'))
+            o_floatWmo = str2double(a_varargin{id+1});
+         elseif (strcmpi(a_varargin{id}, 'maxAge'))
+            o_maxAge = str2double(a_varargin{id+1});
+         elseif (strcmpi(a_varargin{id}, 'floatInfoFile'))
+            o_floatInfoFile = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'rsyncDir'))
+            o_rsyncDir = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'spoolDir'))
+            o_spoolDir = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'outputDir'))
+            o_outputDir = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'logDir'))
+            o_logDir = a_varargin{id+1};
+         else
+            fprintf('WARNING: unexpected input argument (''%s'') => ignored\n', a_varargin{id});
+         end
+      end
+   end
+end
+
+% 'floatWmo' is mandatory
+if (isempty(o_floatWmo))
+   fprintf('ERROR: ''floatWmo'' input parameter is mandatory => exit\n');
+   return
+end
+
+o_errorFlag = 0;
 
 return
 

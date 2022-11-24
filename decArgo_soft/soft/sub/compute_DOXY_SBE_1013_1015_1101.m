@@ -123,10 +123,14 @@ if (~isempty(idNoDef))
    molarDoxyValues = 44.6596*mlplDoxyValues;
       
    % units convertion (micromol/L to micromol/kg)
-   rho = potential_density(presValues, tempValues, psalValues);
+   [measLon, measLat] = get_meas_location(g_decArgo_cycleNum, -1, '');
+   rho = potential_density_gsw(presValues, tempValues, psalValues, 0, measLon, measLat);
+   rho = rho/1000;
+
    oxyValues = molarDoxyValues ./ rho;
+   idNoNan = find(~isnan(oxyValues));
    
-   o_DOXY(idNoDef) = oxyValues;     
+   o_DOXY(idNoDef(idNoNan)) = oxyValues(idNoNan);
 end
 
 return

@@ -58,10 +58,16 @@ for idEv = 1:length(events)
          startTime = evt.timestamp;
       end
       o_cycleTimeData.parkEndDateSys = evt.timestamp;
-   elseif (any(strfind(dataStr, PATTERN_ASCENT_START_1)) || any(strfind(dataStr, PATTERN_ASCENT_START_2)))
+   elseif (any(strfind(dataStr, PATTERN_ASCENT_START_1)))
       if (isempty(startTime))
          startTime = evt.timestamp;
       end
+      o_cycleTimeData.ascentStartDateSys = evt.timestamp;
+   elseif (any(strfind(dataStr, PATTERN_ASCENT_START_2)))
+      if (isempty(startTime))
+         startTime = evt.timestamp;
+      end
+      o_cycleTimeData.parkEndDateSys = evt.timestamp;
       o_cycleTimeData.ascentStartDateSys = evt.timestamp;
    elseif (any(strfind(dataStr, PATTERN_ASCENT_END)))
       if (isempty(startTime))

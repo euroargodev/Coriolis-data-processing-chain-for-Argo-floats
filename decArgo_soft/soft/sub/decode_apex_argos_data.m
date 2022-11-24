@@ -8,7 +8,7 @@
 %    o_structConfig] = decode_apex_argos_data( ...
 %    a_floatNum, a_cycleList, a_excludedCycleList, ...
 %    a_decoderId, a_floatArgosId, ...
-%    a_frameLength, a_floatSurfData, a_floatEndDate)
+%    a_frameLength, a_floatEndDate)
 %
 % INPUT PARAMETERS :
 %   a_floatNum            : float WMO number
@@ -17,7 +17,6 @@
 %   a_decoderId           : float decoder Id
 %   a_floatArgosId        : float PTT number
 %   a_frameLength         : Argos data frame length
-%   a_floatSurfData       : float surface data structure
 %   a_floatEndDate      : end date of the data to process
 %
 % OUTPUT PARAMETERS :
@@ -43,7 +42,7 @@ function [o_tabProfiles, ...
    o_structConfig] = decode_apex_argos_data( ...
    a_floatNum, a_cycleList, a_excludedCycleList, ...
    a_decoderId, a_floatArgosId, ...
-   a_frameLength, a_floatSurfData, a_floatEndDate)
+   a_frameLength, a_floatEndDate)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -90,6 +89,9 @@ g_decArgo_timeData = get_apx_argos_float_time_init_struct(a_decoderId);
 global g_decArgo_presOffsetData;
 g_decArgo_presOffsetData = get_apx_pres_offset_init_struct;
 
+% array to store surface data of Argos floats
+global g_decArgo_floatSurfData;
+
 
 % inits for output CSV file
 if (~isempty(g_decArgo_outputCsvFileId))
@@ -128,9 +130,9 @@ for idCy = 1:length(a_cycleList)
    
    % update the float surface data structure with the previous excluded cycles
    if (~isempty(find((a_excludedCycleList < cycleNum) & ...
-         (a_excludedCycleList > a_floatSurfData.updatedForCycleNumber), 1)))
-      [a_floatSurfData] = update_previous_cycle_surf_data( ...
-         a_floatSurfData, a_floatArgosId, a_floatNum, a_frameLength, ...
+         (a_excludedCycleList > g_decArgo_floatSurfData.updatedForCycleNumber), 1)))
+      [g_decArgo_floatSurfData] = update_previous_cycle_surf_data( ...
+         g_decArgo_floatSurfData, a_floatArgosId, a_floatNum, a_frameLength, ...
          a_excludedCycleList, cycleNum);
    end
    
@@ -150,7 +152,7 @@ for idCy = 1:length(a_cycleList)
    
    % retrieve the previous cycle surface information
    [prevCycleNum, lastLocDate, lastLocLon, lastLocLat, lastMsgDate] = ...
-      get_previous_cycle_surf_data(a_floatSurfData, cycleNum);
+      get_previous_cycle_surf_data(g_decArgo_floatSurfData, cycleNum);
    
    % compute the JAMSTEC QC for the cycle locations
    lastLocDateOfPrevCycle = g_decArgo_dateDef;
@@ -181,9 +183,9 @@ for idCy = 1:length(a_cycleList)
    cycleSurfData.argosLocQc = argosLocQc;
    
    % update the float surface data structure
-   a_floatSurfData.cycleNumbers = [a_floatSurfData.cycleNumbers cycleNum];
-   a_floatSurfData.cycleData = [a_floatSurfData.cycleData cycleSurfData];
-   a_floatSurfData.updatedForCycleNumber = cycleNum;
+   g_decArgo_floatSurfData.cycleNumbers = [g_decArgo_floatSurfData.cycleNumbers cycleNum];
+   g_decArgo_floatSurfData.cycleData = [g_decArgo_floatSurfData.cycleData cycleSurfData];
+   g_decArgo_floatSurfData.updatedForCycleNumber = cycleNum;
    
    % decode the selected data according to decoder Id
    
@@ -228,7 +230,7 @@ for idCy = 1:length(a_cycleList)
          argosDataData, argosDataUsed, argosDataDate, cycleSurfData, a_decoderId, finalStep);
       
       % update surface times in the float surface data structure
-      a_floatSurfData = update_surf_data(a_floatSurfData, g_decArgo_timeData, cycleNum);
+      g_decArgo_floatSurfData = update_surf_data(g_decArgo_floatSurfData, g_decArgo_timeData, cycleNum);
       
       if (~isempty(g_decArgo_outputCsvFileId))
          
@@ -254,7 +256,7 @@ for idCy = 1:length(a_cycleList)
          
          % process profile data for PROF NetCDF file
          [cycleProfile] = process_apx_argos_profile(profData, profNstData, cycleNum, ...
-            g_decArgo_timeData, g_decArgo_presOffsetData, a_floatSurfData, a_decoderId);
+            g_decArgo_timeData, g_decArgo_presOffsetData, g_decArgo_floatSurfData, a_decoderId);
          
          print = 0;
          if (print == 1)
@@ -292,7 +294,7 @@ for idCy = 1:length(a_cycleList)
          % (store all but times in the TRAJ structures)
          [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_apx( ...
             cycleNum, ...
-            addLaunchData, a_floatSurfData, ...
+            addLaunchData, g_decArgo_floatSurfData, ...
             trajData, parkData, astData, profData, surfData, g_decArgo_timeData, g_decArgo_presOffsetData, a_decoderId);
          
          o_tabTrajNMeas = [o_tabTrajNMeas; tabTrajNMeas];
@@ -336,14 +338,14 @@ if (isempty(g_decArgo_outputCsvFileId))
    % if trajectory data is empty (no transmission from the float) add float
    % launch date and position in trajectory data structure
    if (isempty(o_tabTrajNMeas))
-      o_tabTrajNMeas = add_launch_data_in_traj(a_floatSurfData);
+      o_tabTrajNMeas = add_launch_data_in_traj(g_decArgo_floatSurfData);
    end
    
    % fill empty profile locations with interpolated positions
    % (profile locations have been computed cycle by cycle, we will check if
    % some empty profile locations can not be determined using interpolations of the
    % surface trajectory)
-   [o_tabProfiles] = fill_empty_profile_locations_argos(a_floatSurfData, o_tabProfiles);
+   [o_tabProfiles] = fill_empty_profile_locations_argos(g_decArgo_floatSurfData, o_tabProfiles);
    
    % process trajectory data for TRAJ NetCDF file
    % (store times in the TRAJ structures)
@@ -355,7 +357,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       addLaunchData = 0;
    end
    [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_time_apx( ...
-      addLaunchData, a_floatSurfData, ...
+      addLaunchData, g_decArgo_floatSurfData, ...
       g_decArgo_timeData, g_decArgo_presOffsetData, o_tabTrajNMeas, o_tabTrajNCycle);
    
    % sort trajectory data structures according to the predefined measurement
@@ -367,7 +369,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabProfiles, o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas);
 
    % perform DOXY, CHLA and NITRATE adjustment
-   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, a_floatSurfData.launchDate, 1);
+   [o_tabProfiles] = compute_rt_adjusted_param(o_tabProfiles, g_decArgo_floatSurfData.launchDate, 1);
 
    % update N_CYCLE arrays so that N_CYCLE and N_MEASUREMENT arrays are
    % consistency

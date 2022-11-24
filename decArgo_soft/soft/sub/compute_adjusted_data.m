@@ -45,7 +45,7 @@ for idF = 1:length(g_decArgo_rtOffsetInfo.param)
       tabValue = g_decArgo_rtOffsetInfo.value{idF};
       tabDate = g_decArgo_rtOffsetInfo.date{idF};
       if (a_profile.date ~= g_decArgo_dateDef)
-         idD = find((a_profile.date - g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= tabDate);
+         idD = find((a_profile.date + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= tabDate);
          if (~isempty(idD))
             slopeValue = tabSlope(idD(end));
             offsetValue = tabValue(idD(end));

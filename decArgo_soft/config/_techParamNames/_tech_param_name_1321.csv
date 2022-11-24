@@ -3,3 +3,9 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 1002;-1;Number of bins recorded during the mission;NUMBER_BinsWithData_COUNT   ;number of pressure bins with data
 1003;-1;Highest pressure in decibars recorded during the mission;TECH_AUX_PRES_DeepestSample_dbar;Deepest pressure sampled by the CTD in continuous profiling mode
 1004;-1;Pressure w/out Offset:   -0.03,Pressure w/ Offset:    0.01, Surface Pressure Offset:   -0.04;PRES_SurfaceOffsetNotTruncated_dbar;Surface pressure recorded just before the previous descent - Note: cumulative offset, This IS NOT used to correct pressure on board Not autocorrected
+1005;-1;Ice Detected, aborting mission;FLAG_IceDetected_bit;aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit.
+1006;-1;thermal_detect/TRUE/Detected @ 14.81 dbar with a median pressure of 30.05 after 7 samples;PRES_IceAvoidance_dbar;Pressure when float avoids ice
+1007;-1;thermal_detect/median temperature -1.844900 <= critical temperature -1.000000;TEMP_MixedLayerMedian_degC;median of the mixed layer samples taken
+1008;-1;thermal_detect/TRUE/Detected @ 14.81 dbar with a median pressure of 30.05 after 7 samples;NUMBER_MixedLayerSamples_COUNT;number of CTD samples taken in the mixed layer
+1009;-1;thermal_detect/TRUE or breakup_detect/TRUE;TECH_AUX_FLAG_IceDetection_NUMBER;The type of ice detection that ocurred (1: surface Ice detection, 2: Ice breakup detection, 3: Ice cap detection) - see float manual for details.
+1010;-1;any(IceMonths <> 0) & thermal_detect/sample measurements;TECH_AUX_FLAG_IceAlgorithmActivated_LOGICAL;This float type is equiped with Ice detection algorithm activated according to the IceMonths configuration parameter.Flag = 1 when Ice detection algorithm is activated for the concerned cycle, = 0 otherwise.

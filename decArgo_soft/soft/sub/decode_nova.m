@@ -64,8 +64,14 @@ global g_decArgo_applyRtqc;
 % Argos (1), Iridium RUDICS (2), Iridium SBD (3) or Iridium SBD2 (4) float
 global g_decArgo_floatTransType;
 
+% array to store surface data of Argos floats
+global g_decArgo_floatSurfData;
+
 % array to store GPS data
 global g_decArgo_gpsData;
+
+% array to store Iridium mail contents
+global g_decArgo_iridiumMailData;
 
 % global default values
 global g_decArgo_dateDef;
@@ -79,6 +85,11 @@ g_decArgo_spoolFileList = [];
 global g_decArgo_bufFileList;
 g_decArgo_bufFileList = [];
 
+% float launch information
+global g_decArgo_floatLaunchDate;
+global g_decArgo_floatLaunchLon;
+global g_decArgo_floatLaunchLat;
+
 
 % get floats information
 if ((g_decArgo_realtimeFlag == 0) && (g_decArgo_delayedModeFlag == 0))
@@ -91,6 +102,17 @@ end
 % decode the floats of the "a_floatList" list
 nbFloats = length(a_floatList);
 for idFloat = 1:nbFloats
+   
+   % initialized whatever the float transmission type is
+   % (will be used in get_meas_location)
+   g_decArgo_floatSurfData = [];
+   g_decArgo_gpsData = [];
+   g_decArgo_iridiumMailData = [];
+   
+   g_decArgo_floatLaunchDate = '';
+   g_decArgo_floatLaunchLon = '';
+   g_decArgo_floatLaunchLat = '';
+
    floatNum = a_floatList(idFloat);
    
    if (g_decArgo_realtimeFlag == 0)
@@ -117,7 +139,10 @@ for idFloat = 1:nbFloats
       floatRefDay = listRefDay(idF);
       floatEndDate = listEndDate(idF);
       floatDmFlag = listDmFlag(idF);
-
+      
+      g_decArgo_floatLaunchDate = floatLaunchDate;
+      g_decArgo_floatLaunchLon = floatLaunchLon;
+      g_decArgo_floatLaunchLat = floatLaunchLat;
    else
       
       [floatNum, floatArgosId, ...
@@ -131,6 +156,10 @@ for idFloat = 1:nbFloats
          fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
          continue
       end
+      
+      g_decArgo_floatLaunchDate = floatLaunchDate;
+      g_decArgo_floatLaunchLon = floatLaunchLon;
+      g_decArgo_floatLaunchLat = floatLaunchLat;
    end
    
    % check that it is a NOVA float
@@ -165,7 +194,6 @@ for idFloat = 1:nbFloats
       % Iridium SBD floats
       
       % update GPS data global variable
-      g_decArgo_gpsData = [];
       if (floatLaunchLon ~= g_decArgo_argosLonDef)
          g_decArgo_gpsData{1} = -1;
          g_decArgo_gpsData{2} = -1;

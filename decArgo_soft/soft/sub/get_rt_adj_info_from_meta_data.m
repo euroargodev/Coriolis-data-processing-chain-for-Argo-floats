@@ -32,6 +32,8 @@ if (isfield(a_metaData, 'RT_OFFSET'))
    o_rtOffsetInfo.param = [];
    o_rtOffsetInfo.slope = [];
    o_rtOffsetInfo.value = [];
+   o_rtOffsetInfo.adjError = [];
+   o_rtOffsetInfo.adjErrorMethod = [];
    o_rtOffsetInfo.date = [];
    
    rtData = a_metaData.RT_OFFSET;
@@ -41,6 +43,8 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       fieldNames = fields(rtData.PARAM);
       tabSlope = [];
       tabValue = [];
+      tabAdjError = [];
+      tabAdjErrorMethod = [];
       tabDate = [];
       for idF = 1:length(fieldNames)
          fieldName = fieldNames{idF};
@@ -55,6 +59,26 @@ if (isfield(a_metaData, 'RT_OFFSET'))
             tabSlope = [tabSlope slope];
             value = str2double(rtData.VALUE.(['VALUE_' paramNum]));
             tabValue = [tabValue value];
+            if (isfield(rtData, 'ADJUSTED_ERROR'))
+               if (isfield(rtData.ADJUSTED_ERROR, ['ADJUSTED_ERROR_' paramNum]))
+                  adjError = str2double(rtData.ADJUSTED_ERROR.(['ADJUSTED_ERROR_' paramNum]));
+                  tabAdjError = [tabAdjError adjError];
+               else
+                  tabAdjError = [tabAdjError nan];
+               end
+            else
+               tabAdjError = [tabAdjError nan];
+            end
+            if (isfield(rtData, 'ADJUSTED_ERROR_METHOD'))
+               if (isfield(rtData.ADJUSTED_ERROR_METHOD, ['ADJUSTED_ERROR_METHOD_' paramNum]))
+                  adjErrorMethod = rtData.ADJUSTED_ERROR_METHOD.(['ADJUSTED_ERROR_METHOD_' paramNum]);
+                  tabAdjErrorMethod = [tabAdjErrorMethod adjErrorMethod];
+               else
+                  tabAdjErrorMethod = [tabAdjErrorMethod nan];
+               end
+            else
+               tabAdjErrorMethod = [tabAdjErrorMethod nan];
+            end
             date = rtData.DATE.(['DATE_' paramNum]);
             date = datenum(date, 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
             tabDate = [tabDate date];
@@ -63,11 +87,14 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       [tabDate, idSorted] = sort(tabDate);
       tabSlope = tabSlope(idSorted);
       tabValue = tabValue(idSorted);
+      tabAdjError = tabAdjError(idSorted);
       
       % store the RT offsets
       o_rtOffsetInfo.param{end+1} = param;
       o_rtOffsetInfo.slope{end+1} = tabSlope;
       o_rtOffsetInfo.value{end+1} = tabValue;
+      o_rtOffsetInfo.adjError{end+1} = tabAdjError;
+      o_rtOffsetInfo.adjErrorMethod{end+1} = tabAdjErrorMethod;
       o_rtOffsetInfo.date{end+1} = tabDate;
    end
 end

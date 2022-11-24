@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  [o_miscInfo, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
-%    o_gpsData, o_grounding, o_miscEvts, o_cycleTimeData, o_cycleTimeData, o_presOffsetData] = ...
+%    o_gpsData, o_iceDetection, o_buoyancy, o_miscEvts, o_cycleTimeData, o_cycleTimeData, o_presOffsetData] = ...
 %    decode_system_log_apx_apf11_ir(a_systemLogFileList, a_cycleTimeData, a_presOffsetData, a_techData)
 %
 % INPUT PARAMETERS :
@@ -20,6 +20,7 @@
 %   o_techData       : output TECH data
 %   o_gpsData        : GPS data from system_log files
 %   o_grounding      : grounding data
+%   o_iceDetection   : ice detection data
 %   o_buoyancy       : buoyancy data
 %   o_miscEvts       : raw misc events
 %   o_cycleTimeData  : cycle timings data
@@ -34,7 +35,7 @@
 %   04/27/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_miscInfo, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
-   o_gpsData, o_grounding, o_buoyancy, o_miscEvts, o_cycleTimeData, o_presOffsetData] = ...
+   o_gpsData, o_grounding, o_iceDetection, o_buoyancy, o_miscEvts, o_cycleTimeData, o_presOffsetData] = ...
    decode_system_log_apx_apf11_ir(a_systemLogFileList, a_cycleTimeData, a_presOffsetData, a_techData)
 
 % output parameters initialization
@@ -45,6 +46,7 @@ o_sampleCfg = [];
 o_techData = a_techData;
 o_gpsData = [];
 o_grounding = [];
+o_iceDetection = [];
 o_buoyancy = [];
 o_miscEvts = [];
 o_presOffsetData = a_presOffsetData;
@@ -58,6 +60,13 @@ global g_decArgo_cycleNum;
 
 % output CSV file Id
 global g_decArgo_outputCsvFileId;
+
+% list of cycle numbers and ice detection flag
+global g_decArgo_cycleNumListForIce;
+global g_decArgo_cycleNumListIceDetected;
+
+% ice float flag
+global g_decArgo_iceFloat;
 
 
 if (isempty(a_systemLogFileList))
@@ -105,6 +114,18 @@ for idFile = 1:length(a_systemLogFileList)
       [missionCfg, sampleCfg] = process_apx_apf11_ir_config_evts(events(idEvts));
       o_missionCfg = [o_missionCfg; missionCfg];
       o_sampleCfg = [o_sampleCfg; sampleCfg];
+      
+      if (g_decArgo_iceFloat == 0)
+         if (~isempty(missionCfg))
+            missionCfgTmp = missionCfg{2};
+            if (isfield(missionCfgTmp, 'IceMonths'))
+               iceMonths = hex2dec(missionCfgTmp.IceMonths{:});
+               if (iceMonths ~= 0)
+                  g_decArgo_iceFloat = 1;
+               end
+            end
+         end
+      end
    end
    
    % pressure offset
@@ -158,6 +179,84 @@ for idFile = 1:length(a_systemLogFileList)
          
          o_grounding = [o_grounding; grounding];
       end
+   end
+   
+   % Ice events
+   if (g_decArgo_iceFloat == 1)
+      g_decArgo_cycleNumListForIce = [g_decArgo_cycleNumListForIce g_decArgo_cycleNum];
+      g_decArgo_cycleNumListIceDetected = [g_decArgo_cycleNumListIceDetected 0];
+      iceAlgoActivatedForCurrentCycle = 0;
+   end
+   idEvts = find(strcmp({events.functionName}, 'ICE') | ...
+      strcmp({events.functionName}, 'ASCENT'));
+   if (~isempty(idEvts))
+      iceDetection = process_apx_apf11_ir_ice_evts(events(idEvts));
+
+      if (~isempty(iceDetection))
+         o_iceDetection = iceDetection;
+         
+         if (~isempty(iceDetection.thermalDetect.sampleTime))
+            g_decArgo_iceFloat = 1;
+            iceAlgoActivatedForCurrentCycle = 1;
+         end
+         
+         if (~isempty(iceDetection.thermalDetect.medianTempTime))
+            dataStruct = get_apx_tech_data_init_struct(1);
+            dataStruct.label = 'Median TEMP of mixed layer samples';
+            dataStruct.techId = 1007;
+            dataStruct.value = num2str(iceDetection.thermalDetect.medianTemp);
+            dataStruct.cyNum = g_decArgo_cycleNum;
+            o_techData{end+1} = dataStruct;
+         end
+         
+         if (~isempty(iceDetection.thermalDetect.detectTime))
+            dataStruct = get_apx_tech_data_init_struct(1);
+            dataStruct.label = 'Number of mixed layer samples';
+            dataStruct.techId = 1008;
+            dataStruct.value = num2str(iceDetection.thermalDetect.detectNbSample);
+            dataStruct.cyNum = g_decArgo_cycleNum;
+            o_techData{end+1} = dataStruct;
+            
+            dataStruct = get_apx_tech_data_init_struct(1);
+            dataStruct.label = 'Pressure Ice avoidance';
+            dataStruct.techId = 1006;
+            dataStruct.value = num2str(iceDetection.thermalDetect.detectPres);
+            dataStruct.cyNum = g_decArgo_cycleNum;
+            o_techData{end+1} = dataStruct;
+         end
+         
+         if (~isempty(iceDetection.ascent.abortTypeTime))
+            o_cycleTimeData.ascentAbortDate = iceDetection.ascent.abortTypeTime;
+            if (~isempty(iceDetection.thermalDetect.detectPres))
+               o_cycleTimeData.ascentAbortPres = iceDetection.thermalDetect.detectPres;
+            end
+            
+            dataStruct = get_apx_tech_data_init_struct(1);
+            dataStruct.label = 'Ice detection type';
+            dataStruct.techId = 1009;
+            dataStruct.value = num2str(iceDetection.ascent.abortType);
+            dataStruct.cyNum = g_decArgo_cycleNum;
+            o_techData{end+1} = dataStruct;
+            
+            g_decArgo_cycleNumListIceDetected(end) = 1;
+            iceDetectedBitValue = compute_ice_detected_bit_value(g_decArgo_cycleNum, ...
+               g_decArgo_cycleNumListForIce, g_decArgo_cycleNumListIceDetected);
+            dataStruct = get_apx_tech_data_init_struct(1);
+            dataStruct.label = 'Ice detected bit';
+            dataStruct.techId = 1005;
+            dataStruct.value = iceDetectedBitValue;
+            dataStruct.cyNum = g_decArgo_cycleNum;
+            o_techData{end+1} = dataStruct;
+         end
+      end
+   end
+   if (g_decArgo_iceFloat == 1)
+      dataStruct = get_apx_tech_data_init_struct(1);
+      dataStruct.label = 'Ice algorithm activated';
+      dataStruct.techId = 1010;
+      dataStruct.value = iceAlgoActivatedForCurrentCycle;
+      dataStruct.cyNum = g_decArgo_cycleNum;
+      o_techData{end+1} = dataStruct;
    end
    
    % buoyancy activity

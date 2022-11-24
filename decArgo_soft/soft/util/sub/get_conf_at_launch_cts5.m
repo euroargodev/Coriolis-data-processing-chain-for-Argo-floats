@@ -50,23 +50,25 @@ end
 
 % read configuration file
 [confAtLaunchData] = read_apmt_config(a_configReportFileName, decoderId);
-fieldNames = fieldnames(confAtLaunchData);
-for idF = 1:length(fieldNames)
-   section = fieldNames{idF};
-   dataNumList = confAtLaunchData.(section).num;
-   dataNameList = confAtLaunchData.(section).name;
-   dataFmtList = confAtLaunchData.(section).fmt;
-   dataValueList = confAtLaunchData.(section).data;
-   for idI = 1:length(dataNameList)
-      dataNum = dataNumList{idI};
-      dataName = dataNameList{idI};
-      dataFmt = dataFmtList{idI};
-      dataValue = dataValueList{idI};
-      o_confParamNames{end+1} = sprintf('CONFIG_APMT_%s_P%02d', section, dataNum);
-      if (~isempty(dataFmt))
-         o_confParamValues{end+1} = sprintf(dataFmt, dataValue);
-      else
-         o_confParamValues{end+1} = '1';
+if (~isempty(confAtLaunchData))
+   fieldNames = fieldnames(confAtLaunchData);
+   for idF = 1:length(fieldNames)
+      section = fieldNames{idF};
+      dataNumList = confAtLaunchData.(section).num;
+      dataNameList = confAtLaunchData.(section).name;
+      dataFmtList = confAtLaunchData.(section).fmt;
+      dataValueList = confAtLaunchData.(section).data;
+      for idI = 1:length(dataNameList)
+         dataNum = dataNumList{idI};
+         dataName = dataNameList{idI};
+         dataFmt = dataFmtList{idI};
+         dataValue = dataValueList{idI};
+         o_confParamNames{end+1} = sprintf('CONFIG_APMT_%s_P%02d', section, dataNum);
+         if (~isempty(dataFmt))
+            o_confParamValues{end+1} = sprintf(dataFmt, dataValue);
+         else
+            o_confParamValues{end+1} = '1';
+         end
       end
    end
 end

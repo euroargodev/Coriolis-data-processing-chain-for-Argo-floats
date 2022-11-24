@@ -63,11 +63,14 @@ global g_decArgo_applyRtqc;
 % Argos (1), Iridium RUDICS (2) float
 global g_decArgo_floatTransType;
 
-% float launch date
-global g_decArgo_floatLaunchDate;
+% array to store surface data of Argos floats
+global g_decArgo_floatSurfData;
 
 % array to store GPS data
 global g_decArgo_gpsData;
+
+% array to store Iridium mail contents
+global g_decArgo_iridiumMailData;
 
 % global default values
 global g_decArgo_dateDef;
@@ -80,6 +83,12 @@ global g_decArgo_bddUpdateItemLabels;
 g_decArgo_bddUpdateCsvFileName = '';
 g_decArgo_bddUpdateCsvFileId = -1;
 
+% float launch information
+global g_decArgo_floatLaunchDate;
+global g_decArgo_floatLaunchLon;
+global g_decArgo_floatLaunchLat;
+
+
 % get floats information
 if (g_decArgo_realtimeFlag == 0)
    [listWmoNum, listDecId, listArgosId, listFrameLen, ...
@@ -91,9 +100,19 @@ end
 % decode the floats of the "a_floatList" list
 nbFloats = length(a_floatList);
 for idFloat = 1:nbFloats
+   
+   % initialized whatever the float transmission type is
+   % (will be used in get_meas_location)
+   g_decArgo_floatSurfData = [];
+   g_decArgo_gpsData = [];
+   g_decArgo_iridiumMailData = [];
+
    g_decArgo_bddUpdateItemLabels = [];
    g_decArgo_reportStruct = [];
-   
+   g_decArgo_floatLaunchDate = '';
+   g_decArgo_floatLaunchLon = '';
+   g_decArgo_floatLaunchLat = '';
+
    floatNum = a_floatList(idFloat);
    
    if (g_decArgo_realtimeFlag == 0)
@@ -120,7 +139,10 @@ for idFloat = 1:nbFloats
       floatRefDay = listRefDay(idF);
       floatEndDate = listEndDate(idF);
       floatDmFlag = listDmFlag(idF);
-            
+      
+      g_decArgo_floatLaunchDate = floatLaunchDate;
+      g_decArgo_floatLaunchLon = floatLaunchLon;
+      g_decArgo_floatLaunchLat = floatLaunchLat;
    else
       
       [floatNum, floatArgosId, ...
@@ -134,10 +156,12 @@ for idFloat = 1:nbFloats
          fprintf('ERROR: No information on float #%d => nothing done\n', floatNum);
          continue
       end
+      
+      g_decArgo_floatLaunchDate = floatLaunchDate;
+      g_decArgo_floatLaunchLon = floatLaunchLon;
+      g_decArgo_floatLaunchLat = floatLaunchLat;
    end
    
-   g_decArgo_floatLaunchDate = floatLaunchDate;
-
    % check that it is an APEX float
    if ~((floatDecId > 1000) && (floatDecId < 2000))
       fprintf('ERROR: Float #%d is not an Apex float => not decoded\n', floatNum);
@@ -177,14 +201,14 @@ for idFloat = 1:nbFloats
 
       % create the float surface data structure used to compute profile
       % time and location
-      floatSurfData = get_float_surf_data_init_struct();
+      g_decArgo_floatSurfData = get_float_surf_data_init_struct();
       
       % add launch information to the surface data structure
-      floatSurfData.launchDate = floatLaunchDate;
-      floatSurfData.launchLon = floatLaunchLon;
-      floatSurfData.launchLat = floatLaunchLat;
+      g_decArgo_floatSurfData.launchDate = floatLaunchDate;
+      g_decArgo_floatSurfData.launchLon = floatLaunchLon;
+      g_decArgo_floatSurfData.launchLat = floatLaunchLat;
       
-      floatSurfData.cycleDuration = double(floatCycleTime);
+      g_decArgo_floatSurfData.cycleDuration = double(floatCycleTime);
       
       [tabProfiles, ...
          tabTrajNMeas, tabTrajNCycle, ...
@@ -192,7 +216,7 @@ for idFloat = 1:nbFloats
          structConfig] = decode_apex_argos_data( ...
          floatNum, floatCycleList, floatExcludedCycleList, ...
          floatDecId, str2num(floatArgosId), floatFrameLen, ...
-         floatSurfData, floatEndDate);
+         floatEndDate);
          
    elseif (g_decArgo_floatTransType == 2)
 
@@ -210,7 +234,6 @@ for idFloat = 1:nbFloats
       end
       
       % update GPS data global variable
-      g_decArgo_gpsData = [];
       if (floatLaunchLon ~= g_decArgo_argosLonDef)
          g_decArgo_gpsData{1} = -1;
          g_decArgo_gpsData{2} = -1;
@@ -243,7 +266,6 @@ for idFloat = 1:nbFloats
       end
       
       % update GPS data global variable
-      g_decArgo_gpsData = [];
       if (floatLaunchLon ~= g_decArgo_argosLonDef)
          g_decArgo_gpsData{1} = -1;
          g_decArgo_gpsData{2} = -1;

@@ -124,7 +124,6 @@ global g_decArgo_gpsData;
 
 % array to store Iridium mail contents
 global g_decArgo_iridiumMailData;
-g_decArgo_iridiumMailData = [];
 
 % for some (oldest) float versions the prelude and the first deep cycle have the
 % same number 0. We cannot manage this in the TRAJ files and choose to add 1 to

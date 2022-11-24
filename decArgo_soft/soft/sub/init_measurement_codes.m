@@ -58,6 +58,9 @@ global g_MC_SpyInAscProf;
 global g_MC_AscProf;
 global g_MC_MedianValueInAscProf;
 global g_MC_LastAscPumpedCtd;
+global g_MC_IceThermalDetectionTrue;
+global g_MC_IceBreakupDetectionFlag;
+global g_MC_IceAscentAbortNum;
 global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_AET_Float;
@@ -135,6 +138,9 @@ g_MC_AscProf = 590;
 g_MC_MedianValueInAscProf = 595;
 g_MC_LastAscPumpedCtd = 599;
 g_MC_ContinuousProfileStartOrStop = 599; % for TRAJ_AUX of Apex APF11 iridium floats
+g_MC_IceThermalDetectionTrue = 599; % for TRAJ_AUX of Apex APF11 iridium floats
+g_MC_IceBreakupDetectionFlag = 599; % for TECH_AUX of Apex APF11 iridium floats
+g_MC_IceAscentAbortNum = 599; % for TECH_AUX of Apex APF11 iridium float
 g_MC_AET = 600;
 g_MC_AET_Float = 602;
 g_MC_SpyAtSurface = 689;

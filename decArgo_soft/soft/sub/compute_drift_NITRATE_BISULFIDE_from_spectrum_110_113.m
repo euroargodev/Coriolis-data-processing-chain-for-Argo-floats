@@ -241,13 +241,17 @@ if (~isempty(idNoDef))
    
    % Equation #6
    % compute potential temperature and potential density
-   tpot = tetai(ctdData(:, 1), ctdData(:, 2), ctdData(:, 3), 0);
-   [null, sigma0] = swstat90(ctdData(:, 3), tpot, 0);
-   rho = (sigma0+1000)/1000;
-   
+   [measLon, measLat] = get_meas_location(a_profSuna.cycleNumber, a_profSuna.profileNumber, a_profSuna);
+   rho = potential_density_gsw(ctdData(:, 1), ctdData(:, 2), ctdData(:, 3), 0, measLon, measLat);
+   rho = rho/1000;
+
    % compute NITRATE and BISULFIDE data (units convertion: micromol/L to micromol/kg)
-   o_NITRATE(idNoDef) = tabMolarNitrate ./ rho;
-   o_BISULFIDE(idNoDef) = tabMolarBisulfide ./ rho;
+   nitrateValues = tabMolarNitrate ./ rho;
+   idNoNan = find(~isnan(nitrateValues));
+   o_NITRATE(idNoDef(idNoNan)) = nitrateValues(idNoNan);
+   bisulfideValues = tabMolarBisulfide ./ rho;
+   idNoNan = find(~isnan(bisulfideValues));
+   o_BISULFIDE(idNoDef(idNoNan)) = bisulfideValues(idNoNan);
    
    % replace complex values with fillValue (ex: 6901865 #34)
    if (any(imag(o_NITRATE) ~= 0))

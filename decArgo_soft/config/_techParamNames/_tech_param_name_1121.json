@@ -30,5 +30,53 @@
       "TECH_PARAM_MSG_LABEL" : "Pressure w/out Offset:   -0.03,Pressure w/ Offset:    0.01, Surface Pressure Offset:   -0.04",
       "TECH_PARAM_NAME" : "PRES_SurfaceOffsetNotTruncated_dbar",
       "TECH_PARAM_DESCRIPTION" : "Surface pressure recorded just before the previous descent - Note: cumulative offset, This IS NOT used to correct pressure on board Not autocorrected"
+   },
+   "TECH_PARAM_5" :
+   {
+      "TECH_PARAM_DEC_ID" : "1005",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Ice Detected, aborting mission",
+      "TECH_PARAM_NAME" : "FLAG_IceDetected_bit",
+      "TECH_PARAM_DESCRIPTION" : "aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit."
+   },
+   "TECH_PARAM_6" :
+   {
+      "TECH_PARAM_DEC_ID" : "1006",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "thermal_detect/TRUE/Detected @ 14.81 dbar with a median pressure of 30.05 after 7 samples",
+      "TECH_PARAM_NAME" : "PRES_IceAvoidance_dbar",
+      "TECH_PARAM_DESCRIPTION" : "Pressure when float avoids ice"
+   },
+   "TECH_PARAM_7" :
+   {
+      "TECH_PARAM_DEC_ID" : "1007",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "thermal_detect/median temperature -1.844900 <= critical temperature -1.000000",
+      "TECH_PARAM_NAME" : "TEMP_MixedLayerMedian_degC",
+      "TECH_PARAM_DESCRIPTION" : "median of the mixed layer samples taken"
+   },
+   "TECH_PARAM_8" :
+   {
+      "TECH_PARAM_DEC_ID" : "1008",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "thermal_detect/TRUE/Detected @ 14.81 dbar with a median pressure of 30.05 after 7 samples",
+      "TECH_PARAM_NAME" : "NUMBER_MixedLayerSamples_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "number of CTD samples taken in the mixed layer"
+   },
+   "TECH_PARAM_9" :
+   {
+      "TECH_PARAM_DEC_ID" : "1009",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "thermal_detect/TRUE or breakup_detect/TRUE",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceDetection_NUMBER",
+      "TECH_PARAM_DESCRIPTION" : "The type of ice detection that ocurred (1: surface Ice detection, 2: Ice breakup detection, 3: Ice cap detection) - see float manual for details."
+   },
+   "TECH_PARAM_10" :
+   {
+      "TECH_PARAM_DEC_ID" : "1010",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "any(IceMonths <> 0) & thermal_detect/sample measurements",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceAlgorithmActivated_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "This float type is equiped with Ice detection algorithm activated according to the IceMonths configuration parameter.Flag = 1 when Ice detection algorithm is activated for the concerned cycle, = 0 otherwise."
    }
 }

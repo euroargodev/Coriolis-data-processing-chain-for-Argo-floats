@@ -48,7 +48,7 @@ if (~isempty(g_decArgo_rtOffsetInfo))
             if (strcmp(g_decArgo_rtOffsetInfo.param{idF}, profParam.name) == 1)
                tabDate = g_decArgo_rtOffsetInfo.date{idF};
                if (a_profile.date ~= g_decArgo_dateDef)
-                  idD = find((a_profile.date - g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= tabDate);
+                  idD = find((a_profile.date + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= tabDate);
                   if (~isempty(idD))
                      o_adjExist = 1;
                      return

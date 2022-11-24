@@ -150,61 +150,10 @@ for idP = 1:length(o_tabProfiles)
          prof.locationLat = a_gpsLocLat(idPosToUse);
          prof.locationQc = num2str(a_gpsLocQc(idPosToUse));
       else
-         % no GPS fix exists
          
-         if (prof.date ~= g_decArgo_dateDef)
-            
-            % we must interpolate between the existing GPS locations
-            prevLocDate = g_decArgo_dateDef;
-            nextLocDate = g_decArgo_dateDef;
-            
-            % find the previous GPS location
-            idPrev = find((a_gpsLocDate <= prof.date) & (a_gpsLocQc == 1));
-            if (~isempty(idPrev))
-               % previous good GPS locations exist, use the last one
-               [~, idMax] = max(a_gpsLocDate(idPrev));
-               prevLocDate = a_gpsLocDate(idPrev(idMax));
-               prevLocLon = a_gpsLocLon(idPrev(idMax));
-               prevLocLat = a_gpsLocLat(idPrev(idMax));
-            end
-            
-            % find the next GPS location
-            idNext = find((a_gpsLocDate >= prof.date) & (a_gpsLocQc == 1));
-            if (~isempty(idNext))
-               % next good GPS locations exist, use the first one
-               [~, idMin] = min(a_gpsLocDate(idNext));
-               nextLocDate = a_gpsLocDate(idNext(idMin));
-               nextLocLon = a_gpsLocLon(idNext(idMin));
-               nextLocLat = a_gpsLocLat(idNext(idMin));
-            end
-            
-            % interpolate between the 2 locations
-            if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
-               
-               % interpolate the locations
-               [interpLocLon, interpLocLat] = interpolate_between_2_locations(...
-                  prevLocDate, prevLocLon, prevLocLat, ...
-                  nextLocDate, nextLocLon, nextLocLat, ...
-                  prof.date);
-               
-               if (~isnan(interpLocLon))
-                  % assign the interpolated location to the profile
-                  prof.locationDate = prof.date;
-                  prof.locationLon = interpLocLon;
-                  prof.locationLat = interpLocLat;
-                  prof.locationQc = g_decArgo_qcStrInterpolated;
-               else
-                  fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing => profile not located\n', ...
-                     g_decArgo_floatNum, ...
-                     prof.cycleNumber);
-               end
-            end
-         end
-      end
-      
-      % we have not been able to set a location for the profile, we will use the
-      % Iridium locations
-      if (prof.locationDate == g_decArgo_dateDef)
+         % there is no good GPS locations for this cycle
+         
+         % we will use the Iridium locations
          [locDate, locLon, locLat, locQc, lastCycleFlag] = ...
             compute_profile_location_from_iridium_locations_ir_sbd(a_iridiumMailData, prof.cycleNumber);
          if (~isempty(locDate))
@@ -214,8 +163,6 @@ for idP = 1:length(o_tabProfiles)
             prof.locationLat = locLat;
             prof.locationQc = locQc;
             prof.iridiumLocation = 1;
-            
-            % positioning system
             prof.posSystem = 'IRIDIUM';
             
             % if the current cycle is the last received cycle, the location could
@@ -223,6 +170,59 @@ for idP = 1:length(o_tabProfiles)
             % different rsync log files)
             if (lastCycleFlag == 1)
                prof.updated = 1;
+            end
+         else
+            
+            % the profile location is still missing
+            % we must interpolate between the existing GPS locations
+            
+            if (prof.date ~= g_decArgo_dateDef)
+               
+               % we must interpolate between the existing GPS locations
+               prevLocDate = g_decArgo_dateDef;
+               nextLocDate = g_decArgo_dateDef;
+               
+               % find the previous GPS location
+               idPrev = find((a_gpsLocDate <= prof.date) & (a_gpsLocQc == 1));
+               if (~isempty(idPrev))
+                  % previous good GPS locations exist, use the last one
+                  [~, idMax] = max(a_gpsLocDate(idPrev));
+                  prevLocDate = a_gpsLocDate(idPrev(idMax));
+                  prevLocLon = a_gpsLocLon(idPrev(idMax));
+                  prevLocLat = a_gpsLocLat(idPrev(idMax));
+               end
+               
+               % find the next GPS location
+               idNext = find((a_gpsLocDate >= prof.date) & (a_gpsLocQc == 1));
+               if (~isempty(idNext))
+                  % next good GPS locations exist, use the first one
+                  [~, idMin] = min(a_gpsLocDate(idNext));
+                  nextLocDate = a_gpsLocDate(idNext(idMin));
+                  nextLocLon = a_gpsLocLon(idNext(idMin));
+                  nextLocLat = a_gpsLocLat(idNext(idMin));
+               end
+               
+               % interpolate between the 2 locations
+               if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
+                  
+                  % interpolate the locations
+                  [interpLocLon, interpLocLat] = interpolate_between_2_locations(...
+                     prevLocDate, prevLocLon, prevLocLat, ...
+                     nextLocDate, nextLocLon, nextLocLat, ...
+                     prof.date);
+                  
+                  if (~isnan(interpLocLon))
+                     % assign the interpolated location to the profile
+                     prof.locationDate = prof.date;
+                     prof.locationLon = interpLocLon;
+                     prof.locationLat = interpLocLat;
+                     prof.locationQc = g_decArgo_qcStrInterpolated;
+                  else
+                     fprintf('WARNING: Float #%d Cycle #%d: time inconsistency detected while interpolating for profile location processing => profile not located\n', ...
+                        g_decArgo_floatNum, ...
+                        prof.cycleNumber);
+                  end
+               end
             end
          end
       end

@@ -7,7 +7,7 @@
 %    a_cycleNum, ...
 %    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
 %    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, ...
-%    a_gpsData, a_grounding, a_buoyancy, ...
+%    a_gpsData, a_grounding, a_iceDetection, a_buoyancy, ...
 %    a_cycleTimeData, ...
 %    a_clockOffsetData, ...
 %    a_tabTrajNMeas, a_tabTrajNCycle, a_tabTechNMeas)
@@ -25,6 +25,7 @@
 %   a_profOcr504I     : OCR_504I data
 %   a_gpsData         : GPS data
 %   a_grounding       : grounding data
+%   a_iceDetection    : ice detection data
 %   a_buoyancy        : buoyancy data
 %   a_cycleTimeData   : cycle timings data
 %   a_clockOffsetData : clock offset information
@@ -50,7 +51,7 @@ function [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = ...
    a_cycleNum, ...
    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, ...
-   a_gpsData, a_grounding, a_buoyancy, ...
+   a_gpsData, a_grounding, a_iceDetection, a_buoyancy, ...
    a_cycleTimeData, ...
    a_clockOffsetData, ...
    a_tabTrajNMeas, a_tabTrajNCycle, a_tabTechNMeas)
@@ -69,6 +70,8 @@ global g_MC_RPP;
 global g_MC_DDET;
 global g_MC_AST;
 global g_MC_AscProfDeepestBin;
+global g_MC_MedianValueInAscProf;
+global g_MC_IceThermalDetectionTrue;
 global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_TST;
@@ -120,10 +123,12 @@ trajNCycleStruct.dataMode = 'A'; % because clock offset is supposed to be set fo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 paramPres = get_netcdf_param_attributes('PRES');
+paramTemp = get_netcdf_param_attributes('TEMP');
 paramGpsTimeToFix = get_netcdf_param_attributes('GPS_TIME_TO_FIX');
 paramGpsNbSat = get_netcdf_param_attributes('GPS_NB_SATELLITE');
 paramValveFlag = get_netcdf_param_attributes('VALVE_ACTION_FLAG');
 paramPumpFlag = get_netcdf_param_attributes('PUMP_ACTION_FLAG');
+paramNbSampleIceDetect = get_netcdf_param_attributes('NB_SAMPLE_ICE_DETECTION');
 
 descentStartDate = a_cycleTimeData.descentStartDateSci;
 descentStartAdjDate = a_cycleTimeData.descentStartAdjDateSci;
@@ -829,6 +834,86 @@ if (~isempty(ascentStartDate) && ...
          end
          trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ICE DETECTION DATA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if (~isempty(a_iceDetection))
+   
+   % NOTE that, due to float issue, Ice information may have erroneous
+   % timestamps in the system_log (Ex: 6903695 #40) file and then are not dated
+
+   % PT measurements of thermal detection algorithm: (JULD, P, T) stored in TRAJ
+   % with MC=590
+   for idMeas = 1:length(a_iceDetection.thermalDetect.sampleTime)
+      time = a_iceDetection.thermalDetect.sampleTime(idMeas);
+      timeAdj = a_iceDetection.thermalDetect.sampleTimeAdj(idMeas);
+      [measStruct, ~] = create_one_meas_float_time_bis( ...
+         g_MC_AET - 10, ...
+         time, ...
+         timeAdj, ...
+         g_JULD_STATUS_2);
+      if (isempty(measStruct))
+         % some Ice events have been recovered from system_log file even without
+         % timestamp
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.measCode = g_MC_AET - 10;
+      end
+      measStruct.paramList = [paramPres paramTemp];
+      measStruct.paramData = [a_iceDetection.thermalDetect.samplePres(idMeas) a_iceDetection.thermalDetect.sampleTemp(idMeas)];
+      if (a_iceDetection.thermalDetect.samplePresAdj(idMeas) ~= g_decArgo_presDef)
+         measStruct.paramDataAdj = [a_iceDetection.thermalDetect.samplePresAdj(idMeas) a_iceDetection.thermalDetect.sampleTemp(idMeas)];
+      end
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+   end
+   
+   % median value of PT measurements of thermal detection algorithm: (JULD, T)
+   % stored in TRAJ with MC=595
+   if (~isempty(a_iceDetection.thermalDetect.medianTempTime))
+      time = a_iceDetection.thermalDetect.medianTempTime;
+      timeAdj = a_iceDetection.thermalDetect.medianTempTimeAdj;
+      [measStruct, ~] = create_one_meas_float_time_bis( ...
+         g_MC_MedianValueInAscProf, ...
+         time, ...
+         timeAdj, ...
+         g_JULD_STATUS_2);
+      if (isempty(measStruct))
+         % some Ice events have been recovered from system_log file even without
+         % timestamp
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.measCode = g_MC_MedianValueInAscProf;
+      end
+      measStruct.paramList = paramTemp;
+      measStruct.paramData = a_iceDetection.thermalDetect.medianTemp;
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+   end
+   
+   % when thermal detection is TRUE: (JULD, P, NB_SAMPLE) stored in TRAJ_AUX
+   % with MC=599
+   if (~isempty(a_iceDetection.thermalDetect.detectTime))
+      time = a_iceDetection.thermalDetect.detectTime;
+      timeAdj = a_iceDetection.thermalDetect.detectTimeAdj;
+      [measStructAux, ~] = create_one_meas_float_time_bis( ...
+         g_MC_IceThermalDetectionTrue, ...
+         time, ...
+         timeAdj, ...
+         g_JULD_STATUS_2);
+      if (isempty(measStructAux))
+         % some Ice events have been recovered from system_log file even without
+         % timestamp
+         measStructAux = get_traj_one_meas_init_struct();
+         measStructAux.measCode = g_MC_IceThermalDetectionTrue;
+      end
+      measStructAux.sensorNumber = 101; % so that it will be stored in TRAJ_AUX file
+      measStructAux.paramList = [paramPres paramNbSampleIceDetect];
+      measStructAux.paramData = [a_iceDetection.thermalDetect.detectPres a_iceDetection.thermalDetect.detectNbSample];
+      if (a_iceDetection.thermalDetect.detectPresAdj ~= g_decArgo_presDef)
+         measStructAux.paramDataAdj = [a_iceDetection.thermalDetect.detectPresAdj a_iceDetection.thermalDetect.detectNbSample];
+      end
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
    end
 end
 

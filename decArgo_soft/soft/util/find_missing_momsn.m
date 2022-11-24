@@ -53,6 +53,9 @@ diary(logFile);
 tic;
 
 % check inputs
+fprintf('DIR_LOG_FILE = %s\n', DIR_LOG_FILE);
+fprintf('CHECK_RSYNC_DATA = %d\n', CHECK_RSYNC_DATA);
+
 if (CHECK_RSYNC_DATA == 1)
 
    if ~(exist(RSYNC_DATA_DIRECTORY, 'dir') == 7)

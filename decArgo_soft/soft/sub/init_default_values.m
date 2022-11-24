@@ -502,7 +502,7 @@ g_decArgo_vertSpeed = 99.9;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release 
-g_decArgo_decoderVersion = '033d';
+g_decArgo_decoderVersion = '034a';
 
 % minimum duration (in hour) of a non-transmission period to create a new
 % cycle for an Argos float
@@ -525,10 +525,6 @@ g_decArgo_minNumMsgForNotGhost = 4;
 % minimum number of float messages in an Argos file to be processed within the
 % 'profile' mode
 g_decArgo_minNumMsgForProcessing = 5;
-
-% maximum time difference (in days) between 2 GPS locations used to replace
-% Iridium profile locations by interpolated GPS profile locations
-g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc = 30;
 
 % for delayed decoders: interval, before float launch date to consider float
 % configuration messages of the prelude phase (when they are transmitted before

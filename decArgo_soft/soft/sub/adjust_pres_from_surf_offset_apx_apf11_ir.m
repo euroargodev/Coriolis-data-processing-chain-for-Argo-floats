@@ -5,11 +5,11 @@
 % SYNTAX :
 %  [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
 %    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profOcr504I, ...
-%    o_grounding, o_buoyancy, o_cycleTimeData, o_presOffsetData] = ...
+%    o_grounding, o_iceDetection, o_buoyancy, o_cycleTimeData, o_presOffsetData] = ...
 %    adjust_pres_from_surf_offset_apx_apf11_ir( ...
 %    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
 %    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, ...
-%    a_grounding, a_buoyancy, a_cycleTimeData, a_presOffsetData)
+%    a_grounding, a_iceDetection, a_buoyancy, a_cycleTimeData, a_presOffsetData)
 %
 % INPUT PARAMETERS :
 %   a_profCtdP       : input CTD_P data
@@ -22,6 +22,7 @@
 %   a_profFlbbCd     : input FLBB_CD data
 %   a_profOcr504I    : input OCR_504I data
 %   a_grounding      : input grounding data
+%   a_iceDetection   : input ice detection data
 %   a_buoyancy       : input buoyancy data
 %   a_cycleTimeData  : input cycle timings data
 %   a_presOffsetData : input pressure offset information
@@ -37,6 +38,7 @@
 %   o_profFlbbCd     : output FLBB_CD data
 %   o_profOcr504I    : output OCR_504I data
 %   o_grounding      : output grounding data
+%   o_iceDetection   : output ice detection data
 %   o_buoyancy       : output buoyancy data
 %   o_cycleTimeData  : output cycle timings data
 %   o_presOffsetData : updated pressure offset information
@@ -51,11 +53,11 @@
 % ------------------------------------------------------------------------------
 function [o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_profDo, ...
    o_profCtdCp, o_profCtdCpH, o_profFlbbCd, o_profOcr504I, ...
-   o_grounding, o_buoyancy, o_cycleTimeData, o_presOffsetData] = ...
+   o_grounding, o_iceDetection, o_buoyancy, o_cycleTimeData, o_presOffsetData] = ...
    adjust_pres_from_surf_offset_apx_apf11_ir( ...
    a_profCtdP, a_profCtdPt, a_profCtdPts, a_profCtdPtsh, a_profDo, ...
    a_profCtdCp, a_profCtdCpH, a_profFlbbCd, a_profOcr504I, ...
-   a_grounding, a_buoyancy, a_cycleTimeData, a_presOffsetData)
+   a_grounding, a_iceDetection, a_buoyancy, a_cycleTimeData, a_presOffsetData)
 
 % output parameters initialization
 o_surfPresInfo = [];
@@ -69,6 +71,7 @@ o_profCtdCpH = a_profCtdCpH;
 o_profFlbbCd = a_profFlbbCd;
 o_profOcr504I = a_profOcr504I;
 o_grounding = a_grounding;
+o_iceDetection = a_iceDetection;
 o_buoyancy = a_buoyancy;
 o_cycleTimeData = a_cycleTimeData;
 o_presOffsetData = a_presOffsetData;
@@ -118,7 +121,22 @@ if (~isempty(presOffset))
    for idG =1:size(o_grounding, 1)
       o_grounding(idG, 4) = adjust_value(o_grounding(idG, 3), presOffset);
    end
-
+   
+   if (~isempty(o_iceDetection))
+      for idI = 1:length(o_iceDetection.thermalDetect.samplePres)
+         o_iceDetection.thermalDetect.samplePresAdj(idI) = ...
+            adjust_value(o_iceDetection.thermalDetect.samplePres(idI), presOffset);
+      end
+      if (~isempty(o_iceDetection.thermalDetect.detectPres))
+         o_iceDetection.thermalDetect.detectPresAdj = ...
+            adjust_value(o_iceDetection.thermalDetect.detectPres, presOffset);
+      end
+      if (~isempty(o_iceDetection.thermalDetect.detectMedianPres))
+         o_iceDetection.thermalDetect.detectMedianPresAdj = ...
+            adjust_value(o_iceDetection.thermalDetect.detectMedianPres, presOffset);
+      end
+   end
+   
    for idB =1:size(o_buoyancy, 1)
       o_buoyancy(idB, 4) = adjust_value(o_buoyancy(idB, 3), presOffset);
    end
@@ -132,6 +150,7 @@ if (~isempty(presOffset))
    o_cycleTimeData.continuousProfileStartAdjPresSci = adjust_value(o_cycleTimeData.continuousProfileStartPresSci, presOffset);
    o_cycleTimeData.continuousProfileEndAdjPresSci = adjust_value(o_cycleTimeData.continuousProfileEndPresSci, presOffset);
    o_cycleTimeData.ascentEndAdjPresSci = adjust_value(o_cycleTimeData.ascentEndPresSci, presOffset);
+   o_cycleTimeData.ascentAbortAdjPres = adjust_value(o_cycleTimeData.ascentAbortPres, presOffset);
 end
 
 return

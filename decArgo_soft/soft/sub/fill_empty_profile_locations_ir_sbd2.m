@@ -92,10 +92,6 @@ global g_decArgo_qcStrInterpolated;
 % global default values
 global g_decArgo_dateDef;
 
-% maximum time difference (in days) between 2 GPS locations used to replace
-% Iridium profile locations by interpolated GPS profile locations
-global g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc;
-
 
 % unpack the input data
 a_gpsLocCycleNum = a_gpsData{1};
@@ -133,8 +129,7 @@ if (~isempty(idNext))
 end
 
 % interpolate between the 2 locations
-if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef) && ...
-      ((nextLocDate-prevLocDate) <= g_decArgo_maxDelayToReplaceIrLocByInterpolatedGpsLoc))
+if ((prevLocDate ~= g_decArgo_dateDef) && (nextLocDate ~= g_decArgo_dateDef))
    
    % interpolate the locations
    [interpLocLon, interpLocLat] = interpolate_between_2_locations(...

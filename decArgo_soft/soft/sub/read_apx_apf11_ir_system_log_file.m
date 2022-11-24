@@ -28,6 +28,7 @@ o_events = [];
 
 % default values
 global g_decArgo_janFirst1950InMatlab;
+global g_decArgo_dateDef;
 
 % float launch date
 global g_decArgo_floatLaunchDate;
@@ -59,6 +60,7 @@ while 1
    end
    
    lineNum = lineNum + 1;
+   
    line = strtrim(line);
    if (isempty(line) || ((line(1) == '>') && (length(line) == 1)))
       continue
@@ -79,19 +81,23 @@ while 1
    
    newEvent = [];
    newEvent.number = eventNum;
-   evtDate = datenum(line(1:idSep(1)-1), 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
-   
-   if (a_fromLaunchFlag)
-      if (~isempty(g_decArgo_floatLaunchDate) && (evtDate < g_decArgo_floatLaunchDate))
-         continue
-      end
-   end
-   
-   newEvent.timestamp = evtDate;
+   newEvent.timestamp = datenum(line(1:idSep(1)-1), 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
    newEvent.priority = line(idSep(1)+1:idSep(2)-1);
    newEvent.functionName = line(idSep(2)+1:idSep(3)-1);
    newEvent.message = line(idSep(3)+1:end);
-   
+
+   if (a_fromLaunchFlag)
+      if (~isempty(g_decArgo_floatLaunchDate) && (newEvent.timestamp < g_decArgo_floatLaunchDate))
+         % we keep Ice information, even without timestamp
+         if ~((strcmp(newEvent.functionName, 'ASCENT') && (any(strfind(newEvent.message, 'aborting mission')))) || ...
+               strcmp(newEvent.functionName, 'ICE'))
+            continue
+         else
+            newEvent.timestamp = g_decArgo_dateDef;
+         end
+      end
+   end
+      
    o_events = [o_events newEvent];
    eventNum = eventNum + 1;
 end

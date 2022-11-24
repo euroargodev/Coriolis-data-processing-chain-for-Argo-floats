@@ -116,7 +116,6 @@ global g_decArgo_gpsData;
 
 % array to store Iridium mail contents
 global g_decArgo_iridiumMailData;
-g_decArgo_iridiumMailData = [];
 
 % offset between float days and julian days
 global g_decArgo_julD2FloatDayOffset;
