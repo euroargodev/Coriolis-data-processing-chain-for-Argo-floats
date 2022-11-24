@@ -1440,13 +1440,13 @@ for idNM = 1:length(a_tabTrajNMeas)
       if (~isempty(meas.juldQc))
          data{juldQcVarId+1}(idM) = meas.juldQc;
       end
-      if (~isempty(meas.juldAdj))
+      if (~isempty(meas.juldAdj) && (adjustedCycle == 1))
          data{juldAdjustedVarId+1}(idM) = meas.juldAdj;
       end
-      if (~isempty(meas.juldAdjStatus))
+      if (~isempty(meas.juldAdjStatus) && (adjustedCycle == 1))
          data{juldAdjustedStatusVarId+1}(idM) = meas.juldAdjStatus;
       end
-      if (~isempty(meas.juldAdjQc))
+      if (~isempty(meas.juldAdjQc) && (adjustedCycle == 1))
          data{juldAdjustedQcVarId+1}(idM) = meas.juldAdjQc;
       end
       if (~isempty(meas.latitude))

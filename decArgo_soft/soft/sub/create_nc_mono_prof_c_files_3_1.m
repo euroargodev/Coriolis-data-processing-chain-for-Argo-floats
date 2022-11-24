@@ -74,14 +74,9 @@ if (isempty(a_tabProfiles))
    return
 end
 
-% select and process Auxiliary profiles
-sensorNumList = [a_tabProfiles.sensorNumber];
-idProfAux = find(sensorNumList > 100);
-if (~isempty(idProfAux))
-   create_nc_mono_prof_aux_files( ...
-      a_decoderId, a_tabProfiles(idProfAux), a_metaDataFromJson);
-end
-
+% select Auxiliary profiles
+idProfAux = find([a_tabProfiles.sensorNumber] > 100);
+a_tabAuxProfiles = a_tabProfiles(idProfAux);
 a_tabProfiles(idProfAux) = [];
 
 % no data to save
@@ -159,6 +154,7 @@ for idProf = 1:length(tabProfiles)
       [profile.outputCycleNumber direction profile.primarySamplingProfileFlag 0]];
 end
 
+generatedProfList = [];
 for idProf = 1:length(tabProfiles)
    if (profInfo(idProf, 4) == 0)
       profile = tabProfiles(idProf);
@@ -403,6 +399,8 @@ for idProf = 1:length(tabProfiles)
             continue
          end
          
+         generatedProfList = [generatedProfList; outputCycleNumber direction];
+
          % information to retrieve from a possible existing mono-profile file
          ncCreationDate = '';
          histoInstitution = '';
@@ -1545,5 +1543,11 @@ for idProf = 1:length(tabProfiles)
 end
 
 fprintf('... NetCDF MONO-PROFILE c files created\n');
+
+% process Auxiliary profiles
+if (~isempty(a_tabAuxProfiles))
+   create_nc_mono_prof_aux_files( ...
+      a_decoderId, a_tabAuxProfiles, a_metaDataFromJson, generatedProfList);
+end
 
 return

@@ -176,7 +176,7 @@ if (g_decArgo_floatTransType == 1)
    end
    if (generateNcTraj32 == 1)
       create_nc_traj_file_3_2(a_decoderId, ...
-         a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson);
+         a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson, generateNcTraj);
    end
    
 elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
@@ -228,7 +228,7 @@ elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    end
    if (generateNcTraj32 == 1)
       create_nc_traj_file_3_2(a_decoderId, ...
-         a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson);
+         a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson, generateNcTraj);
    end
 end
 

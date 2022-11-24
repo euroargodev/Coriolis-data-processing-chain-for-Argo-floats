@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  create_nc_traj_file_3_2( ...
-%    a_decoderId, a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson)
+%    a_decoderId, a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson, a_traj31Generated)
 %
 % INPUT PARAMETERS :
 %   a_decoderId        : float decoder Id
@@ -11,6 +11,7 @@
 %   a_tabTrajNCycle    : N_CYCLE trajectory data
 %   a_metaDataFromJson : additional information retrieved from JSON meta-data
 %                        file
+%   a_traj31Generated  : flag for TRAJ 3.1 generated file
 %
 % OUTPUT PARAMETERS :
 %
@@ -23,7 +24,7 @@
 %   06/28/2021 - RNU - creation
 % ------------------------------------------------------------------------------
 function create_nc_traj_file_3_2( ...
-   a_decoderId, a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson)
+   a_decoderId, a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson, a_traj31Generated)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -86,7 +87,7 @@ end
 a_tabTrajNMeas(idDel) = [];
 
 % process Auxiliary trajectory data
-if (~isempty(tabTrajAuxNMeas))
+if (~isempty(tabTrajAuxNMeas) && (a_traj31Generated == 0))
    create_nc_traj_aux_file( ...
       a_decoderId, tabTrajAuxNMeas, a_tabTrajNCycle, a_metaDataFromJson);
 end

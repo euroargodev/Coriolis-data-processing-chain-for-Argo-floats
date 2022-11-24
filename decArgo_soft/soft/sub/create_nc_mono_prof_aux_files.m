@@ -3,13 +3,14 @@
 %
 % SYNTAX :
 %  create_nc_mono_prof_aux_files( ...
-%    a_decoderId, a_tabProfiles, a_metaDataFromJson)
+%    a_decoderId, a_tabProfiles, a_metaDataFromJson, a_generatedProfList)
 %
 % INPUT PARAMETERS :
-%   a_decoderId        : float decoder Id
-%   a_tabProfiles      : decoded profiles
-%   a_metaDataFromJson : additional information retrieved from JSON meta-data
-%                        file
+%   a_decoderId         : float decoder Id
+%   a_tabProfiles       : decoded profiles
+%   a_metaDataFromJson  : additional information retrieved from JSON meta-data
+%                         file
+%   a_generatedProfList : list of generated core profile files
 %
 % OUTPUT PARAMETERS :
 %
@@ -22,7 +23,7 @@
 %   02/20/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function create_nc_mono_prof_aux_files( ...
-   a_decoderId, a_tabProfiles, a_metaDataFromJson)
+   a_decoderId, a_tabProfiles, a_metaDataFromJson, a_generatedProfList)
 
 % Argos (1), Iridium RUDICS (2) or Iridium SBD (3) float
 global g_decArgo_floatTransType;
@@ -33,10 +34,6 @@ global g_decArgo_applyRtqc;
 
 % mode processing flags
 global g_decArgo_realtimeFlag;
-global g_decArgo_delayedModeFlag;
-
-% global input parameter information
-global g_decArgo_processModeAll;
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -103,6 +100,14 @@ for idProf = 1:length(a_tabProfiles)
       direction = 2;
       if (profile.direction == 'D')
          direction = 1;
+      end
+      
+      % generate AUX profile file only if associated core profile file has been
+      % generated during the same session
+      if (~any((a_generatedProfList(:, 1) == outputCycleNumber) & ...
+            (a_generatedProfList(:, 2) == direction)))
+         profInfo(idProf, 4) = 1;
+         continue
       end
       
       % list of profiles to store in the current profile file
@@ -184,167 +189,6 @@ for idProf = 1:length(a_tabProfiles)
                g_decArgo_floatNum, outputCycleNumber);
          end
          ncPathFileName = [outputDirName  ncFileName];
-         
-         % check if the file need to be created
-         generate = 1;
-         if (g_decArgo_floatTransType == 1)
-            
-            % Argos floats
-            
-            if (g_decArgo_generateNcMonoProf == 2)
-               
-               if ((g_decArgo_realtimeFlag == 1) && (g_decArgo_processModeAll == 0))
-                  
-                  % in this configuration, only new profile files are created
-                  % (never updated)
-                  if (exist(ncPathFileName, 'file') == 2)
-                     generate = 0;
-                  end
-               end
-            end
-            
-         elseif ((g_decArgo_floatTransType == 2) || ...
-               (g_decArgo_floatTransType == 4))
-            
-            % Iridium RUDICS floats
-            % Iridium SBD ProvBioII floats
-
-            if (g_decArgo_generateNcMonoProf == 2)
-               
-               if (g_decArgo_realtimeFlag == 1)
-                  
-                  % in this configuration, the file is created/updated if:
-                  % - it doesn't exist
-                  % - it exists but the profile structure has been updated
-                  if ((exist(ncPathFileName, 'file') == 2) && ...
-                        (isempty(find([a_tabProfiles(idProfInFile).updated] == 1, 1))))
-                     generate = 0;
-                  end
-               elseif (g_decArgo_delayedModeFlag == 1)
-                  
-                  % in this configuration, the file is created/updated if:
-                  % - it doesn't exist
-                  if (exist(ncPathFileName, 'file') == 2)
-                     generate = 0;
-                  end
-               end
-            end
-            
-         elseif (g_decArgo_floatTransType == 3)
-            
-            % Iridium SBD floats
-
-            if (g_decArgo_generateNcMonoProf == 2)
-               
-               if (g_decArgo_realtimeFlag == 1)
-                  
-                  % in this configuration, the file is created/updated if:
-                  % - it doesn't exist
-                  % - it exists but the profile structure has been updated
-                  if ((exist(ncPathFileName, 'file') == 2) && ...
-                        (isempty(find([a_tabProfiles(idProfInFile).updated] == 1, 1))))
-                     generate = 0;
-                  end
-               end
-            end
-            
-         else
-            
-            if (g_decArgo_generateNcMonoProf == 2)
-               
-               if (g_decArgo_realtimeFlag == 1)
-                  
-                  fprintf('WARNING: Float #%d Cycle #%d Profile #%d Output Cycle #%d: no strategy to generate or not profile NetCDF files - generating all profile fles\n', ...
-                     g_decArgo_floatNum, cycleNumber, profileNumber, outputCycleNumber);
-               end
-            end
-         end
-         
-         % the data of one cycle can be in consecutive rsync log files
-         % to check if the file need to be created we should then compare profile
-         % levels
-         if (generate == 0)
-            if ((g_decArgo_floatTransType == 2) || (g_decArgo_floatTransType == 3) || (g_decArgo_floatTransType == 4))
-               if ((g_decArgo_generateNcMonoProf == 2) && (g_decArgo_realtimeFlag == 1))
-                  if (exist(ncPathFileName, 'file') == 2)
-                     
-                     % retrieve profile levels of the nc file
-                     ncProfLev = get_nc_profile_level(ncPathFileName);
-                     
-                     % compare profile levels
-                     differ = 0;
-                     
-                     for idP = 1:nbProfToStore
-                        prof = a_tabProfiles(idProfInFile(idP));
-                        nLevelsParam = 0;
-                        idNoDefAll = [];
-                        
-                        profPos = idP-1+profShiftIfNoPrimary;
-                        
-                        % profile parameter data
-                        parameterList = prof.paramList;
-                        for idParam = 1:length(parameterList)
-                           profParam = parameterList(idParam);
-                           profParamName = profParam.name;
-                           paramInfo = get_netcdf_param_attributes(profParamName);
-                           
-                           % parameter data
-                           if (isempty(prof.paramNumberWithSubLevels))
-                              % none of the profile parameters has sublevels
-                              paramData = prof.data(:, idParam);
-                              idNoDef = find(paramData ~= paramInfo.fillValue);
-                              idNoDefAll = [idNoDefAll idNoDef'];
-                           else
-                              % some profile parameters have sublevels
-                              % retrieve the column(s) associated with the parameter data
-                              idF = find(prof.paramNumberWithSubLevels < idParam);
-                              if (isempty(idF))
-                                 firstCol = idParam;
-                              else
-                                 firstCol = idParam + sum(prof.paramNumberOfSubLevels(idF)) - length(idF);
-                              end
-                              
-                              idF = find(prof.paramNumberWithSubLevels == idParam);
-                              if (isempty(idF))
-                                 lastCol = firstCol;
-                              else
-                                 lastCol = firstCol + prof.paramNumberOfSubLevels(idF) - 1;
-                              end
-                              
-                              paramData = prof.data(:, firstCol:lastCol);
-                              if (size(paramData, 2) == 1)
-                                 idNoDef = find(paramData ~= paramInfo.fillValue);
-                                 idNoDefAll = [idNoDefAll idNoDef'];
-                              else
-                                 idNoDef = [];
-                                 for id = 1:size(paramData, 1)
-                                    if ~((length(unique(paramData(id, :))) == 1) && (unique(paramData(id, :)) == paramInfo.fillValue))
-                                       idNoDef = [idNoDef id];
-                                    end
-                                 end
-                                 idNoDefAll = [idNoDefAll idNoDef];
-                              end
-                           end
-                        end
-                        
-                        if (~isempty(idNoDefAll))
-                           nLevelsParam = max(idNoDefAll) - min(idNoDefAll) + 1;
-                        end
-                        if (nLevelsParam ~= ncProfLev(profPos+1))
-                           differ = 1;
-                           break
-                        end
-                     end
-                     if (differ == 1)
-                        generate = 1;
-                     end
-                  end
-               end
-            end
-         end
-         if (generate == 0)
-            continue
-         end
          
          % information to retrieve from a possible existing mono-profile file
          ncCreationDate = '';
