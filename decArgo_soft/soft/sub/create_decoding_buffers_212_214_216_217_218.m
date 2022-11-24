@@ -581,7 +581,7 @@ end
 
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
-      6903772, 6903773, 3902137, 6903865, 6903264, 6903698]))
+      6903772, 6903773, 3902137, 6903865, 6903264, 6903698, 6903771]))
    switch g_decArgo_floatNum
       case 6903772
          % the float have been set to EOL at cycle #99, however the data of this
@@ -636,6 +636,16 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabRank(idDel) = -1;
          tabRankByCycle(idDel) = -1;
          tabRankByDate(idDel) = -1;
+      case 6903771
+         % tech#1, tech#2 and prog#1 packets are transmitted twice at cycle #60
+         idDel = find((tabCyNum == 60) & (tabPackType == 0), 1, 'first');
+         id = find((tabCyNum == 60) & (tabPackType == 4), 1, 'first');
+         idDel = [idDel id];
+         id = find((tabCyNum == 60) & (tabPackType == 5), 1, 'first');
+         idDel = [idDel id];
+         tabRank(idDel) = -1;
+         tabRankByCycle(idDel) = -1;
+         tabRankByDate(idDel) = -1;
    end
 end
 
@@ -653,7 +663,7 @@ for cyNum = cyNumList
       fprintf('BUFF_INFO: Float #%d Cycle #%3d : - NO DATA\n', ...
          g_decArgo_floatNum, cyNum);
    else
-      rankNumList = unique(tabRank(idForCy), 'stable');
+      rankNumList = setdiff(unique(tabRank(idForCy), 'stable'), -1);
       for rankNum = rankNumList
          idForRankCy = idForCy(find(tabRank(idForCy) == rankNum));
          idRankCy = idForRankCy(1);

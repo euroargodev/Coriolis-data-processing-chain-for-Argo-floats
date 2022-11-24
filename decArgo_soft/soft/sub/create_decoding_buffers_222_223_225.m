@@ -487,7 +487,7 @@ for cyNum = cyNumList
       fprintf('BUFF_INFO: Float #%d Cycle #%3d : - NO DATA\n', ...
          g_decArgo_floatNum, cyNum);
    else
-      rankNumList = unique(tabRank(idForCy), 'stable');
+      rankNumList = setdiff(unique(tabRank(idForCy), 'stable'), -1);
       for rankNum = rankNumList
          idForRankCy = idForCy(find(tabRank(idForCy) == rankNum));
          idRankCy = idForRankCy(1);
