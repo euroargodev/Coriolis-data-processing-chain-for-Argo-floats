@@ -295,51 +295,53 @@ elseif (length(idF1) == 1)
       
       % retrieve IN AIR acquisition cycle periodicity
       [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
-      inAirAcqPeriod = get_config_value('CONFIG_PT33', configNames, configValues);
-      if (mod(g_decArgo_cycleNum, inAirAcqPeriod) == 0)
-         
-         % cycle with IN AIR measurements
-         inAirAcqDurationMin = get_config_value('CONFIG_PT31', configNames, configValues);
-         finalBuoyancyAcqSec = get_config_value('CONFIG_PT32', configNames, configValues)/100;
-         
-         ascentEndDate = transStartDate - 10/1440 - inAirAcqDurationMin*2/1440 - round(finalBuoyancyAcqSec/60)/1440;
-      else
-         
-         % cycle without IN AIR measurements
-         finalBuoyancyAcqSec = get_config_value('CONFIG_PT04', configNames, configValues)/100;
-         
-         ascentEndDate = transStartDate - 10/1440 - round(finalBuoyancyAcqSec/60)/1440;
-      end
-      
-      ascentStartHour = a_tabTech1(id, 36);
-      ascentStartDate = fix(ascentEndDate) +  ascentStartHour/1440;
-      if (ascentStartDate > ascentEndDate)
-         ascentStartDate = ascentStartDate - 1;
-      end
-      
-      descentToProfEndHour = a_tabTech1(id, 26);
-      descentToProfEndDate = fix(ascentStartDate) +  descentToProfEndHour/1440;
-      if (descentToProfEndDate > ascentStartDate)
-         descentToProfEndDate = descentToProfEndDate - 1;
-      end
-      
-      descentToProfStartHour = a_tabTech1(id, 25);
-      descentToProfStartDate = fix(descentToProfEndDate) +  descentToProfStartHour/1440;
-      if (descentToProfStartDate > descentToProfEndDate)
-         descentToProfStartDate = descentToProfStartDate - 1;
-      end
-      
-      % the descent duration can be > 24 h (see 6901757 #7)
-      if (a_tabTech1(id, 29) > 0) % a_tabTech1(id, 29) == 0 means that it is not set because the float didn't wait at profile pressure
-         nbDays = 0;
-         vertDist = abs(a_tabTech1(id, 29)-(a_tabTech1(id, 21)+a_tabTech1(id, 22))/2);
-         while (vertDist*100/((descentToProfEndDate-descentToProfStartDate)*86400) > MAX_DESC_SPEED)
-            descentToProfStartDate = descentToProfStartDate - 1;
-            nbDays = nbDays + 1;
+      if (~isempty(configNames))
+         inAirAcqPeriod = get_config_value('CONFIG_PT33', configNames, configValues);
+         if (mod(g_decArgo_cycleNum, inAirAcqPeriod) == 0)
+            
+            % cycle with IN AIR measurements
+            inAirAcqDurationMin = get_config_value('CONFIG_PT31', configNames, configValues);
+            finalBuoyancyAcqSec = get_config_value('CONFIG_PT32', configNames, configValues)/100;
+            
+            ascentEndDate = transStartDate - 10/1440 - inAirAcqDurationMin*2/1440 - round(finalBuoyancyAcqSec/60)/1440;
+         else
+            
+            % cycle without IN AIR measurements
+            finalBuoyancyAcqSec = get_config_value('CONFIG_PT04', configNames, configValues)/100;
+            
+            ascentEndDate = transStartDate - 10/1440 - round(finalBuoyancyAcqSec/60)/1440;
          end
-         if (nbDays > 0)
-            fprintf('INFO: Float #%d cycle #%d: %d day substracted to DESCENT TO PROF START DATE (the descent duration is > 24 h)\n', ...
-               g_decArgo_floatNum, g_decArgo_cycleNum, nbDays);
+         
+         ascentStartHour = a_tabTech1(id, 36);
+         ascentStartDate = fix(ascentEndDate) +  ascentStartHour/1440;
+         if (ascentStartDate > ascentEndDate)
+            ascentStartDate = ascentStartDate - 1;
+         end
+         
+         descentToProfEndHour = a_tabTech1(id, 26);
+         descentToProfEndDate = fix(ascentStartDate) +  descentToProfEndHour/1440;
+         if (descentToProfEndDate > ascentStartDate)
+            descentToProfEndDate = descentToProfEndDate - 1;
+         end
+         
+         descentToProfStartHour = a_tabTech1(id, 25);
+         descentToProfStartDate = fix(descentToProfEndDate) +  descentToProfStartHour/1440;
+         if (descentToProfStartDate > descentToProfEndDate)
+            descentToProfStartDate = descentToProfStartDate - 1;
+         end
+         
+         % the descent duration can be > 24 h (see 6901757 #7)
+         if (a_tabTech1(id, 29) > 0) % a_tabTech1(id, 29) == 0 means that it is not set because the float didn't wait at profile pressure
+            nbDays = 0;
+            vertDist = abs(a_tabTech1(id, 29)-(a_tabTech1(id, 21)+a_tabTech1(id, 22))/2);
+            while (vertDist*100/((descentToProfEndDate-descentToProfStartDate)*86400) > MAX_DESC_SPEED)
+               descentToProfStartDate = descentToProfStartDate - 1;
+               nbDays = nbDays + 1;
+            end
+            if (nbDays > 0)
+               fprintf('INFO: Float #%d cycle #%d: %d day substracted to DESCENT TO PROF START DATE (the descent duration is > 24 h)\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleNum, nbDays);
+            end
          end
       end
    end
