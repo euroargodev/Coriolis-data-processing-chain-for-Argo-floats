@@ -123,6 +123,7 @@
 %                             locations to determine region area
 %   01/03/2022 - RNU - V 3.4: Exclude NaN values from get_gebco_elev_point
 %                             output
+%   12/02/2022 - RNU - V 3.5: Added "Global range test" for DOWN_IRRADIANCE665.
 % ------------------------------------------------------------------------------
 function add_rtqc_to_trajectory_file(a_floatNum, ...
    a_ncTrajInputFilePathName, a_ncTrajOutputFilePathName, ...
@@ -161,7 +162,7 @@ global g_JULD_STATUS_9;
 
 % program version
 global g_decArgo_addRtqcToTrajVersion;
-g_decArgo_addRtqcToTrajVersion = '3.4';
+g_decArgo_addRtqcToTrajVersion = '3.5';
 
 % Argo data start date
 janFirst1997InJulD = gregorian_2_julian_dec_argo('1997/01/01 00:00:00');
@@ -1318,6 +1319,7 @@ if (testFlagList(6) == 1)
             {'DOWN_IRRADIANCE412'} ...
             {'DOWN_IRRADIANCE443'} ...
             {'DOWN_IRRADIANCE490'} ...
+            {'DOWN_IRRADIANCE665'} ...
             {'DOWNWELLING_PAR'} ...
             ];
       else
@@ -1351,6 +1353,7 @@ if (testFlagList(6) == 1)
             {'DOWN_IRRADIANCE412_ADJUSTED'} ...
             {'DOWN_IRRADIANCE443_ADJUSTED'} ...
             {'DOWN_IRRADIANCE490_ADJUSTED'} ...
+            {'DOWN_IRRADIANCE665_ADJUSTED'} ...
             {'DOWNWELLING_PAR_ADJUSTED'} ...
             ];
       end
@@ -1376,6 +1379,7 @@ if (testFlagList(6) == 1)
          {-1} {2.9}; ... % DOWN_IRRADIANCE412
          {-1} {3.2}; ... % DOWN_IRRADIANCE443
          {-1} {3.4}; ... % DOWN_IRRADIANCE490
+         {-1} {2.8}; ... % DOWN_IRRADIANCE665
          {-1} {4672}; ... % DOWNWELLING_PAR
          ];
       
