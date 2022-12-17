@@ -666,7 +666,7 @@ end
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
       6903865, 6903771, 7900543, 6900790, 6901880, 6903229, 6902802, 7900522, ...
-      6903774, 3901644, 6903010, 6902938, 6903777]))
+      6903774, 3901644, 6903010, 6902938, 6903777, 6902989]))
    switch g_decArgo_floatNum
       case 6903865
          % cycle #58 data are separated
@@ -845,6 +845,19 @@ if (ismember(g_decArgo_floatNum, [ ...
             tabRank(idDel) = -1;
             tabRankByCycle(idDel) = -1;
          end
+      case 6902989
+         % second Iridium session of cycle #129 delayed but in different session
+         % than the first Iridium session
+         id129 = find(tabCyNum == 129);
+         tabRank(id129) = tabRank(id129(1));
+         tabRankByCycle(id129) = tabRankByCycle(id129(1));
+         idStart = find(tabIrSession(id129) == 1);
+         idShift129 = id129(idStart(1):end);
+         tabRank(tabRank > tabRank(idShift129(1))) = tabRank(tabRank > tabRank(idShift129(1))) + 1;
+         tabRank(idShift129) = tabRank(idShift129) + 1;
+         tabRankByCycle(tabRankByCycle > tabRankByCycle(idShift129(1))) = tabRankByCycle(tabRankByCycle > tabRankByCycle(idShift129(1))) + 1;
+         tabRankByCycle(idShift129) = tabRankByCycle(idShift129) + 1;
+         tabDeep(idShift129) = 0;
    end
 end
 
