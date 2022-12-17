@@ -42,6 +42,14 @@ files = dir(missionFileName);
 if (length(files) == 1)
    missionFilePathName = [a_configDirName '/' files(1).name];
    o_missionConfData = parse_mission_system_file_apx_apf11(missionFilePathName);
+   if (isfield(o_missionConfData, 'IceMonths') && ~isempty(o_missionConfData.IceMonths{:} ))
+      o_missionConfData.IceMonths{:} = regexprep(o_missionConfData.IceMonths{:} , '0x', '');
+      o_missionConfData.IceMonths{:}  = ['0x' o_missionConfData.IceMonths{:}];
+   end
+   if (isfield(o_missionConfData , 'VitalsMask') && ~isempty(o_missionConfData.VitalsMask{:} ))
+      o_missionConfData.VitalsMask{:}  = regexprep(o_missionConfData.VitalsMask{:} , '0x', '');
+      o_missionConfData.VitalsMask{:}  = ['0x' o_missionConfData.VitalsMask{:} ];
+   end
 elseif (isempty(files))
    fprintf('WARNING: mission.cfg file is missing for float %d in directory ''%s''\n', ...
       a_floatNum, a_configDirName);

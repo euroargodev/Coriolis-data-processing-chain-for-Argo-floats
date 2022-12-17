@@ -40,6 +40,7 @@ global g_MC_InAirSingleMeasRelativeToTST;
 
 % QC flag values (char)
 global g_decArgo_qcStrInterpolated;
+global g_decArgo_qcStrCorrectable;
 
 
 % unpack the GPS input data
@@ -181,6 +182,14 @@ for idP = 1:length(o_tabProfiles)
                prevLocLon = a_gpsLocLon(idPrev(idMax));
                prevLocLat = a_gpsLocLat(idPrev(idMax));
             end
+
+            % there is no previous GPS good location, use float launch date and
+            % location
+            if (prevLocDate == g_decArgo_dateDef)
+               prevLocDate = a_gpsLocDate(a_gpsLocCycleNum == -1);
+               prevLocLon = a_gpsLocLon(a_gpsLocCycleNum == -1);
+               prevLocLat = a_gpsLocLat(a_gpsLocCycleNum == -1);
+            end
             
             % find the next GPS location
             idNext = find((a_gpsLocDate >= prof.date) & (a_gpsLocQc == 1));
@@ -272,10 +281,9 @@ for idP = 1:length(o_tabProfiles)
                
                % we must interpolate between the existing GPS locations
                prevLocDate = g_decArgo_dateDef;
-               
+
                % find the previous GPS location
-               %                idPrev = find((a_gpsLocDate <= prof.date) & (a_gpsLocQc == 1));
-               idPrev = find((a_gpsLocDate <= prof.date)); % no restriction on a_gpsLocQc because for cycle #1, the launch date is welcome
+               idPrev = find((a_gpsLocDate <= prof.date) & (a_gpsLocQc == 1));
                if (~isempty(idPrev))
                   % previous good GPS locations exist, use the last one
                   [~, idMax] = max(a_gpsLocDate(idPrev));
@@ -283,10 +291,18 @@ for idP = 1:length(o_tabProfiles)
                   prevLocLon = a_gpsLocLon(idPrev(idMax));
                   prevLocLat = a_gpsLocLat(idPrev(idMax));
                end
-               
+
+               % there is no previous GPS good location, use float launch date
+               % and location
+               if (prevLocDate == g_decArgo_dateDef)
+                  prevLocDate = a_gpsLocDate(a_gpsLocCycleNum == -1);
+                  prevLocLon = a_gpsLocLon(a_gpsLocCycleNum == -1);
+                  prevLocLat = a_gpsLocLat(a_gpsLocCycleNum == -1);
+               end
+
                % interpolate between the 2 locations
                if (prevLocDate ~= g_decArgo_dateDef)
-                  
+
                   % interpolate the locations
                   [interpLocLon, interpLocLat] = interpolate_between_2_locations(...
                      prevLocDate, prevLocLon, prevLocLat, ...
@@ -342,6 +358,14 @@ for idP = 1:length(o_tabProfiles)
                prevLocLat = a_gpsLocLat(idPrev(idMax));
             end
             
+            % there is no previous GPS good location, use float launch date and
+            % location
+            if (prevLocDate == g_decArgo_dateDef)
+               prevLocDate = a_gpsLocDate(a_gpsLocCycleNum == -1);
+               prevLocLon = a_gpsLocLon(a_gpsLocCycleNum == -1);
+               prevLocLat = a_gpsLocLat(a_gpsLocCycleNum == -1);
+            end
+
             % find the next GPS location
             idNext = find((a_gpsLocDate >= prof.date) & (a_gpsLocQc == 1));
             if (~isempty(idNext))
