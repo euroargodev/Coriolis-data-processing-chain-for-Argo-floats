@@ -444,7 +444,7 @@ end
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
       6904068, 6900791, 6903064, 6904067, 6903800, 6904072, 6903059, 6903109, ...
-      6904236, 6903046, 6904097, 6904080, 6903867]))
+      6904236, 6903046, 6904097, 6904080, 6903867, 6901283]))
    switch g_decArgo_floatNum
       case 6900791
          % cycle #11 data are separated
@@ -657,6 +657,18 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabCompleted(id136) = 1;
          tabSession(id136) = tabSession(id136(1));
          tabSessionDeep(id136) = tabSessionDeep(id136(1));
+      case 6901283
+         % cycle #67: tech#1, tech#2 and one hydraulic packets are transmitted twice
+         idTech1 = find((tabCyNum == 67) & (tabPackType == 0));
+         idTech2 = find((tabCyNum == 67) & (tabPackType == 4));
+         idHydrau = find((tabCyNum == 67) & (tabPackType == 6));
+         tabRank(tabRank == tabRank(idTech1(1))) = tabRank(idTech1(2));
+         tabRankByCycle(tabRankByCycle == tabRankByCycle(idTech1(1))) = tabRankByCycle(idTech1(2));
+         tabSession(tabSession == tabSession(idTech1(1))) = tabSession(idTech1(2));
+         tabSessionDeep(tabSessionDeep == tabSessionDeep(idTech1(1))) = tabSessionDeep(idTech1(2));
+         idDel = [idTech1(2) idTech2(2) idHydrau(1)];
+         tabRank(idDel) = -1;
+         tabRankByCycle(idDel) = -1;
    end
 end
 
