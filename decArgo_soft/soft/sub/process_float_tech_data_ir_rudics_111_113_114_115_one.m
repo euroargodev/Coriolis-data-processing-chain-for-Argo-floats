@@ -462,12 +462,12 @@ g_decArgo_outputNcParamValue{end+1} = a_tabTech(a_dataIndex, 84);
 % g_decArgo_outputNcParamValue{end+1} = a_tabTech(a_dataIndex, 85);
 idPos = find(strcmp(g_decArgo_floatConfig.STATIC.NAMES, 'CONFIG_PX_0_0_0_0_3') == 1, 1);
 if (isempty(idPos))
-   names = g_decArgo_floatConfig.STATIC.NAMES';
-   values = g_decArgo_floatConfig.STATIC.VALUES';
-   names{end+1} = 'CONFIG_PX_0_0_0_0_3';
-   values{end+1} = num2str(a_tabTech(a_dataIndex, 85));
-   g_decArgo_floatConfig.STATIC.NAMES = names';
-   g_decArgo_floatConfig.STATIC.VALUES = values';
+   g_decArgo_floatConfig.STATIC.NAMES{end+1} = 'CONFIG_PX_0_0_0_0_3';
+   g_decArgo_floatConfig.STATIC.VALUES{end+1} = num2str(a_tabTech(a_dataIndex, 85));
+   if (width(g_decArgo_floatConfig.STATIC.NAMES) > 1)
+      g_decArgo_floatConfig.STATIC.NAMES = g_decArgo_floatConfig.STATIC.NAMES';
+      g_decArgo_floatConfig.STATIC.VALUES = g_decArgo_floatConfig.STATIC.VALUES';
+   end
 else
    g_decArgo_floatConfig.STATIC.VALUES{idPos} = num2str(a_tabTech(a_dataIndex, 85));
 end
@@ -478,12 +478,12 @@ end
 % g_decArgo_outputNcParamValue{end+1} = a_tabTech(a_dataIndex, 86);
 idPos = find(strcmp(g_decArgo_floatConfig.STATIC.NAMES, 'CONFIG_PX_0_0_0_0_4') == 1, 1);
 if (isempty(idPos))
-   names = g_decArgo_floatConfig.STATIC.NAMES';
-   values = g_decArgo_floatConfig.STATIC.VALUES';
-   names{end+1} = 'CONFIG_PX_0_0_0_0_4';
-   values{end+1} = num2str(a_tabTech(a_dataIndex, 86));
-   g_decArgo_floatConfig.STATIC.NAMES = names';
-   g_decArgo_floatConfig.STATIC.VALUES = values';
+   g_decArgo_floatConfig.STATIC.NAMES{end+1} = 'CONFIG_PX_0_0_0_0_4';
+   g_decArgo_floatConfig.STATIC.VALUES{end+1} = num2str(a_tabTech(a_dataIndex, 86));
+   if (width(g_decArgo_floatConfig.STATIC.NAMES) > 1)
+      g_decArgo_floatConfig.STATIC.NAMES = g_decArgo_floatConfig.STATIC.NAMES';
+      g_decArgo_floatConfig.STATIC.VALUES = g_decArgo_floatConfig.STATIC.VALUES';
+   end
 else
    g_decArgo_floatConfig.STATIC.VALUES{idPos} = num2str(a_tabTech(a_dataIndex, 86));
 end

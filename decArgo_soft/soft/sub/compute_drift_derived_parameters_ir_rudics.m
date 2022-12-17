@@ -351,7 +351,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_112_121_to_127( ...
+      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_112_121_to_131( ...
          a_driftOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -391,7 +391,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_112_121_to_127( ...
+      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_112_121_to_131( ...
          a_driftOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -418,7 +418,47 @@ for idP = 1:length(paramToDeriveList)
    end
 end
 
-% compute DOWN_IRRADIANCE490 data and add them in the profile structure
+% compute DOWN_IRRADIANCE443 data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'RAW_DOWNWELLING_IRRADIANCE443'} ...
+   ];
+derivedParamList = [ ...
+   {'DOWN_IRRADIANCE443'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      downIrr443 = compute_DOWN_IRRADIANCE443_130( ...
+         a_driftOcr.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      a_driftOcr.data(:, end+1) = downIrr443;
+      if (isempty(a_driftOcr.dataQc))
+         a_driftOcr.dataQc = ones(size(a_driftOcr.data, 1), length(a_driftOcr.paramList))*g_decArgo_qcDef;
+      end
+      downIrr443Qc = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
+      downIrr443Qc(find(downIrr443 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_driftOcr.dataQc(:, end+1) = downIrr443Qc;
+
+      if (~isempty(a_driftOcr.dataAdj))
+         a_driftOcr.dataAdj(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_driftOcr.dataAdjQc))
+            a_driftOcr.dataAdjQc = ones(size(a_driftOcr.data, 1), length(a_driftOcr.paramList))*g_decArgo_qcDef;
+         end
+         a_driftOcr.dataAdjQc(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
+      end
+      
+      a_driftOcr.paramList = [a_driftOcr.paramList derivedParam];
+      if (~isempty(a_driftOcr.paramDataMode))
+         a_driftOcr.paramDataMode = [a_driftOcr.paramDataMode ' '];
+      end
+   end
+end
+
+% compute DOWN_IRRADIANCE665 data and add them in the profile structure
 paramToDeriveList = [ ...
    {'RAW_DOWNWELLING_IRRADIANCE490'} ...
    ];
@@ -431,7 +471,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_112_121_to_127( ...
+      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_112_121_to_131( ...
          a_driftOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -442,6 +482,46 @@ for idP = 1:length(paramToDeriveList)
       downIrr490Qc = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
       downIrr490Qc(find(downIrr490 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_driftOcr.dataQc(:, end+1) = downIrr490Qc;
+      
+      if (~isempty(a_driftOcr.dataAdj))
+         a_driftOcr.dataAdj(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_driftOcr.dataAdjQc))
+            a_driftOcr.dataAdjQc = ones(size(a_driftOcr.data, 1), length(a_driftOcr.paramList))*g_decArgo_qcDef;
+         end
+         a_driftOcr.dataAdjQc(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
+      end
+      
+      a_driftOcr.paramList = [a_driftOcr.paramList derivedParam];
+      if (~isempty(a_driftOcr.paramDataMode))
+         a_driftOcr.paramDataMode = [a_driftOcr.paramDataMode ' '];
+      end
+   end
+end
+
+% compute DOWN_IRRADIANCE665 data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'RAW_DOWNWELLING_IRRADIANCE665'} ...
+   ];
+derivedParamList = [ ...
+   {'DOWN_IRRADIANCE665'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      downIrr665 = compute_DOWN_IRRADIANCE665_130( ...
+         a_driftOcr.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      a_driftOcr.data(:, end+1) = downIrr665;
+      if (isempty(a_driftOcr.dataQc))
+         a_driftOcr.dataQc = ones(size(a_driftOcr.data, 1), length(a_driftOcr.paramList))*g_decArgo_qcDef;
+      end
+      downIrr665Qc = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
+      downIrr665Qc(find(downIrr665 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_driftOcr.dataQc(:, end+1) = downIrr665Qc;
       
       if (~isempty(a_driftOcr.dataAdj))
          a_driftOcr.dataAdj(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*derivedParam.fillValue;
@@ -471,7 +551,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downPar = compute_DOWNWELLING_PAR_105_to_112_121_to_127( ...
+      downPar = compute_DOWNWELLING_PAR_105_to_112_121_to_129_131( ...
          a_driftOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -553,7 +633,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      chla = compute_CHLA_105_to_112_121_to_127_1121_to_28_1322_1323( ...
+      chla = compute_CHLA_105_to_112_121_to_131_1121_to_28_1322_1323( ...
          a_driftEco2.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -807,7 +887,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      chla = compute_CHLA_105_to_112_121_to_127_1121_to_28_1322_1323( ...
+      chla = compute_CHLA_105_to_112_121_to_131_1121_to_28_1322_1323( ...
          a_driftEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
 
@@ -1018,7 +1098,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      cdom = compute_CDOM_105_to_107_110_112_121_to_127_1121_to_28_1322_1323( ...
+      cdom = compute_CDOM_105_to_107_110_112_121_to_130_1121_to_28_1322_1323( ...
          a_driftEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -1110,7 +1190,7 @@ ctdLinkData = assign_CTD_measurements(a_ctdDates, a_ctdData, a_BBP_dates);
 if (~isempty(ctdLinkData))
    
    if (a_lambda == 700)
-      o_BBP = compute_BBP700_105_to_112_121_to_127_1121_to_28_1322_1323( ...
+      o_BBP = compute_BBP700_105_to_112_121_to_131_1121_to_28_1322_1323( ...
          a_BETA_BACKSCATTERING, ...
          a_BETA_BACKSCATTERING_fillValue, ...
          a_BBP_fillValue, ...
@@ -1185,7 +1265,7 @@ for idD = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idD});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idD});
       
-      chla = compute_CHLA_105_to_112_121_to_127_1121_to_28_1322_1323( ...
+      chla = compute_CHLA_105_to_112_121_to_131_1121_to_28_1322_1323( ...
          a_driftEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -1214,7 +1294,7 @@ for idD = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idD});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idD});
       
-      bbp700 = compute_BBP700_105_to_112_121_to_127_1121_to_28_1322_1323_V1( ...
+      bbp700 = compute_BBP700_105_to_112_121_to_131_1121_to_28_1322_1323_V1( ...
          a_driftEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -1272,7 +1352,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      cdom = compute_CDOM_105_to_107_110_112_121_to_127_1121_to_28_1322_1323( ...
+      cdom = compute_CDOM_105_to_107_110_112_121_to_130_1121_to_28_1322_1323( ...
          a_driftEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -1373,7 +1453,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idP, 2});
             derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
             
-            nitrate = compute_drift_NITRATE_1xx_5_to_9_11_12_14_15_21_to_26_28( ...
+            nitrate = compute_drift_NITRATE_1xx_5_to_9_11_12_14_15_21_to_26_28_to_31( ...
                a_driftSuna.data(:, idF1:idF1+a_driftSuna.paramNumberOfSubLevels-1), ...
                a_driftSuna.data(:, idF2), ...
                paramToDerive1.fillValue, ...
@@ -1776,10 +1856,10 @@ if (~isempty(ctdLinkData))
             a_driftOptode);
          o_ptsForDoxy = ctdLinkData;
 
-      case {107, 109, 110, 111, 113, 114, 115, 121, 122, 124, 126, 127, 128, 129}
+      case {107, 109, 110, 111, 113, 114, 115, 121, 122, 124, 126, 127, 128, 129, 130, 131}
          
          % compute DOXY values using the Stern-Volmer equation
-         o_DOXY = compute_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_29( ...
+         o_DOXY = compute_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_31( ...
             a_C1PHASE_DOXY, ...
             a_C2PHASE_DOXY, ...
             a_TEMP_DOXY, ...
@@ -2151,7 +2231,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downPar = compute_DOWNWELLING_PAR_mpe_128_129( ...
+      downPar = compute_DOWNWELLING_PAR_mpe_128_to_131( ...
          a_driftMpe.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       

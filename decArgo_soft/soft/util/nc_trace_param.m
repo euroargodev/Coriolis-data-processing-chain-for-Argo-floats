@@ -44,7 +44,7 @@ g_NTP_NAME_PARAM1 = 'TEMP';
 % g_NTP_NAME_PARAM1 = 'FREQUENCY_DOXY';
 % g_NTP_NAME_PARAM1 = 'PH_IN_SITU_FREE';
 % g_NTP_NAME_PARAM1 = 'DOXY';
-% g_NTP_NAME_PARAM1 = 'CHLA';
+g_NTP_NAME_PARAM1 = 'CHLA';
 
 % g_NTP_NAME_PARAM2 = 'TURBIDITY';
 % g_NTP_NAME_PARAM2 = 'BBP700';
@@ -56,7 +56,7 @@ g_NTP_NAME_PARAM2 = 'PSAL';
 % g_NTP_NAME_PARAM2 = 'DOXY';
 % g_NTP_NAME_PARAM2 = 'PH_IN_SITU_TOTAL';
 % g_NTP_NAME_PARAM2 = 'CHLA';
-% g_NTP_NAME_PARAM2 = 'BBP700';
+g_NTP_NAME_PARAM2 = 'BBP700';
 
 % top directory of NetCDF files to plot
 g_NTP_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
@@ -68,6 +68,7 @@ g_NTP_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % default list of floats to plot
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\lists_20221013\list_decId_224.txt';
 
 % number of cycles to plot
 g_NTP_DEFAULT_NB_CYCLES = 5;
@@ -343,9 +344,11 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
             profParamAdj1Qc = profData{2*idVal};
 
             for idProf = 1:size(profParam1, 2)
-               if (any(profParamAdj1(:, idProf) ~= param1Struct.fillValue))
-                  profParam1(:, idProf) = profParam1(:, idProf);
-                  profParam1Qc(:, idProf) = profParamAdj1Qc(:, idProf);
+               if (~ischar(profParamAdj1))
+                  if (any(profParamAdj1(:, idProf) ~= param1Struct.fillValue))
+                     profParam1(:, idProf) = profParam1(:, idProf);
+                     profParam1Qc(:, idProf) = profParamAdj1Qc(:, idProf);
+                  end
                end
             end
 
@@ -371,9 +374,11 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
             profParamAdj2Qc = profData{2*idVal};
 
             for idProf = 1:size(profParam2, 2)
-               if (any(profParamAdj2(:, idProf) ~= param1Struct.fillValue))
-                  profParam2(:, idProf) = profParam2(:, idProf);
-                  profParam2Qc(:, idProf) = profParamAdj2Qc(:, idProf);
+               if (~ischar(profParamAdj2))
+                  if (any(profParamAdj2(:, idProf) ~= param1Struct.fillValue))
+                     profParam2(:, idProf) = profParam2(:, idProf);
+                     profParam2Qc(:, idProf) = profParamAdj2Qc(:, idProf);
+                  end
                end
             end
 

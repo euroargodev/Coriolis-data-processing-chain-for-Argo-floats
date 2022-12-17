@@ -35,25 +35,14 @@ global g_NTT_CT_UPDATE_DATA_SET;
 
 % top directory of NetCDF files to plot
 % g_NTT_NC_DIR = 'E:\201905-ArgoData\coriolis\';
-g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\NEMO_20190304\OUTPUT_20190304\nc\';
 g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\REM_DM\DEC_NOT_DM\nc_avec_dm\';
-% g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\REM_DM\IN_DM\nc\';
-% g_NTT_NC_DIR = 'E:\202110-ArgoData\coriolis\';
 
 % directory to store pdf output
 g_NTT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % default list of floats to plot
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_collecte_v2.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_TRAJ_DM_test.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\test_doxy_adj_err_5.46_5.74.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_apx_rudics.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\Rem_DM\rem_in_dm.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertNkeOldVersionsTo3.1_20210913\list\provor_4.6_4.61.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_flbb_20160512.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\lists_20221013\list_decId_222_4.txt';
 
 % display help information on available commands
 display_help;
@@ -99,7 +88,7 @@ if (nargin == 0)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
       return
    end
-   
+
    fprintf('Floats from list: %s\n', floatListFileName);
    floatList = textread(FLOAT_LIST_FILE_NAME, '%d');
 else
@@ -292,622 +281,629 @@ clf;
 g_NTT_downOrUp = a_downOrUp;
 
 if ((a_idFloat ~= g_NTT_ID_FLOAT) || (a_reload == 1))
-   
+
    % a new float is wanted
    g_NTT_ID_FLOAT = a_idFloat;
    g_NTT_cycles = [];
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % retrieve and store the data of the new float
-   
+
    % float number
    floatNum = g_NTT_FLOAT_LIST(a_idFloat+1);
    floatNumStr = num2str(floatNum);
-   
-   % from META file
-   metaFileName = [g_NTT_NC_DIR '/' floatNumStr '/' floatNumStr '_meta.nc'];
-   
-   % retrieve information from META file
-   wantedVars = [ ...
-      {'FORMAT_VERSION'} ...
-      {'LAUNCH_CONFIG_PARAMETER_NAME'} ...
-      {'LAUNCH_CONFIG_PARAMETER_VALUE'} ...
-      {'CONFIG_PARAMETER_NAME'} ...
-      {'CONFIG_PARAMETER_VALUE'} ...
-      ];
-   [metaData] = get_data_from_nc_file(metaFileName, wantedVars);
-   
-   idVal = find(strcmp('FORMAT_VERSION', metaData(1:2:end)) == 1, 1);
-   metaFileFormatVersion = strtrim(metaData{2*idVal}');
-   
-   % check the meta file format version
-   if (~strcmp(metaFileFormatVersion, '3.1'))
-      fprintf('ERROR: Input meta file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
-         metaFileName, metaFileFormatVersion);
-      return
-   end
-   
-   % retrieve the needed configuration parameters
-   idVal = find(strcmp('LAUNCH_CONFIG_PARAMETER_NAME', metaData(1:2:end)) == 1, 1);
-   launchConfigParamName = metaData{2*idVal};
-   [~, nParam] = size(launchConfigParamName);
-   launchConfigName = [];
-   for idParam = 1:nParam
-      launchConfigName{end+1} = deblank(launchConfigParamName(:, idParam)');
-   end
-   
-   idVal = find(strcmp('LAUNCH_CONFIG_PARAMETER_VALUE', metaData(1:2:end)) == 1, 1);
-   launchConfigValue = metaData{2*idVal};
-   
-   idVal = find(strcmp('CONFIG_PARAMETER_NAME', metaData(1:2:end)) == 1, 1);
-   configParamName = metaData{2*idVal};
-   [~, nParam] = size(configParamName);
-   configName = [];
-   for idParam = 1:nParam
-      configName{end+1} = deblank(configParamName(:, idParam)');
-   end
-   
-   idVal = find(strcmp('CONFIG_PARAMETER_VALUE', metaData(1:2:end)) == 1, 1);
-   configValue = metaData{2*idVal};
-   
-   cycleTimeMeta = -1;
-   idF = find(strcmp('CONFIG_CycleTime_days', launchConfigName(:)) == 1, 1);
-   if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
-      cycleTimeMeta = launchConfigValue(idF);
-   else
-      idF = find(strcmp('CONFIG_CycleTime_hours', launchConfigName(:)) == 1, 1);
+
+   if (exist([g_NTT_NC_DIR '/' floatNumStr '/'], 'dir') == 7)
+
+      % from META file
+      metaFileName = [g_NTT_NC_DIR '/' floatNumStr '/' floatNumStr '_meta.nc'];
+
+      % retrieve information from META file
+      wantedVars = [ ...
+         {'FORMAT_VERSION'} ...
+         {'LAUNCH_CONFIG_PARAMETER_NAME'} ...
+         {'LAUNCH_CONFIG_PARAMETER_VALUE'} ...
+         {'CONFIG_PARAMETER_NAME'} ...
+         {'CONFIG_PARAMETER_VALUE'} ...
+         ];
+      [metaData] = get_data_from_nc_file(metaFileName, wantedVars);
+
+      idVal = find(strcmp('FORMAT_VERSION', metaData(1:2:end)) == 1, 1);
+      metaFileFormatVersion = strtrim(metaData{2*idVal}');
+
+      % check the meta file format version
+      if (~strcmp(metaFileFormatVersion, '3.1'))
+         fprintf('ERROR: Input meta file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
+            metaFileName, metaFileFormatVersion);
+         return
+      end
+
+      % retrieve the needed configuration parameters
+      idVal = find(strcmp('LAUNCH_CONFIG_PARAMETER_NAME', metaData(1:2:end)) == 1, 1);
+      launchConfigParamName = metaData{2*idVal};
+      [~, nParam] = size(launchConfigParamName);
+      launchConfigName = [];
+      for idParam = 1:nParam
+         launchConfigName{end+1} = deblank(launchConfigParamName(:, idParam)');
+      end
+
+      idVal = find(strcmp('LAUNCH_CONFIG_PARAMETER_VALUE', metaData(1:2:end)) == 1, 1);
+      launchConfigValue = metaData{2*idVal};
+
+      idVal = find(strcmp('CONFIG_PARAMETER_NAME', metaData(1:2:end)) == 1, 1);
+      configParamName = metaData{2*idVal};
+      [~, nParam] = size(configParamName);
+      configName = [];
+      for idParam = 1:nParam
+         configName{end+1} = deblank(configParamName(:, idParam)');
+      end
+
+      idVal = find(strcmp('CONFIG_PARAMETER_VALUE', metaData(1:2:end)) == 1, 1);
+      configValue = metaData{2*idVal};
+
+      cycleTimeMeta = -1;
+      idF = find(strcmp('CONFIG_CycleTime_days', launchConfigName(:)) == 1, 1);
       if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
-         cycleTimeMeta = launchConfigValue(idF)/24;
+         cycleTimeMeta = launchConfigValue(idF);
       else
-         idF = find(strcmp('CONFIG_CycleTime_seconds', launchConfigName(:)) == 1, 1);
+         idF = find(strcmp('CONFIG_CycleTime_hours', launchConfigName(:)) == 1, 1);
          if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
-            cycleTimeMeta = launchConfigValue(idF)/86400;
+            cycleTimeMeta = launchConfigValue(idF)/24;
          else
-            idF = find(strcmp('CONFIG_CycleTime_minutes', launchConfigName(:)) == 1, 1);
+            idF = find(strcmp('CONFIG_CycleTime_seconds', launchConfigName(:)) == 1, 1);
             if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
-               cycleTimeMeta = launchConfigValue(idF)/1440;
+               cycleTimeMeta = launchConfigValue(idF)/86400;
+            else
+               idF = find(strcmp('CONFIG_CycleTime_minutes', launchConfigName(:)) == 1, 1);
+               if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
+                  cycleTimeMeta = launchConfigValue(idF)/1440;
+               end
             end
          end
       end
-   end
-   idF = find(strcmp('CONFIG_CycleTime_days', configName(:)) == 1, 1);
-   if (~isempty(idF))
-      cycleTime = configValue(idF, :);
-      cycleTime(find(cycleTime == 99999)) = [];
-      cycleTimeMeta = cycleTime(end);
-   else
-      idF = find(strcmp('CONFIG_CycleTime_hours', configName(:)) == 1, 1);
+      idF = find(strcmp('CONFIG_CycleTime_days', configName(:)) == 1, 1);
       if (~isempty(idF))
          cycleTime = configValue(idF, :);
          cycleTime(find(cycleTime == 99999)) = [];
-         cycleTimeMeta = cycleTime(end)/24;
+         cycleTimeMeta = cycleTime(end);
       else
-         idF = find(strcmp('CONFIG_CycleTime_seconds', configName(:)) == 1, 1);
+         idF = find(strcmp('CONFIG_CycleTime_hours', configName(:)) == 1, 1);
          if (~isempty(idF))
             cycleTime = configValue(idF, :);
             cycleTime(find(cycleTime == 99999)) = [];
-            cycleTimeMeta = cycleTime(end)/86400;
+            cycleTimeMeta = cycleTime(end)/24;
          else
-            idF = find(strcmp('CONFIG_CycleTime_minutes', configName(:)) == 1, 1);
+            idF = find(strcmp('CONFIG_CycleTime_seconds', configName(:)) == 1, 1);
             if (~isempty(idF))
                cycleTime = configValue(idF, :);
                cycleTime(find(cycleTime == 99999)) = [];
-               cycleTimeMeta = cycleTime(end)/1440;
+               cycleTimeMeta = cycleTime(end)/86400;
+            else
+               idF = find(strcmp('CONFIG_CycleTime_minutes', configName(:)) == 1, 1);
+               if (~isempty(idF))
+                  cycleTime = configValue(idF, :);
+                  cycleTime(find(cycleTime == 99999)) = [];
+                  cycleTimeMeta = cycleTime(end)/1440;
+               end
             end
          end
       end
-   end
-   
-   % Remocean floats
-   %    if (cycleTimeMeta == -1)
-   %       idF = find(strcmp('CONFIG_InternalCycleTime1_hours', launchConfigName(:)) == 1, 1);
-   %       if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
-   %          cycleTimeMeta = launchConfigValue(idF)/24;
-   %       end
-   %       idF = find(strcmp('CONFIG_InternalCycleTime1_hours', configName(:)) == 1, 1);
-   %       if (~isempty(idF))
-   %          cycleTime = configValue(idF, :);
-   %          cycleTime(find(cycleTime == 99999)) = [];
-   %          cycleTimeMeta = cycleTime(end)/24;
-   %       end
-   %    end
-   if (cycleTimeMeta == -1)
-      fprintf('ERROR: Unable to retrieve CONFIG_CycleTime_days from meta file (%s) - CONFIG_CycleTime_days set to 1\n', ...
-         metaFileName);
-      cycleTimeMeta = 1;
-      
-      %       fprintf('ERROR: Unable to retrieve CONFIG_CycleTime_days from meta file (%s)\n', ...
-      %          metaFileName);
-      %       return
-   end
-   
-   % cycle duration
-   g_NTT_cycleTimeMeta = cycleTimeMeta;
-   
-   % from TRAJ file
-   trajFileName = [g_NTT_NC_DIR '/' floatNumStr '/' floatNumStr '_Rtraj.nc'];
-   
-   % retrieve information from TRAJ file
-   wantedVars = [ ...
-      {'FORMAT_VERSION'} ...
-      {'JULD'} ...
-      {'JULD_ADJUSTED'} ...
-      {'LATITUDE'} ...
-      {'LONGITUDE'} ...
-      {'POSITION_ACCURACY'} ...
-      {'CYCLE_NUMBER'} ...
-      {'MEASUREMENT_CODE'} ...
-      {'PRES'} ...
-      {'PRES_ADJUSTED'} ...
-      {'DATA_MODE'} ...
-      {'CYCLE_NUMBER_INDEX'} ...
-      ];
-   [trajData] = get_data_from_nc_file(trajFileName, wantedVars);
-   
-   if (isempty(trajData))
-      label = sprintf('%02d/%02d : %s no data', ...
-         a_idFloat+1, ...
-         length(g_NTT_FLOAT_LIST), ...
-         num2str(g_NTT_FLOAT_LIST(a_idFloat+1)));
-      title(label, 'FontSize', 14);
-      return
-   end
-   
-   idVal = find(strcmp('FORMAT_VERSION', trajData(1:2:end)) == 1, 1);
-   trajFileFormatVersion = strtrim(trajData{2*idVal}');
-   
-   % check the traj file format version
-%    if (~ismember(trajFileFormatVersion, [{'3.1'} {'3.2'}]))
-%       fprintf('ERROR: Input traj file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
-%          trajFileName, trajFileFormatVersion);
-%       return
-%    end
-   
-   idVal = find(strcmp('CYCLE_NUMBER', trajData(1:2:end)) == 1, 1);
-   cycleNumberTraj = trajData{2*idVal};
-   
-   idVal = find(strcmp('MEASUREMENT_CODE', trajData(1:2:end)) == 1, 1);
-   measCode = trajData{2*idVal};
-   
-   idVal = find(strcmp('LATITUDE', trajData(1:2:end)) == 1, 1);
-   latitude = trajData{2*idVal};
-   
-   idVal = find(strcmp('LONGITUDE', trajData(1:2:end)) == 1, 1);
-   longitude = trajData{2*idVal};
-   
-   idVal = find(strcmp('POSITION_ACCURACY', trajData(1:2:end)) == 1, 1);
-   posAcc = trajData{2*idVal};
-   
-   idVal = find(strcmp('DATA_MODE', trajData(1:2:end)) == 1, 1);
-   dataMode = trajData{2*idVal};
-   
-   idVal = find(strcmp('CYCLE_NUMBER_INDEX', trajData(1:2:end)) == 1, 1);
-   cycleNumberIndexTraj = trajData{2*idVal};
-   
-   if (g_NTT_ADJ == 2)
-      idVal = find(strcmp('JULD_ADJUSTED', trajData(1:2:end)) == 1, 1);
-      juldAdj = trajData{2*idVal};
-      
-      idVal = find(strcmp('PRES_ADJUSTED', trajData(1:2:end)) == 1, 1);
-      trajPresAdj = trajData{2*idVal};
-      
-      idVal = find(strcmp('JULD', trajData(1:2:end)) == 1, 1);
-      juldNotAdj = trajData{2*idVal};
-      
-      idVal = find(strcmp('PRES', trajData(1:2:end)) == 1, 1);
-      trajPresNotAdj = trajData{2*idVal};
-      
-      juld = juldAdj;
-      trajPres = trajPresAdj;
-      idNotAdj = find(dataMode == 'R');
-      cycleNumNotAdj = unique(cycleNumberIndexTraj(idNotAdj));
-      idNotAdj = find(ismember(cycleNumberTraj, cycleNumNotAdj));
-      juld(idNotAdj) = juldNotAdj(idNotAdj);
-      trajPres(idNotAdj) = trajPresNotAdj(idNotAdj);
-   elseif (g_NTT_ADJ == 1)
-      idVal = find(strcmp('JULD_ADJUSTED', trajData(1:2:end)) == 1, 1);
-      juld = trajData{2*idVal};
-      
-      idVal = find(strcmp('PRES_ADJUSTED', trajData(1:2:end)) == 1, 1);
-      trajPres = trajData{2*idVal};
-   else
-      idVal = find(strcmp('JULD', trajData(1:2:end)) == 1, 1);
-      juld = trajData{2*idVal};
-      
-      idVal = find(strcmp('PRES', trajData(1:2:end)) == 1, 1);
-      trajPres = trajData{2*idVal};
-   end
-   
-   [g_NTT_CT_MODE_VAL, g_NTT_CT_MODE_NB, g_NTT_CT_CYCLE_MODE, g_NTT_CT_MODE_CYCLE] = ...
-      compute_cycle_duration(cycleNumberTraj, measCode, juld);
-   
-   % from PROF file
-   profFileName = [g_NTT_NC_DIR '/' floatNumStr '/' floatNumStr '_prof.nc'];
-   
-   % retrieve information from PROF file
-   wantedVars = [ ...
-      {'FORMAT_VERSION'} ...
-      {'CYCLE_NUMBER'} ...
-      {'DIRECTION'} ...
-      {'PRES'} ...
-      ];
-   [profData] = get_data_from_nc_file(profFileName, wantedVars);
-   
-   if (isempty(profData))
-      cycleNumberProf = [];
-      maxMesProf = 0;
-   else
-      
-      idVal = find(strcmp('FORMAT_VERSION', profData(1:2:end)) == 1, 1);
-      profFileFormatVersion = strtrim(profData{2*idVal}');
-      
-      % check the prof file format version
-      if (~strcmp(profFileFormatVersion, '3.1'))
-         fprintf('ERROR: Input prof file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
-            profFileName, profFileFormatVersion);
-         %          return
+
+      % Remocean floats
+      %    if (cycleTimeMeta == -1)
+      %       idF = find(strcmp('CONFIG_InternalCycleTime1_hours', launchConfigName(:)) == 1, 1);
+      %       if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
+      %          cycleTimeMeta = launchConfigValue(idF)/24;
+      %       end
+      %       idF = find(strcmp('CONFIG_InternalCycleTime1_hours', configName(:)) == 1, 1);
+      %       if (~isempty(idF))
+      %          cycleTime = configValue(idF, :);
+      %          cycleTime(find(cycleTime == 99999)) = [];
+      %          cycleTimeMeta = cycleTime(end)/24;
+      %       end
+      %    end
+      if (cycleTimeMeta == -1)
+         fprintf('ERROR: Unable to retrieve CONFIG_CycleTime_days from meta file (%s) - CONFIG_CycleTime_days set to 1\n', ...
+            metaFileName);
+         cycleTimeMeta = 1;
+
+         %       fprintf('ERROR: Unable to retrieve CONFIG_CycleTime_days from meta file (%s)\n', ...
+         %          metaFileName);
+         %       return
       end
-      
-      idVal = find(strcmp('CYCLE_NUMBER', profData(1:2:end)) == 1, 1);
-      cycleNumberProf = profData{2*idVal};
-      
-      idVal = find(strcmp('DIRECTION', profData(1:2:end)) == 1, 1);
-      profDir = profData{2*idVal};
-      
-      idVal = find(strcmp('PRES', profData(1:2:end)) == 1, 1);
-      profPres = profData{2*idVal};
-      [nLev, nProf] = size(profPres);
-      maxMesProf = nLev;
-   end
-   
-   % cycles to consider
-   cycles = cycleNumberTraj(find(cycleNumberTraj >= 0));
-   cycles = [0:max(cycles)]';
-   
-   % compute the dimension of the arrays
-   maxArgosLoc = 0;
-   maxMesDrift = 0;
-   maxMesDateDescProf = 0;
-   maxMesDateAscProf = 0;
-   for idCy = 1:length(cycles)
-      numCycle = cycles(idCy);
-      idCycle = find(cycleNumberTraj == numCycle);
-      
-      nbArgosLoc = length(find((measCode(idCycle) == g_MC_Surface) & (latitude(idCycle) ~= 99999)));
-      maxArgosLoc = max([maxArgosLoc nbArgosLoc]);
-      
-      nbMesDrift = length(find(measCode(idCycle) == g_MC_DriftAtPark));
-      maxMesDrift = max([maxMesDrift nbMesDrift]);
-      
-      nbMesDateDescProf = length(find(measCode(idCycle) == g_MC_DescProf));
-      maxMesDateDescProf = max([maxMesDateDescProf nbMesDateDescProf]);
-      
-      nbMesDateAscProf = length(find(measCode(idCycle) == g_MC_AscProf));
-      maxMesDateAscProf = max([maxMesDateAscProf nbMesDateAscProf]);
-   end
-   
-   % arrays to store the data
-   g_NTT_cycles = cycles;
-   
-   % times
-   g_NTT_diveStart = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_descentStart = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_firstDescProf = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_descProf = ones(length(cycles), maxMesDateDescProf)*g_dateDef;
-   g_NTT_lastDescProf = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_descentEnd = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_firstDriftMes = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_driftMes = ones(length(cycles), maxMesDrift)*g_dateDef;
-   g_NTT_lastDriftMes = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_toProfStart = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_toProfEnd = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_ascentStart = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_ascentStartFloat = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_downTimeEndDate = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_firstAscProf = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_ascProf = ones(length(cycles), maxMesDateAscProf)*g_dateDef;
-   g_NTT_lastAscProf = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_ascentEnd = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_argosStart = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_ascentEndFloat = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_argosStartFloat = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_argosFirstMsg = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_argosLoc = ones(length(cycles), maxArgosLoc)*g_dateDef;
-   g_NTT_argosLastMsg = ones(length(cycles), 1)*g_dateDef;
-   g_NTT_argosStop = ones(length(cycles), 1)*g_dateDef;
-   
-   % pressures
-   g_NTT_tabParkPres = ones(length(cycles), 1)*g_presDef;
-   g_NTT_tabProfPres = ones(length(cycles), 1)*g_presDef;
-   g_NTT_tabMesProfPres = ones(length(cycles), maxMesProf)*g_presDef;
-   tabFirstArgosLon = ones(length(cycles), 1)*g_lonDef;
-   tabFirstArgosLat = ones(length(cycles), 1)*g_latDef;
-   tabLastArgosLon = ones(length(cycles), 1)*g_lonDef;
-   tabLastArgosLat = ones(length(cycles), 1)*g_latDef;
-   g_NTT_tabCyclesEtopo = g_NTT_cycles;
-   g_NTT_tabEtopoMin = ones(length(cycles), 1)*g_elevDef;
-   g_NTT_tabEtopoMax = ones(length(cycles), 1)*-g_elevDef;
-      
-   % data storage
-   for idCy = 1:length(cycles)
-      numCycle = cycles(idCy);
-      
-      if (g_NTT_CYCLE_0 == 0)
-         % for DPF floats
-         if (numCycle == 0)
+
+      % cycle duration
+      g_NTT_cycleTimeMeta = cycleTimeMeta;
+
+      % from TRAJ file
+      trajFileName = [g_NTT_NC_DIR '/' floatNumStr '/' floatNumStr '_Rtraj.nc'];
+
+      % retrieve information from TRAJ file
+      wantedVars = [ ...
+         {'FORMAT_VERSION'} ...
+         {'JULD'} ...
+         {'JULD_ADJUSTED'} ...
+         {'LATITUDE'} ...
+         {'LONGITUDE'} ...
+         {'POSITION_ACCURACY'} ...
+         {'CYCLE_NUMBER'} ...
+         {'MEASUREMENT_CODE'} ...
+         {'PRES'} ...
+         {'PRES_ADJUSTED'} ...
+         {'DATA_MODE'} ...
+         {'CYCLE_NUMBER_INDEX'} ...
+         ];
+      [trajData] = get_data_from_nc_file(trajFileName, wantedVars);
+
+      if (isempty(trajData))
+         label = sprintf('%02d/%02d : %s no data', ...
+            a_idFloat+1, ...
+            length(g_NTT_FLOAT_LIST), ...
+            num2str(g_NTT_FLOAT_LIST(a_idFloat+1)));
+         title(label, 'FontSize', 14);
+         return
+      end
+
+      idVal = find(strcmp('FORMAT_VERSION', trajData(1:2:end)) == 1, 1);
+      trajFileFormatVersion = strtrim(trajData{2*idVal}');
+
+      % check the traj file format version
+      %    if (~ismember(trajFileFormatVersion, [{'3.1'} {'3.2'}]))
+      %       fprintf('ERROR: Input traj file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
+      %          trajFileName, trajFileFormatVersion);
+      %       return
+      %    end
+
+      idVal = find(strcmp('CYCLE_NUMBER', trajData(1:2:end)) == 1, 1);
+      cycleNumberTraj = trajData{2*idVal};
+
+      idVal = find(strcmp('MEASUREMENT_CODE', trajData(1:2:end)) == 1, 1);
+      measCode = trajData{2*idVal};
+
+      idVal = find(strcmp('LATITUDE', trajData(1:2:end)) == 1, 1);
+      latitude = trajData{2*idVal};
+
+      idVal = find(strcmp('LONGITUDE', trajData(1:2:end)) == 1, 1);
+      longitude = trajData{2*idVal};
+
+      idVal = find(strcmp('POSITION_ACCURACY', trajData(1:2:end)) == 1, 1);
+      posAcc = trajData{2*idVal};
+
+      idVal = find(strcmp('DATA_MODE', trajData(1:2:end)) == 1, 1);
+      dataMode = trajData{2*idVal};
+
+      idVal = find(strcmp('CYCLE_NUMBER_INDEX', trajData(1:2:end)) == 1, 1);
+      cycleNumberIndexTraj = trajData{2*idVal};
+
+      if (g_NTT_ADJ == 2)
+         idVal = find(strcmp('JULD_ADJUSTED', trajData(1:2:end)) == 1, 1);
+         juldAdj = trajData{2*idVal};
+
+         idVal = find(strcmp('PRES_ADJUSTED', trajData(1:2:end)) == 1, 1);
+         trajPresAdj = trajData{2*idVal};
+
+         idVal = find(strcmp('JULD', trajData(1:2:end)) == 1, 1);
+         juldNotAdj = trajData{2*idVal};
+
+         idVal = find(strcmp('PRES', trajData(1:2:end)) == 1, 1);
+         trajPresNotAdj = trajData{2*idVal};
+
+         juld = juldAdj;
+         trajPres = trajPresAdj;
+         idNotAdj = find(dataMode == 'R');
+         cycleNumNotAdj = unique(cycleNumberIndexTraj(idNotAdj));
+         idNotAdj = find(ismember(cycleNumberTraj, cycleNumNotAdj));
+         juld(idNotAdj) = juldNotAdj(idNotAdj);
+         trajPres(idNotAdj) = trajPresNotAdj(idNotAdj);
+      elseif (g_NTT_ADJ == 1)
+         idVal = find(strcmp('JULD_ADJUSTED', trajData(1:2:end)) == 1, 1);
+         juld = trajData{2*idVal};
+
+         idVal = find(strcmp('PRES_ADJUSTED', trajData(1:2:end)) == 1, 1);
+         trajPres = trajData{2*idVal};
+      else
+         idVal = find(strcmp('JULD', trajData(1:2:end)) == 1, 1);
+         juld = trajData{2*idVal};
+
+         idVal = find(strcmp('PRES', trajData(1:2:end)) == 1, 1);
+         trajPres = trajData{2*idVal};
+      end
+
+      [g_NTT_CT_MODE_VAL, g_NTT_CT_MODE_NB, g_NTT_CT_CYCLE_MODE, g_NTT_CT_MODE_CYCLE] = ...
+         compute_cycle_duration(cycleNumberTraj, measCode, juld);
+
+      % from PROF file
+      profFileName = [g_NTT_NC_DIR '/' floatNumStr '/' floatNumStr '_prof.nc'];
+
+      % retrieve information from PROF file
+      wantedVars = [ ...
+         {'FORMAT_VERSION'} ...
+         {'CYCLE_NUMBER'} ...
+         {'DIRECTION'} ...
+         {'PRES'} ...
+         ];
+      [profData] = get_data_from_nc_file(profFileName, wantedVars);
+
+      if (isempty(profData))
+         cycleNumberProf = [];
+         maxMesProf = 0;
+      else
+
+         idVal = find(strcmp('FORMAT_VERSION', profData(1:2:end)) == 1, 1);
+         profFileFormatVersion = strtrim(profData{2*idVal}');
+
+         % check the prof file format version
+         if (~strcmp(profFileFormatVersion, '3.1'))
+            fprintf('ERROR: Input prof file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
+               profFileName, profFileFormatVersion);
+            %          return
+         end
+
+         idVal = find(strcmp('CYCLE_NUMBER', profData(1:2:end)) == 1, 1);
+         cycleNumberProf = profData{2*idVal};
+
+         idVal = find(strcmp('DIRECTION', profData(1:2:end)) == 1, 1);
+         profDir = profData{2*idVal};
+
+         idVal = find(strcmp('PRES', profData(1:2:end)) == 1, 1);
+         profPres = profData{2*idVal};
+         [nLev, nProf] = size(profPres);
+         maxMesProf = nLev;
+      end
+
+      % cycles to consider
+      cycles = cycleNumberTraj(find(cycleNumberTraj >= 0));
+      cycles = [0:max(cycles)]';
+
+      % compute the dimension of the arrays
+      maxArgosLoc = 0;
+      maxMesDrift = 0;
+      maxMesDateDescProf = 0;
+      maxMesDateAscProf = 0;
+      for idCy = 1:length(cycles)
+         numCycle = cycles(idCy);
+         idCycle = find(cycleNumberTraj == numCycle);
+
+         nbArgosLoc = length(find((measCode(idCycle) == g_MC_Surface) & (latitude(idCycle) ~= 99999)));
+         maxArgosLoc = max([maxArgosLoc nbArgosLoc]);
+
+         nbMesDrift = length(find(measCode(idCycle) == g_MC_DriftAtPark));
+         maxMesDrift = max([maxMesDrift nbMesDrift]);
+
+         nbMesDateDescProf = length(find(measCode(idCycle) == g_MC_DescProf));
+         maxMesDateDescProf = max([maxMesDateDescProf nbMesDateDescProf]);
+
+         nbMesDateAscProf = length(find(measCode(idCycle) == g_MC_AscProf));
+         maxMesDateAscProf = max([maxMesDateAscProf nbMesDateAscProf]);
+      end
+
+      % arrays to store the data
+      g_NTT_cycles = cycles;
+
+      % times
+      g_NTT_diveStart = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_descentStart = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_firstDescProf = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_descProf = ones(length(cycles), maxMesDateDescProf)*g_dateDef;
+      g_NTT_lastDescProf = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_descentEnd = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_firstDriftMes = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_driftMes = ones(length(cycles), maxMesDrift)*g_dateDef;
+      g_NTT_lastDriftMes = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_toProfStart = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_toProfEnd = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_ascentStart = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_ascentStartFloat = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_downTimeEndDate = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_firstAscProf = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_ascProf = ones(length(cycles), maxMesDateAscProf)*g_dateDef;
+      g_NTT_lastAscProf = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_ascentEnd = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_argosStart = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_ascentEndFloat = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_argosStartFloat = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_argosFirstMsg = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_argosLoc = ones(length(cycles), maxArgosLoc)*g_dateDef;
+      g_NTT_argosLastMsg = ones(length(cycles), 1)*g_dateDef;
+      g_NTT_argosStop = ones(length(cycles), 1)*g_dateDef;
+
+      % pressures
+      g_NTT_tabParkPres = ones(length(cycles), 1)*g_presDef;
+      g_NTT_tabProfPres = ones(length(cycles), 1)*g_presDef;
+      g_NTT_tabMesProfPres = ones(length(cycles), maxMesProf)*g_presDef;
+      tabFirstArgosLon = ones(length(cycles), 1)*g_lonDef;
+      tabFirstArgosLat = ones(length(cycles), 1)*g_latDef;
+      tabLastArgosLon = ones(length(cycles), 1)*g_lonDef;
+      tabLastArgosLat = ones(length(cycles), 1)*g_latDef;
+      g_NTT_tabCyclesEtopo = g_NTT_cycles;
+      g_NTT_tabEtopoMin = ones(length(cycles), 1)*g_elevDef;
+      g_NTT_tabEtopoMax = ones(length(cycles), 1)*-g_elevDef;
+
+      % data storage
+      for idCy = 1:length(cycles)
+         numCycle = cycles(idCy);
+
+         if (g_NTT_CYCLE_0 == 0)
+            % for DPF floats
+            if (numCycle == 0)
+               continue
+            end
+         end
+
+         % from TRAJ file
+         idCycle = find(cycleNumberTraj == numCycle);
+         if (isempty(idCycle))
             continue
          end
-      end
-      
-      % from TRAJ file
-      idCycle = find(cycleNumberTraj == numCycle);
-      if (isempty(idCycle))
-         continue
-      end
-      
-      idDescentStart = find(measCode(idCycle) == g_MC_DST);
-      if (length(idDescentStart) > 1)
-         fprintf('ERROR: Cycle number %d: %d DescentStart\n', ...
-            numCycle, length(idDescentStart));
-         idDescentStart = idDescentStart(1);
-      end
-      if (~isempty(idDescentStart) && (juld(idCycle(idDescentStart)) ~= 999999))
-         g_NTT_descentStart(numCycle+1) = juld(idCycle(idDescentStart));
-      end
-      
-      idMesDescProf = find(measCode(idCycle) == g_MC_DescProf);
-      if (~isempty(idMesDescProf))
-         dates = juld(idCycle(idMesDescProf));
-         dates(find(dates == 999999)) = g_dateDef;
-         g_NTT_descProf(numCycle+1, 1:length(idMesDescProf)) = dates;
-         dates(find(dates == g_dateDef)) = [];
-         if (~isempty(dates))
-            g_NTT_firstDescProf(numCycle+1) = dates(1);
-            g_NTT_lastDescProf(numCycle+1) = dates(end);
+
+         idDescentStart = find(measCode(idCycle) == g_MC_DST);
+         if (length(idDescentStart) > 1)
+            fprintf('ERROR: Cycle number %d: %d DescentStart\n', ...
+               numCycle, length(idDescentStart));
+            idDescentStart = idDescentStart(1);
          end
-      end
-      
-      idDescentEnd = find(measCode(idCycle) == g_MC_PST);
-      if (length(idDescentEnd) > 1)
-         fprintf('ERROR: Cycle number %d: %d DescentEnd\n', ...
-            numCycle, length(idDescentEnd));
-         idDescentEnd = idDescentEnd(1);
-      end
-      if (~isempty(idDescentEnd) && (juld(idCycle(idDescentEnd)) ~= 999999))
-         g_NTT_descentEnd(numCycle+1) = juld(idCycle(idDescentEnd));
-      end
-      
-      idDriftMes = find(measCode(idCycle) == g_MC_DriftAtPark);
-      if (~isempty(idDriftMes))
-         idDef = find(juld(idCycle(idDriftMes)) ~= 999999);
-         if (~isempty(idDef))
-            dates = juld(idCycle(idDriftMes(idDef)));
+         if (~isempty(idDescentStart) && (juld(idCycle(idDescentStart)) ~= 999999))
+            g_NTT_descentStart(numCycle+1) = juld(idCycle(idDescentStart));
+         end
+
+         idMesDescProf = find(measCode(idCycle) == g_MC_DescProf);
+         if (~isempty(idMesDescProf))
+            dates = juld(idCycle(idMesDescProf));
             dates(find(dates == 999999)) = g_dateDef;
-            g_NTT_driftMes(numCycle+1, idDef) = dates;
+            g_NTT_descProf(numCycle+1, 1:length(idMesDescProf)) = dates;
             dates(find(dates == g_dateDef)) = [];
             if (~isempty(dates))
-               g_NTT_firstDriftMes(numCycle+1) = dates(1);
-               g_NTT_lastDriftMes(numCycle+1) = dates(end);
+               g_NTT_firstDescProf(numCycle+1) = dates(1);
+               g_NTT_lastDescProf(numCycle+1) = dates(end);
             end
          end
-      end
-      
-      idToProfStart = find(measCode(idCycle) == g_MC_PET);
-      if (length(idToProfStart) > 1)
-         fprintf('ERROR: Cycle number %d: %d ToProfStart\n', ...
-            numCycle, length(idToProfStart));
-         idToProfStart = idToProfStart(1);
-      end
-      if (~isempty(idToProfStart) && (juld(idCycle(idToProfStart)) ~= 999999))
-         g_NTT_toProfStart(numCycle+1) = juld(idCycle(idToProfStart));
-      end
-      
-      idToProfEnd = find(measCode(idCycle) == g_MC_DPST);
-      if (length(idToProfEnd) > 1)
-         fprintf('ERROR: Cycle number %d: %d ToProfEnd\n', ...
-            numCycle, length(idToProfEnd));
-         idToProfEnd = idToProfEnd(1);
-      end
-      if (~isempty(idToProfEnd) && (juld(idCycle(idToProfEnd)) ~= 999999))
-         g_NTT_toProfEnd(numCycle+1) = juld(idCycle(idToProfEnd));
-      end
-      
-      idAscentStart = find(measCode(idCycle) == g_MC_AST);
-      if (length(idAscentStart) > 1)
-         fprintf('ERROR: Cycle number %d: %d AscentStart\n', ...
-            numCycle, length(idAscentStart));
-         idAscentStart = idAscentStart(1);
-      end
-      if (~isempty(idAscentStart) && (juld(idCycle(idAscentStart)) ~= 999999))
-         g_NTT_ascentStart(numCycle+1) = juld(idCycle(idAscentStart));
-      end
-      
-      idAscentStartFloat = find(measCode(idCycle) == g_MC_AST_Float);
-      if (length(idAscentStartFloat) > 1)
-         fprintf('ERROR: Cycle number %d: %d AscentStartFloat\n', ...
-            numCycle, length(idAscentStartFloat));
-         idAscentStartFloat = idAscentStartFloat(1);
-      end
-      if (~isempty(idAscentStartFloat) && (juld(idCycle(idAscentStartFloat)) ~= 999999))
-         g_NTT_ascentStartFloat(numCycle+1) = juld(idCycle(idAscentStartFloat));
-      end
-      
-      idDownTimeEnd = find(measCode(idCycle) == g_MC_DownTimeEnd);
-      if (length(idDownTimeEnd) > 1)
-         fprintf('ERROR: Cycle number %d: %d DownTimeEnd\n', ...
-            numCycle, length(idDownTimeEnd));
-         idDownTimeEnd = idDownTimeEnd(1);
-      end
-      if (~isempty(idDownTimeEnd) && (juld(idCycle(idDownTimeEnd)) ~= 999999))
-         g_NTT_downTimeEndDate(numCycle+1) = juld(idCycle(idDownTimeEnd));
-      end
-      
-      idMesAscProf = find(measCode(idCycle) == g_MC_AscProf);
-      if (~isempty(idMesAscProf))
-         dates = juld(idCycle(idMesAscProf));
-         dates(find(dates == 999999)) = g_dateDef;
-         g_NTT_ascProf(numCycle+1, 1:length(idMesAscProf)) = dates;
-         dates(find(dates == g_dateDef)) = [];
-         if (~isempty(dates))
-            g_NTT_firstAscProf(numCycle+1) = dates(1);
-            g_NTT_lastAscProf(numCycle+1) = dates(end);
+
+         idDescentEnd = find(measCode(idCycle) == g_MC_PST);
+         if (length(idDescentEnd) > 1)
+            fprintf('ERROR: Cycle number %d: %d DescentEnd\n', ...
+               numCycle, length(idDescentEnd));
+            idDescentEnd = idDescentEnd(1);
+         end
+         if (~isempty(idDescentEnd) && (juld(idCycle(idDescentEnd)) ~= 999999))
+            g_NTT_descentEnd(numCycle+1) = juld(idCycle(idDescentEnd));
+         end
+
+         idDriftMes = find(measCode(idCycle) == g_MC_DriftAtPark);
+         if (~isempty(idDriftMes))
+            idDef = find(juld(idCycle(idDriftMes)) ~= 999999);
+            if (~isempty(idDef))
+               dates = juld(idCycle(idDriftMes(idDef)));
+               dates(find(dates == 999999)) = g_dateDef;
+               g_NTT_driftMes(numCycle+1, idDef) = dates;
+               dates(find(dates == g_dateDef)) = [];
+               if (~isempty(dates))
+                  g_NTT_firstDriftMes(numCycle+1) = dates(1);
+                  g_NTT_lastDriftMes(numCycle+1) = dates(end);
+               end
+            end
+         end
+
+         idToProfStart = find(measCode(idCycle) == g_MC_PET);
+         if (length(idToProfStart) > 1)
+            fprintf('ERROR: Cycle number %d: %d ToProfStart\n', ...
+               numCycle, length(idToProfStart));
+            idToProfStart = idToProfStart(1);
+         end
+         if (~isempty(idToProfStart) && (juld(idCycle(idToProfStart)) ~= 999999))
+            g_NTT_toProfStart(numCycle+1) = juld(idCycle(idToProfStart));
+         end
+
+         idToProfEnd = find(measCode(idCycle) == g_MC_DPST);
+         if (length(idToProfEnd) > 1)
+            fprintf('ERROR: Cycle number %d: %d ToProfEnd\n', ...
+               numCycle, length(idToProfEnd));
+            idToProfEnd = idToProfEnd(1);
+         end
+         if (~isempty(idToProfEnd) && (juld(idCycle(idToProfEnd)) ~= 999999))
+            g_NTT_toProfEnd(numCycle+1) = juld(idCycle(idToProfEnd));
+         end
+
+         idAscentStart = find(measCode(idCycle) == g_MC_AST);
+         if (length(idAscentStart) > 1)
+            fprintf('ERROR: Cycle number %d: %d AscentStart\n', ...
+               numCycle, length(idAscentStart));
+            idAscentStart = idAscentStart(1);
+         end
+         if (~isempty(idAscentStart) && (juld(idCycle(idAscentStart)) ~= 999999))
+            g_NTT_ascentStart(numCycle+1) = juld(idCycle(idAscentStart));
+         end
+
+         idAscentStartFloat = find(measCode(idCycle) == g_MC_AST_Float);
+         if (length(idAscentStartFloat) > 1)
+            fprintf('ERROR: Cycle number %d: %d AscentStartFloat\n', ...
+               numCycle, length(idAscentStartFloat));
+            idAscentStartFloat = idAscentStartFloat(1);
+         end
+         if (~isempty(idAscentStartFloat) && (juld(idCycle(idAscentStartFloat)) ~= 999999))
+            g_NTT_ascentStartFloat(numCycle+1) = juld(idCycle(idAscentStartFloat));
+         end
+
+         idDownTimeEnd = find(measCode(idCycle) == g_MC_DownTimeEnd);
+         if (length(idDownTimeEnd) > 1)
+            fprintf('ERROR: Cycle number %d: %d DownTimeEnd\n', ...
+               numCycle, length(idDownTimeEnd));
+            idDownTimeEnd = idDownTimeEnd(1);
+         end
+         if (~isempty(idDownTimeEnd) && (juld(idCycle(idDownTimeEnd)) ~= 999999))
+            g_NTT_downTimeEndDate(numCycle+1) = juld(idCycle(idDownTimeEnd));
+         end
+
+         idMesAscProf = find(measCode(idCycle) == g_MC_AscProf);
+         if (~isempty(idMesAscProf))
+            dates = juld(idCycle(idMesAscProf));
+            dates(find(dates == 999999)) = g_dateDef;
+            g_NTT_ascProf(numCycle+1, 1:length(idMesAscProf)) = dates;
+            dates(find(dates == g_dateDef)) = [];
+            if (~isempty(dates))
+               g_NTT_firstAscProf(numCycle+1) = dates(1);
+               g_NTT_lastAscProf(numCycle+1) = dates(end);
+            end
+         end
+
+         idAscentEnd = find(measCode(idCycle) == g_MC_AET);
+         if (length(idAscentEnd) > 1)
+            fprintf('ERROR: Cycle number %d: %d AscentEnd\n', ...
+               numCycle, length(idAscentEnd));
+            idAscentEnd = idAscentEnd(1);
+         end
+         if (~isempty(idAscentEnd) && (juld(idCycle(idAscentEnd)) ~= 999999))
+            g_NTT_ascentEnd(numCycle+1) = juld(idCycle(idAscentEnd));
+         end
+
+         if (g_NTT_FLOAT_TIMES == 1)
+            idAscentEndFloat = find(measCode(idCycle) == g_MC_AET_Float);
+            if (length(idAscentEndFloat) > 1)
+               fprintf('ERROR: Cycle number %d: %d AscentEndFloat\n', ...
+                  numCycle, length(idAscentEndFloat));
+               idAscentEndFloat = idAscentEndFloat(1);
+            end
+            if (~isempty(idAscentEndFloat) && (juld(idCycle(idAscentEndFloat)) ~= 999999))
+               g_NTT_ascentEndFloat(numCycle+1) = juld(idCycle(idAscentEndFloat));
+            end
+         end
+
+         idArgosStart = find(measCode(idCycle) == g_MC_TST);
+         if (length(idArgosStart) > 1)
+            fprintf('ERROR: Cycle number %d: %d ArgosStart\n', ...
+               numCycle, length(idArgosStart));
+            idArgosStart = idArgosStart(1);
+         end
+         if (~isempty(idArgosStart) && (juld(idCycle(idArgosStart)) ~= 999999))
+            g_NTT_argosStart(numCycle+1) = juld(idCycle(idArgosStart));
+         end
+
+         if (g_NTT_FLOAT_TIMES == 1)
+            idArgosStartFloat = find(measCode(idCycle) == g_MC_TST_Float);
+            if (length(idArgosStartFloat) > 1)
+               fprintf('ERROR: Cycle number %d: %d ArgosStartFloat\n', ...
+                  numCycle, length(idArgosStartFloat));
+               idArgosStartFloat = idArgosStartFloat(1);
+            end
+            if (~isempty(idArgosStartFloat) && (juld(idCycle(idArgosStartFloat)) ~= 999999))
+               g_NTT_argosStartFloat(numCycle+1) = juld(idCycle(idArgosStartFloat));
+            end
+         end
+
+         idArgosFirstMsg = find(measCode(idCycle) == g_MC_FMT);
+         if (length(idArgosFirstMsg) > 1)
+            fprintf('ERROR: Cycle number %d: %d ArgosFirstMsg\n', ...
+               numCycle, length(idArgosFirstMsg));
+            idArgosFirstMsg = idArgosFirstMsg(1);
+         end
+         if (~isempty(idArgosFirstMsg) && (juld(idCycle(idArgosFirstMsg)) ~= 999999))
+            g_NTT_argosFirstMsg(numCycle+1) = juld(idCycle(idArgosFirstMsg));
+         end
+
+         idArgosLoc = find((measCode(idCycle) == g_MC_Surface) & (latitude(idCycle) ~= 99999));
+         if (~isempty(idArgosLoc))
+            dates = juld(idCycle(idArgosLoc));
+            dates(find(dates == 999999)) = g_dateDef;
+            g_NTT_argosLoc(numCycle+1, 1:length(idArgosLoc)) = dates;
+         end
+
+         idArgosLastMsg = find(measCode(idCycle) == g_MC_LMT);
+         if (length(idArgosLastMsg) > 1)
+            fprintf('ERROR: Cycle number %d: %d ArgosLastMsg\n', ...
+               numCycle, length(idArgosLastMsg));
+            idArgosLastMsg = idArgosLastMsg(1);
+         end
+         if (~isempty(idArgosLastMsg) && (juld(idCycle(idArgosLastMsg)) ~= 999999))
+            g_NTT_argosLastMsg(numCycle+1) = juld(idCycle(idArgosLastMsg));
+         end
+
+         idArgosStop = find(measCode(idCycle) == g_MC_TET);
+         if (length(idArgosStop) > 1)
+            fprintf('ERROR: Cycle number %d: %d ArgosStop\n', ...
+               numCycle, length(idArgosStop));
+            idArgosStop = idArgosStop(1);
+         end
+         if (~isempty(idArgosStop) && (juld(idCycle(idArgosStop)) ~= 999999))
+            g_NTT_argosStop(numCycle+1) = juld(idCycle(idArgosStop));
+         end
+
+         idMeanParkMes = find(measCode(idCycle) == g_MC_RPP);
+         if (length(idMeanParkMes) > 1)
+            fprintf('ERROR: Cycle number %d: %d MeanParkMes\n', ...
+               numCycle, length(idMeanParkMes));
+            idMeanParkMes = idMeanParkMes(1);
+         end
+         if (~isempty(idMeanParkMes) && (trajPres(idCycle(idMeanParkMes)) ~= 99999))
+            g_NTT_tabParkPres(numCycle+1) = trajPres(idCycle(idMeanParkMes));
+         end
+
+         idArgosLoc = find((measCode(idCycle) == g_MC_Surface) & (latitude(idCycle) ~= 99999));
+         if (~isempty(idArgosLoc))
+            tabLon = longitude(idCycle(idArgosLoc));
+            tabLat = latitude(idCycle(idArgosLoc));
+            tabPosQc = posAcc(idCycle(idArgosLoc));
+
+            idGoodPos = find((tabPosQc == g_decArgo_qcStrGood) | (tabPosQc == g_decArgo_qcStrProbablyGood) | (tabPosQc == g_decArgo_qcStrCorrectable) | (tabPosQc == 'G'));
+            tabLon = tabLon(idGoodPos);
+            tabLat = tabLat(idGoodPos);
+
+            if (~isempty(idGoodPos))
+               tabFirstArgosLon(numCycle+1) = tabLon(1);
+               tabFirstArgosLat(numCycle+1) = tabLat(1);
+               tabLastArgosLon(numCycle+1) = tabLon(end);
+               tabLastArgosLat(numCycle+1) = tabLat(end);
+            end
+         end
+
+         % from PROF file
+         idCycle = find(cycleNumberProf == numCycle);
+         if (isempty(idCycle))
+            continue
+         end
+
+         idProfAsc = find(profDir(idCycle) == 'A');
+         if (~isempty(idProfAsc))
+            tabPres = profPres(:, idCycle(idProfAsc));
+            tabPres(find(tabPres == 99999)) = [];
+            if (~isempty(tabPres))
+               g_NTT_tabProfPres(numCycle+1) = tabPres(end);
+            else
+               g_NTT_tabProfPres(numCycle+1) = g_presDef;
+            end
+            g_NTT_tabMesProfPres(numCycle+1, 1:length(tabPres)) = tabPres;
          end
       end
-      
-      idAscentEnd = find(measCode(idCycle) == g_MC_AET);
-      if (length(idAscentEnd) > 1)
-         fprintf('ERROR: Cycle number %d: %d AscentEnd\n', ...
-            numCycle, length(idAscentEnd));
-         idAscentEnd = idAscentEnd(1);
-      end
-      if (~isempty(idAscentEnd) && (juld(idCycle(idAscentEnd)) ~= 999999))
-         g_NTT_ascentEnd(numCycle+1) = juld(idCycle(idAscentEnd));
-      end
-      
-      if (g_NTT_FLOAT_TIMES == 1)
-         idAscentEndFloat = find(measCode(idCycle) == g_MC_AET_Float);
-         if (length(idAscentEndFloat) > 1)
-            fprintf('ERROR: Cycle number %d: %d AscentEndFloat\n', ...
-               numCycle, length(idAscentEndFloat));
-            idAscentEndFloat = idAscentEndFloat(1);
+
+      % retrieve ETOPO2 elevations at the first and last Argos locations
+      for idCy = 2:length(cycles)
+         if (tabLastArgosLon(idCy-1) ~= g_lonDef)
+            [firstElev, lon, lat] = m_etopo2( ...
+               [tabLastArgosLon(idCy-1) tabLastArgosLon(idCy-1) ...
+               tabLastArgosLat(idCy-1) tabLastArgosLat(idCy-1)]);
+            g_NTT_tabEtopoMin(idCy-1) = min(min(firstElev));
+            g_NTT_tabEtopoMax(idCy-1) = max(max(firstElev));
          end
-         if (~isempty(idAscentEndFloat) && (juld(idCycle(idAscentEndFloat)) ~= 999999))
-            g_NTT_ascentEndFloat(numCycle+1) = juld(idCycle(idAscentEndFloat));
+
+         if (tabFirstArgosLon(idCy) ~= g_lonDef)
+            [secondElev, lon, lat] = m_etopo2( ...
+               [tabFirstArgosLon(idCy) tabFirstArgosLon(idCy) ...
+               tabFirstArgosLat(idCy) tabFirstArgosLat(idCy)]);
+            g_NTT_tabEtopoMin(idCy-1) = min([g_NTT_tabEtopoMin(idCy-1) min(min(secondElev))]);
+            g_NTT_tabEtopoMax(idCy-1) = max([g_NTT_tabEtopoMax(idCy-1) max(max(secondElev))]);
          end
       end
-      
-      idArgosStart = find(measCode(idCycle) == g_MC_TST);
-      if (length(idArgosStart) > 1)
-         fprintf('ERROR: Cycle number %d: %d ArgosStart\n', ...
-            numCycle, length(idArgosStart));
-         idArgosStart = idArgosStart(1);
-      end
-      if (~isempty(idArgosStart) && (juld(idCycle(idArgosStart)) ~= 999999))
-         g_NTT_argosStart(numCycle+1) = juld(idCycle(idArgosStart));
-      end
-      
-      if (g_NTT_FLOAT_TIMES == 1)
-         idArgosStartFloat = find(measCode(idCycle) == g_MC_TST_Float);
-         if (length(idArgosStartFloat) > 1)
-            fprintf('ERROR: Cycle number %d: %d ArgosStartFloat\n', ...
-               numCycle, length(idArgosStartFloat));
-            idArgosStartFloat = idArgosStartFloat(1);
-         end
-         if (~isempty(idArgosStartFloat) && (juld(idCycle(idArgosStartFloat)) ~= 999999))
-            g_NTT_argosStartFloat(numCycle+1) = juld(idCycle(idArgosStartFloat));
-         end
-      end
-      
-      idArgosFirstMsg = find(measCode(idCycle) == g_MC_FMT);
-      if (length(idArgosFirstMsg) > 1)
-         fprintf('ERROR: Cycle number %d: %d ArgosFirstMsg\n', ...
-            numCycle, length(idArgosFirstMsg));
-         idArgosFirstMsg = idArgosFirstMsg(1);
-      end
-      if (~isempty(idArgosFirstMsg) && (juld(idCycle(idArgosFirstMsg)) ~= 999999))
-         g_NTT_argosFirstMsg(numCycle+1) = juld(idCycle(idArgosFirstMsg));
-      end
-      
-      idArgosLoc = find((measCode(idCycle) == g_MC_Surface) & (latitude(idCycle) ~= 99999));
-      if (~isempty(idArgosLoc))
-         dates = juld(idCycle(idArgosLoc));
-         dates(find(dates == 999999)) = g_dateDef;
-         g_NTT_argosLoc(numCycle+1, 1:length(idArgosLoc)) = dates;
-      end
-      
-      idArgosLastMsg = find(measCode(idCycle) == g_MC_LMT);
-      if (length(idArgosLastMsg) > 1)
-         fprintf('ERROR: Cycle number %d: %d ArgosLastMsg\n', ...
-            numCycle, length(idArgosLastMsg));
-         idArgosLastMsg = idArgosLastMsg(1);
-      end
-      if (~isempty(idArgosLastMsg) && (juld(idCycle(idArgosLastMsg)) ~= 999999))
-         g_NTT_argosLastMsg(numCycle+1) = juld(idCycle(idArgosLastMsg));
-      end
-      
-      idArgosStop = find(measCode(idCycle) == g_MC_TET);
-      if (length(idArgosStop) > 1)
-         fprintf('ERROR: Cycle number %d: %d ArgosStop\n', ...
-            numCycle, length(idArgosStop));
-         idArgosStop = idArgosStop(1);
-      end
-      if (~isempty(idArgosStop) && (juld(idCycle(idArgosStop)) ~= 999999))
-         g_NTT_argosStop(numCycle+1) = juld(idCycle(idArgosStop));
-      end
-      
-      idMeanParkMes = find(measCode(idCycle) == g_MC_RPP);
-      if (length(idMeanParkMes) > 1)
-         fprintf('ERROR: Cycle number %d: %d MeanParkMes\n', ...
-            numCycle, length(idMeanParkMes));
-         idMeanParkMes = idMeanParkMes(1);
-      end
-      if (~isempty(idMeanParkMes) && (trajPres(idCycle(idMeanParkMes)) ~= 99999))
-         g_NTT_tabParkPres(numCycle+1) = trajPres(idCycle(idMeanParkMes));
-      end
-      
-      idArgosLoc = find((measCode(idCycle) == g_MC_Surface) & (latitude(idCycle) ~= 99999));
-      if (~isempty(idArgosLoc))
-         tabLon = longitude(idCycle(idArgosLoc));
-         tabLat = latitude(idCycle(idArgosLoc));
-         tabPosQc = posAcc(idCycle(idArgosLoc));
-         
-         idGoodPos = find((tabPosQc == g_decArgo_qcStrGood) | (tabPosQc == g_decArgo_qcStrProbablyGood) | (tabPosQc == g_decArgo_qcStrCorrectable) | (tabPosQc == 'G'));
-         tabLon = tabLon(idGoodPos);
-         tabLat = tabLat(idGoodPos);
-         
-         if (~isempty(idGoodPos))
-            tabFirstArgosLon(numCycle+1) = tabLon(1);
-            tabFirstArgosLat(numCycle+1) = tabLat(1);
-            tabLastArgosLon(numCycle+1) = tabLon(end);
-            tabLastArgosLat(numCycle+1) = tabLat(end);
-         end
-      end
-      
-      % from PROF file
-      idCycle = find(cycleNumberProf == numCycle);
-      if (isempty(idCycle))
-         continue
-      end
-      
-      idProfAsc = find(profDir(idCycle) == 'A');
-      if (~isempty(idProfAsc))
-         tabPres = profPres(:, idCycle(idProfAsc));
-         tabPres(find(tabPres == 99999)) = [];
-         if (~isempty(tabPres))
-            g_NTT_tabProfPres(numCycle+1) = tabPres(end);
-         else
-            g_NTT_tabProfPres(numCycle+1) = g_presDef;
-         end
-         g_NTT_tabMesProfPres(numCycle+1, 1:length(tabPres)) = tabPres;
-      end
+
+      %    idKo = find(g_NTT_tabEtopoMin == g_elevDef);
+      %    g_NTT_tabCyclesEtopo(idKo) = [];
+      %    g_NTT_tabEtopoMin(idKo) = [];
+      %    g_NTT_tabEtopoMax(idKo) = [];
+      %    g_NTT_tabEtopoMin = -g_NTT_tabEtopoMin;
+      %    g_NTT_tabEtopoMax = -g_NTT_tabEtopoMax;
+
+   else
+      fprintf('ERROR: Float #%d: Directory not found (%s)\n', ...
+         floatNum, [g_NTT_NC_DIR '/' floatNumStr '/']);
    end
-   
-   % retrieve ETOPO2 elevations at the first and last Argos locations
-   for idCy = 2:length(cycles)
-      if (tabLastArgosLon(idCy-1) ~= g_lonDef)
-         [firstElev, lon, lat] = m_etopo2( ...
-            [tabLastArgosLon(idCy-1) tabLastArgosLon(idCy-1) ...
-            tabLastArgosLat(idCy-1) tabLastArgosLat(idCy-1)]);
-         g_NTT_tabEtopoMin(idCy-1) = min(min(firstElev));
-         g_NTT_tabEtopoMax(idCy-1) = max(max(firstElev));
-      end
-      
-      if (tabFirstArgosLon(idCy) ~= g_lonDef)
-         [secondElev, lon, lat] = m_etopo2( ...
-            [tabFirstArgosLon(idCy) tabFirstArgosLon(idCy) ...
-            tabFirstArgosLat(idCy) tabFirstArgosLat(idCy)]);
-         g_NTT_tabEtopoMin(idCy-1) = min([g_NTT_tabEtopoMin(idCy-1) min(min(secondElev))]);
-         g_NTT_tabEtopoMax(idCy-1) = max([g_NTT_tabEtopoMax(idCy-1) max(max(secondElev))]);
-      end
-   end
-   
-   %    idKo = find(g_NTT_tabEtopoMin == g_elevDef);
-   %    g_NTT_tabCyclesEtopo(idKo) = [];
-   %    g_NTT_tabEtopoMin(idKo) = [];
-   %    g_NTT_tabEtopoMax(idKo) = [];
-   %    g_NTT_tabEtopoMin = -g_NTT_tabEtopoMin;
-   %    g_NTT_tabEtopoMax = -g_NTT_tabEtopoMax;
-   
+
 end
 
 if (isempty(g_NTT_cycles))
@@ -923,9 +919,9 @@ end
 if (g_NTT_CT_UPDATE_DATA_SET == 1)
    if (g_NTT_CT_MODE_CYCLE_NUM == 0)
       g_NTT_cycleTime = g_NTT_cycleTimeMeta;
-      
+
       g_NTT_cycles_used = g_NTT_cycles;
-      
+
       g_NTT_diveStart_used = g_NTT_diveStart;
       g_NTT_descentStart_used = g_NTT_descentStart;
       g_NTT_firstDescProf_used = g_NTT_firstDescProf;
@@ -951,35 +947,35 @@ if (g_NTT_CT_UPDATE_DATA_SET == 1)
       g_NTT_argosLoc_used = g_NTT_argosLoc;
       g_NTT_argosLastMsg_used = g_NTT_argosLastMsg;
       g_NTT_argosStop_used = g_NTT_argosStop;
-      
+
       g_NTT_tabParkPres_used = g_NTT_tabParkPres;
       g_NTT_tabProfPres_used = g_NTT_tabProfPres;
       g_NTT_tabMesProfPres_used = g_NTT_tabMesProfPres;
-      
+
       g_NTT_tabCyclesEtopo_used = g_NTT_tabCyclesEtopo;
       g_NTT_tabEtopoMin_used = g_NTT_tabEtopoMin;
       g_NTT_tabEtopoMax_used = g_NTT_tabEtopoMax;
-      
+
       idKo = find(g_NTT_tabEtopoMin_used == g_elevDef);
       g_NTT_tabCyclesEtopo_used(idKo) = [];
       g_NTT_tabEtopoMin_used(idKo) = [];
       g_NTT_tabEtopoMax_used(idKo) = [];
       g_NTT_tabEtopoMin_used = -g_NTT_tabEtopoMin_used;
       g_NTT_tabEtopoMax_used = -g_NTT_tabEtopoMax_used;
-      
+
    else
       g_NTT_cycleTime = g_NTT_CT_MODE_VAL(g_NTT_CT_MODE_CYCLE(g_NTT_CT_MODE_CYCLE_NUM, 1))/24;
-      
+
       idStart = g_NTT_CT_MODE_CYCLE(g_NTT_CT_MODE_CYCLE_NUM, 2)+1;
       idEnd = g_NTT_CT_MODE_CYCLE(g_NTT_CT_MODE_CYCLE_NUM, 3)+1;
-      
+
       % additional cycles
       addCy = 0;
       idStart = max(idStart-addCy, 1);
       idEnd = min(idEnd+addCy, length(g_NTT_cycles));
-      
+
       g_NTT_cycles_used = g_NTT_cycles(idStart:idEnd);
-      
+
       g_NTT_diveStart_used = g_NTT_diveStart(idStart:idEnd);
       g_NTT_descentStart_used = g_NTT_descentStart(idStart:idEnd);
       g_NTT_firstDescProf_used = g_NTT_firstDescProf(idStart:idEnd);
@@ -1005,14 +1001,14 @@ if (g_NTT_CT_UPDATE_DATA_SET == 1)
       g_NTT_argosLoc_used = g_NTT_argosLoc(idStart:idEnd, :);
       g_NTT_argosLastMsg_used = g_NTT_argosLastMsg(idStart:idEnd);
       g_NTT_argosStop_used = g_NTT_argosStop(idStart:idEnd);
-      
+
       g_NTT_tabParkPres_used = g_NTT_tabParkPres(idStart:idEnd);
       g_NTT_tabProfPres_used = g_NTT_tabProfPres(idStart:idEnd);
       g_NTT_tabMesProfPres_used = g_NTT_tabMesProfPres(idStart:idEnd, :);
       g_NTT_tabCyclesEtopo_used = g_NTT_tabCyclesEtopo(idStart:idEnd);
       g_NTT_tabEtopoMin_used = g_NTT_tabEtopoMin(idStart:idEnd);
       g_NTT_tabEtopoMax_used = g_NTT_tabEtopoMax(idStart:idEnd);
-      
+
       idKo = find(g_NTT_tabEtopoMin_used == g_elevDef);
       g_NTT_tabCyclesEtopo_used(idKo) = [];
       g_NTT_tabEtopoMin_used(idKo) = [];
@@ -1028,85 +1024,85 @@ end
 timeAxes = subplot('Position', [0.044 0.085 0.63 0.85]);
 
 if ((a_downOrUp == 0) || (a_downOrUp == 1))
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % DESCENT
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % data pre-processing
-   
+
    xArgosLastMsgData = [g_dateDef; g_NTT_argosLastMsg_used(1:end-1)];
    yArgosLastMsgData = g_NTT_cycles_used;
    idKo = find(xArgosLastMsgData == g_dateDef);
    xArgosLastMsgData(idKo) = [];
    yArgosLastMsgData(idKo) = [];
-   
+
    xDiveStartData = g_NTT_diveStart_used;
    yDiveStartData = g_NTT_cycles_used;
    idKo = find(xDiveStartData == g_dateDef);
    xDiveStartData(idKo) = [];
    yDiveStartData(idKo) = [];
-   
+
    xDescentStartData = g_NTT_descentStart_used;
    yDescentStartData = g_NTT_cycles_used;
    idKo = find(xDescentStartData == g_dateDef);
    xDescentStartData(idKo) = [];
    yDescentStartData(idKo) = [];
-   
+
    if (g_NTT_DRIFT_MES == 1)
       xFirstDescProf = g_NTT_firstDescProf_used;
       yFirstDescProf = g_NTT_cycles_used;
       idKo = find(xFirstDescProf == g_dateDef);
       xFirstDescProf(idKo) = [];
       yFirstDescProf(idKo) = [];
-      
+
       xLastDescProf = g_NTT_lastDescProf_used;
       yLastDescProf = g_NTT_cycles_used;
       idKo = find(xLastDescProf == g_dateDef);
       xLastDescProf(idKo) = [];
       yLastDescProf(idKo) = [];
    end
-   
+
    xDescentEndData = g_NTT_descentEnd_used;
    yDescentEndData = g_NTT_cycles_used;
    idKo = find(xDescentEndData == g_dateDef);
    xDescentEndData(idKo) = [];
    yDescentEndData(idKo) = [];
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % plot the data
-   
+
    if (~isempty(xArgosLastMsgData))
       xArgosLastMsgData = xArgosLastMsgData - double(yArgosLastMsgData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xArgosLastMsgData, yArgosLastMsgData, 'r.-');
       hold on;
    end
-   
+
    if (~isempty(xDiveStartData))
       xDiveStartData = xDiveStartData - double(yDiveStartData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xDiveStartData, yDiveStartData, 'c.-');
       hold on;
    end
-   
+
    if (~isempty(xDescentStartData))
       xDescentStartData = xDescentStartData - double(yDescentStartData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xDescentStartData, yDescentStartData, 'm*-');
       hold on;
    end
-   
+
    if (g_NTT_DRIFT_MES == 1)
       if (~isempty(xFirstDescProf))
          xFirstDescProf = xFirstDescProf - double(yFirstDescProf-g_NTT_cycles_used(1))*g_NTT_cycleTime;
          plot(timeAxes, xFirstDescProf, yFirstDescProf, 'r-');
          hold on;
       end
-      
+
       [nlig ncol] = size(g_NTT_descProf_used);
       for id = 1:nlig
          xDescProf = g_NTT_descProf_used(id, :)';
          idKo = find(xDescProf == g_dateDef);
          xDescProf(idKo) = [];
-         
+
          if (~isempty(xDescProf))
             yDescProf = ones(length(xDescProf), 1)*double(g_NTT_cycles_used(id));
             xDescProf = xDescProf - double(g_NTT_cycles_used(id)-g_NTT_cycles_used(1))*g_NTT_cycleTime;
@@ -1114,162 +1110,162 @@ if ((a_downOrUp == 0) || (a_downOrUp == 1))
             hold on;
          end
       end
-      
+
       if (~isempty(xLastDescProf))
          xLastDescProf = xLastDescProf - double(yLastDescProf-g_NTT_cycles_used(1))*g_NTT_cycleTime;
          plot(timeAxes, xLastDescProf, yLastDescProf, 'r-');
          hold on;
       end
    end
-   
+
    if (~isempty(xDescentEndData))
       xDescentEndData = xDescentEndData - double(yDescentEndData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xDescentEndData, yDescentEndData, 'mo-');
       hold on;
    end
-   
+
 end
 
 if ((a_downOrUp == 0) || (a_downOrUp == 2))
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % ASCENT
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % data pre-processing
-   
+
    xToProfStartData = g_NTT_toProfStart_used;
    yToProfStartData = g_NTT_cycles_used;
    idKo = find(xToProfStartData == g_dateDef);
    xToProfStartData(idKo) = [];
    yToProfStartData(idKo) = [];
-   
+
    xToProfEndData = g_NTT_toProfEnd_used;
    yToProfEndData = g_NTT_cycles_used;
    idKo = find(xToProfEndData == g_dateDef);
    xToProfEndData(idKo) = [];
    yToProfEndData(idKo) = [];
-   
+
    xAscentStartData = g_NTT_ascentStart_used;
    yAscentStartData = g_NTT_cycles_used;
    idKo = find(xAscentStartData == g_dateDef);
    xAscentStartData(idKo) = [];
    yAscentStartData(idKo) = [];
-   
+
    xAscentStartFloatData = g_NTT_ascentStartFloat_used;
    yAscentStartFloatData = g_NTT_cycles_used;
    idKo = find(xAscentStartFloatData == g_dateDef);
    xAscentStartFloatData(idKo) = [];
    yAscentStartFloatData(idKo) = [];
-   
+
    xDownTimeEndData = g_NTT_downTimeEndDate_used;
    yDownTimeEndData = g_NTT_cycles_used;
    idKo = find(xDownTimeEndData == g_dateDef);
    xDownTimeEndData(idKo) = [];
    yDownTimeEndData(idKo) = [];
-   
+
    if (g_NTT_DRIFT_MES == 1)
       xFirstAscProf = g_NTT_firstAscProf_used;
       yFirstAscProf = g_NTT_cycles_used;
       idKo = find(xFirstAscProf == g_dateDef);
       xFirstAscProf(idKo) = [];
       yFirstAscProf(idKo) = [];
-      
+
       xLastAscProf = g_NTT_lastAscProf_used;
       yLastAscProf = g_NTT_cycles_used;
       idKo = find(xLastAscProf == g_dateDef);
       xLastAscProf(idKo) = [];
       yLastAscProf(idKo) = [];
    end
-   
+
    xAscentEndData = g_NTT_ascentEnd_used;
    yAscentEndData = g_NTT_cycles_used;
    idKo = find(xAscentEndData == g_dateDef);
    xAscentEndData(idKo) = [];
    yAscentEndData(idKo) = [];
-   
+
    xAscentEndFloatData = g_NTT_ascentEndFloat_used;
    yAscentEndFloatData = g_NTT_cycles_used;
    idKo = find(xAscentEndFloatData == g_dateDef);
    xAscentEndFloatData(idKo) = [];
    yAscentEndFloatData(idKo) = [];
-   
+
    xArgosStartData = g_NTT_argosStart_used;
    yArgosStartData = g_NTT_cycles_used;
    idKo = find(xArgosStartData == g_dateDef);
    xArgosStartData(idKo) = [];
    yArgosStartData(idKo) = [];
-   
+
    xArgosStartFloatData = g_NTT_argosStartFloat_used;
    yArgosStartFloatData = g_NTT_cycles_used;
    idKo = find(xArgosStartFloatData == g_dateDef);
    xArgosStartFloatData(idKo) = [];
    yArgosStartFloatData(idKo) = [];
-   
+
    xArgosFirstMsgData = g_NTT_argosFirstMsg_used;
    yArgosFirstMsgData = g_NTT_cycles_used;
    idKo = find(xArgosFirstMsgData == g_dateDef);
    xArgosFirstMsgData(idKo) = [];
    yArgosFirstMsgData(idKo) = [];
-   
+
    xArgosLastMsgData = g_NTT_argosLastMsg_used;
    yArgosLastMsgData = g_NTT_cycles_used;
    idKo = find(xArgosLastMsgData == g_dateDef);
    xArgosLastMsgData(idKo) = [];
    yArgosLastMsgData(idKo) = [];
-   
+
    xArgosStopData = g_NTT_argosStop_used;
    yArgosStopData = g_NTT_cycles_used;
    idKo = find(xArgosStopData == g_dateDef);
    xArgosStopData(idKo) = [];
    yArgosStopData(idKo) = [];
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % plot the data
-   
+
    if (~isempty(xToProfStartData))
       xToProfStartData = xToProfStartData - double(yToProfStartData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xToProfStartData, yToProfStartData, 'c.-');
       hold on;
    end
-   
+
    if (~isempty(xToProfEndData))
       xToProfEndData = xToProfEndData - double(yToProfEndData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xToProfEndData, yToProfEndData, 'co-');
       hold on;
    end
-   
+
    if (~isempty(xAscentStartData))
       xAscentStartData = xAscentStartData - double(yAscentStartData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xAscentStartData, yAscentStartData, 'm*-');
       hold on;
    end
-   
+
    if (~isempty(xAscentStartFloatData))
       xAscentStartFloatData = xAscentStartFloatData - double(yAscentStartFloatData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xAscentStartFloatData, yAscentStartFloatData, 'b.-');
       hold on;
    end
-   
+
    if (~isempty(xDownTimeEndData))
       xDownTimeEndData = xDownTimeEndData - double(yDownTimeEndData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xDownTimeEndData, yDownTimeEndData, 'go-');
       hold on;
    end
-   
+
    if (g_NTT_DRIFT_MES == 1)
       if (~isempty(xFirstAscProf))
          xFirstAscProf = xFirstAscProf - double(yFirstAscProf-g_NTT_cycles_used(1))*g_NTT_cycleTime;
          plot(timeAxes, xFirstAscProf, yFirstAscProf, 'r-');
          hold on;
       end
-      
+
       [nlig ncol] = size(g_NTT_ascProf_used);
       for id = 1:nlig
          xAscProf = g_NTT_ascProf_used(id, :)';
          idKo = find(xAscProf == g_dateDef);
          xAscProf(idKo) = [];
-         
+
          if (~isempty(xAscProf))
             yAscProf = ones(length(xAscProf), 1)*double(g_NTT_cycles_used(id));
             xAscProf = xAscProf - double(g_NTT_cycles_used(id)-g_NTT_cycles_used(1))*g_NTT_cycleTime;
@@ -1277,50 +1273,50 @@ if ((a_downOrUp == 0) || (a_downOrUp == 2))
             hold on;
          end
       end
-      
+
       if (~isempty(xLastAscProf))
          xLastAscProf = xLastAscProf - double(yLastAscProf-g_NTT_cycles_used(1))*g_NTT_cycleTime;
          plot(timeAxes, xLastAscProf, yLastAscProf, 'r-');
          hold on;
       end
    end
-   
+
    if (~isempty(xAscentEndData))
       xAscentEndData = xAscentEndData - double(yAscentEndData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xAscentEndData, yAscentEndData, 'mo-');
       hold on;
    end
-   
+
    if (~isempty(xAscentEndFloatData))
       xAscentEndFloatData = xAscentEndFloatData - double(yAscentEndFloatData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xAscentEndFloatData, yAscentEndFloatData, 'ko-');
       hold on;
    end
-   
+
    if (~isempty(xArgosStartData))
       xArgosStartData = xArgosStartData - double(yArgosStartData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xArgosStartData, yArgosStartData, 'c.-');
       hold on;
    end
-   
+
    if (~isempty(xArgosStartFloatData))
       xArgosStartFloatData = xArgosStartFloatData - double(yArgosStartFloatData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xArgosStartFloatData, yArgosStartFloatData, 'k.-');
       hold on;
    end
-   
+
    if (~isempty(xArgosFirstMsgData))
       xArgosFirstMsgData = xArgosFirstMsgData - double(yArgosFirstMsgData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xArgosFirstMsgData, yArgosFirstMsgData, 'r.-');
       hold on;
    end
-   
+
    [nlig ncol] = size(g_NTT_argosLoc_used);
    for id = 1:nlig
       xArgosLocData = g_NTT_argosLoc_used(id, :)';
       idKo = find(xArgosLocData == g_dateDef);
       xArgosLocData(idKo) = [];
-      
+
       if (~isempty(xArgosLocData))
          yArgosLocData = ones(length(xArgosLocData), 1)*double(g_NTT_cycles_used(id));
          xArgosLocData = xArgosLocData - double(g_NTT_cycles_used(id)-g_NTT_cycles_used(1))*g_NTT_cycleTime;
@@ -1328,56 +1324,56 @@ if ((a_downOrUp == 0) || (a_downOrUp == 2))
          hold on;
       end
    end
-   
+
    if (~isempty(xArgosLastMsgData))
       xArgosLastMsgData = xArgosLastMsgData - double(yArgosLastMsgData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xArgosLastMsgData, yArgosLastMsgData, 'r.-');
       hold on;
    end
-   
+
    if (~isempty(xArgosStopData))
       xArgosStopData = xArgosStopData - double(yArgosStopData-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xArgosStopData, yArgosStopData, 'c.-');
       hold on;
    end
-   
+
 end
 
 if ((a_downOrUp == 0) && (g_NTT_DRIFT_MES == 1))
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % PARKING DRIFT
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % data pre-processing
-   
+
    xFirstDriftMes = g_NTT_firstDriftMes_used;
    yFirstDriftMes = g_NTT_cycles_used;
    idKo = find(xFirstDriftMes == g_dateDef);
    xFirstDriftMes(idKo) = [];
    yFirstDriftMes(idKo) = [];
-   
+
    xLastDriftMes = g_NTT_lastDriftMes_used;
    yLastDriftMes = g_NTT_cycles_used;
    idKo = find(xLastDriftMes == g_dateDef);
    xLastDriftMes(idKo) = [];
    yLastDriftMes(idKo) = [];
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % plot the data
-   
+
    if (~isempty(xFirstDriftMes))
       xFirstDriftMes = xFirstDriftMes - double(yFirstDriftMes-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xFirstDriftMes, yFirstDriftMes, 'g-');
       hold on;
    end
-   
+
    [nlig ncol] = size(g_NTT_driftMes_used);
    for id = 1:nlig
       xDriftMes = g_NTT_driftMes_used(id, :)';
       idKo = find(xDriftMes == g_dateDef);
       xDriftMes(idKo) = [];
-      
+
       if (~isempty(xDriftMes))
          yDriftMes = ones(length(xDriftMes), 1)*double(g_NTT_cycles_used(id));
          xDriftMes = xDriftMes - double(g_NTT_cycles_used(id)-g_NTT_cycles_used(1))*g_NTT_cycleTime;
@@ -1385,13 +1381,13 @@ if ((a_downOrUp == 0) && (g_NTT_DRIFT_MES == 1))
          hold on;
       end
    end
-   
+
    if (~isempty(xLastDriftMes))
       xLastDriftMes = xLastDriftMes - double(yLastDriftMes-g_NTT_cycles_used(1))*g_NTT_cycleTime;
       plot(timeAxes, xLastDriftMes, yLastDriftMes, 'g-');
       hold on;
    end
-   
+
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1423,11 +1419,11 @@ if (g_NTT_ALL_MES_PROF ~= 0)
    for id = 1:nlig
       xMesProfPresData = g_NTT_tabMesProfPres_used(id, :)';
       yMesProfPresData = ones(length(xMesProfPresData), 1)*double(g_NTT_cycles_used(id));
-      
+
       idKo = find(xMesProfPresData == g_presDef);
       xMesProfPresData(idKo) = [];
       yMesProfPresData(idKo) = [];
-      
+
       if (~isempty(xMesProfPresData))
          plot(presAxes, xMesProfPresData, yMesProfPresData, 'b.');
          hold on;
@@ -1453,7 +1449,7 @@ if (~isempty(g_NTT_tabCyclesEtopo_used))
    if (~isempty(find(g_NTT_tabEtopoMax_used < maxPres)))
       plot(presAxes, g_NTT_tabEtopoMin_used, g_NTT_tabCyclesEtopo_used, 'k.-');
       hold on;
-      
+
       plot(presAxes, g_NTT_tabEtopoMax_used, g_NTT_tabCyclesEtopo_used, 'k.-');
       hold on;
    end
@@ -1616,7 +1612,7 @@ global g_NTT_CT_UPDATE_DATA_SET;
 if (strcmp(a_eventData.Key, 'escape'))
    set(g_NTT_FIG_TIMES_HANDLE, 'KeyPressFcn', '');
    close(g_NTT_FIG_TIMES_HANDLE);
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % next float
 elseif (strcmp(a_eventData.Key, 'rightarrow'))
@@ -1625,9 +1621,9 @@ elseif (strcmp(a_eventData.Key, 'rightarrow'))
    plot_times( ...
       mod(g_NTT_ID_FLOAT+1, length(g_NTT_FLOAT_LIST)), ...
       g_NTT_downOrUp, 0);
-   
+
    display_current_config;
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % previous float
 elseif (strcmp(a_eventData.Key, 'leftarrow'))
@@ -1636,96 +1632,96 @@ elseif (strcmp(a_eventData.Key, 'leftarrow'))
    plot_times( ...
       mod(g_NTT_ID_FLOAT-1, length(g_NTT_FLOAT_LIST)), ...
       g_NTT_downOrUp, 0);
-   
+
    display_current_config;
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % time TOTAL/DOWN/UP
 elseif (strcmp(a_eventData.Key, 'uparrow'))
    plot_times( ...
       g_NTT_ID_FLOAT, ...
       mod(g_NTT_downOrUp-1, 3), 0);
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % time TOTAL/DOWN/UP
 elseif (strcmp(a_eventData.Key, 'downarrow'))
    plot_times( ...
       g_NTT_ID_FLOAT, ...
       mod(g_NTT_downOrUp+1, 3), 0);
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % ignore cycle #0 data
 elseif (strcmp(a_eventData.Key, 'z'))
    g_NTT_CYCLE_0 = mod(g_NTT_CYCLE_0+1, 2);
    plot_times(g_NTT_ID_FLOAT, g_NTT_downOrUp, 1);
-   
+
    display_current_config;
-      
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % use adjusted times and pressures
 elseif (strcmp(a_eventData.Key, 'j'))
    g_NTT_ADJ = mod(g_NTT_ADJ+1, 3);
    plot_times(g_NTT_ID_FLOAT, g_NTT_downOrUp, 1);
-   
+
    display_current_config;
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % plot float times
 elseif (strcmp(a_eventData.Key, 'f'))
    g_NTT_FLOAT_TIMES = mod(g_NTT_FLOAT_TIMES+1, 2);
    plot_times(g_NTT_ID_FLOAT, g_NTT_downOrUp, 1);
-   
+
    display_current_config;
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % plot of parking drift measurement times
 elseif (strcmp(a_eventData.Key, 'd'))
    g_NTT_DRIFT_MES = mod(g_NTT_DRIFT_MES+1, 2);
    plot_times(g_NTT_ID_FLOAT, g_NTT_downOrUp, 0);
-   
+
    display_current_config;
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % plot of profile bin levels
 elseif (strcmp(a_eventData.Key, 'm'))
    g_NTT_ALL_MES_PROF = mod(g_NTT_ALL_MES_PROF+1, 2);
    plot_times(g_NTT_ID_FLOAT, g_NTT_downOrUp, 0);
-   
+
    display_current_config;
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % pdf output file generation
 elseif (strcmp(a_eventData.Key, 'p'))
    g_NTT_PRINT = 1;
    plot_times(g_NTT_ID_FLOAT, g_NTT_downOrUp, 0);
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % change cycle time to the next value
 elseif (strcmp(a_eventData.Character, '+'))
    g_NTT_CT_MODE_CYCLE_NUM = mod(g_NTT_CT_MODE_CYCLE_NUM+1, size(g_NTT_CT_MODE_CYCLE, 1)+1);
    g_NTT_CT_UPDATE_DATA_SET = 1;
    plot_times(g_NTT_ID_FLOAT, g_NTT_downOrUp, 0);
-   
+
    display_current_config;
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % change cycle time to the previous value
 elseif (strcmp(a_eventData.Character, '-'))
    g_NTT_CT_MODE_CYCLE_NUM = mod(g_NTT_CT_MODE_CYCLE_NUM-1, size(g_NTT_CT_MODE_CYCLE, 1)+1);
    g_NTT_CT_UPDATE_DATA_SET = 1;
    plot_times(g_NTT_ID_FLOAT, g_NTT_downOrUp, 0);
-   
+
    display_current_config;
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % reset cycle time
 elseif (strcmp(a_eventData.Character, '0'))
    g_NTT_CT_MODE_CYCLE_NUM = 0;
    g_NTT_CT_UPDATE_DATA_SET = 1;
    plot_times(g_NTT_ID_FLOAT, g_NTT_downOrUp, 0);
-   
+
    display_current_config;
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % write help and current configuration
 elseif (strcmp(a_eventData.Key, 'h'))
@@ -1841,7 +1837,7 @@ if (g_NTT_CT_MODE_CYCLE_NUM ~= 0)
       else
          cyNumStr = [cyNumStr sprintf(' %d-%d', cyStart, cyEnd)];
       end
-   end   
+   end
    comment = ['(for cycles:' cyNumStr ')'];
 end
 fprintf('CURRENT CYCLE TIME  : %d hours %s\n', ...

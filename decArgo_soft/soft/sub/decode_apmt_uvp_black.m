@@ -25,12 +25,12 @@ function [o_uvpBlackData] = decode_apmt_uvp_black(a_data, a_lastByteNum, a_input
 % output parameters initialization
 o_uvpBlackData = [];
 
-% codes for CTS5 phases (used to decode CTD data)
+% codes for CTS5 phases
 global g_decArgo_cts5PhasePark;
 global g_decArgo_cts5PhaseShortPark;
 global g_decArgo_cts5PhaseSurface;
 
-% codes for CTS5 treatment types (used to decode CTD data)
+% codes for CTS5 treatment types
 global g_decArgo_cts5Treat_RW;
 global g_decArgo_cts5Treat_DW;
 

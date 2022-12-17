@@ -4,13 +4,12 @@
 % 
 % SYNTAX :
 %  [o_techNcParamIndex, o_techNcParamValue] = ...
-%    update_technical_data_ir_rudics_cts5(a_techNcParamIndex, a_techNcParamValue, a_firstCycleNum, a_decoderId)
+%    update_technical_data_ir_rudics_cts5(a_techNcParamIndex, a_techNcParamValue, a_firstCycleNum)
 % 
 % INPUT PARAMETERS :
 %   a_techNcParamIndex : input technical index information
 %   a_techNcParamValue : input technical data
 %   a_firstCycleNum    : first cycle to consider
-%   a_decoderId        : float decoder Id
 % 
 % OUTPUT PARAMETERS :
 %   o_techNcParamIndex : output technical index information
@@ -25,7 +24,7 @@
 %   02/21/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_techNcParamIndex, o_techNcParamValue] = ...
-   update_technical_data_ir_rudics_cts5(a_techNcParamIndex, a_techNcParamValue, a_firstCycleNum, a_decoderId)
+   update_technical_data_ir_rudics_cts5(a_techNcParamIndex, a_techNcParamValue, a_firstCycleNum)
 
 % output parameters initialization
 o_techNcParamIndex = a_techNcParamIndex;
@@ -94,7 +93,7 @@ if (~isempty(o_techNcParamIndex))
       if (any(configValue(idF, :) == 1))
 
          [o_techNcParamIndex, o_techNcParamValue] = ...
-            add_ice_detected_bit_value_cts5(o_techNcParamIndex, o_techNcParamValue, a_decoderId);
+            add_ice_detected_bit_value_cts5(o_techNcParamIndex, o_techNcParamValue);
       end
    end
 end
@@ -107,12 +106,11 @@ return
 %
 % SYNTAX :
 %  [o_techNcParamIndex, o_techNcParamValue] = ...
-%    add_ice_detected_bit_value_cts5(a_techNcParamIndex, a_techNcParamValue, a_decoderId)
+%    add_ice_detected_bit_value_cts5(a_techNcParamIndex, a_techNcParamValue)
 %
 % INPUT PARAMETERS :
 %   a_techNcParamIndex : input technical index information
 %   a_techNcParamValue : input technical data
-%   a_decoderId        : float decoder Id
 % 
 % OUTPUT PARAMETERS :
 %   o_techNcParamIndex : output technical index information
@@ -127,7 +125,7 @@ return
 %   11/22/2021 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_techNcParamIndex, o_techNcParamValue] = ...
-   add_ice_detected_bit_value_cts5(a_techNcParamIndex, a_techNcParamValue, a_decoderId)
+   add_ice_detected_bit_value_cts5(a_techNcParamIndex, a_techNcParamValue)
 
 % output parameters initialization
 o_techNcParamIndex = a_techNcParamIndex;

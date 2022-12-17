@@ -20,9 +20,9 @@
 % RELEASES :
 %   09/03/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ctdData] = decode_apmt_ctd_extended_126_to_129(a_data, a_lastByteNum, a_inputFilePathName)
+function [o_ctdData] = decode_apmt_ctd_extended_126_to_131(a_data, a_lastByteNum, a_inputFilePathName)
 
-% codes for CTS5 phases (used to decode CTD data)
+% codes for CTS5 phases
 global g_decArgo_cts5PhaseDescent;
 global g_decArgo_cts5PhasePark;
 global g_decArgo_cts5PhaseDeepProfile;
@@ -30,7 +30,7 @@ global g_decArgo_cts5PhaseShortPark;
 global g_decArgo_cts5PhaseAscent;
 global g_decArgo_cts5PhaseSurface;
 
-% codes for CTS5 treatment types (used to decode CTD data)
+% codes for CTS5 treatment types
 global g_decArgo_cts5Treat_AM_SD_MD;
 global g_decArgo_cts5Treat_AM_SD;
 global g_decArgo_cts5Treat_AM_MD;

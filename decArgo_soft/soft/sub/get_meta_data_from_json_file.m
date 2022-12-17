@@ -37,13 +37,9 @@ for idField = 1:length(a_wantedMetaNames)
       if (~isempty(fieldValue))
          o_metaData = [o_metaData {fieldName} {fieldValue}];
       else
-         %          fprintf('WARNING: Field %s value is empty in file : %s\n', ...
-         %             fieldName, jsonInputFileName);
          o_metaData = [o_metaData {fieldName} {' '}];
       end
    else
-      %       fprintf('WARNING: Field %s not present in file : %s\n', ...
-      %          fieldName, jsonInputFileName);
       o_metaData = [o_metaData {fieldName} {' '}];
    end
 end

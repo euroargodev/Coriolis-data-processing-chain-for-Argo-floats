@@ -55,12 +55,12 @@ global g_decArgo_treatAverageAndStDev;
 global g_decArgo_treatAverageAndMedian;
 global g_decArgo_treatAverageAndStDevAndMedian;
 
-% codes for CTS5 phases (used to decode CTD data)
+% codes for CTS5 phases
 global g_decArgo_cts5PhaseDescent;
 global g_decArgo_cts5PhasePark;
 global g_decArgo_cts5PhaseAscent;
 
-% codes for CTS5 treatment types (used to decode CTD data)
+% codes for CTS5 treatment types
 global g_decArgo_cts5Treat_AM_SD_MD;
 global g_decArgo_cts5Treat_AM_SD;
 global g_decArgo_cts5Treat_AM_MD;

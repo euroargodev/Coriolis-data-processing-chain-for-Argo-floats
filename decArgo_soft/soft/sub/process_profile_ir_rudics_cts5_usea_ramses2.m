@@ -30,6 +30,7 @@ function [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf] = ...
 % output parameters initialization
 o_tabProfiles = [];
 o_tabDrift = [];
+o_tabDesc2Prof = [];
 o_tabSurf = [];
 
 % current float WMO number

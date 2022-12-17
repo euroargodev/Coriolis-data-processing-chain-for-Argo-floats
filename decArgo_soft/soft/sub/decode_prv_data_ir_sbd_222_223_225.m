@@ -98,6 +98,7 @@ switch (packType)
       tabTech1 = get_bits(firstBit, tabNbBits, msgData);
             
       cycleNum = tabTech1(1);
+      iridiumSession = tabTech1(2);
       
       % check decoder Id
       if (g_decArgo_decIdCheckFlag == 0)
@@ -149,6 +150,7 @@ switch (packType)
       
       decodedData.decData = {tabTech1};
       decodedData.cyNumRaw = cycleNum;
+      decodedData.irSession = iridiumSession;
       decodedData.eolFlag = eolFlag;
       decodedData.julD2FloatDayOffset = julD2FloatDayOffset;
       
@@ -174,7 +176,8 @@ switch (packType)
       tabTech2 = get_bits(firstBit, tabNbBits, msgData);
       
       cycleNum = tabTech2(1);
-                  
+      iridiumSession = tabTech2(2);
+
       % check Provor/Arvor hydraulic type
       if (g_decArgo_provorArvorHydraulicTypeCheckFlag == 0)
          check_provor_arvor_hydraulic_type(tabTech2(58), a_decoderId, g_decArgo_floatNum);
@@ -187,6 +190,7 @@ switch (packType)
       
       decodedData.decData = {tabTech2};
       decodedData.cyNumRaw = cycleNum;
+      decodedData.irSession = iridiumSession;
       decodedData.resetDate = floatLastResetTime;
       decodedData.expNbDesc = tabTech2(4);
       decodedData.expNbDrift = tabTech2(5);

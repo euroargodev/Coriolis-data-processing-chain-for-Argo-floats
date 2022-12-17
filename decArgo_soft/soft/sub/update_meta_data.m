@@ -34,7 +34,7 @@ global g_decArgo_decoderIdListMtime;
 % list of decoder Ids implemented in the current decoder
 decoderIdListNke = [1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32, ...
    105, 106, 107, 109, 110, 111, 112, 113, 114, 115, ...
-   121, 122, 123, 124, 125, 126, 127, 128, 129, ...
+   121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, ...
    201, 202, 203, 204, 205, 206, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225, ...
    301, 302, 303];
 decoderIdListApex = [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1021, 1022, ...
@@ -1244,7 +1244,7 @@ switch (a_decoderId)
          ];
 
    case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 111, 112, 113, 114, 115, ...
-         201, 203, 206, 121, 122, 123, 124, 125, 126, 127, 128, 129, 215, 216, 217, 218, 221, 223, 225}
+         201, 203, 206, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 215, 216, 217, 218, 221, 223, 225}
       if (ismember(a_decoderId, [213, 214, 121, 122, 123, 124, 125, 126, 127, 215, 216, 217, 218, 221, 223, 225]))
          if (a_decoderId == 124) % no optode on CTS5 UVP #6902968
             if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
@@ -2297,7 +2297,7 @@ switch (a_decoderId)
       end
 
    case {107, 109, 110, 111, 113, 114, 115, ...
-         121, 122, 124, 126, 127, 128, 129, ...
+         121, 122, 124, 126, 127, 128, 129, 130, 131, ...
          201, 203, 206, 213, 214, 215, 216, 217, 218, 221, 223, 225, ...
          1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1322, 1323}
       % CASE_202_205_304
@@ -3626,7 +3626,7 @@ global g_decArgo_addParamListRadiometry;
 paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129}
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 131}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
          paramList = [ ...
@@ -3638,6 +3638,28 @@ switch (a_decoderId)
             {'DOWN_IRRADIANCE412'} ...
             {'DOWN_IRRADIANCE490'} ...
             {'DOWNWELLING_PAR'} ...
+            ];
+      end
+      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+            any(strcmp('MPE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         paramList = [paramList ...
+            {'VOLTAGE_DOWNWELLING_PAR'} ...
+            {'TEMP_DOWNWELLING_PAR'} ...
+            {'DOWNWELLING_PAR2'} ...
+            ];
+      end
+   case {130}
+      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+            any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         paramList = [ ...
+            {'RAW_DOWNWELLING_IRRADIANCE412'} ...
+            {'RAW_DOWNWELLING_IRRADIANCE443'} ...
+            {'RAW_DOWNWELLING_IRRADIANCE490'} ...
+            {'RAW_DOWNWELLING_IRRADIANCE665'} ...
+            {'DOWN_IRRADIANCE412'} ...
+            {'DOWN_IRRADIANCE443'} ...
+            {'DOWN_IRRADIANCE490'} ...
+            {'DOWN_IRRADIANCE665'} ...
             ];
       end
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
@@ -3758,7 +3780,7 @@ global g_decArgo_calibInfo;
 
 switch (a_decoderId)
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, ...
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       switch (a_paramName)
 
@@ -3782,6 +3804,16 @@ switch (a_decoderId)
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated downwelling irradiance measurement at 412 nm';
 
+         case {'RAW_DOWNWELLING_IRRADIANCE443'}
+            o_param = 'RAW_DOWNWELLING_IRRADIANCE443';
+            o_paramSensor = 'RADIOMETER_DOWN_IRR443';
+            o_paramUnits = 'count';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Uncalibrated downwelling irradiance measurement at 443 nm';
+
          case {'RAW_DOWNWELLING_IRRADIANCE490'}
             o_param = 'RAW_DOWNWELLING_IRRADIANCE490';
             o_paramSensor = 'RADIOMETER_DOWN_IRR490';
@@ -3791,6 +3823,16 @@ switch (a_decoderId)
             o_preCalibEq = 'none';
             o_preCalibCoef = 'none';
             o_preCalibComment = 'Uncalibrated downwelling irradiance measurement at 490 nm';
+
+         case {'RAW_DOWNWELLING_IRRADIANCE665'}
+            o_param = 'RAW_DOWNWELLING_IRRADIANCE665';
+            o_paramSensor = 'RADIOMETER_DOWN_IRR665';
+            o_paramUnits = 'count';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Uncalibrated downwelling irradiance measurement at 665 nm';
 
          case {'RAW_DOWNWELLING_PAR'}
             o_param = 'RAW_DOWNWELLING_PAR';
@@ -3950,6 +3992,36 @@ switch (a_decoderId)
             o_preCalibEq = 'DOWN_IRRADIANCE555=0.01*A1_555*(RAW_DOWNWELLING_IRRADIANCE555-A0_555)*lm_555';
             o_preCalibCoef = sprintf('A1_555=%g, A0_555=%g, lm_555=%g', ...
                a1Lambda555, a0Lambda555, lmLambda555);
+            o_preCalibComment = '';
+
+         case {'DOWN_IRRADIANCE665'}
+
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo))
+               fprintf('ERROR: Float #%d: missing DOWN_IRRADIANCE665 calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            elseif (isfield(g_decArgo_calibInfo, 'OCR') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A0Lambda665') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'A1Lambda665') && ...
+                  isfield(g_decArgo_calibInfo.OCR, 'LmLambda665'))
+               a0Lambda665 = double(g_decArgo_calibInfo.OCR.A0Lambda665);
+               a1Lambda665 = double(g_decArgo_calibInfo.OCR.A1Lambda665);
+               lmLambda665 = double(g_decArgo_calibInfo.OCR.LmLambda665);
+            else
+               fprintf('ERROR: Float #%d: inconsistent DOWN_IRRADIANCE665 calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+
+            o_param = 'DOWN_IRRADIANCE665';
+            o_paramSensor = 'RADIOMETER_DOWN_IRR665';
+            o_paramUnits = 'W/m^2/nm';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'DOWN_IRRADIANCE665=0.01*A1_665*(RAW_DOWNWELLING_IRRADIANCE665-A0_665)*lm_665';
+            o_preCalibCoef = sprintf('A1_665=%g, A0_665=%g, lm_665=%g', ...
+               a1Lambda665, a0Lambda665, lmLambda665);
             o_preCalibComment = '';
 
          case {'DOWN_IRRADIANCE670'}
@@ -4157,7 +4229,7 @@ global g_decArgo_addParamListBackscattering;
 paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 110, 111, 112, 113, 114, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, ...
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
@@ -4252,7 +4324,7 @@ global g_decArgo_calibInfo;
 
 switch (a_decoderId)
    case {105, 106, 107, 110, 111, 112, 113, 114, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, ...
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       switch (a_paramName)
 
@@ -4585,7 +4657,7 @@ global g_decArgo_addParamListChla;
 paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, ...
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, ...
          301, 302, 303, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
@@ -4600,6 +4672,16 @@ switch (a_decoderId)
          paramList = [ ...
             {'FLUORESCENCE_VOLTAGE_CHLA'} ...
             {'CHLA2'} ...
+            ];
+      end
+   case {131}
+      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
+            any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         paramList = [ ...
+            {'FLUORESCENCE_CHLA'} ...
+            {'CHLA'} ...
+            {'FLUORESCENCE_CHLA435'} ...
+            {'CHLA435'} ...
             ];
       end
    case {1015, 1101, 1105, 1110, 1111, 1112, 1114}
@@ -4675,7 +4757,7 @@ global g_decArgo_calibInfo;
 
 switch (a_decoderId)
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, ...
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       switch (a_paramName)
 
@@ -4741,6 +4823,44 @@ switch (a_decoderId)
                   scaleFactChloroA, darkCountChloroA, DarkCountChloroA_O);
                o_preCalibComment = '';
             end
+
+         case {'FLUORESCENCE_CHLA435'}
+            o_param = 'FLUORESCENCE_CHLA435';
+            o_paramSensor = 'AUX_FLUOROMETER_CHLA435';
+            o_paramUnits = 'count';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Uncalibrated chlorophyll-a at 435 nanometers fluorescence measurement';
+
+         case {'CHLA435'}
+
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo))
+               fprintf('ERROR: Float #%d: missing CHLA435 calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
+                  isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactChloroA435') && ...
+                  isfield(g_decArgo_calibInfo.ECO3, 'DarkCountChloroA435'))
+               scaleFactChloroA435 = double(g_decArgo_calibInfo.ECO3.ScaleFactChloroA435);
+               darkCountChloroA435 = double(g_decArgo_calibInfo.ECO3.DarkCountChloroA435);
+            else
+               fprintf('ERROR: Float #%d: inconsistent CHLA435 calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+
+            o_param = 'CHLA435';
+            o_paramSensor = 'AUX_FLUOROMETER_CHLA435';
+            o_paramUnits = 'mg/m3';
+            o_paramAccuracy = '0.08 mg/m3';
+            o_paramResolution = '0.025 mg/m3';
+            o_preCalibEq = 'CHLA435=(FLUORESCENCE_CHLA435-DARK_CHLA435)*SCALE_CHLA435';
+            o_preCalibCoef = sprintf('SCALE_CHLA435=%g, DARK_CHLA435=%g', ...
+               scaleFactChloroA435, darkCountChloroA435);
+            o_preCalibComment = '';
 
       end
 
@@ -5028,7 +5148,7 @@ global g_decArgo_addParamListCdom;
 paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 110, 111, 112, 113, 114, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, ...
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
@@ -5099,7 +5219,7 @@ global g_decArgo_calibInfo;
 
 switch (a_decoderId)
    case {105, 106, 107, 110, 111, 112, 113, 114, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, ...
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, ...
          1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
       switch (a_paramName)
 
@@ -5213,7 +5333,7 @@ function [o_metaData] = update_parameter_list_nitrate(a_metaData, a_decoderId)
 paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 109, 111, 112, 114, 115, ...
-         121, 122, 123, 124, 125, 126, 128, 129}
+         121, 122, 123, 124, 125, 126, 128, 129, 130, 131}
       % check that a SUNA sensor is mounted on the float
       if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
             any(strcmp(struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT), 'SUNA')))
@@ -5310,7 +5430,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 
 switch (a_decoderId)
    case {105, 106, 107, 109, 110, 111, 112, 113, 114, 115, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129}
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131}
       switch (a_paramName)
 
          case {'UV_INTENSITY_NITRATE'}
@@ -5971,7 +6091,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {121, 122, 123, 124, 125, 126, 127, 128, 129}
+   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131}
       switch (a_paramName)
 
          case {'VRS_PH'}

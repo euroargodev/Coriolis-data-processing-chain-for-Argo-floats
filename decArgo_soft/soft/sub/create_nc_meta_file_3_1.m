@@ -740,7 +740,7 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {121, 122, 123, 124, 125, 126, 127, 128, 129}
+   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131}
       
       % CTS5 floats
       
@@ -1047,7 +1047,7 @@ switch (a_decoderId)
       
       % CTS5-USEA
       if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
-         if (ismember(a_decoderId, [129]) && any(strcmp(g_decArgo_sensorMountedOnFloat, 'UVP')))
+         if (ismember(a_decoderId, [129 130 131]) && any(strcmp(g_decArgo_sensorMountedOnFloat, 'UVP')))
             % dispatch each configuration parameter on the UVP sensor in the
             % configuration
             [launchAuxConfigName, launchAuxConfigId, launchAuxConfigValue, ...

@@ -49,7 +49,7 @@ switch (a_decoderId)
       % PROVOR_IV SBE
       o_wmoInstType = '835';
       
-   case {126, 127, 128, 129}
+   case {126, 127, 128, 129, 130, 131}
       % PROVOR_V SBE
       o_wmoInstType = '834';
       

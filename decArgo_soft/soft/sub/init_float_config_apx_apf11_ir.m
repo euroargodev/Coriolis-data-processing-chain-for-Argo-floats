@@ -52,7 +52,7 @@ if (isfield(g_decArgo_jsonMetaData, 'FLOAT_RUDICS_ID'))
    o_floatRudicsId = g_decArgo_jsonMetaData.FLOAT_RUDICS_ID;
 end
 if (isempty(o_floatRudicsId) && ~ismember(a_decoderId, g_decArgo_decoderIdListApexApf11IridiumRudics))
-   fprintf('ERROR: FLOAT_RUDICS_ID is mandatory, it should be set in Json meta-data file (%s)\n', jsonInputFileName);
+   fprintf('ERROR: FLOAT_RUDICS_ID is mandatory, it should be set in Json meta-data file\n');
    return
 end
 

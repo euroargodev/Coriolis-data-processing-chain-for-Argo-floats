@@ -537,7 +537,7 @@ for typeNum = typeOrderList
                         fileNameInfo{2}{idFile2});
                   end
 
-                  print_data_in_csv_file_ir_rudics_cts5_OCR(apmtOcr);
+                  print_data_in_csv_file_ir_rudics_cts5_OCR(apmtOcr, a_decoderId);
                end
 
                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -776,7 +776,7 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesOcr, tabDriftOcr, tabSurfOcr] = ...
-         process_profile_ir_rudics_cts5_usea_ocr(apmtOcr, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_ir_rudics_cts5_usea_ocr(apmtOcr, apmtTimeFromTech, g_decArgo_gpsData, a_decoderId);
 
       % merge profiles (all data from a given sensor together)
       [tabProfilesOcr] = merge_profile_meas_ir_rudics_cts5_usea_ocr(tabProfilesOcr);

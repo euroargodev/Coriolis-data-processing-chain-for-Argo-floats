@@ -205,10 +205,10 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {121, 122, 124, 126, 127, 128, 129}
+   case {121, 122, 124, 126, 127, 128, 129, 130, 131}
       
       % compute PPOX_DOXY values using the Stern-Volmer equation
-      o_PPOX_DOXY = compute_PPOX_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_29( ...
+      o_PPOX_DOXY = compute_PPOX_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_31( ...
          a_C1PHASE_DOXY, ...
          a_C2PHASE_DOXY, ...
          a_TEMP_DOXY, ...
@@ -293,7 +293,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_112_121_to_127( ...
+      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_112_121_to_131( ...
          a_surfOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -322,7 +322,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_112_121_to_127( ...
+      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_112_121_to_131( ...
          a_surfOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -338,7 +338,65 @@ for idP = 1:length(paramToDeriveList)
    end
 end
 
-% compute DOWN_IRRADIANCE490 data and add them in the profile structure
+% compute DOWN_IRRADIANCE443 data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'RAW_DOWNWELLING_IRRADIANCE443'} ...
+   ];
+derivedParamList = [ ...
+   {'DOWN_IRRADIANCE443'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      downIrr443 = compute_DOWN_IRRADIANCE443_130( ...
+         a_surfOcr.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      a_surfOcr.data(:, end+1) = downIrr443;
+      if (isempty(a_surfOcr.dataQc))
+         a_surfOcr.dataQc = ones(size(a_surfOcr.data, 1), length(a_surfOcr.paramList))*g_decArgo_qcDef;
+      end
+      downIrr443Qc = ones(size(a_surfOcr.data, 1), 1)*g_decArgo_qcDef;
+      downIrr443Qc(find(downIrr443 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_surfOcr.dataQc(:, end+1) = downIrr443Qc;
+      
+      a_surfOcr.paramList = [a_surfOcr.paramList derivedParam];
+   end
+end
+
+% compute DOWN_IRRADIANCE665 data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'RAW_DOWNWELLING_IRRADIANCE665'} ...
+   ];
+derivedParamList = [ ...
+   {'DOWN_IRRADIANCE665'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      downIrr665 = compute_DOWN_IRRADIANCE665_130( ...
+         a_surfOcr.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      a_surfOcr.data(:, end+1) = downIrr665;
+      if (isempty(a_surfOcr.dataQc))
+         a_surfOcr.dataQc = ones(size(a_surfOcr.data, 1), length(a_surfOcr.paramList))*g_decArgo_qcDef;
+      end
+      downIrr665Qc = ones(size(a_surfOcr.data, 1), 1)*g_decArgo_qcDef;
+      downIrr665Qc(find(downIrr665 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_surfOcr.dataQc(:, end+1) = downIrr665Qc;
+      
+      a_surfOcr.paramList = [a_surfOcr.paramList derivedParam];
+   end
+end
+
+% compute DOWN_IRRADIANCE665 data and add them in the profile structure
 paramToDeriveList = [ ...
    {'RAW_DOWNWELLING_IRRADIANCE490'} ...
    ];
@@ -351,7 +409,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_112_121_to_127( ...
+      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_112_121_to_131( ...
          a_surfOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -380,7 +438,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downPar = compute_DOWNWELLING_PAR_105_to_112_121_to_127( ...
+      downPar = compute_DOWNWELLING_PAR_105_to_112_121_to_129_131( ...
          a_surfOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -448,7 +506,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downPar = compute_DOWNWELLING_PAR_mpe_128_129( ...
+      downPar = compute_DOWNWELLING_PAR_mpe_128_to_131( ...
          a_surfMpe.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       

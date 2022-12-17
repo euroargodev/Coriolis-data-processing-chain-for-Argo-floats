@@ -718,7 +718,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    % add float cycle and pattern number to the NetCDF technical data
    [o_tabNcTechIndex, o_tabNcTechVal] = ...
       update_technical_data_ir_rudics_cts5( ...
-      o_tabNcTechIndex, o_tabNcTechVal, g_decArgo_firstCycleNumCts5, a_decoderId);
+      o_tabNcTechIndex, o_tabNcTechVal, g_decArgo_firstCycleNumCts5);
 end
 
 % remove temporary directory

@@ -25,7 +25,7 @@ function [o_eco3Data] = decode_apmt_eco3(a_data, a_lastByteNum, a_inputFilePathN
 % output parameters initialization
 o_eco3Data = [];
 
-% codes for CTS5 phases (used to decode CTD data)
+% codes for CTS5 phases
 global g_decArgo_cts5PhaseDescent;
 global g_decArgo_cts5PhasePark;
 global g_decArgo_cts5PhaseDeepProfile;
@@ -33,7 +33,7 @@ global g_decArgo_cts5PhaseShortPark;
 global g_decArgo_cts5PhaseAscent;
 global g_decArgo_cts5PhaseSurface;
 
-% codes for CTS5 treatment types (used to decode CTD data)
+% codes for CTS5 treatment types
 global g_decArgo_cts5Treat_AM_SD_MD;
 global g_decArgo_cts5Treat_AM_SD;
 global g_decArgo_cts5Treat_AM_MD;
@@ -98,29 +98,49 @@ while (currentByte <= lastByteNum)
    newTreatNum = -1;
    
    % look for a new phase header
+   anomalyFlag = 0;
    if (inputData(currentByte) == '[')
       for idPhase = 1:length(phaseList)
          phaseName = phaseList{idPhase};
-         if (strcmp(char(inputData(currentByte:currentByte+length(phaseName)-1))', phaseName))
-            newPhaseNum = idPhase;
-            currentByte = currentByte + length(phaseName);
+         if ((currentByte+length(phaseName)-1) <= length(inputData))
+            if (strcmp(char(inputData(currentByte:currentByte+length(phaseName)-1))', phaseName))
+               newPhaseNum = idPhase;
+               currentByte = currentByte + length(phaseName);
+               break
+            end
+         else
+            fprintf('WARNING: Unexpected end of data in file: %s\n', a_inputFilePathName);
+            anomalyFlag = 1;
             break
          end
       end
+   end
+   if (anomalyFlag)
+      break
    end
    
    % look for a new treatment header
+   anomalyFlag = 0;
    if (inputData(currentByte) == '(')
       for idTreat = 1:length(treatList)
          treatName = treatList{idTreat};
-         if (strcmp(char(inputData(currentByte:currentByte+length(treatName)-1))', treatName))
-            newTreatNum = idTreat;
-            currentByte = currentByte + length(treatName);
+         if ((currentByte+length(treatName)-1) <= length(inputData))
+            if (strcmp(char(inputData(currentByte:currentByte+length(treatName)-1))', treatName))
+               newTreatNum = idTreat;
+               currentByte = currentByte + length(treatName);
+               break
+            end
+         else
+            fprintf('WARNING: Unexpected end of data in file: %s\n', a_inputFilePathName);
+            anomalyFlag = 1;
             break
          end
       end
    end
-   
+   if (anomalyFlag)
+      break
+   end
+
    % the treatment type of PARK, SHORT_PARK and SURFACE measurements is always
    % RAW (NKE personal communication)
    if (ismember(newPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
@@ -166,7 +186,12 @@ while (currentByte <= lastByteNum)
       % the absolute date is provided in the beginning of descent/ascent phase
       % data
       if (ismember(currentPhaseNum, [g_decArgo_cts5PhaseDescent g_decArgo_cts5PhaseDeepProfile g_decArgo_cts5PhaseAscent]))
-         data = get_bits(1, 32, inputData(currentByte:currentByte+3));
+         if ((currentByte+3) <= length(inputData))
+            data = get_bits(1, 32, inputData(currentByte:currentByte+3));
+         else
+            fprintf('WARNING: Unexpected end of data in file: %s\n', a_inputFilePathName);
+            break
+         end
          currentDataStruct.date = typecast(swapbytes(uint32(data)), 'uint32');
          currentByte = currentByte + 4;
       end
@@ -180,7 +205,16 @@ while (currentByte <= lastByteNum)
          tabNbBits(1) = 32;
       end
       nbBytes = sum(tabNbBits)/8;
-      rawData = get_bits(1, tabNbBits, inputData(currentByte:currentByte+nbBytes-1));
+      if ((currentByte+nbBytes-1) <= length(inputData))
+         rawData = get_bits(1, tabNbBits, inputData(currentByte:currentByte+nbBytes-1));
+         if (all(rawData == 0))
+            fprintf('WARNING: Null data in file: %s\n', a_inputFilePathName);
+            break
+         end
+      else
+         fprintf('WARNING: Unexpected end of data in file: %s\n', a_inputFilePathName);
+         break
+      end
       tabSignedList = signedList{currentTreatNum};
       for id = 1:length(tabNbBits)
          if (tabNbBits(id) > 8)

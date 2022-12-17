@@ -135,6 +135,9 @@ for idFilePtn = 1:length(a_inputFileName)
                   end
                end
                fileList{idFirst, 1} = fileNameNew;
+               if (length(fileSubList) == 1) % if we have a unique file with a '#' inside its name
+                  fileSubList{end+1} = '';
+               end
                fileList{idFirst, 2} = fileSubList;
                fileList{idFirst, 3} = a_inputFilePath{idFilePtn};
                fileList(idDel, :) = [];

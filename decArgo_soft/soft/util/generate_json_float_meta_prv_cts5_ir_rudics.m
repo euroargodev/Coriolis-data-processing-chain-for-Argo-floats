@@ -61,24 +61,24 @@ else
    % JPR CONFIGURATION - START
 
    % meta-data file exported from Coriolis data base
-   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5-USEA_6903069.txt';
-   %    FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_7.13_6903095_6903096.txt';
-   %    FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_7.13.txt';
-      FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_Jumbo.txt';
-   %    FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_CTS5_6904226.txt';
+   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB7\new_rem_meta.txt';
+   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\4902437_7.15_20221024.txt';
+   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\dbExport_7.16_6990503.txt';
 
    % list of sensors mounted on floats
+   SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB7\float_sensor_list.txt';
    SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
 
    % list of concerned floats
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB7\tmp.txt';
    FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
-      FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_cts5_jumbo.txt';
-   %    FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_cts5_6904226.txt';
 
    % calibration coefficient file decoded from data
+   CALIB_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB7\calib_coef.txt';
    CALIB_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
    % directory of launch configuration for each float
+   CONFIG_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB7\';
    CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\ConfigAtLaunch\';
 
    % directory of SUNA calibration files

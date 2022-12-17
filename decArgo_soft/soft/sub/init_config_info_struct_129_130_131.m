@@ -2,7 +2,7 @@
 % Get the basic structure to read CTS5-USEA configuration.
 %
 % SYNTAX :
-%  [o_configSectionList, o_configInfoStruct] = init_config_info_struct_129
+%  [o_configSectionList, o_configInfoStruct] = init_config_info_struct_129_130_131
 %
 % INPUT PARAMETERS :
 %
@@ -18,7 +18,7 @@
 % RELEASES :
 %   06/13/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_configSectionList, o_configInfoStruct] = init_config_info_struct_129
+function [o_configSectionList, o_configInfoStruct] = init_config_info_struct_129_130_131
 
 % list of expected sections
 o_configSectionList = [ ...

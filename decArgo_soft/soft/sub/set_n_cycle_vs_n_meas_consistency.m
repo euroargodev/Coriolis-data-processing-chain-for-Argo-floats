@@ -119,6 +119,7 @@ for idNCy = 1:length(o_tabTrajNCycle)
    idFNMeas = find([o_tabTrajNMeas.outputCycleNumber] == cycleNum);
    % check consistency for MC_LIST items
    for idMc = 1:size(MC_LIST, 1)
+
       measCode = MC_LIST{idMc, 1};
       measField = MC_LIST{idMc, 2};
       measStatusField = MC_LIST{idMc, 3};
@@ -165,6 +166,18 @@ for idNCy = 1:length(o_tabTrajNCycle)
             if (isempty(juldFinal) || (juldFinal == g_decArgo_ncDateDef))
                juldFinal = juld;
                juldStatusFinal = juldStatus;
+               %             else
+               %                if (ismember(measCode, [g_MC_DST g_MC_FST g_MC_PST g_MC_DPST g_MC_AST g_MC_TST g_MC_FMT]))
+               %                   [juldFinal, idMin] = min([juldFinal juld]);
+               %                   if (idMin == 2)
+               %                      juldStatusFinal = juldStatus;
+               %                   end
+               %                else
+               %                   [juldFinal, idMax] = max([juldFinal juld]);
+               %                   if (idMax == 2)
+               %                      juldStatusFinal = juldStatus;
+               %                   end
+               %                end
             end
          end
       end

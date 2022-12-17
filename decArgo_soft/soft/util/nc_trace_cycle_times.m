@@ -62,11 +62,8 @@ else
    g_NTCT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\pdf\';
 
    % default list of floats to plot
-   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\cts5_usea.txt';
-   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_20220321_nke_argos_asfar.txt';
-   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_cts5_jumbo.txt';
    FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
-   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_flbb_20160512.txt';
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\lists_20221013\list_decId_222_4.txt';
 
    % JPR CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,7 +115,7 @@ if (nargin == 0)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
       return
    end
-   
+
    fprintf('Floats from list: %s\n', floatListFileName);
    floatList = textread(FLOAT_LIST_FILE_NAME, '%d');
 else
@@ -337,663 +334,674 @@ clf;
 g_NTCT_cycle = a_idCycle;
 
 if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1))
-   
+
    fprintf('Loading new float ... ');
-   
+
    % a new float is wanted
    g_NTCT_FLOAT_ID = a_idFloat;
    g_NTCT_cycles = [];
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % retrieve and store the data of the new float
-   
+
    % float number
    floatNum = g_NTCT_FLOAT_LIST(a_idFloat+1);
-   
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % from TRAJ file
-   trajFileName = [g_NTCT_NC_DIR '/' num2str(floatNum) '/' num2str(floatNum) '_Rtraj.nc'];
-   
-   if ~(exist(trajFileName, 'file') == 2)
-      fprintf('\n');
-      fprintf('File not found: %s\n', trajFileName);
-   end
-   
-   % retrieve information from TRAJ file
-   wantedVars = [ ...
-      {'FORMAT_VERSION'} ...
-      {'JULD'} ...
-      {'JULD_ADJUSTED'} ...
-      {'PRES'} ...
-      {'PRES_ADJUSTED'} ...
-      {'CYCLE_NUMBER'} ...
-      {'MEASUREMENT_CODE'} ...
-      {'GROUNDED'} ...
-      {'CONFIG_MISSION_NUMBER'} ...
-      {'CYCLE_NUMBER_INDEX'} ...
-      {'LATITUDE'} ...
-      {'LONGITUDE'} ...
-      ];
-   [trajData] = get_data_from_nc_file(trajFileName, wantedVars);
-   
-   if (isempty(trajData))
-      label = sprintf('%02d/%02d : %s no data', ...
-         a_idFloat+1, ...
-         length(g_NTCT_FLOAT_LIST), ...
-         num2str(g_NTCT_FLOAT_LIST(a_idFloat+1)));
-      title(label, 'FontSize', 14);
-      fprintf('\n');
-      return
-   end
-   
-   idVal = find(strcmp('FORMAT_VERSION', trajData(1:2:end)) == 1, 1);
-   formatVersion = strtrim(trajData{2*idVal}');
-   
-   % check the traj file format version
-   if (~ismember(formatVersion, [{'3.1'} {'3.2'}]))
-      fprintf('\n');
-      fprintf('ERROR: Input traj file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
-         trajFileName, formatVersion);
-      return
-   end
-   
-   idVal = find(strcmp('CYCLE_NUMBER', trajData(1:2:end)) == 1, 1);
-   cycleNumber = trajData{2*idVal};
-   
-   idVal = find(strcmp('MEASUREMENT_CODE', trajData(1:2:end)) == 1, 1);
-   measCode = trajData{2*idVal};
-   
-   idVal = find(strcmp('JULD', trajData(1:2:end)) == 1, 1);
-   juld = trajData{2*idVal};
-   
-   idVal = find(strcmp('JULD_ADJUSTED', trajData(1:2:end)) == 1, 1);
-   juldAdj = trajData{2*idVal};
-   
-   idVal = find(strcmp('PRES', trajData(1:2:end)) == 1, 1);
-   pres = double(trajData{2*idVal});
-   
-   idVal = find(strcmp('PRES_ADJUSTED', trajData(1:2:end)) == 1, 1);
-   presAdj = double(trajData{2*idVal});
-   
-   idVal = find(strcmp('CYCLE_NUMBER_INDEX', trajData(1:2:end)) == 1, 1);
-   cycleNumberIndex = trajData{2*idVal};
-   
-   idVal = find(strcmp('GROUNDED', trajData(1:2:end)) == 1, 1);
-   grounded = trajData{2*idVal};
-   
-   idVal = find(strcmp('CONFIG_MISSION_NUMBER', trajData(1:2:end)) == 1, 1);
-   configMissionNumberTraj = trajData{2*idVal};
-   
-   idVal = find(strcmp('LATITUDE', trajData(1:2:end)) == 1, 1);
-   latitude = trajData{2*idVal};
-   
-   idVal = find(strcmp('LONGITUDE', trajData(1:2:end)) == 1, 1);
-   longitude = trajData{2*idVal};
-   
-   % merge JULD and JULD_ADJUSTED
-   idF = find(juldAdj ~= 999999);
-   juld(idF) = juldAdj(idF);
-   juld(juld == 999999) = g_dateDef;
 
-   % merge PRES and PRES_ADJUSTED
-   if (g_NTCT_PRES_DATA_MODE == 0)
-      idF = find(presAdj ~= 99999);
-      pres(idF) = presAdj(idF);
-   end
-   pres(pres == 99999) = g_presDef;
+   if (exist([g_NTCT_NC_DIR '/' num2str(floatNum) '/'], 'dir') == 7)
 
-   % retrieve fixes
-   idF = find((juld ~= g_dateDef) & (latitude ~= 99999) & (longitude ~= 99999));
-   posJuld = juld(idF);
-   posLat = latitude(idF);
-   posLon = longitude(idF);
-   
-   % interpolate fixes along the displacements
-   posPrecJuld = posJuld(1);
-   posPrecLat = posLat(1);
-   posPrecLon = posLon(1);
-   posJuldAll = posPrecJuld;
-   posLatAll = posPrecLat;
-   posLonAll = posPrecLon;
-   for idP = 2:length(posJuld)
-      diffTime = posJuld(idP) - posPrecJuld;
-      if (ceil(diffTime) > 1)
-         times = [posPrecJuld:(diffTime/ceil(diffTime)):posJuld(idP)]';
-         interpLocLat = interp1q([posPrecJuld; posJuld(idP)], [posPrecLat; posLat(idP)], times);
-         interpLocLon = interp1q([posPrecJuld; posJuld(idP)], [posPrecLon; posLon(idP)], times);
-         posJuldAll = [posJuldAll; times(2:end)];
-         posLatAll = [posLatAll; interpLocLat(2:end)];
-         posLonAll = [posLonAll; interpLocLon(2:end)];
-      else
-         posJuldAll = [posJuldAll; posJuld(idP)];
-         posLatAll = [posLatAll; posLat(idP)];
-         posLonAll = [posLonAll; posLon(idP)];
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % from TRAJ file
+      trajFileName = [g_NTCT_NC_DIR '/' num2str(floatNum) '/' num2str(floatNum) '_Rtraj.nc'];
+
+      if ~(exist(trajFileName, 'file') == 2)
+         fprintf('\n');
+         fprintf('File not found: %s\n', trajFileName);
       end
-      posPrecJuld = posJuld(idP);
-      posPrecLat = posLat(idP);
-      posPrecLon = posLon(idP);
-   end
-   
-   % retrieve the bathymetry along the displacements
-   g_NTCT_tabBathyJuld = posJuldAll;
-   g_NTCT_tabBathyMin = ones(size(posJuldAll))*g_elevDef;
-   g_NTCT_tabBathyMax = ones(size(posJuldAll))*-g_elevDef;
-   
-   for idP = 1:length(posJuldAll)
-      [elev, lon, lat] = m_etopo2([posLonAll(idP) posLonAll(idP) posLatAll(idP) posLatAll(idP)]);
-      g_NTCT_tabBathyMin(idP) = min(min(-elev));
-      g_NTCT_tabBathyMax(idP) = max(max(-elev));
-   end
-   
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % from TECH_AUX file
-   techAuxFileName = [g_NTCT_NC_DIR_AUX '/' num2str(floatNum) '/auxiliary/' num2str(floatNum) '_tech_aux.nc'];
-   
-   valveAct = [];
-   if ~(exist(techAuxFileName, 'file') == 2)
-      fprintf('\n');
-      fprintf('File not found: %s\n', techAuxFileName);
-   else
-      
+
       % retrieve information from TRAJ file
       wantedVars = [ ...
+         {'FORMAT_VERSION'} ...
          {'JULD'} ...
          {'JULD_ADJUSTED'} ...
-         {'VALVE_ACTION_DURATION'} ...
-         {'VALVE_ACTION_FLAG'} ...
-         {'PUMP_ACTION_DURATION'} ...
-         {'PUMP_ACTION_FLAG'} ...
-         {'CYCLE_NUMBER_MEAS'} ...
+         {'PRES'} ...
+         {'PRES_ADJUSTED'} ...
+         {'CYCLE_NUMBER'} ...
          {'MEASUREMENT_CODE'} ...
+         {'GROUNDED'} ...
+         {'CONFIG_MISSION_NUMBER'} ...
+         {'CYCLE_NUMBER_INDEX'} ...
+         {'LATITUDE'} ...
+         {'LONGITUDE'} ...
          ];
-      [techAuxData] = get_data_from_nc_file(techAuxFileName, wantedVars);
-      
-      idVal = find(strcmp('CYCLE_NUMBER_MEAS', techAuxData(1:2:end)) == 1, 1);
-      cycleNumberTech = techAuxData{2*idVal};
-      
-      idVal = find(strcmp('MEASUREMENT_CODE', techAuxData(1:2:end)) == 1, 1);
-      measCodeTech = techAuxData{2*idVal};
-      
-      idVal = find(strcmp('JULD', techAuxData(1:2:end)) == 1, 1);
-      juldTech = techAuxData{2*idVal};
-      
-      idVal = find(strcmp('JULD_ADJUSTED', techAuxData(1:2:end)) == 1, 1);
-      juldTechAdj = techAuxData{2*idVal};
-      
-      idVal = find(strcmp('VALVE_ACTION_DURATION', techAuxData(1:2:end)) == 1, 1);
-      valveActDuration = techAuxData{2*idVal};
-      
-      idVal = find(strcmp('VALVE_ACTION_FLAG', techAuxData(1:2:end)) == 1, 1);
-      valveActFlag = techAuxData{2*idVal};
-      
-      idVal = find(strcmp('PUMP_ACTION_DURATION', techAuxData(1:2:end)) == 1, 1);
-      pumpActDuration = techAuxData{2*idVal};
-      
-      idVal = find(strcmp('PUMP_ACTION_FLAG', techAuxData(1:2:end)) == 1, 1);
-      pumpActFlag = techAuxData{2*idVal};
-      
-      % merge JULD and JULD_ADJUSTED
-      idF = find(juldTechAdj ~= 999999);
-      juldTech(idF) = juldTechAdj(idF);
-      juldTech(find(juldTech == 999999)) = g_dateDef;
-      
-      % get valve information
-      if (~isempty(valveActFlag))
-         valveAct = valveActFlag;
-      elseif (~isempty(pumpActFlag))
-         valveAct = pumpActFlag;
-         valveAct(find(valveAct == 1)) = -1;
-      elseif (~isempty(valveActDuration))
-         valveAct = valveActDuration;
-      elseif (~isempty(pumpActDuration))
-         valveAct = pumpActDuration;
-         valveAct(find(valveAct ~= -1)) = -1;
-      end
-   end
-   
-   % process retrieved data
-   
-   % arrays to store the data
-   g_NTCT_cycles = unique(cycleNumber(find(cycleNumber >= 0)));
-   
-   % buoyancy activitity
-   idF = find(ismember(measCode, [239 g_MC_SpyInDescToPark g_MC_SpyAtPark g_MC_SpyInDescToProf g_MC_SpyAtProf g_MC_SpyInAscProf g_MC_SpyAtSurface])); % 239 = 250-11 for Apex
-   nbMax = max(histc(cycleNumber(idF), min(cycleNumber(idF)):max(cycleNumber(idF))));
-   
-   g_NTCT_SpyInDescToPark_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_SpyInDescToPark_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_SpyInDescToPark_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
-   g_NTCT_SpyAtPark_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_SpyAtPark_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_SpyAtPark_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
-   g_NTCT_SpyInDescToProf_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_SpyInDescToProf_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_SpyInDescToProf_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
-   g_NTCT_SpyAtProf_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_SpyAtProf_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_SpyAtProf_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
-   g_NTCT_SpyInAscProf_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_SpyInAscProf_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_SpyInAscProf_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
-   g_NTCT_SpyAtSurface_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_SpyAtSurface_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_SpyAtSurface_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
-   
-   if (~isempty(valveAct))
-      for idC = 1:length(g_NTCT_cycles)
-         idF = find((cycleNumber == g_NTCT_cycles(idC)) & ismember(measCode, [239 g_MC_SpyInDescToPark]));
-         if (~isempty(idF))
-            g_NTCT_SpyInDescToPark_juld(idC, 1:length(idF)) = juld(idF);
-            g_NTCT_SpyInDescToPark_pres(idC, 1:length(idF)) = pres(idF);
-            idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & ismember(measCodeTech, [239 g_MC_SpyInDescToPark]));
-            %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
-            if (length(idF) ~= length(idF2))
-               fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
-            else
-               g_NTCT_SpyInDescToPark_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
-            end
-         end
-         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyAtPark));
-         if (~isempty(idF))
-            g_NTCT_SpyAtPark_juld(idC, 1:length(idF)) = juld(idF);
-            g_NTCT_SpyAtPark_pres(idC, 1:length(idF)) = pres(idF);
-            idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyAtPark));
-            %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
-            if (length(idF) ~= length(idF2))
-               fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
-            else
-               g_NTCT_SpyAtPark_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
-            end
-         end
-         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyInDescToProf));
-         if (~isempty(idF))
-            g_NTCT_SpyInDescToProf_juld(idC, 1:length(idF)) = juld(idF);
-            g_NTCT_SpyInDescToProf_pres(idC, 1:length(idF)) = pres(idF);
-            idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyInDescToProf));
-            %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
-            if (length(idF) ~= length(idF2))
-               fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
-            else
-               g_NTCT_SpyInDescToProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
-            end
-         end
-         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyAtProf));
-         if (~isempty(idF))
-            g_NTCT_SpyAtProf_juld(idC, 1:length(idF)) = juld(idF);
-            g_NTCT_SpyAtProf_pres(idC, 1:length(idF)) = pres(idF);
-            idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyAtProf));
-            %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
-            if (length(idF) ~= length(idF2))
-               fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
-            else
-               g_NTCT_SpyAtProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
-            end
-         end
-         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyInAscProf));
-         if (~isempty(idF))
-            g_NTCT_SpyInAscProf_juld(idC, 1:length(idF)) = juld(idF);
-            g_NTCT_SpyInAscProf_pres(idC, 1:length(idF)) = pres(idF);
-            idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyInAscProf));
-            %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
-            if (length(idF) ~= length(idF2))
-               fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
-            else
-               g_NTCT_SpyInAscProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
-            end
-         end
-         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyAtSurface));
-         if (~isempty(idF))
-            g_NTCT_SpyAtSurface_juld(idC, 1:length(idF)) = juld(idF);
-            g_NTCT_SpyAtSurface_pres(idC, 1:length(idF)) = pres(idF);
-            idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyAtSurface));
-            %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
-            if (length(idF) ~= length(idF2))
-               fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
-            else
-               g_NTCT_SpyAtSurface_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
-            end
-         end
-      end
-   end
-   
-   % series of measurements
-   %    idF = find(ismember(measCode, [g_MC_DescProf g_MC_DriftAtPark g_MC_AscProf ...
-   %       g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST ...
-   %       g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST ...
-   %       g_MC_Surface g_MC_Grounded]));
-   
-   idF = find(ismember(measCode, [ ...
-      g_MC_DST-10 ...
-      g_MC_DescProf ...
-      g_MC_PST-10 ...
-      g_MC_DriftAtPark ...
-      g_MC_DDET-10 ...
-      g_MC_AST-10 ...
-      g_MC_AscProf ...
-      g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST ...
-      g_MC_InAirSingleMeasRelativeToTST ...
-      g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST ...
-      g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST ...
-      g_MC_InAirSingleMeasRelativeToTET ...
-      g_MC_Surface ...
-      g_MC_TET-10 ...
-      g_MC_Grounded ...
-      ]));
+      [trajData] = get_data_from_nc_file(trajFileName, wantedVars);
 
-   nbMax = max(histc(cycleNumber(idF), min(cycleNumber(idF)):max(cycleNumber(idF))));
-   
-   g_NTCT_Surface1_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_Surface1_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_DescProf_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_DescProf_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_DriftAtPark1_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_DriftAtPark1_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_DriftAtPark_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_DriftAtPark_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_Desc2Prof1_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_Desc2Prof1_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_Desc2Prof2_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_Desc2Prof2_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_AscProf_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_AscProf_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_NearSurfaceSeriesOfMeas_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_NearSurfaceSeriesOfMeas_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_InAirSeriesOfMeas_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_InAirSeriesOfMeas_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_Surface_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_Surface2_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_Surface2_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   g_NTCT_Grounded_flag_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
-   g_NTCT_Grounded_flag_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
-   
-   for idC = 1:length(g_NTCT_cycles)
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DST-10));
-      if (~isempty(idF))
-         g_NTCT_Surface1_juld(idC, 1:length(idF)) = juld(idF);
-         g_NTCT_Surface1_pres(idC, 1:length(idF)) = pres(idF);
+      if (isempty(trajData))
+         label = sprintf('%02d/%02d : %s no data', ...
+            a_idFloat+1, ...
+            length(g_NTCT_FLOAT_LIST), ...
+            num2str(g_NTCT_FLOAT_LIST(a_idFloat+1)));
+         title(label, 'FontSize', 14);
+         fprintf('\n');
+         return
       end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DescProf));
-      if (~isempty(idF))
-         g_NTCT_DescProf_juld(idC, 1:length(idF)) = juld(idF);
-         g_NTCT_DescProf_pres(idC, 1:length(idF)) = pres(idF);
+
+      idVal = find(strcmp('FORMAT_VERSION', trajData(1:2:end)) == 1, 1);
+      formatVersion = strtrim(trajData{2*idVal}');
+
+      % check the traj file format version
+      if (~ismember(formatVersion, [{'3.1'} {'3.2'}]))
+         fprintf('\n');
+         fprintf('ERROR: Input traj file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
+            trajFileName, formatVersion);
+         return
       end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_PST-10));
-      if (~isempty(idF))
-         g_NTCT_DriftAtPark1_juld(idC, 1:length(idF)) = juld(idF);
-         g_NTCT_DriftAtPark1_pres(idC, 1:length(idF)) = pres(idF);
+
+      idVal = find(strcmp('CYCLE_NUMBER', trajData(1:2:end)) == 1, 1);
+      cycleNumber = trajData{2*idVal};
+
+      idVal = find(strcmp('MEASUREMENT_CODE', trajData(1:2:end)) == 1, 1);
+      measCode = trajData{2*idVal};
+
+      idVal = find(strcmp('JULD', trajData(1:2:end)) == 1, 1);
+      juld = trajData{2*idVal};
+
+      idVal = find(strcmp('JULD_ADJUSTED', trajData(1:2:end)) == 1, 1);
+      juldAdj = trajData{2*idVal};
+
+      idVal = find(strcmp('PRES', trajData(1:2:end)) == 1, 1);
+      pres = double(trajData{2*idVal});
+
+      idVal = find(strcmp('PRES_ADJUSTED', trajData(1:2:end)) == 1, 1);
+      presAdj = double(trajData{2*idVal});
+
+      idVal = find(strcmp('CYCLE_NUMBER_INDEX', trajData(1:2:end)) == 1, 1);
+      cycleNumberIndex = trajData{2*idVal};
+
+      idVal = find(strcmp('GROUNDED', trajData(1:2:end)) == 1, 1);
+      grounded = trajData{2*idVal};
+
+      idVal = find(strcmp('CONFIG_MISSION_NUMBER', trajData(1:2:end)) == 1, 1);
+      configMissionNumberTraj = trajData{2*idVal};
+
+      idVal = find(strcmp('LATITUDE', trajData(1:2:end)) == 1, 1);
+      latitude = trajData{2*idVal};
+
+      idVal = find(strcmp('LONGITUDE', trajData(1:2:end)) == 1, 1);
+      longitude = trajData{2*idVal};
+
+      % merge JULD and JULD_ADJUSTED
+      idF = find(juldAdj ~= 999999);
+      juld(idF) = juldAdj(idF);
+      juld(juld == 999999) = g_dateDef;
+
+      % merge PRES and PRES_ADJUSTED
+      if (g_NTCT_PRES_DATA_MODE == 0)
+         idF = find(presAdj ~= 99999);
+         pres(idF) = presAdj(idF);
       end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DriftAtPark));
-      if (~isempty(idF))
-         g_NTCT_DriftAtPark_juld(idC, 1:length(idF)) = juld(idF);
-         g_NTCT_DriftAtPark_pres(idC, 1:length(idF)) = pres(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DDET-10));
-      if (~isempty(idF))
-         g_NTCT_Desc2Prof1_juld(idC, 1:length(idF)) = juld(idF);
-         g_NTCT_Desc2Prof1_pres(idC, 1:length(idF)) = pres(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_AST-10));
-      if (~isempty(idF))
-         g_NTCT_Desc2Prof2_juld(idC, 1:length(idF)) = juld(idF);
-         g_NTCT_Desc2Prof2_pres(idC, 1:length(idF)) = pres(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_AscProf));
-      if (~isempty(idF))
-         g_NTCT_AscProf_juld(idC, 1:length(idF)) = juld(idF);
-         g_NTCT_AscProf_pres(idC, 1:length(idF)) = pres(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & ...
-         ((measCode == g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
-         (measCode == g_MC_InAirSingleMeasRelativeToTST) | ...
-         (measCode == g_MC_InAirSingleMeasRelativeToTET)));
-      if (~isempty(idF))
-         g_NTCT_InAirSeriesOfMeas_juld(idC, 1:length(idF)) = juld(idF);
-         g_NTCT_InAirSeriesOfMeas_pres(idC, 1:length(idF)) = pres(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & ...
-         ((measCode == g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
-         (measCode == g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST)));
-      if (~isempty(idF))
-         g_NTCT_NearSurfaceSeriesOfMeas_juld(idC, 1:length(idF)) = juld(idF);
-         g_NTCT_NearSurfaceSeriesOfMeas_pres(idC, 1:length(idF)) = pres(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_Surface));
-      if (~isempty(idF))
-         g_NTCT_Surface_juld(idC, 1:length(idF)) = juld(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_TET-10));
-      if (~isempty(idF))
-         g_NTCT_Surface2_juld(idC, 1:length(idF)) = juld(idF);
-         g_NTCT_Surface2_pres(idC, 1:length(idF)) = pres(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_Grounded));
-      if (~isempty(idF))
-         g_NTCT_Grounded_flag_juld(idC, 1:length(idF)) = juld(idF);
-         g_NTCT_Grounded_flag_pres(idC, 1:length(idF)) = pres(idF);
-      end
-   end
-   
-   % launch date
-   g_NTCT_Launch_juld = g_dateDef;
-   idF = find(measCode == g_MC_Launch);
-   if (~isempty(idF))
-      g_NTCT_Launch_juld = juld(idF);
-   end
-   
-   % cycle timings
-   g_NTCT_CycleStart_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
-   g_NTCT_DST_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
-   g_NTCT_FST_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
-   g_NTCT_FST_pres = ones(length(g_NTCT_cycles), 1)*g_presDef;
-   g_NTCT_PST_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
-   g_NTCT_PET_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
-   g_NTCT_MinPresInDriftAtPark_pres = ones(length(g_NTCT_cycles), 1)*g_presDef;
-   g_NTCT_MaxPresInDriftAtPark_pres = ones(length(g_NTCT_cycles), 1)*g_presDef;
-   g_NTCT_DPST_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
-   g_NTCT_MinPresInDriftAtProf_pres = ones(length(g_NTCT_cycles), 1)*g_presDef;
-   g_NTCT_MaxPresInDriftAtProf_pres = ones(length(g_NTCT_cycles), 1)*g_presDef;
-   g_NTCT_AST_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
-   g_NTCT_LastAscPumpedCtd_pres = ones(length(g_NTCT_cycles), 1)*g_presDef;
-   g_NTCT_AET_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
-   g_NTCT_TST_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
-   g_NTCT_FMT_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
-   g_NTCT_LMT_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
-   g_NTCT_TET_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
-   g_NTCT_Grounded_flag = zeros(length(g_NTCT_cycles), 1);
-   
-   for idC = 1:length(g_NTCT_cycles)
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_CycleStart));
-      if (~isempty(idF))
-         g_NTCT_CycleStart_juld(idC) = juld(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DST));
-      if (~isempty(idF))
-         g_NTCT_DST_juld(idC) = juld(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_FST));
-      if (~isempty(idF))
-         g_NTCT_FST_juld(idC) = juld(idF);
-         g_NTCT_FST_pres(idC) = pres(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_PST));
-      if (~isempty(idF))
-         g_NTCT_PST_juld(idC) = juld(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_PET));
-      if (~isempty(idF))
-         g_NTCT_PET_juld(idC) = juld(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_MinPresInDriftAtPark));
-      if (~isempty(idF))
-         g_NTCT_MinPresInDriftAtPark_pres(idC) = min(pres(idF));
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_MaxPresInDriftAtPark));
-      if (~isempty(idF))
-         g_NTCT_MaxPresInDriftAtPark_pres(idC) = max(pres(idF));
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DPST));
-      if (~isempty(idF))
-         g_NTCT_DPST_juld(idC) = juld(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_MinPresInDriftAtProf));
-      if (~isempty(idF))
-         g_NTCT_MinPresInDriftAtProf_pres(idC) = pres(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_MaxPresInDriftAtProf));
-      if (~isempty(idF))
-         g_NTCT_MaxPresInDriftAtProf_pres(idC) = pres(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_AST));
-      if (~isempty(idF))
-         g_NTCT_AST_juld(idC) = juld(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_LastAscPumpedCtd));
-      if (~isempty(idF))
-         g_NTCT_LastAscPumpedCtd_pres(idC) = pres(idF(1));
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_AET));
-      if (~isempty(idF))
-         g_NTCT_AET_juld(idC) = juld(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_TST));
-      if (~isempty(idF))
-         g_NTCT_TST_juld(idC) = juld(idF);
-      end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_FMT));
-      if (~isempty(idF))
-         if (length(idF) > 1)
-            idF = idF(1)
+      pres(pres == 99999) = g_presDef;
+
+      % retrieve fixes
+      idF = find((juld ~= g_dateDef) & (latitude ~= 99999) & (longitude ~= 99999));
+      posJuld = juld(idF);
+      posLat = latitude(idF);
+      posLon = longitude(idF);
+
+      % interpolate fixes along the displacements
+      posPrecJuld = posJuld(1);
+      posPrecLat = posLat(1);
+      posPrecLon = posLon(1);
+      posJuldAll = posPrecJuld;
+      posLatAll = posPrecLat;
+      posLonAll = posPrecLon;
+      for idP = 2:length(posJuld)
+         diffTime = posJuld(idP) - posPrecJuld;
+         if (ceil(diffTime) > 1)
+            times = [posPrecJuld:(diffTime/ceil(diffTime)):posJuld(idP)]';
+            interpLocLat = interp1q([posPrecJuld; posJuld(idP)], [posPrecLat; posLat(idP)], times);
+            interpLocLon = interp1q([posPrecJuld; posJuld(idP)], [posPrecLon; posLon(idP)], times);
+            posJuldAll = [posJuldAll; times(2:end)];
+            posLatAll = [posLatAll; interpLocLat(2:end)];
+            posLonAll = [posLonAll; interpLocLon(2:end)];
+         else
+            posJuldAll = [posJuldAll; posJuld(idP)];
+            posLatAll = [posLatAll; posLat(idP)];
+            posLonAll = [posLonAll; posLon(idP)];
          end
-         g_NTCT_FMT_juld(idC) = juld(idF);
+         posPrecJuld = posJuld(idP);
+         posPrecLat = posLat(idP);
+         posPrecLon = posLon(idP);
       end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_LMT));
-      if (~isempty(idF))
-         g_NTCT_LMT_juld(idC) = juld(idF);
+
+      % retrieve the bathymetry along the displacements
+      g_NTCT_tabBathyJuld = posJuldAll;
+      g_NTCT_tabBathyMin = ones(size(posJuldAll))*g_elevDef;
+      g_NTCT_tabBathyMax = ones(size(posJuldAll))*-g_elevDef;
+
+      for idP = 1:length(posJuldAll)
+         [elev, lon, lat] = m_etopo2([posLonAll(idP) posLonAll(idP) posLatAll(idP) posLatAll(idP)]);
+         g_NTCT_tabBathyMin(idP) = min(min(-elev));
+         g_NTCT_tabBathyMax(idP) = max(max(-elev));
       end
-      idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_TET));
-      if (~isempty(idF))
-         g_NTCT_TET_juld(idC) = juld(idF);
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % from TECH_AUX file
+      techAuxFileName = [g_NTCT_NC_DIR_AUX '/' num2str(floatNum) '/auxiliary/' num2str(floatNum) '_tech_aux.nc'];
+
+      valveAct = [];
+      if ~(exist(techAuxFileName, 'file') == 2)
+         fprintf('\n');
+         fprintf('File not found: %s\n', techAuxFileName);
+      else
+
+         % retrieve information from TRAJ file
+         wantedVars = [ ...
+            {'JULD'} ...
+            {'JULD_ADJUSTED'} ...
+            {'VALVE_ACTION_DURATION'} ...
+            {'VALVE_ACTION_FLAG'} ...
+            {'PUMP_ACTION_DURATION'} ...
+            {'PUMP_ACTION_FLAG'} ...
+            {'CYCLE_NUMBER_MEAS'} ...
+            {'MEASUREMENT_CODE'} ...
+            ];
+         [techAuxData] = get_data_from_nc_file(techAuxFileName, wantedVars);
+
+         idVal = find(strcmp('CYCLE_NUMBER_MEAS', techAuxData(1:2:end)) == 1, 1);
+         cycleNumberTech = techAuxData{2*idVal};
+
+         idVal = find(strcmp('MEASUREMENT_CODE', techAuxData(1:2:end)) == 1, 1);
+         measCodeTech = techAuxData{2*idVal};
+
+         idVal = find(strcmp('JULD', techAuxData(1:2:end)) == 1, 1);
+         juldTech = techAuxData{2*idVal};
+
+         idVal = find(strcmp('JULD_ADJUSTED', techAuxData(1:2:end)) == 1, 1);
+         juldTechAdj = techAuxData{2*idVal};
+
+         idVal = find(strcmp('VALVE_ACTION_DURATION', techAuxData(1:2:end)) == 1, 1);
+         valveActDuration = techAuxData{2*idVal};
+
+         idVal = find(strcmp('VALVE_ACTION_FLAG', techAuxData(1:2:end)) == 1, 1);
+         valveActFlag = techAuxData{2*idVal};
+
+         idVal = find(strcmp('PUMP_ACTION_DURATION', techAuxData(1:2:end)) == 1, 1);
+         pumpActDuration = techAuxData{2*idVal};
+
+         idVal = find(strcmp('PUMP_ACTION_FLAG', techAuxData(1:2:end)) == 1, 1);
+         pumpActFlag = techAuxData{2*idVal};
+
+         % merge JULD and JULD_ADJUSTED
+         idF = find(juldTechAdj ~= 999999);
+         juldTech(idF) = juldTechAdj(idF);
+         juldTech(find(juldTech == 999999)) = g_dateDef;
+
+         % get valve information
+         if (~isempty(valveActFlag))
+            valveAct = valveActFlag;
+         elseif (~isempty(pumpActFlag))
+            valveAct = pumpActFlag;
+            valveAct(find(valveAct == 1)) = -1;
+         elseif (~isempty(valveActDuration))
+            valveAct = valveActDuration;
+         elseif (~isempty(pumpActDuration))
+            valveAct = pumpActDuration;
+            valveAct(find(valveAct ~= -1)) = -1;
+         end
       end
-   end
-   
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % from META file
-   metaFileName = [g_NTCT_NC_DIR '/' num2str(floatNum) '/' num2str(floatNum) '_meta.nc'];
-   
-   if ~(exist(metaFileName, 'file') == 2)
-      fprintf('\n');
-      fprintf('File not found: %s\n', metaFileName);
-   end
-   
-   % retrieve information from META file
-   wantedVars = [ ...
-      {'FORMAT_VERSION'} ...
-      {'LAUNCH_CONFIG_PARAMETER_NAME'} ...
-      {'LAUNCH_CONFIG_PARAMETER_VALUE'} ...
-      {'CONFIG_PARAMETER_NAME'} ...
-      {'CONFIG_PARAMETER_VALUE'} ...
-      {'CONFIG_MISSION_NUMBER'} ...
-      ];
-   [metaData] = get_data_from_nc_file(metaFileName, wantedVars);
-   
-   idVal = find(strcmp('FORMAT_VERSION', metaData(1:2:end)) == 1, 1);
-   metaFileFormatVersion = strtrim(metaData{2*idVal}');
-   
-   % check the meta file format version
-   if (~strcmp(metaFileFormatVersion, '3.1'))
-      fprintf('\n');
-      fprintf('ERROR: Input meta file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
-         metaFileName, metaFileFormatVersion);
-      return
-   end
-   
-   % retrieve the needed configuration parameters
-   idVal = find(strcmp('LAUNCH_CONFIG_PARAMETER_NAME', metaData(1:2:end)) == 1, 1);
-   launchConfigParamName = metaData{2*idVal};
-   [~, nParam] = size(launchConfigParamName);
-   launchConfigName = [];
-   for idParam = 1:nParam
-      launchConfigName{end+1} = deblank(launchConfigParamName(:, idParam)');
-   end
-   
-   idVal = find(strcmp('LAUNCH_CONFIG_PARAMETER_VALUE', metaData(1:2:end)) == 1, 1);
-   launchConfigValue = metaData{2*idVal};
-   
-   idVal = find(strcmp('CONFIG_PARAMETER_NAME', metaData(1:2:end)) == 1, 1);
-   configParamName = metaData{2*idVal};
-   [~, nParam] = size(configParamName);
-   configName = [];
-   for idParam = 1:nParam
-      configName{end+1} = deblank(configParamName(:, idParam)');
-   end
-   
-   idVal = find(strcmp('CONFIG_PARAMETER_VALUE', metaData(1:2:end)) == 1, 1);
-   configValue = metaData{2*idVal};
-   
-   idVal = find(strcmp('CONFIG_MISSION_NUMBER', metaData(1:2:end)) == 1, 1);
-   configMissionNumberMeta = metaData{2*idVal}';
-   
-   % process retrieved data
-   parkP = g_presDef;
-   idF = find(strcmp('CONFIG_ParkPressure_dbar', launchConfigName(:)) == 1, 1);
-   if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
-      parkP = launchConfigValue(idF);
-   end
-   parkPres = ones(size(configMissionNumberMeta))*parkP;
-   idF = find(strcmp('CONFIG_ParkPressure_dbar', configName(:)) == 1, 1);
-   if (~isempty(idF))
-      parkPres = configValue(idF, :);
-   end
-   
-   profP = g_presDef;
-   idF = find(strcmp('CONFIG_ProfilePressure_dbar', launchConfigName(:)) == 1, 1);
-   if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
-      profP = launchConfigValue(idF);
-   end
-   profPres = ones(size(configMissionNumberMeta))*profP;
-   idF = find(strcmp('CONFIG_ProfilePressure_dbar', configName(:)) == 1, 1);
-   if (~isempty(idF))
-      profPres = configValue(idF, :);
-   end
-   
-   toleranceP = g_presDef;
-   idF = find(strcmp('CONFIG_PressureTargetToleranceDuringDrift_dbar', launchConfigName(:)) == 1, 1);
-   if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
-      toleranceP = launchConfigValue(idF);
-   end
-   tolerancePres = ones(size(configMissionNumberMeta))*toleranceP;
-   idF = find(strcmp('CONFIG_PressureTargetToleranceDuringDrift_dbar', configName(:)) == 1, 1);
-   if (~isempty(idF))
-      tolerancePres = configValue(idF, :);
-   end
-   
-   % process retrieved data
-   
-   g_NTCT_ParkPres = ones(length(g_NTCT_cycles), 1)*g_presDef;
-   g_NTCT_ProfPres = ones(length(g_NTCT_cycles), 1)*g_presDef;
-   g_NTCT_TolerancePres = ones(length(g_NTCT_cycles), 1)*g_presDef;
-   
-   for idC = 1:length(g_NTCT_cycles)
-      idF = find(cycleNumberIndex == g_NTCT_cycles(idC));
-      if (~isempty(idF))
-         confMisNum = configMissionNumberTraj(idF);
-         if (confMisNum ~= 99999)
-            idF2 = find((configMissionNumberMeta == confMisNum));
-            if (~isempty(idF2) && (parkPres(idF2) ~= 99999))
-               g_NTCT_ParkPres(idC, 1) = parkPres(idF2);
-               g_NTCT_ProfPres(idC, 1) = profPres(idF2);
-               g_NTCT_TolerancePres(idC, 1) = tolerancePres(idF2);
-            else
-               fprintf('ERROR: Configuration number\n');
+
+      % process retrieved data
+
+      % arrays to store the data
+      g_NTCT_cycles = unique(cycleNumber(find(cycleNumber >= 0)));
+
+      % buoyancy activitity
+      idF = find(ismember(measCode, [239 g_MC_SpyInDescToPark g_MC_SpyAtPark g_MC_SpyInDescToProf g_MC_SpyAtProf g_MC_SpyInAscProf g_MC_SpyAtSurface])); % 239 = 250-11 for Apex
+      nbMax = max(histc(cycleNumber(idF), min(cycleNumber(idF)):max(cycleNumber(idF))));
+
+      g_NTCT_SpyInDescToPark_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_SpyInDescToPark_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_SpyInDescToPark_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
+      g_NTCT_SpyAtPark_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_SpyAtPark_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_SpyAtPark_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
+      g_NTCT_SpyInDescToProf_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_SpyInDescToProf_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_SpyInDescToProf_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
+      g_NTCT_SpyAtProf_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_SpyAtProf_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_SpyAtProf_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
+      g_NTCT_SpyInAscProf_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_SpyInAscProf_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_SpyInAscProf_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
+      g_NTCT_SpyAtSurface_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_SpyAtSurface_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_SpyAtSurface_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
+
+      if (~isempty(valveAct))
+         for idC = 1:length(g_NTCT_cycles)
+            idF = find((cycleNumber == g_NTCT_cycles(idC)) & ismember(measCode, [239 g_MC_SpyInDescToPark]));
+            if (~isempty(idF))
+               g_NTCT_SpyInDescToPark_juld(idC, 1:length(idF)) = juld(idF);
+               g_NTCT_SpyInDescToPark_pres(idC, 1:length(idF)) = pres(idF);
+               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & ismember(measCodeTech, [239 g_MC_SpyInDescToPark]));
+               %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
+               if (length(idF) ~= length(idF2))
+                  fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
+               else
+                  g_NTCT_SpyInDescToPark_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
+               end
+            end
+            idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyAtPark));
+            if (~isempty(idF))
+               g_NTCT_SpyAtPark_juld(idC, 1:length(idF)) = juld(idF);
+               g_NTCT_SpyAtPark_pres(idC, 1:length(idF)) = pres(idF);
+               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyAtPark));
+               %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
+               if (length(idF) ~= length(idF2))
+                  fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
+               else
+                  g_NTCT_SpyAtPark_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
+               end
+            end
+            idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyInDescToProf));
+            if (~isempty(idF))
+               g_NTCT_SpyInDescToProf_juld(idC, 1:length(idF)) = juld(idF);
+               g_NTCT_SpyInDescToProf_pres(idC, 1:length(idF)) = pres(idF);
+               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyInDescToProf));
+               %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
+               if (length(idF) ~= length(idF2))
+                  fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
+               else
+                  g_NTCT_SpyInDescToProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
+               end
+            end
+            idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyAtProf));
+            if (~isempty(idF))
+               g_NTCT_SpyAtProf_juld(idC, 1:length(idF)) = juld(idF);
+               g_NTCT_SpyAtProf_pres(idC, 1:length(idF)) = pres(idF);
+               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyAtProf));
+               %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
+               if (length(idF) ~= length(idF2))
+                  fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
+               else
+                  g_NTCT_SpyAtProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
+               end
+            end
+            idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyInAscProf));
+            if (~isempty(idF))
+               g_NTCT_SpyInAscProf_juld(idC, 1:length(idF)) = juld(idF);
+               g_NTCT_SpyInAscProf_pres(idC, 1:length(idF)) = pres(idF);
+               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyInAscProf));
+               %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
+               if (length(idF) ~= length(idF2))
+                  fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
+               else
+                  g_NTCT_SpyInAscProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
+               end
+            end
+            idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyAtSurface));
+            if (~isempty(idF))
+               g_NTCT_SpyAtSurface_juld(idC, 1:length(idF)) = juld(idF);
+               g_NTCT_SpyAtSurface_pres(idC, 1:length(idF)) = pres(idF);
+               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyAtSurface));
+               %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
+               if (length(idF) ~= length(idF2))
+                  fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
+               else
+                  g_NTCT_SpyAtSurface_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
+               end
             end
          end
-         if (grounded(idF) == 'Y')
-            g_NTCT_Grounded_flag(idC) = 1;
+      end
+
+      % series of measurements
+      %    idF = find(ismember(measCode, [g_MC_DescProf g_MC_DriftAtPark g_MC_AscProf ...
+      %       g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST ...
+      %       g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST ...
+      %       g_MC_Surface g_MC_Grounded]));
+
+      idF = find(ismember(measCode, [ ...
+         g_MC_DST-10 ...
+         g_MC_DescProf ...
+         g_MC_PST-10 ...
+         g_MC_DriftAtPark ...
+         g_MC_DDET-10 ...
+         g_MC_AST-10 ...
+         g_MC_AscProf ...
+         g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST ...
+         g_MC_InAirSingleMeasRelativeToTST ...
+         g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST ...
+         g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST ...
+         g_MC_InAirSingleMeasRelativeToTET ...
+         g_MC_Surface ...
+         g_MC_TET-10 ...
+         g_MC_Grounded ...
+         ]));
+
+      nbMax = max(histc(cycleNumber(idF), min(cycleNumber(idF)):max(cycleNumber(idF))));
+
+      g_NTCT_Surface1_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_Surface1_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_DescProf_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_DescProf_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_DriftAtPark1_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_DriftAtPark1_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_DriftAtPark_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_DriftAtPark_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_Desc2Prof1_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_Desc2Prof1_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_Desc2Prof2_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_Desc2Prof2_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_AscProf_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_AscProf_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_NearSurfaceSeriesOfMeas_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_NearSurfaceSeriesOfMeas_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_InAirSeriesOfMeas_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_InAirSeriesOfMeas_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_Surface_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_Surface2_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_Surface2_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_Grounded_flag_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_Grounded_flag_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+
+      for idC = 1:length(g_NTCT_cycles)
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DST-10));
+         if (~isempty(idF))
+            g_NTCT_Surface1_juld(idC, 1:length(idF)) = juld(idF);
+            g_NTCT_Surface1_pres(idC, 1:length(idF)) = pres(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DescProf));
+         if (~isempty(idF))
+            g_NTCT_DescProf_juld(idC, 1:length(idF)) = juld(idF);
+            g_NTCT_DescProf_pres(idC, 1:length(idF)) = pres(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_PST-10));
+         if (~isempty(idF))
+            g_NTCT_DriftAtPark1_juld(idC, 1:length(idF)) = juld(idF);
+            g_NTCT_DriftAtPark1_pres(idC, 1:length(idF)) = pres(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DriftAtPark));
+         if (~isempty(idF))
+            g_NTCT_DriftAtPark_juld(idC, 1:length(idF)) = juld(idF);
+            g_NTCT_DriftAtPark_pres(idC, 1:length(idF)) = pres(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DDET-10));
+         if (~isempty(idF))
+            g_NTCT_Desc2Prof1_juld(idC, 1:length(idF)) = juld(idF);
+            g_NTCT_Desc2Prof1_pres(idC, 1:length(idF)) = pres(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_AST-10));
+         if (~isempty(idF))
+            g_NTCT_Desc2Prof2_juld(idC, 1:length(idF)) = juld(idF);
+            g_NTCT_Desc2Prof2_pres(idC, 1:length(idF)) = pres(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_AscProf));
+         if (~isempty(idF))
+            g_NTCT_AscProf_juld(idC, 1:length(idF)) = juld(idF);
+            g_NTCT_AscProf_pres(idC, 1:length(idF)) = pres(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & ...
+            ((measCode == g_MC_InAirSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
+            (measCode == g_MC_InAirSingleMeasRelativeToTST) | ...
+            (measCode == g_MC_InAirSingleMeasRelativeToTET)));
+         if (~isempty(idF))
+            g_NTCT_InAirSeriesOfMeas_juld(idC, 1:length(idF)) = juld(idF);
+            g_NTCT_InAirSeriesOfMeas_pres(idC, 1:length(idF)) = pres(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & ...
+            ((measCode == g_MC_InWaterSeriesOfMeasPartOfSurfaceSequenceRelativeToTST) | ...
+            (measCode == g_MC_InWaterSeriesOfMeasPartOfEndOfProfileRelativeToTST)));
+         if (~isempty(idF))
+            g_NTCT_NearSurfaceSeriesOfMeas_juld(idC, 1:length(idF)) = juld(idF);
+            g_NTCT_NearSurfaceSeriesOfMeas_pres(idC, 1:length(idF)) = pres(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_Surface));
+         if (~isempty(idF))
+            g_NTCT_Surface_juld(idC, 1:length(idF)) = juld(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_TET-10));
+         if (~isempty(idF))
+            g_NTCT_Surface2_juld(idC, 1:length(idF)) = juld(idF);
+            g_NTCT_Surface2_pres(idC, 1:length(idF)) = pres(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_Grounded));
+         if (~isempty(idF))
+            g_NTCT_Grounded_flag_juld(idC, 1:length(idF)) = juld(idF);
+            g_NTCT_Grounded_flag_pres(idC, 1:length(idF)) = pres(idF);
          end
       end
+
+      % launch date
+      g_NTCT_Launch_juld = g_dateDef;
+      idF = find(measCode == g_MC_Launch);
+      if (~isempty(idF))
+         g_NTCT_Launch_juld = juld(idF);
+      end
+
+      % cycle timings
+      g_NTCT_CycleStart_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
+      g_NTCT_DST_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
+      g_NTCT_FST_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
+      g_NTCT_FST_pres = ones(length(g_NTCT_cycles), 1)*g_presDef;
+      g_NTCT_PST_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
+      g_NTCT_PET_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
+      g_NTCT_MinPresInDriftAtPark_pres = ones(length(g_NTCT_cycles), 1)*g_presDef;
+      g_NTCT_MaxPresInDriftAtPark_pres = ones(length(g_NTCT_cycles), 1)*g_presDef;
+      g_NTCT_DPST_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
+      g_NTCT_MinPresInDriftAtProf_pres = ones(length(g_NTCT_cycles), 1)*g_presDef;
+      g_NTCT_MaxPresInDriftAtProf_pres = ones(length(g_NTCT_cycles), 1)*g_presDef;
+      g_NTCT_AST_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
+      g_NTCT_LastAscPumpedCtd_pres = ones(length(g_NTCT_cycles), 1)*g_presDef;
+      g_NTCT_AET_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
+      g_NTCT_TST_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
+      g_NTCT_FMT_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
+      g_NTCT_LMT_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
+      g_NTCT_TET_juld = ones(length(g_NTCT_cycles), 1)*g_dateDef;
+      g_NTCT_Grounded_flag = zeros(length(g_NTCT_cycles), 1);
+
+      for idC = 1:length(g_NTCT_cycles)
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_CycleStart));
+         if (~isempty(idF))
+            g_NTCT_CycleStart_juld(idC) = juld(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DST));
+         if (~isempty(idF))
+            g_NTCT_DST_juld(idC) = juld(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_FST));
+         if (~isempty(idF))
+            g_NTCT_FST_juld(idC) = juld(idF);
+            g_NTCT_FST_pres(idC) = pres(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_PST));
+         if (~isempty(idF))
+            g_NTCT_PST_juld(idC) = juld(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_PET));
+         if (~isempty(idF))
+            g_NTCT_PET_juld(idC) = juld(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_MinPresInDriftAtPark));
+         if (~isempty(idF))
+            g_NTCT_MinPresInDriftAtPark_pres(idC) = min(pres(idF));
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_MaxPresInDriftAtPark));
+         if (~isempty(idF))
+            g_NTCT_MaxPresInDriftAtPark_pres(idC) = max(pres(idF));
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DPST));
+         if (~isempty(idF))
+            g_NTCT_DPST_juld(idC) = juld(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_MinPresInDriftAtProf));
+         if (~isempty(idF))
+            g_NTCT_MinPresInDriftAtProf_pres(idC) = pres(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_MaxPresInDriftAtProf));
+         if (~isempty(idF))
+            g_NTCT_MaxPresInDriftAtProf_pres(idC) = pres(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_AST));
+         if (~isempty(idF))
+            g_NTCT_AST_juld(idC) = juld(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_LastAscPumpedCtd));
+         if (~isempty(idF))
+            g_NTCT_LastAscPumpedCtd_pres(idC) = pres(idF(1));
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_AET));
+         if (~isempty(idF))
+            g_NTCT_AET_juld(idC) = juld(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_TST));
+         if (~isempty(idF))
+            g_NTCT_TST_juld(idC) = juld(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_FMT));
+         if (~isempty(idF))
+            if (length(idF) > 1)
+               idF = idF(1)
+            end
+            g_NTCT_FMT_juld(idC) = juld(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_LMT));
+         if (~isempty(idF))
+            if (length(idF) > 1)
+               idF = idF(1)
+            end
+            g_NTCT_LMT_juld(idC) = juld(idF);
+         end
+         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_TET));
+         if (~isempty(idF))
+            g_NTCT_TET_juld(idC) = juld(idF);
+         end
+      end
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % from META file
+      metaFileName = [g_NTCT_NC_DIR '/' num2str(floatNum) '/' num2str(floatNum) '_meta.nc'];
+
+      if ~(exist(metaFileName, 'file') == 2)
+         fprintf('\n');
+         fprintf('File not found: %s\n', metaFileName);
+      end
+
+      % retrieve information from META file
+      wantedVars = [ ...
+         {'FORMAT_VERSION'} ...
+         {'LAUNCH_CONFIG_PARAMETER_NAME'} ...
+         {'LAUNCH_CONFIG_PARAMETER_VALUE'} ...
+         {'CONFIG_PARAMETER_NAME'} ...
+         {'CONFIG_PARAMETER_VALUE'} ...
+         {'CONFIG_MISSION_NUMBER'} ...
+         ];
+      [metaData] = get_data_from_nc_file(metaFileName, wantedVars);
+
+      idVal = find(strcmp('FORMAT_VERSION', metaData(1:2:end)) == 1, 1);
+      metaFileFormatVersion = strtrim(metaData{2*idVal}');
+
+      % check the meta file format version
+      if (~strcmp(metaFileFormatVersion, '3.1'))
+         fprintf('\n');
+         fprintf('ERROR: Input meta file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s)\n', ...
+            metaFileName, metaFileFormatVersion);
+         return
+      end
+
+      % retrieve the needed configuration parameters
+      idVal = find(strcmp('LAUNCH_CONFIG_PARAMETER_NAME', metaData(1:2:end)) == 1, 1);
+      launchConfigParamName = metaData{2*idVal};
+      [~, nParam] = size(launchConfigParamName);
+      launchConfigName = [];
+      for idParam = 1:nParam
+         launchConfigName{end+1} = deblank(launchConfigParamName(:, idParam)');
+      end
+
+      idVal = find(strcmp('LAUNCH_CONFIG_PARAMETER_VALUE', metaData(1:2:end)) == 1, 1);
+      launchConfigValue = metaData{2*idVal};
+
+      idVal = find(strcmp('CONFIG_PARAMETER_NAME', metaData(1:2:end)) == 1, 1);
+      configParamName = metaData{2*idVal};
+      [~, nParam] = size(configParamName);
+      configName = [];
+      for idParam = 1:nParam
+         configName{end+1} = deblank(configParamName(:, idParam)');
+      end
+
+      idVal = find(strcmp('CONFIG_PARAMETER_VALUE', metaData(1:2:end)) == 1, 1);
+      configValue = metaData{2*idVal};
+
+      idVal = find(strcmp('CONFIG_MISSION_NUMBER', metaData(1:2:end)) == 1, 1);
+      configMissionNumberMeta = metaData{2*idVal}';
+
+      % process retrieved data
+      parkP = g_presDef;
+      idF = find(strcmp('CONFIG_ParkPressure_dbar', launchConfigName(:)) == 1, 1);
+      if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
+         parkP = launchConfigValue(idF);
+      end
+      parkPres = ones(size(configMissionNumberMeta))*parkP;
+      idF = find(strcmp('CONFIG_ParkPressure_dbar', configName(:)) == 1, 1);
+      if (~isempty(idF))
+         parkPres = configValue(idF, :);
+      end
+
+      profP = g_presDef;
+      idF = find(strcmp('CONFIG_ProfilePressure_dbar', launchConfigName(:)) == 1, 1);
+      if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
+         profP = launchConfigValue(idF);
+      end
+      profPres = ones(size(configMissionNumberMeta))*profP;
+      idF = find(strcmp('CONFIG_ProfilePressure_dbar', configName(:)) == 1, 1);
+      if (~isempty(idF))
+         profPres = configValue(idF, :);
+      end
+
+      toleranceP = g_presDef;
+      idF = find(strcmp('CONFIG_PressureTargetToleranceDuringDrift_dbar', launchConfigName(:)) == 1, 1);
+      if (~isempty(idF) && (launchConfigValue(idF) ~= 99999))
+         toleranceP = launchConfigValue(idF);
+      end
+      tolerancePres = ones(size(configMissionNumberMeta))*toleranceP;
+      idF = find(strcmp('CONFIG_PressureTargetToleranceDuringDrift_dbar', configName(:)) == 1, 1);
+      if (~isempty(idF))
+         tolerancePres = configValue(idF, :);
+      end
+
+      % process retrieved data
+
+      g_NTCT_ParkPres = ones(length(g_NTCT_cycles), 1)*g_presDef;
+      g_NTCT_ProfPres = ones(length(g_NTCT_cycles), 1)*g_presDef;
+      g_NTCT_TolerancePres = ones(length(g_NTCT_cycles), 1)*g_presDef;
+
+      for idC = 1:length(g_NTCT_cycles)
+         idF = find(cycleNumberIndex == g_NTCT_cycles(idC));
+         if (~isempty(idF))
+            confMisNum = configMissionNumberTraj(idF);
+            if (confMisNum ~= 99999)
+               idF2 = find((configMissionNumberMeta == confMisNum));
+               if (~isempty(idF2) && (parkPres(idF2) ~= 99999))
+                  g_NTCT_ParkPres(idC, 1) = parkPres(idF2);
+                  g_NTCT_ProfPres(idC, 1) = profPres(idF2);
+                  g_NTCT_TolerancePres(idC, 1) = tolerancePres(idF2);
+               else
+                  fprintf('ERROR: Configuration number\n');
+               end
+            end
+            if (grounded(idF) == 'Y')
+               g_NTCT_Grounded_flag(idC) = 1;
+            end
+         end
+      end
+
+      fprintf('done\n');
+
+   else
+
+      fprintf('ERROR: Float #%d: Directory not found (%s)\n', ...
+         floatNum, [g_NTCT_NC_DIR '/' num2str(floatNum) '/']);
    end
-   
-   fprintf('done\n');
 end
 
 if (isempty(g_NTCT_cycles))
@@ -1176,7 +1184,7 @@ ySpyInDescToPark(idDel) = [];
 if (~isempty(xSpyInDescToPark))
    plot(presAxes, xSpyInDescToPark, ySpyInDescToPark, 'k');
    hold on;
-   
+
    evSpyInDescToPark = g_NTCT_SpyInDescToPark_evFlag(a_idCycle+1, 1:length(xSpyInDescToPark));
    idEv = find(evSpyInDescToPark > 0);
    plot(presAxes, xSpyInDescToPark(idEv), ySpyInDescToPark(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
@@ -1192,7 +1200,7 @@ ySpyAtPark(idDel) = [];
 if (~isempty(xSpyAtPark))
    plot(presAxes, xSpyAtPark, ySpyAtPark, 'k');
    hold on;
-   
+
    evSpyAtPark = g_NTCT_SpyAtPark_evFlag(a_idCycle+1, 1:length(xSpyAtPark));
    idEv = find(evSpyAtPark > 0);
    plot(presAxes, xSpyAtPark(idEv), ySpyAtPark(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
@@ -1208,7 +1216,7 @@ ySpyInDescToProf(idDel) = [];
 if (~isempty(xSpyInDescToProf))
    plot(presAxes, xSpyInDescToProf, ySpyInDescToProf, 'k');
    hold on;
-   
+
    evSpyInDescToProf = g_NTCT_SpyInDescToProf_evFlag(a_idCycle+1, 1:length(xSpyInDescToProf));
    idEv = find(evSpyInDescToProf > 0);
    plot(presAxes, xSpyInDescToProf(idEv), ySpyInDescToProf(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
@@ -1224,7 +1232,7 @@ ySpyAtProf(idDel) = [];
 if (~isempty(xSpyAtProf))
    plot(presAxes, xSpyAtProf, ySpyAtProf, 'k');
    hold on;
-   
+
    evSpyAtProf = g_NTCT_SpyAtProf_evFlag(a_idCycle+1, 1:length(xSpyAtProf));
    idEv = find(evSpyAtProf > 0);
    plot(presAxes, xSpyAtProf(idEv), ySpyAtProf(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
@@ -1242,13 +1250,13 @@ firstSurfPres = g_presDef;
 if (~isempty(xSpyInAscProf))
    plot(presAxes, xSpyInAscProf, ySpyInAscProf, 'k');
    hold on;
-   
+
    evSpyInAscProf = g_NTCT_SpyInAscProf_evFlag(a_idCycle+1, 1:length(xSpyInAscProf));
    idEv = find(evSpyInAscProf > 0);
    plot(presAxes, xSpyInAscProf(idEv), ySpyInAscProf(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
    idPump = find(evSpyInAscProf == -1);
    plot(presAxes, xSpyInAscProf(idPump), ySpyInAscProf(idPump), 'r^', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
-   
+
    firstSurfDate = fliplr(xSpyInAscProf);
    firstSurfPres = fliplr(ySpyInAscProf);
    if (length(firstSurfDate) > 2)
@@ -1267,13 +1275,13 @@ firstSurfPres = g_presDef;
 if (~isempty(xSpyAtSurface))
    plot(presAxes, xSpyAtSurface, ySpyAtSurface, 'k');
    hold on;
-   
+
    evSpyAtSurface = g_NTCT_SpyAtSurface_evFlag(a_idCycle+1, 1:length(xSpyAtSurface));
    idEv = find(evSpyAtSurface > 0);
    plot(presAxes, xSpyAtSurface(idEv), ySpyAtSurface(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
    idPump = find(evSpyAtSurface == -1);
    plot(presAxes, xSpyAtSurface(idPump), ySpyAtSurface(idPump), 'r^', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
-   
+
    firstSurfDate = fliplr(xSpyAtSurface);
    firstSurfPres = fliplr(ySpyAtSurface);
    if (length(firstSurfDate) > 2)
@@ -1601,67 +1609,67 @@ global g_NTCT_cycle;
 if (strcmp(a_eventData.Key, 'escape'))
    set(g_NTCT_FIG_HANDLE, 'KeyPressFcn', '');
    close(g_NTCT_FIG_HANDLE);
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % next float
 elseif (strcmp(a_eventData.Key, 'rightarrow'))
    plot_cycle_times( ...
       mod(g_NTCT_FLOAT_ID+1, length(g_NTCT_FLOAT_LIST)), ...
       0, 0);
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % previous float
 elseif (strcmp(a_eventData.Key, 'leftarrow'))
    plot_cycle_times( ...
       mod(g_NTCT_FLOAT_ID-1, length(g_NTCT_FLOAT_LIST)), ...
       0, 0);
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % previous cycle
 elseif (strcmp(a_eventData.Key, 'uparrow'))
    plot_cycle_times( ...
       g_NTCT_FLOAT_ID, ...
       mod(g_NTCT_cycle-1, length(g_NTCT_cycles)), 0);
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % next cycle
 elseif (strcmp(a_eventData.Key, 'downarrow'))
    plot_cycle_times( ...
       g_NTCT_FLOAT_ID, ...
       mod(g_NTCT_cycle+1, length(g_NTCT_cycles)), 0);
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % bathy visibility
 elseif (strcmp(a_eventData.Key, 'b'))
    g_NTCT_BATHY = mod(g_NTCT_BATHY+1, 2);
    plot_cycle_times(g_NTCT_FLOAT_ID, g_NTCT_cycle, 0);
-   
+
    display_current_config;
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % surf only visibility
 elseif (strcmp(a_eventData.Key, 's'))
    g_NTCT_SURF = mod(g_NTCT_SURF+1, 2);
    plot_cycle_times(g_NTCT_FLOAT_ID, g_NTCT_cycle, 0);
-   
+
    display_current_config;
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % pdf output file generation
 elseif (strcmp(a_eventData.Key, 'p'))
    g_NTCT_PRINT = 1;
    plot_cycle_times(g_NTCT_FLOAT_ID, g_NTCT_cycle, 0);
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % pdf output file generation of all cycles
 elseif (strcmp(a_eventData.Key, 'f'))
-   
+
    cycleNumTmp = g_NTCT_cycle;
    for idCy = g_NTCT_cycles'
       g_NTCT_PRINT = 1;
       plot_cycle_times(g_NTCT_FLOAT_ID, idCy, 0);
    end
-   
+
    g_NTCT_cycle = cycleNumTmp;
    plot_cycle_times(g_NTCT_FLOAT_ID, g_NTCT_cycle, 0);
 
@@ -1678,7 +1686,7 @@ elseif (strcmp(a_eventData.Key, 'h'))
    fprintf('   p            : pdf output file generation\n');
    fprintf('   f            : pdf output file generation of all cycles\n');
    fprintf('Escape: exit\n\n');
-   
+
    display_current_config;
 end
 
@@ -1799,7 +1807,7 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
+% SEE ALSO :
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
@@ -1812,18 +1820,18 @@ o_ncData = [];
 
 
 if (exist(a_ncPathFileName, 'file') == 2)
-   
+
    % open NetCDF file
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
       return
    end
-   
+
    % retrieve variables from NetCDF file
    for idVar = 1:length(a_wantedVars)
       varName = a_wantedVars{idVar};
-      
+
       if (var_is_present_dec_argo(fCdf, varName))
          varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
          o_ncData = [o_ncData {varName} {varValue}];
@@ -1832,9 +1840,9 @@ if (exist(a_ncPathFileName, 'file') == 2)
          %             varName, a_ncPathFileName);
          o_ncData = [o_ncData {varName} {''}];
       end
-      
+
    end
-   
+
    netcdf.close(fCdf);
 end
 

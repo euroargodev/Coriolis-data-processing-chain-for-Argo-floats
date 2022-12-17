@@ -3,7 +3,7 @@
 %
 % SYNTAX :
 %  [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = ...
-%    create_config_param_names_ir_rudics_cts5_129
+%    create_config_param_names_ir_rudics_cts5_129_130_131
 %
 % INPUT PARAMETERS :
 %
@@ -21,7 +21,7 @@
 %   06/27/2022 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = ...
-   create_config_param_names_ir_rudics_cts5_129
+   create_config_param_names_ir_rudics_cts5_129_130_131
 
 % output parameters initialization
 o_decArgoConfParamNames = [];
@@ -296,9 +296,9 @@ end
 
 % misc sensor static configuration parameters
 for idT = 0:3
-   for idS = 0:7
-      for idP = 0:1
-         for idI = 0:3
+   for idS = 0:9
+      for idP = 0:3
+         for idI = 0:4
             for idK = 0:8
                paramNum = 100000 + idK + idI*10 + idP*100 + idS*1000 + idT*10000;
                idParamName = find(g_decArgo_outputNcConfParamId == paramNum);

@@ -2,7 +2,7 @@
 % Decode meta-data XML file data transmitted by a CTS5-USEA float.
 %
 % SYNTAX :
-%  [o_metaData] = decode_apmt_metadata_129(a_inputFilePathName)
+%  [o_metaData] = decode_apmt_metadata_129_130_131(a_inputFilePathName)
 %
 % INPUT PARAMETERS :
 %   a_inputFilePathName : APMT meta-data XML file to decode
@@ -18,14 +18,14 @@
 % RELEASES :
 %   06/14/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_metaData] = decode_apmt_metadata_129(a_inputFilePathName)
+function [o_metaData] = decode_apmt_metadata_129_130_131(a_inputFilePathName)
 
 % output parameters initialization
 o_metaData = [];
 
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
-   fprintf('ERROR: decode_apmt_metadata_129: File not found: %s\n', a_inputFilePathName);
+   fprintf('ERROR: decode_apmt_metadata_129_130_131: File not found: %s\n', a_inputFilePathName);
    return
 end
 
@@ -228,17 +228,22 @@ telecom.type = '';
 telecom.cid = '';
 telecom.login = '';
 
+behaviour = [];
+behaviour.options = '';
+
 hardware = [];
 hardware.control_board = [];
 hardware.control_board.model = '';
 hardware.control_board.sn = '';
 hardware.control_board.firmware = '';
+hardware.control_board.checksum = '';
 hardware.control_board.sdcard = '';
 
 hardware.measure_board = [];
 hardware.measure_board.model = '';
 hardware.measure_board.sn = '';
 hardware.measure_board.firmware = '';
+hardware.measure_board.checksum = '';
 
 hardware.extension_board = [];
 hardware.extension_board.model = '';
@@ -406,6 +411,7 @@ sensors.sensor_imu.compass.si22 = '';
 
 o_metaDataStruct.profiler = profiler;
 o_metaDataStruct.telecom = telecom;
+o_metaDataStruct.behaviour = behaviour;
 o_metaDataStruct.hardware = hardware;
 o_metaDataStruct.sensors = sensors;
 

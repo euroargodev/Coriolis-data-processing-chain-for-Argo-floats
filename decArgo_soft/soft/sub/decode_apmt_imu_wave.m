@@ -25,7 +25,7 @@ function [o_imuWaveData] = decode_apmt_imu_wave(a_data, a_lastByteNum, a_inputFi
 % output parameters initialization
 o_imuWaveData = [];
 
-% codes for CTS5 phases (used to decode CTD data)
+% codes for CTS5 phases
 global g_decArgo_cts5PhaseDescent;
 global g_decArgo_cts5PhasePark;
 global g_decArgo_cts5PhaseDeepProfile;
@@ -33,7 +33,7 @@ global g_decArgo_cts5PhaseShortPark;
 global g_decArgo_cts5PhaseAscent;
 global g_decArgo_cts5PhaseSurface;
 
-% codes for CTS5 treatment types (used to decode CTD data)
+% codes for CTS5 treatment types
 global g_decArgo_cts5Treat_AM_SD_MD;
 global g_decArgo_cts5Treat_AM_SD;
 global g_decArgo_cts5Treat_AM_MD;

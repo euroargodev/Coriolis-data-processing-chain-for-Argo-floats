@@ -77,6 +77,9 @@ idFCyPtn = find(([g_decArgo_eventData{:, 1}] == a_cyNum) & ([g_decArgo_eventData
 cycleStartTime = [];
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 100);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
       'CYCLE START TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
    g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
@@ -156,6 +159,9 @@ end
 stabParkStartDate = [];
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 105, 1); % in case of multi park, only the first one is managed
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
       'STABILIZED PARK START TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, ...
       g_decArgo_eventData{idFCyPtn(idF), 5}{:});
@@ -172,6 +178,9 @@ end
 parkEndDate = [];
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 106);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
       'PARK END TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
    g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
@@ -185,6 +194,9 @@ end
 deepParkStartDate = [];
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 107);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
       'DEEP PARK START TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
    g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
@@ -198,6 +210,9 @@ end
 ascentStartDate = [];
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 108);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
       'ASCENT START TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
    g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
@@ -210,6 +225,9 @@ end
 % slow ascent start time
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 109);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
       'SLOW ASCENT START TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
    g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
@@ -221,6 +239,9 @@ end
 % resumed ascent start time
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 110);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
       'RESUMED ASCENT START TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
    g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
@@ -233,6 +254,9 @@ end
 ascentEndDate = [];
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 96);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
       'ASCENT END TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
    g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
@@ -245,6 +269,9 @@ end
 % surface time (final pump action start date
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 97);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
       'FINAL PUMP ACTION START TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
    g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
@@ -257,7 +284,7 @@ end
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 121);
 if (~isempty(idF))
    transmissionStartTime = min([g_decArgo_eventData{idFCyPtn(idF), 6}]);
-   
+
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
       'TRANSMISSION START TIME', 'JULD', transmissionStartTime, []);
    g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
@@ -270,7 +297,7 @@ end
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 126);
 if (~isempty(idF))
    transmissionEndTime = max([g_decArgo_eventData{idFCyPtn(idF), 6}]);
-   
+
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
       'TRANSMISSION END TIME', 'JULD', transmissionEndTime, []);
    g_decArgo_eventDataTraj{end+1} = get_cts5_traj_data_init_struct(...
@@ -320,6 +347,9 @@ end
 % CTD pump cut-off pressure
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 197);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataMeta{end+1} = get_cts5_tech_data_init_struct(...
       188, 'CTD pump cut-off pressure (dbar)', g_decArgo_eventData{idFCyPtn(idF), 5}{:});
 end
@@ -327,6 +357,9 @@ end
 % pressure offset
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 198);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
       102, 'Pressure offset (dbar)', g_decArgo_eventData{idFCyPtn(idF), 5}{:});
 end
@@ -334,6 +367,9 @@ end
 % surface pressure
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 47);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
       177, 'Surface pressure (dbar)', g_decArgo_eventData{idFCyPtn(idF(1)), 5}{:});
 end
@@ -341,6 +377,9 @@ end
 % internal pressure
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 48);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
       103, 'Internal pressure (mbar)', g_decArgo_eventData{idFCyPtn(idF(1)), 5}{:});
 end
@@ -348,6 +387,9 @@ end
 % battery voltage
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 49);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
       104, 'Battery voltage (V)', g_decArgo_eventData{idFCyPtn(idF(1)), 5}{:});
 end
@@ -367,7 +409,7 @@ if (~isempty(idF))
             g_decArgo_eventData{idFCyPtn(idF(id)), 5}{2});
       end
    end
-   
+
    evtTimes = [g_decArgo_eventData{idFCyPtn(idF), 6}];
    refParkStart = parkStartDate;
    if (isempty(refParkStart))
@@ -389,7 +431,7 @@ if (~isempty(idF))
             a_cyNum, a_ptnNum);
          g_decArgo_eventDataTraj{end}.group = g_decArgo_trajItemGroupNum;
          g_decArgo_trajItemGroupNum = g_decArgo_trajItemGroupNum + 1;
-         
+
          g_decArgo_eventDataParamTech{end+1} = get_cts5_traj_data_init_struct(...
             g_MC_SpyInDescToPark, 'JULD', ...
             'Buoyancy action time during descent to park', ...
@@ -432,7 +474,7 @@ if (~isempty(idF))
             a_cyNum, a_ptnNum);
          g_decArgo_eventDataTraj{end}.group = g_decArgo_trajItemGroupNum;
          g_decArgo_trajItemGroupNum = g_decArgo_trajItemGroupNum + 1;
-         
+
          g_decArgo_eventDataParamTech{end+1} = get_cts5_traj_data_init_struct(...
             g_MC_SpyAtPark, 'JULD', ...
             'Buoyancy action time during drift at park', ...
@@ -475,7 +517,7 @@ if (~isempty(idF))
             a_cyNum, a_ptnNum);
          g_decArgo_eventDataTraj{end}.group = g_decArgo_trajItemGroupNum;
          g_decArgo_trajItemGroupNum = g_decArgo_trajItemGroupNum + 1;
-         
+
          g_decArgo_eventDataParamTech{end+1} = get_cts5_traj_data_init_struct(...
             g_MC_SpyInDescToProf, 'JULD', ...
             'Buoyancy action time during descent to prof', ...
@@ -518,7 +560,7 @@ if (~isempty(idF))
             a_cyNum, a_ptnNum);
          g_decArgo_eventDataTraj{end}.group = g_decArgo_trajItemGroupNum;
          g_decArgo_trajItemGroupNum = g_decArgo_trajItemGroupNum + 1;
-         
+
          g_decArgo_eventDataParamTech{end+1} = get_cts5_traj_data_init_struct(...
             g_MC_SpyAtProf, 'JULD', ...
             'Buoyancy action time during drift at prof', ...
@@ -571,7 +613,7 @@ if (~isempty(idF))
             a_cyNum, a_ptnNum);
          g_decArgo_eventDataTraj{end}.group = g_decArgo_trajItemGroupNum;
          g_decArgo_trajItemGroupNum = g_decArgo_trajItemGroupNum + 1;
-         
+
          g_decArgo_eventDataParamTech{end+1} = get_cts5_traj_data_init_struct(...
             g_MC_SpyInAscProf, 'JULD', ...
             'Buoyancy action time during ascent to surface', ...
@@ -900,6 +942,9 @@ end
 % ice detection (ISA)
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 111);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
       'ICE DETECTION TIME (ISA)', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
    g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
@@ -911,6 +956,9 @@ end
 % ice detection
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 113);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
       'ICE DETECTION TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, ...
       g_decArgo_eventData{idFCyPtn(idF), 5}{:});
@@ -936,6 +984,9 @@ end
 % accepted feedback
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 88);
 if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
    g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
       'ACCEPTED FEEDBACK', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
    g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...

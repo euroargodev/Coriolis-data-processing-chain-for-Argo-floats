@@ -139,7 +139,7 @@ for idDir = 1:length(uDir)
 
       switch (a_tabProfiles(idProf).treatType)
          case {g_decArgo_treatRaw, g_decArgo_treatAverage, g_decArgo_treatDecimatedRaw}
-            % IMU Raw (raw) (mean) (decimated raw)
+            % IMU Tilt & Heading (raw) (mean) (decimated raw)
 
             finalData = [finalData; ...
                data];

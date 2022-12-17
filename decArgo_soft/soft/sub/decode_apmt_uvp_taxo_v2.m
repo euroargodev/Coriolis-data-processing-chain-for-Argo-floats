@@ -25,7 +25,7 @@ function [o_uvpTaxoV2Data] = decode_apmt_uvp_taxo_v2(a_data, a_lastByteNum, a_in
 % output parameters initialization
 o_uvpTaxoV2Data = [];
 
-% codes for CTS5 phases (used to decode CTD data)
+% codes for CTS5 phases
 global g_decArgo_cts5PhaseDescent;
 global g_decArgo_cts5PhasePark;
 global g_decArgo_cts5PhaseDeepProfile;
@@ -33,7 +33,7 @@ global g_decArgo_cts5PhaseShortPark;
 global g_decArgo_cts5PhaseAscent;
 global g_decArgo_cts5PhaseSurface;
 
-% codes for CTS5 treatment types (used to decode CTD data)
+% codes for CTS5 treatment types
 global g_decArgo_cts5Treat_RW;
 global g_decArgo_cts5Treat_AM;
 global g_decArgo_cts5Treat_DW;

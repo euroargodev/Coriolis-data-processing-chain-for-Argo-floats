@@ -2,7 +2,7 @@
 % Get the basic structure to read CTS5-USEA technical data.
 %
 % SYNTAX :
-%  [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_129
+%  [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_129_130_131
 %
 % INPUT PARAMETERS :
 %
@@ -18,7 +18,7 @@
 % RELEASES :
 %   06/17/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_129
+function [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_129_130_131
 
 % output parameters initialization
 o_techSectionList = [];

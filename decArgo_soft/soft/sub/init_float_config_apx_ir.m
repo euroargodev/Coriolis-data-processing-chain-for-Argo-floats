@@ -50,12 +50,12 @@ if (g_decArgo_floatTransType == 3)
    if (isfield(g_decArgo_jsonMetaData, 'FLOAT_RUDICS_ID'))
       [o_floatRudicsId, status] = str2num(g_decArgo_jsonMetaData.FLOAT_RUDICS_ID);
       if (status == 0)
-         fprintf('ERROR: FLOAT_RUDICS_ID is not correct in Json meta-data file (%s)\n', jsonInputFileName);
+         fprintf('ERROR: FLOAT_RUDICS_ID is not correct in Json meta-data file\n');
          return
       end
    end
    if (isempty(o_floatRudicsId))
-      fprintf('ERROR: FLOAT_RUDICS_ID is mandatory, it should be set in Json meta-data file (%s)\n', jsonInputFileName);
+      fprintf('ERROR: FLOAT_RUDICS_ID is mandatory, it should be set in Json meta-data file\n');
       return
    end
 end

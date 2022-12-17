@@ -29,6 +29,7 @@ o_decodeData = struct( ...
    'cyNumRaw', -1, ... % transmitted cycle number
    'cyNum', -1, ... % adjusted cycle number (corrected from float possible reset during mission)
    'packType', -1, ... % packet type number
+   'irSession', -1, ... % Iridium session indicator (0=first session, 1=second session) provided by the float
    'eolFlag', -1, ... % EOL flag provided by the float
    'resetDate', -1, ... % date of the last reset of the float
    'julD2FloatDayOffset', -1, ... % offset between julian day and float day

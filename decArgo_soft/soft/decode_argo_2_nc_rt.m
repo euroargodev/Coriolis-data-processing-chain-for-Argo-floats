@@ -90,7 +90,7 @@ try
          logFileName = [g_decArgo_dirOutputLogFile '/decode_argo_2_nc_rt_' currentTime '.log'];
       end
       diary(logFileName);   
-      
+            
       % print input parameters
       fprintf('CURRENT TIME: %s\n\n', currentTime);
       fprintf('INPUT PARAMETERS:\n');
@@ -175,13 +175,22 @@ try
       status = 'nok';
    end
 
-catch
-   
+catch MException
+
+   fprintf('ERROR:\n');
+   fprintf('%s\n', regexprep(MException.message, char(10), ': '));
+   for idS = 1:size(MException.stack, 1)
+      fprintf('Line: %3d File: %s (func: %s)\n', ...
+         MException.stack(idS). line, ...
+         MException.stack(idS). file, ...
+         MException.stack(idS). name);
+   end
+
    diary off;
-   
+
    % finalize XML report
-   [status] = finalize_xml_report(ticStartTime, logFileName, lasterror);
-   
+   [status] = finalize_xml_report(ticStartTime, logFileName, MException);
+
 end
 
 % delete the temporary sub-directory

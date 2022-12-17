@@ -8,6 +8,10 @@
 % data set files, then updated with OLD dataset DM and SCOOP QCs.
 % Note also that the report of SCOOP QCs is performed for all parameters except
 % those provided in a list (named IGNORED_PARAMETER_LIST below).
+% The "specific" version of the original tool has been created to save the
+% additional constraints appeared in version 1.8 of the tool because in its 1.9
+% version of nc_copy_mono_profile_dm_and_qc we came back to the "simplified"
+% version.
 %
 % SYNTAX :
 %   nc_copy_mono_profile_dm_and_qc_specific(varargin)

@@ -74,9 +74,9 @@ data(:, 4) = sensor_2_value_for_chloroA_ir_rudics_sbd2(data(:, 4));
 data(:, 5) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 5));
 data(:, 6) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 6));
 paramCHLA = get_netcdf_param_attributes('CHLA');
-data(:, 7) = compute_CHLA_105_to_112_121_to_127_1121_to_28_1322_1323(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
+data(:, 7) = compute_CHLA_105_to_112_121_to_131_1121_to_28_1322_1323(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
 % paramBBP700 = get_netcdf_param_attributes('BBP700');
-% data(:, 8) = compute_BBP700_105_to_112_121_to_127_1121_to_28_1322_1323(data(:, 5), g_decArgo_backscatDef, paramBBP700.fillValue);
+% data(:, 8) = compute_BBP700_105_to_112_121_to_131_1121_to_28_1322_1323(data(:, 5), g_decArgo_backscatDef, paramBBP700.fillValue);
 % paramBBP532 = get_netcdf_param_attributes('BBP532');
 % data(:, 9) = compute_BBP532_108_109(data(:, 6), g_decArgo_backscatDef, paramBBP532.fillValue);
 

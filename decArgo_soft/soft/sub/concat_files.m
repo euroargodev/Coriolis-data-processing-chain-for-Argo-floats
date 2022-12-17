@@ -28,34 +28,36 @@ o_ok = 1;
 
 % concatenate files in the provided order
 for idF = 1:length(a_inputFiles)
-   inputFilePathName = [a_inputDirName a_inputFiles{idF}];
-   outputFilePathName = [a_outputDirName a_outputFile];
-   if (idF == 1)
-      if (copy_file(inputFilePathName, outputFilePathName) == 0)
-         o_ok = 0;
-         return
-      end
-   else
-      
-      % concatenate input file content in the output file
-      fidOutput = fopen(outputFilePathName, 'a');
-      if (fidOutput == -1)
-         fprintf('ERROR: Unable to open file: %s\n', outputFilePathName);
-         o_ok = 0;
-         return
-      end
-      
-      fidInput = fopen(inputFilePathName, 'r');
-      if (fidInput == -1)
-         fprintf('ERROR: Unable to open file: %s\n', inputFilePathName);
-         o_ok = 0;
-         return
-      end
-      
-      fwrite(fidOutput, fread(fidInput));
+   if (~isempty(a_inputFiles{idF}))
+      inputFilePathName = [a_inputDirName a_inputFiles{idF}];
+      outputFilePathName = [a_outputDirName a_outputFile];
+      if (idF == 1)
+         if (copy_file(inputFilePathName, outputFilePathName) == 0)
+            o_ok = 0;
+            return
+         end
+      else
 
-      fclose(fidInput);
-      fclose(fidOutput);
+         % concatenate input file content in the output file
+         fidOutput = fopen(outputFilePathName, 'a');
+         if (fidOutput == -1)
+            fprintf('ERROR: Unable to open file: %s\n', outputFilePathName);
+            o_ok = 0;
+            return
+         end
+
+         fidInput = fopen(inputFilePathName, 'r');
+         if (fidInput == -1)
+            fprintf('ERROR: Unable to open file: %s\n', inputFilePathName);
+            o_ok = 0;
+            return
+         end
+
+         fwrite(fidOutput, fread(fidInput));
+
+         fclose(fidInput);
+         fclose(fidOutput);
+      end
    end
 end
 

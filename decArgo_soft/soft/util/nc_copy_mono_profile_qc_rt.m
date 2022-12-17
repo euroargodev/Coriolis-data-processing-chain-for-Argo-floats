@@ -14,11 +14,7 @@
 %      floatWmo       : float to process (if not given: all the floats of the Qc
 %                       directory are processed)
 %      inputQcDir     : directory of input NetCDF files containing the Qc values
-%      inputDmDir     : directory of DM input NetCDF files
-%      inputArgosDir  : directory of input NetCDF files for Argos floats
-%      inputSbdDir    : directory of input NetCDF files for Iridium SBD floats
-%      inputRudicsDir : directory of input NetCDF files for Iridium Rudics
-%                       floats (Remocean)
+%      inputDir     : directory of input NetCDF files to be updated
 %      outputDir      : directory of output NetCDF updated files
 %      logDir         : directory to store the log file
 %

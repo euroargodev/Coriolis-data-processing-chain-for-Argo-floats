@@ -110,13 +110,6 @@ switch(a_floatNum)
       if (~isempty(delFile))
          move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
       end
-      %       fprintf('MISC: %s - not used\n', delFile.name);
-      % 013b_system_00007#02.hex should be renamed 013b_system_00007#02.hex
-      movFile = dir([a_outputDir '/013b_system_00007#02*.hex']);
-      if (~isempty(movFile))
-         move_file([a_outputDir '/' movFile.name], ...
-            [a_outputDir '/' regexprep(movFile.name, '#02', '')]);
-      end
       
    case 4901805
       % files 012b_* should not be kept
@@ -169,26 +162,27 @@ switch(a_floatNum)
 
    case 6903124
       % files: 3e82_255_01_do.hex, 3e82_255_01_eco.hex, 3e82_255_01_ocr.hex,
-      % 3e82_255_01_ramses.hex, 3aa9_system_00116.hex should not be kept
+      % 3e82_255_01_ramses.hex should not be kept
       delFile = dir([a_outputDir '/3e82_255_01_*.hex']);
       for idF = 1:length(delFile)
          move_file([a_outputDir '/' delFile(idF).name], g_decArgo_unusedDirectory);
       end
 
-   case 6903094
-      % files 3ab0_system_00102#02.hex, 3ab0_system_00106#02.hex and 3ab0_system_00110#02.hex should not be kept
-      delFile = dir([a_outputDir '/3ab0_system_00102#02_*.hex']);
-      if (~isempty(delFile))
-         move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
-      end
-      delFile = dir([a_outputDir '/3ab0_system_00106#02_*.hex']);
-      if (~isempty(delFile))
-         move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
-      end
-      delFile = dir([a_outputDir '/3ab0_system_00110#02_*.hex']);
-      if (~isempty(delFile))
-         move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
-      end
+      % removed when a resue mode has been implemented for SYSTEM files
+      %    case 6903094
+      %       % files 3ab0_system_00102#02.hex, 3ab0_system_00106#02.hex and 3ab0_system_00110#02.hex should not be kept
+      %       delFile = dir([a_outputDir '/3ab0_system_00102#02_*.hex']);
+      %       if (~isempty(delFile))
+      %          move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
+      %       end
+      %       delFile = dir([a_outputDir '/3ab0_system_00106#02_*.hex']);
+      %       if (~isempty(delFile))
+      %          move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
+      %       end
+      %       delFile = dir([a_outputDir '/3ab0_system_00110#02_*.hex']);
+      %       if (~isempty(delFile))
+      %          move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
+      %       end
 
    case 6904226
       % two prefix are resent in transmitted files '4e88' and 'ffff'

@@ -1,12 +1,12 @@
 % ------------------------------------------------------------------------------
-% Create the ECO profiles of CTS5-USEA decoded data.
+% Create the OCR profiles of CTS5-USEA decoded data.
 %
 % SYNTAX :
 %  [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf] = ...
-%    process_profile_ir_rudics_cts5_usea_eco3(a_ecoData, a_timeData, a_gpsData)
+%    process_profile_ir_rudics_cts5_usea_ocr_130(a_ocrData, a_timeData, a_gpsData)
 %
 % INPUT PARAMETERS :
-%   a_ecoData  : CTS5-USEA ECO data
+%   a_ocrData  : CTS5-USEA OCR data
 %   a_timeData : decoded time data
 %   a_gpsData  : GPS data
 %
@@ -22,10 +22,10 @@
 % AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   09/22/2020 - RNU - creation
+%   10/31/2022 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf] = ...
-   process_profile_ir_rudics_cts5_usea_eco3(a_ecoData, a_timeData, a_gpsData)
+   process_profile_ir_rudics_cts5_usea_ocr_130(a_ocrData, a_timeData, a_gpsData)
 
 % output parameters initialization
 o_tabProfiles = [];
@@ -75,19 +75,17 @@ global g_decArgo_cts5Treat_DW;
 
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamListCtd;
-global g_decArgo_addParamListChla;
-global g_decArgo_addParamListBackscattering;
-global g_decArgo_addParamListCdom;
+global g_decArgo_addParamListRadiometry;
 
 
-if (isempty(a_ecoData))
+if (isempty(a_ocrData))
    return
 end
 
 % process the profiles
-for idP = 1:length(a_ecoData)
+for idP = 1:length(a_ocrData)
    
-   dataStruct = a_ecoData{idP};
+   dataStruct = a_ocrData{idP};
    phaseId = dataStruct.phaseId;
    treatId = dataStruct.treatId;
    data = dataStruct.data;
@@ -103,7 +101,7 @@ for idP = 1:length(a_ecoData)
    elseif (phaseId == g_decArgo_cts5PhaseSurface)
       phaseNum = g_decArgo_phaseSatTrans;
    else
-      fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Nothing done yet for processing ECO3 profiles with phase Id #%d\n', ...
+      fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Nothing done yet for processing OCR profiles with phase Id #%d\n', ...
          g_decArgo_floatNum, ...
          g_decArgo_cycleNum, ...
          g_decArgo_cycleNumFloat, ...
@@ -114,25 +112,26 @@ for idP = 1:length(a_ecoData)
    profStruct = get_profile_init_struct( ...
       g_decArgo_cycleNumFloat, g_decArgo_patternNumFloat, phaseNum, 0);
    profStruct.outputCycleNumber = g_decArgo_cycleNum;
-   profStruct.sensorNumber = 3;
-   profStruct.payloadSensorNumber = 4;
-      
+   profStruct.sensorNumber = 2;
+   profStruct.payloadSensorNumber = 3;
+   
    % store data measurements
    if (~isempty(data))
       
       switch (treatId)
          case {g_decArgo_cts5Treat_RW, g_decArgo_cts5Treat_AM, g_decArgo_cts5Treat_DW}
-            % ECO (raw) (mean) (decimated raw)
+            % OCR (raw) (mean) (decimated raw)
             
             % create parameters
             paramJuld = get_netcdf_param_attributes('JULD');
             paramPres = get_netcdf_param_attributes('PRES');
-            paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
-            paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
-            paramFluorescenceCdom = get_netcdf_param_attributes('FLUORESCENCE_CDOM');
-
+            paramIr1 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412');
+            paramIr2 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE443');
+            paramIr3 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490');
+            paramIr4 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE665');
+            
             profStruct.paramList = [ ...
-               paramPres paramFluorescenceChla paramBetaBackscattering700 paramFluorescenceCdom ...
+               paramPres paramIr1 paramIr2 paramIr3 paramIr4 ...
                ];
             
             % treatment type
@@ -145,53 +144,54 @@ for idP = 1:length(a_ecoData)
             end
             
          case g_decArgo_cts5Treat_AM_SD
-            % ECO (mean & stDev)
+            % OCR (mean & stDev)
             
             % create parameters
             paramJuld = get_netcdf_param_attributes('JULD');
             paramPres = get_netcdf_param_attributes('PRES');
-            paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
-            paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
-            paramFluorescenceCdom = get_netcdf_param_attributes('FLUORESCENCE_CDOM');
-            paramFluorescenceChlaStDev = get_netcdf_param_attributes('FLUORESCENCE_CHLA_STD');
-            paramBetaBackscattering700StDev = get_netcdf_param_attributes('BETA_BACKSCATTERING700_STD');
-            paramFluorescenceCdomStDev = get_netcdf_param_attributes('FLUORESCENCE_CDOM_STD');
+            paramIr1 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412');
+            paramIr2 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE443');
+            paramIr3 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490');
+            paramIr4 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE665');
+            paramIr1StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412_STD');
+            paramIr2StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE443_STD');
+            paramIr3StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490_STD');
+            paramIr4StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE665_STD');
             
             profStruct.paramList = [ ...
-               paramPres paramFluorescenceChla paramBetaBackscattering700 paramFluorescenceCdom ...
-               paramFluorescenceChlaStDev paramBetaBackscattering700StDev paramFluorescenceCdomStDev ...
+               paramPres paramIr1 paramIr2 paramIr3 paramIr4 ...
+               paramIr1StDev paramIr2StDev paramIr3StDev paramIr4StDev ...
                ];
             
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDev;
-            
+
             % parameter added "on the fly" to meta-data file
-            g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_CHLA_STD';
-            g_decArgo_addParamListChla = unique(g_decArgo_addParamListChla, 'stable');
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE412_STD';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE443_STD';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE490_STD';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE665_STD';
+            g_decArgo_addParamListRadiometry = unique(g_decArgo_addParamListRadiometry, 'stable');
 
-            g_decArgo_addParamListBackscattering{end+1} = 'BETA_BACKSCATTERING700_STD';
-            g_decArgo_addParamListBackscattering = unique(g_decArgo_addParamListBackscattering, 'stable');
-
-            g_decArgo_addParamListCdom{end+1} = 'FLUORESCENCE_CDOM_STD';
-            g_decArgo_addParamListCdom = unique(g_decArgo_addParamListCdom, 'stable');
-            
          case g_decArgo_cts5Treat_AM_MD
-            % ECO (mean & median)
+            % OCR (mean & median)
             
             % create parameters
             paramJuld = get_netcdf_param_attributes('JULD');
             paramPres = get_netcdf_param_attributes('PRES');
-            paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
-            paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
-            paramFluorescenceCdom = get_netcdf_param_attributes('FLUORESCENCE_CDOM');
+            paramIr1 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412');
+            paramIr2 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE443');
+            paramIr3 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490');
+            paramIr4 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE665');
             paramPresMed = get_netcdf_param_attributes('PRES_MED');
-            paramFluorescenceChlaMed = get_netcdf_param_attributes('FLUORESCENCE_CHLA_MED');
-            paramBetaBackscattering700Med = get_netcdf_param_attributes('BETA_BACKSCATTERING700_MED');
-            paramFluorescenceCdomMed = get_netcdf_param_attributes('FLUORESCENCE_CDOM_MED');
+            paramIr1Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412_MED');
+            paramIr2Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE443_MED');
+            paramIr3Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490_MED');
+            paramIr4Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE665_MED');
             
             profStruct.paramList = [ ...
-               paramPres paramFluorescenceChla paramBetaBackscattering700 paramFluorescenceCdom ...
-               paramPresMed paramFluorescenceChlaMed paramBetaBackscattering700Med paramFluorescenceCdomMed ...
+               paramPres paramIr1 paramIr2 paramIr3 paramIr4 ...
+               paramPresMed paramIr1Med paramIr2Med paramIr3Med paramIr4Med ...
                ];
 
             % treatment type
@@ -201,59 +201,57 @@ for idP = 1:length(a_ecoData)
             g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
             g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
 
-            g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_CHLA_MED';
-            g_decArgo_addParamListChla = unique(g_decArgo_addParamListChla, 'stable');
-
-            g_decArgo_addParamListBackscattering{end+1} = 'BETA_BACKSCATTERING700_MED';
-            g_decArgo_addParamListBackscattering = unique(g_decArgo_addParamListBackscattering, 'stable');
-
-            g_decArgo_addParamListCdom{end+1} = 'FLUORESCENCE_CDOM_MED';
-            g_decArgo_addParamListCdom = unique(g_decArgo_addParamListCdom, 'stable');
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE412_MED';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE443_MED';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE490_MED';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE665_MED';
+            g_decArgo_addParamListRadiometry = unique(g_decArgo_addParamListRadiometry, 'stable');
 
          case g_decArgo_cts5Treat_AM_SD_MD
-            % ECO (mean & stDev & median)
-            
+            % OCR (mean & stDev & median)
+
             % create parameters
             paramJuld = get_netcdf_param_attributes('JULD');
             paramPres = get_netcdf_param_attributes('PRES');
-            paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
-            paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
-            paramFluorescenceCdom = get_netcdf_param_attributes('FLUORESCENCE_CDOM');
-            paramFluorescenceChlaStDev = get_netcdf_param_attributes('FLUORESCENCE_CHLA_STD');
-            paramBetaBackscattering700StDev = get_netcdf_param_attributes('BETA_BACKSCATTERING700_STD');
-            paramFluorescenceCdomStDev = get_netcdf_param_attributes('FLUORESCENCE_CDOM_STD');
+            paramIr1 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412');
+            paramIr2 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE443');
+            paramIr3 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490');
+            paramIr4 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE665');
+            paramIr1StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412_STD');
+            paramIr2StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE443_STD');
+            paramIr3StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490_STD');
+            paramIr4StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE665_STD');
             paramPresMed = get_netcdf_param_attributes('PRES_MED');
-            paramFluorescenceChlaMed = get_netcdf_param_attributes('FLUORESCENCE_CHLA_MED');
-            paramBetaBackscattering700Med = get_netcdf_param_attributes('BETA_BACKSCATTERING700_MED');
-            paramFluorescenceCdomMed = get_netcdf_param_attributes('FLUORESCENCE_CDOM_MED');
+            paramIr1Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE412_MED');
+            paramIr2Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE443_MED');
+            paramIr3Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490_MED');
+            paramIr4Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE665_MED');
             
             profStruct.paramList = [ ...
-               paramPres paramFluorescenceChla paramBetaBackscattering700 paramFluorescenceCdom ...
-               paramFluorescenceChlaStDev paramBetaBackscattering700StDev paramFluorescenceCdomStDev ...
-               paramPresMed paramFluorescenceChlaMed paramBetaBackscattering700Med paramFluorescenceCdomMed ...
+               paramPres paramIr1 paramIr2 paramIr3 paramIr4 ...
+               paramIr1StDev paramIr2StDev paramIr3StDev paramIr4StDev ...
+               paramPresMed paramIr1Med paramIr2Med paramIr3Med paramIr4Med ...
                ];
-                        
+
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDevAndMedian;
-            
+
             % parameter added "on the fly" to meta-data file
             g_decArgo_addParamListCtd{end+1} = 'PRES_MED';
             g_decArgo_addParamListCtd = unique(g_decArgo_addParamListCtd, 'stable');
 
-            g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_CHLA_STD';
-            g_decArgo_addParamListChla{end+1} = 'FLUORESCENCE_CHLA_MED';
-            g_decArgo_addParamListChla = unique(g_decArgo_addParamListChla, 'stable');
-
-            g_decArgo_addParamListBackscattering{end+1} = 'BETA_BACKSCATTERING700_STD';
-            g_decArgo_addParamListBackscattering{end+1} = 'BETA_BACKSCATTERING700_MED';
-            g_decArgo_addParamListBackscattering = unique(g_decArgo_addParamListBackscattering, 'stable');
-
-            g_decArgo_addParamListCdom{end+1} = 'FLUORESCENCE_CDOM_STD';
-            g_decArgo_addParamListCdom{end+1} = 'FLUORESCENCE_CDOM_MED';
-            g_decArgo_addParamListCdom = unique(g_decArgo_addParamListCdom, 'stable');
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE412_STD';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE412_MED';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE443_STD';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE443_MED';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE490_STD';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE490_MED';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE665_STD';
+            g_decArgo_addParamListRadiometry{end+1} = 'RAW_DOWNWELLING_IRRADIANCE665_MED';
+            g_decArgo_addParamListRadiometry = unique(g_decArgo_addParamListRadiometry, 'stable');
 
          otherwise
-            fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Treatment #%d not managed - ECO data ignored\n', ...
+            fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Treatment #%d not managed - OCR data ignored\n', ...
                g_decArgo_floatNum, ...
                g_decArgo_cycleNum, ...
                g_decArgo_cycleNumFloat, ...

@@ -447,9 +447,8 @@ if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
    end
    sensorList = sort(unique(sensorList));
 else
-   fprintf('ERROR: Float #%d: SENSOR_MOUNTED_ON_FLOAT not present in Json meta-data file: %s\n', ...
-      g_decArgo_floatNum, ...
-      jsonInputFileName);
+   fprintf('ERROR: Float #%d: SENSOR_MOUNTED_ON_FLOAT not present in Json meta-data file\n', ...
+      g_decArgo_floatNum);
 end
 
 % store the sensor list

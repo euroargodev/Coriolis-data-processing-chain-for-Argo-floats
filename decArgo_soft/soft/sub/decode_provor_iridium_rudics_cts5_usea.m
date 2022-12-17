@@ -376,7 +376,7 @@ for idFlCy = 1:length(floatCycleList)
 
          % adjust BGC pressures sampled during drift phase
          % and SUNA profile pressures
-         if (ismember(a_decoderId, [126:129]))
+         if (ismember(a_decoderId, [126:131]))
             [tabProfiles, tabDrift] = adjust_bgc_pres_cts5_usea(tabProfiles, tabDrift);
          end
 
@@ -467,7 +467,7 @@ for idFlCy = 1:length(floatCycleList)
 
                % adjust BGC pressures sampled during drift phase
                % and SUNA profile pressures
-               if (ismember(a_decoderId, [126:129]))
+               if (ismember(a_decoderId, [126:131]))
                   [tabProfiles, tabDrift] = adjust_bgc_pres_cts5_usea(tabProfiles, tabDrift);
                end
 
@@ -566,7 +566,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    % technical data
    [o_tabNcTechIndex, o_tabNcTechVal] = ...
       update_technical_data_ir_rudics_cts5( ...
-      o_tabNcTechIndex, o_tabNcTechVal, g_decArgo_firstCycleNumCts5, a_decoderId);
+      o_tabNcTechIndex, o_tabNcTechVal, g_decArgo_firstCycleNumCts5);
 end
 
 return
@@ -916,7 +916,7 @@ for typeNum = typeOrderList
                         fileNameInfo{2}{idFile2});
                   end
 
-                  print_data_in_csv_file_ir_rudics_cts5_ECO(apmtEco);
+                  print_data_in_csv_file_ir_rudics_cts5_ECO(apmtEco, a_decoderId);
                end
 
                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -934,7 +934,7 @@ for typeNum = typeOrderList
                         fileNameInfo{2}{idFile2});
                   end
 
-                  print_data_in_csv_file_ir_rudics_cts5_OCR(apmtOcr);
+                  print_data_in_csv_file_ir_rudics_cts5_OCR(apmtOcr, a_decoderId);
                end
 
                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1227,10 +1227,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesOcr, tabDriftOcr, tabDesc2ProfOcr, tabSurfOcr] = ...
-         process_profile_ir_rudics_cts5_usea_ocr(apmtOcr, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_ir_rudics_cts5_usea_ocr(apmtOcr, apmtTimeFromTech, g_decArgo_gpsData, a_decoderId);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesOcr] = merge_profile_meas_ir_rudics_cts5_usea_ocr(tabProfilesOcr);
+      [tabProfilesOcr] = merge_profile_meas_ir_rudics_cts5_usea_ocr(tabProfilesOcr, a_decoderId);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesOcr] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesOcr);
@@ -1246,10 +1246,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesEco, tabDriftEco, tabDesc2ProfEco, tabSurfEco] = ...
-         process_profile_ir_rudics_cts5_usea_eco(apmtEco, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_ir_rudics_cts5_usea_eco(apmtEco, apmtTimeFromTech, g_decArgo_gpsData, a_decoderId);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesEco] = merge_profile_meas_ir_rudics_cts5_usea_eco(tabProfilesEco);
+      [tabProfilesEco] = merge_profile_meas_ir_rudics_cts5_usea_eco(tabProfilesEco, a_decoderId);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesEco] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesEco);

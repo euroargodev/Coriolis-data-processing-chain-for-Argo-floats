@@ -601,8 +601,8 @@ switch (a_decoderId)
       [o_ok] = decode_event_data_121_to_123(a_inputFilePathName, a_launchDate);
    case {124, 125}
       [o_ok] = decode_event_data_124_125(a_inputFilePathName, a_launchDate);
-   case {126, 127, 128, 129}
-      [o_ok] = decode_event_data_126_127_128_129(a_inputFilePathName, a_launchDate);
+   case {126, 127, 128, 129, 130, 131}
+      [o_ok] = decode_event_data_126_2_131(a_inputFilePathName, a_launchDate);
    otherwise
       fprintf('ERROR: decode_event_data not defined yet for deciId #%d\n', ...
          a_decoderId);
@@ -1009,7 +1009,7 @@ return
 % Decode and store CTS5 events of a given system file.
 %
 % SYNTAX :
-%  [o_ok] = decode_event_data_126_127_128_129(a_inputFilePathName, a_launchDate)
+%  [o_ok] = decode_event_data_126_2_131(a_inputFilePathName, a_launchDate)
 %
 % INPUT PARAMETERS :
 %   a_inputFilePathName : system file path name
@@ -1026,7 +1026,41 @@ return
 % RELEASES :
 %   09/02/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ok] = decode_event_data_126_127_128_129(a_inputFilePathName, a_launchDate)
+function [o_ok] = decode_event_data_126_2_131(a_inputFilePathName, a_launchDate)
+
+% output parameters initialization
+o_ok = 0;
+
+o_ok = decode_event_data_nominal_126_2_130(a_inputFilePathName, a_launchDate);
+
+if (~o_ok)
+   o_ok = decode_event_data_rescue_126_2_130(a_inputFilePathName, a_launchDate);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Decode and store CTS5 events of a given system file.
+%
+% SYNTAX :
+%  [o_ok] = decode_event_data_rescue_126_2_130(a_inputFilePathName, a_launchDate)
+%
+% INPUT PARAMETERS :
+%   a_inputFilePathName : system file path name
+%   a_launchDate        : launch date
+%
+% OUTPUT PARAMETERS :
+%   o_ok : decoding report flag (1 if ok, 0 otherwise)
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   09/02/2020 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_ok] = decode_event_data_rescue_126_2_130(a_inputFilePathName, a_launchDate)
 
 % output parameters initialization
 o_ok = 0;
@@ -1045,11 +1079,223 @@ global g_decArgo_eventUsedList;
 
 
 % initialize event list
-init_event_lists_126_127_128_129;
+init_event_lists_126_2_130;
 evtList = g_decArgo_eventNumTypeList;
 
 if ~(exist(a_inputFilePathName, 'file') == 2)
-   fprintf('ERROR: decode_event_data_126_127_128_129: File not found: %s\n', a_inputFilePathName);
+   fprintf('ERROR: decode_event_data_nominal_126_2_130: File not found: %s\n', a_inputFilePathName);
+   return
+end
+
+% open the file and read the data
+fId = fopen(a_inputFilePathName, 'r');
+if (fId == -1)
+   fprintf('ERROR: Unable to open file: %s\n', a_inputFilePathName);
+   return
+end
+data = fread(fId);
+fclose(fId);
+
+% find the position of the last useful byte
+lastByteNum = get_last_byte_number(data, hex2dec('1a'));
+
+timeOffset = 455812984;
+
+lastDate = '';
+if (~isempty(g_decArgo_eventData))
+   lastDate = g_decArgo_eventData{end, 4};
+end
+
+VERBOSE = 0;
+
+evtDataTab = [];
+evtDataTabAll = [];
+curBitStart = 0;
+ok = 0;
+while ((curBitStart-1)/8 < lastByteNum)
+
+   if (ok == 1)
+      evtDataTabAll = [evtDataTabAll; evtDataTab];
+      break
+   end
+
+   if (length(evtDataTab) <= 10)
+      curBitStart = curBitStart + 1;
+   else
+      evtDataTabAll = [evtDataTabAll; evtDataTab];
+      curBitStart = curBit + 1;
+   end
+   curBit = curBitStart;
+
+   if (VERBOSE)
+      fprintf('curBit = %d/%d\n', curBit, lastByteNum*8);
+   end
+
+   ok = 1;
+   evtDataTab = [];
+
+   clockError = 0;
+   evtJulDPrec = [];
+   while ((curBit-1)/8 < lastByteNum)
+      if (lastByteNum - (curBit-1)/8 < 5)
+         fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
+            lastByteNum - (curBit-1)/8, a_inputFilePathName);
+         break
+      else
+
+         rawData = get_bits(curBit, [8 32], data);
+         curBit = curBit + 40;
+
+         timeInfo = typecast(swapbytes(uint32(rawData(2))), 'uint32');
+         evtDate = bitand(timeInfo, hex2dec('3FFFFFFF'));
+         evtEpoch2000 = evtDate + timeOffset;
+         evtJulD = g_decArgo_janFirst2000InJulD + double(evtEpoch2000)/86400;
+
+         if (~isempty(lastDate))
+            if (evtJulD < lastDate)
+               if (VERBOSE)
+                  fprintf('ERROR: evtJulD < lastDate : (%s < %s)\n', ...
+                     julian_2_gregorian_dec_argo(evtJulD), ...
+                     julian_2_gregorian_dec_argo(lastDate));
+               end
+               ok = 0;
+               break
+            end
+         end
+         
+         evtNum = rawData(1) + bitshift(timeInfo, -30)*256;
+         idF = find(evtList(:, 1) == evtNum);
+         if (length(idF) == 1)
+            evtDataType = evtList(idF, 2);
+
+            if (~ismember(evtDataType, 0:17))
+               if (VERBOSE)
+                  fprintf('ERROR: unexpected evtDataType : (%d)\n', ...
+                     evtDataType);
+               end
+               ok = 0;
+               break
+            end
+
+            retrieve = 0;
+            if (ismember(evtNum, g_decArgo_eventUsedList))
+               retrieve = 1;
+            end
+            [ok, curBit, evtData] = get_event_126_2_130(curBit, data, evtDataType, retrieve);
+            if (~ok)
+               if (VERBOSE)
+                  evtGregD = julian_2_gregorian_dec_argo(evtJulD);
+                  fprintf('ERROR: unable to retrieve event #%d (dated %s) in file %s\n', ...
+                     evtNum, evtGregD, a_inputFilePathName);
+               end
+               ok = 0;
+               break
+            end
+
+            % BE CAREFUL: the RTC could be erroneously set
+            % see for example float 6902829:
+            % 23/07/2017 03:01	SYSTEM	Clock update 2001/01/00 00:00:00
+            % in that case we ignore following events until the next #12 event
+            stopClockError = 1;
+            if (evtNum == 12)
+               % check if the new RTC set date is after float launch date - 365
+               if (evtData{:} > a_launchDate - 365)
+                  if (clockError == 1)
+                     fprintf('WARNING: RTC correctly set to %s in file %s - end of event date correction\n', ...
+                        julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+                     clockError = 0;
+                     stopClockError = 0;
+                  end
+               else
+                  fprintf('WARNING: RTC erroneously set to %s in file %s - start of event date correction\n', ...
+                     julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+                  clockError = 1;
+               end
+            end
+
+            if (retrieve)
+               evtNew = cell(1, 4);
+               if (~isempty(g_decArgo_eventData))
+                  evtNew{1, 1} = size(g_decArgo_eventData, 1) + 1;
+               else
+                  evtNew{1, 1} = 1;
+               end
+               evtNew{1, 2} = evtNum;
+               evtNew{1, 3} = evtData;
+               if ((clockError == 0) && (stopClockError == 1))
+                  evtNew{1, 4} = evtJulD;
+                  evtJulDPrec = evtJulD;
+               else
+                  evtNew{1, 4} = fix(evtJulDPrec) + evtJulD - fix(evtJulD);
+                  if (ismember(evtNum, [12 66]))
+                     evtNew{1, 3} = evtNew(1, 4);
+                  end
+               end
+               evtDataTab = [evtDataTab; evtNew];
+            end
+         else
+            if (VERBOSE)
+               fprintf('WARNING: unexpected event number (%d) in file %s\n', ...
+                  evtNum, a_inputFilePathName);
+            end
+            ok = 0;
+            break
+         end
+      end
+   end
+end
+
+g_decArgo_eventData = cat(1, g_decArgo_eventData, evtDataTabAll);
+
+o_ok = 1;
+
+return
+
+% ------------------------------------------------------------------------------
+% Decode and store CTS5 events of a given system file.
+%
+% SYNTAX :
+%  [o_ok] = decode_event_data_nominal_126_2_130(a_inputFilePathName, a_launchDate)
+%
+% INPUT PARAMETERS :
+%   a_inputFilePathName : system file path name
+%   a_launchDate        : launch date
+%
+% OUTPUT PARAMETERS :
+%   o_ok : decoding report flag (1 if ok, 0 otherwise)
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   09/02/2020 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_ok] = decode_event_data_nominal_126_2_130(a_inputFilePathName, a_launchDate)
+
+% output parameters initialization
+o_ok = 0;
+
+% default values
+global g_decArgo_janFirst2000InJulD;
+
+% variable to store all useful event data
+global g_decArgo_eventData;
+
+% variable to store event numbers and types
+global g_decArgo_eventNumTypeList;
+
+% list of events to use
+global g_decArgo_eventUsedList;
+
+
+% initialize event list
+init_event_lists_126_2_130;
+evtList = g_decArgo_eventNumTypeList;
+
+if ~(exist(a_inputFilePathName, 'file') == 2)
+   fprintf('ERROR: decode_event_data_nominal_126_2_130: File not found: %s\n', a_inputFilePathName);
    return
 end
 
@@ -1068,15 +1314,12 @@ lastByteNum = get_last_byte_number(data, hex2dec('1a'));
 timeOffset = 455812984;
 
 curBit = 1;
-ignoreEvts = 0;
-ignoreNextEvt = 0;
 clockError = 0;
 evtJulDPrec = [];
 NB_EVENTS = 500;
 evtAll = repmat(cell(1, 4), NB_EVENTS, 1);
 cpt = 1;
-stop = 0;
-while (((curBit-1)/8 < lastByteNum) && (~stop))
+while ((curBit-1)/8 < lastByteNum)
    if (lastByteNum - (curBit-1)/8 < 5)
       fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
          lastByteNum - (curBit-1)/8, a_inputFilePathName);
@@ -1099,7 +1342,7 @@ while (((curBit-1)/8 < lastByteNum) && (~stop))
          if (ismember(evtNum, g_decArgo_eventUsedList))
             retrieve = 1;
          end
-         [ok, curBit, evtData] = get_event_126_127(curBit, data, evtDataType, retrieve);
+         [ok, curBit, evtData] = get_event_126_2_130(curBit, data, evtDataType, retrieve);
          if (~ok)
             evtGregD = julian_2_gregorian_dec_argo(evtJulD);
             fprintf('ERROR: unable to retrieve event #%d (dated %s) in file %s\n', ...
@@ -1155,7 +1398,7 @@ while (((curBit-1)/8 < lastByteNum) && (~stop))
       else
          fprintf('WARNING: unexpected event number (%d) in file %s\n', ...
             evtNum, a_inputFilePathName);
-         stop = 1;
+         return
       end
    end
 end
@@ -1770,7 +2013,7 @@ return
 % Decode (or only read without storing it) one CTS5 event.
 %
 % SYNTAX :
-%  [o_ok, o_curBit, o_evtData] = get_event_126_127(a_curBit, a_data, a_evtDataType, a_retrieve)
+%  [o_ok, o_curBit, o_evtData] = get_event_126_2_130(a_curBit, a_data, a_evtDataType, a_retrieve)
 %
 % INPUT PARAMETERS :
 %   a_curBit      : input current bit
@@ -1791,7 +2034,7 @@ return
 % RELEASES :
 %   10/18/2018 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ok, o_curBit, o_evtData] = get_event_126_127(a_curBit, a_data, a_evtDataType, a_retrieve)
+function [o_ok, o_curBit, o_evtData] = get_event_126_2_130(a_curBit, a_data, a_evtDataType, a_retrieve)
 
 % output parameters initialization
 o_ok = 0;
@@ -1846,14 +2089,16 @@ switch (a_evtDataType)
       end
    case {2, 15}
       % S
+      evtRawData = get_bits(o_curBit, bitPattern, a_data);
+      if (evtRawData == 0)
+         return
+      end
       if (a_retrieve)
-         evtRawData = get_bits(o_curBit, bitPattern, a_data);
          o_curBit = o_curBit + sum(bitPattern);
          evtRawData2 = get_bits(o_curBit, repmat(8, 1, evtRawData), a_data);
          o_curBit = o_curBit + evtRawData*8;
          o_evtData{end+1} = char(evtRawData2-128)';
       else
-         evtRawData = get_bits(o_curBit, bitPattern, a_data);
          o_curBit = o_curBit + sum(bitPattern) + evtRawData*8;
       end
    case 3
@@ -1980,21 +2225,26 @@ switch (a_evtDataType)
       end
    case 11
       % LUS
+      evtRawData = get_bits(o_curBit, bitPattern, a_data);
+      if (evtRawData(2) == 0)
+         return
+      end
       if (a_retrieve)
-         evtRawData = get_bits(o_curBit, bitPattern, a_data);
          o_curBit = o_curBit + sum(bitPattern);
          o_evtData{end+1} = typecast(swapbytes(uint32(evtRawData(1))), 'uint32');
          evtRawData2 = get_bits(o_curBit, repmat(8, 1, evtRawData(2)), a_data);
          o_curBit = o_curBit + evtRawData(2)*8;
          o_evtData{end+1} = char(evtRawData2-128)';
       else
-         evtRawData = get_bits(o_curBit, bitPattern, a_data);
          o_curBit = o_curBit + sum(bitPattern) + evtRawData(2)*8;
       end
    case 12
       % USS
+      evtRawData = get_bits(o_curBit, bitPattern, a_data);
+      if ((evtRawData(2) == 0) || (evtRawData(3) == 0))
+         return
+      end
       if (a_retrieve)
-         evtRawData = get_bits(o_curBit, bitPattern, a_data);
          o_curBit = o_curBit + sum(bitPattern);
          o_evtData{end+1} = typecast(swapbytes(uint16(evtRawData(1))), 'uint16');
          evtRawData2 = get_bits(o_curBit, repmat(8, 1, evtRawData(2)), a_data);
@@ -2004,13 +2254,15 @@ switch (a_evtDataType)
          o_curBit = o_curBit + evtRawData(3)*8;
          o_evtData{end+1} = char(evtRawData3-128)';
       else
-         evtRawData = get_bits(o_curBit, bitPattern, a_data);
          o_curBit = o_curBit + sum(bitPattern) + evtRawData(2)*8 + evtRawData(3)*8;
       end
    case 13
       % USSS
+      evtRawData = get_bits(o_curBit, bitPattern, a_data);
+      if ((evtRawData(2) == 0) || (evtRawData(3)-1 == 0) || (evtRawData(4) == 0))
+         return
+      end
       if (a_retrieve)
-         evtRawData = get_bits(o_curBit, bitPattern, a_data);
          o_curBit = o_curBit + sum(bitPattern);
          o_evtData{end+1} = typecast(swapbytes(uint16(evtRawData(1))), 'uint16');
          evtRawData2 = get_bits(o_curBit, repmat(8, 1, evtRawData(2)), a_data);
@@ -2026,7 +2278,6 @@ switch (a_evtDataType)
          o_curBit = o_curBit + (evtRawData(4)+1)*8;
          o_evtData{end+1} = char(evtRawData4-128)';
       else
-         evtRawData = get_bits(o_curBit, bitPattern, a_data);
          o_curBit = o_curBit + sum(bitPattern) + evtRawData(2)*8 + evtRawData(3)*8 + evtRawData(4)*8;
       end
    case 14
@@ -2053,15 +2304,17 @@ switch (a_evtDataType)
       end
    case 17
       % SLU
+      evtRawData = get_bits(o_curBit, bitPattern, a_data);
+      if (evtRawData(1) == 0)
+         return
+      end
       if (a_retrieve)
-         evtRawData = get_bits(o_curBit, bitPattern, a_data);
          o_curBit = o_curBit + sum(bitPattern);
          evtRawData2 = get_bits(o_curBit, repmat(8, 1, evtRawData(1)), a_data);
          o_curBit = o_curBit + evtRawData(1)*8;
          o_evtData{end+1} = char(evtRawData2-128)';
          o_evtData{end+1} = typecast(swapbytes(uint32(evtRawData(2))), 'uint32');
       else
-         evtRawData = get_bits(o_curBit, bitPattern, a_data);
          o_curBit = o_curBit + evtRawData(1)*8 + sum(bitPattern);
       end
    otherwise
@@ -2669,7 +2922,7 @@ return
 % Init event type list and event used list.
 %
 % SYNTAX :
-%  init_event_lists_126_127_128_129
+%  init_event_lists_126_2_130
 %
 % INPUT PARAMETERS :
 %
@@ -2683,7 +2936,7 @@ return
 % RELEASES :
 %   09/03/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function init_event_lists_126_127_128_129
+function init_event_lists_126_2_130
 
 % variable to store event numbers and types
 global g_decArgo_eventNumTypeList;

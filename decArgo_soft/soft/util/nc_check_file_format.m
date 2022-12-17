@@ -25,6 +25,7 @@ function nc_check_file_format(varargin)
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_exec_v2.6_2022-04-19_spec_v2.6_2022-04-21\';
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_exec_v2.7_2022-05-17_spec_v2.6_2022-04-21\';
 DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_exec_v2.7.03_2022-06-01_spec_v2.6_2022-04-21\';
+DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_exec_v2.7.03_2022-06-01_spec_v2.7_2022-09-26\';
 
 % top directory of the NetCDF files to check
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
@@ -50,6 +51,8 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexO
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_flbb_20160512.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_c_5.3_5.301_all.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_cm.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_cts5_jumbo.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
 
 % meta-data file exported from Coriolis data base
 % dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\meta_PRV_from_VB_REFERENCE_20150217.txt';
@@ -76,13 +79,13 @@ CHECK_NC_META = 1;
 
 if (nargin == 0)
    floatListFileName = FLOAT_LIST_FILE_NAME;
-   
+
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
       return
    end
-   
+
    fprintf('Floats from list: %s\n', floatListFileName);
    floatList = load(floatListFileName);
 else
@@ -134,35 +137,35 @@ fprintf(fidOut, '%s\n', header);
 lineNum = 1;
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
-   
+
    floatNum = floatList(idFloat);
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
-   
+
    % json meta-data file for this float
    jsonInputFileName = [DIR_JSON_FLOAT_META '/' sprintf('%d_meta.json', floatNum)];
-   
-   floatDac = 'INCOIS';
-%    floatDac = 'CORIOLIS';
+
+   %    floatDac = 'INCOIS';
+   floatDac = 'CORIOLIS';
    if (exist(jsonInputFileName, 'file') == 2)
       % read meta-data file
       metaData = loadjson(jsonInputFileName);
-      
+
       inst = get_institution_from_data_centre(metaData.DATA_CENTRE);
       if (~isempty(inst))
          floatDac = inst;
       end
    end
-   
+
    %    [floatDac] = get_float_dac(floatNum, metaWmoList, metaData);
    %    floatDac = 'incois';
    %    floatDac = 'aoml';
    %    floatDac = 'csio';
    %    floatDac = 'bodc';
    %    floatDac = 'coriolis';
-   
+
    for idType = 1:5
-      
+
       if ((idType == 1) && (CHECK_NC_TRAJ == 1))
          % check trajectory files
          ncFileDir = [DIR_INPUT_NC_FILES '/' num2str(floatNum) '/'];
@@ -191,18 +194,18 @@ for idFloat = 1:nbFloats
       else
          continue
       end
-      
+
       if (exist(ncFileDir, 'dir') == 7)
-         
+
          for idFile = 1:length(ncFiles)
-            
+
             ncFileName = ncFiles(idFile).name;
             [~, name, ~] = fileparts(ncFileName);
             if (strcmp(name(end-3:end), '_aux'))
                continue
             end
             ncFilePathName = [ncFileDir '/' ncFileName];
-            
+
             cmd = '';
             if (ispc)
                cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
@@ -226,22 +229,22 @@ for idFloat = 1:nbFloats
                fprintf('Cannot determine operating system\n');
                return
             end
-            
+
             [status, cmdOut] = system(cmd);
             if (status == 0)
-               
+
                reportFilePathName = [DIR_OUTPUT_REPORT_FILES '/' ncFileName '.filecheck'];
                if ~(exist(reportFilePathName, 'file') == 2)
                   fprintf('ERROR: Report file not found: %s\n', reportFilePathName);
                   continue
                end
-               
+
                fId = fopen(reportFilePathName, 'r');
                if (fId == -1)
                   fprintf('ERROR: Unable to open file: %s\n', reportFilePathName);
                   continue
                end
-               
+
                status = '';
                errorNum = -1;
                warningNum = -1;
@@ -250,7 +253,7 @@ for idFloat = 1:nbFloats
                   if (line == -1)
                      break
                   end
-                  
+
                   % collect information
                   if (~isempty(strfind(line, '<status>')))
                      idFStatus1 = strfind(line, '<status>');
@@ -284,19 +287,19 @@ for idFloat = 1:nbFloats
                      break,
                   end
                end
-               
+
                fclose(fId);
-               
+
                % edit report
                %                if ((errorNum > 0) || (warningNum > 0))
                %                   edit(reportFilePathName);
                %                end
-               
+
                % print collected information in the output CSV file
                fprintf(fidOut, '%d; %d; %s; %s; %s; %d; %d\n', ...
                   lineNum, floatNum, pattern, ncFileName, status, errorNum, warningNum);
                lineNum = lineNum + 1;
-               
+
             else
                fprintf('ERROR: Status %d returned by system cmd ''%s''\n', status, cmd);
             end
