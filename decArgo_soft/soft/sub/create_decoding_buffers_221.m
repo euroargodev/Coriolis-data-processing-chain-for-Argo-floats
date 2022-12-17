@@ -483,11 +483,13 @@ end
 % update tabCompleted array
 cyNumList = unique(tabRankByCycle);
 cyNumList(cyNumList < 0) = [];
-for cyNum = 1:length(cyNumList)
-   idForCheck = find(tabRankByCycle == cyNumList(cyNum));
+for cyId = 1:length(cyNumList)
+   cyNum = cyNumList(cyId);
+   idForCheck = find(tabRankByCycle == cyNum);
 
    % check current session contents
-   [completed, deep, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0, 1);
+   [completed, ~, ~] = check_buffer(idForCheck, tabPackType, ...
+      tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, tabExpNbNearSurface, tabExpNbInAir, cyNum, 0, 1);
    if (completed == 1)
       tabCompleted(idForCheck) = 1;
    end

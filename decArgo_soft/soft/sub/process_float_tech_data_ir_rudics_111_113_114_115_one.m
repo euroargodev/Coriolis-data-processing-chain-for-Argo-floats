@@ -464,7 +464,7 @@ idPos = find(strcmp(g_decArgo_floatConfig.STATIC.NAMES, 'CONFIG_PX_0_0_0_0_3') =
 if (isempty(idPos))
    g_decArgo_floatConfig.STATIC.NAMES{end+1} = 'CONFIG_PX_0_0_0_0_3';
    g_decArgo_floatConfig.STATIC.VALUES{end+1} = num2str(a_tabTech(a_dataIndex, 85));
-   if (width(g_decArgo_floatConfig.STATIC.NAMES) > 1)
+   if (size(g_decArgo_floatConfig.STATIC.NAMES, 2) > size(g_decArgo_floatConfig.STATIC.NAMES, 1))
       g_decArgo_floatConfig.STATIC.NAMES = g_decArgo_floatConfig.STATIC.NAMES';
       g_decArgo_floatConfig.STATIC.VALUES = g_decArgo_floatConfig.STATIC.VALUES';
    end
@@ -480,7 +480,7 @@ idPos = find(strcmp(g_decArgo_floatConfig.STATIC.NAMES, 'CONFIG_PX_0_0_0_0_4') =
 if (isempty(idPos))
    g_decArgo_floatConfig.STATIC.NAMES{end+1} = 'CONFIG_PX_0_0_0_0_4';
    g_decArgo_floatConfig.STATIC.VALUES{end+1} = num2str(a_tabTech(a_dataIndex, 86));
-   if (width(g_decArgo_floatConfig.STATIC.NAMES) > 1)
+   if (size(g_decArgo_floatConfig.STATIC.NAMES, 2) > size(g_decArgo_floatConfig.STATIC.NAMES, 1))
       g_decArgo_floatConfig.STATIC.NAMES = g_decArgo_floatConfig.STATIC.NAMES';
       g_decArgo_floatConfig.STATIC.VALUES = g_decArgo_floatConfig.STATIC.VALUES';
    end

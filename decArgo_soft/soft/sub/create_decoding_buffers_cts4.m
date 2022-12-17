@@ -239,7 +239,7 @@ for sesNum = sessionList
          delayed = 1;
          
          if ((completed == 1) && (deep ~= deepExpected))
-            fprintf('\nINFO: Float #%d : session number %d : no measurement during deep cycle\n\n', ...
+            fprintf('\nINFO: Float #%d : session number %d : no measurement during deep cycle\n', ...
                g_decArgo_floatNum, sesNum);
          end
          
@@ -311,7 +311,7 @@ for sesNum = sessionList
    delayed = 0;
    
    if ((completed == 1) && (deep ~= deepExpected))
-      fprintf('\nINFO: Float #%d : session number %d : no measurement during deep cycle\n\n', ...
+      fprintf('\nINFO: Float #%d : session number %d : no measurement during deep cycle\n', ...
          g_decArgo_floatNum, sesNum);
    end
    
