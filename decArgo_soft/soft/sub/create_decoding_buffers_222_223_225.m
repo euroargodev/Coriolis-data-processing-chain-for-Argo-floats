@@ -637,10 +637,18 @@ if (ismember(g_decArgo_floatNum, [ ...
          % WARNING: Float #6904097: config already exists for cycle #24 - updating the current one
          % is due to reset of the float, nothing to do
       case 6904080
-         % cycle #20 data transmitted more than 3 transmissions
+         % cycle #20 data transmitted in more than 3 transmissions
          id20 = find(tabCyNum == 20);
          tabRank(id20) = tabRank(id20(1));
          tabRankByCycle(id20) = tabRankByCycle(id20(1));
+         % cycle #23 data transmitted in more than 3 transmissions
+         id23 = find(tabCyNum == 23);
+         tabRank(id23) = tabRank(id23(1));
+         tabRankByCycle(id23) = tabRankByCycle(id23(1));
+         % cycle #25 data transmitted in more than 3 transmissions
+         id25 = find(tabCyNum == 25);
+         tabRank(id25) = tabRank(id25(1));
+         tabRankByCycle(id25) = tabRankByCycle(id25(1));
       case 6903867
          % cycle #136 split for unknown reason
          id136 = find(tabCyNum == 136);
