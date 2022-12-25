@@ -27,10 +27,13 @@ global g_decArgo_argosLatDef;
 % array to store GPS data
 global g_decArgo_gpsData;
 
+% cycle phases
+global g_decArgo_phaseSurfWait;
+
 
 if (~isempty(a_tabTech))
    
-   idPos = find((a_tabTech(:, 88) ~= g_decArgo_argosLonDef) & (a_tabTech(:, 77) == 1));
+   idPos = find((a_tabTech(:, 88) ~= g_decArgo_argosLonDef) & (a_tabTech(:, 77) == 1)); % valid fix
    if (~isempty(idPos))
       
       % unpack the GPS data
@@ -71,43 +74,6 @@ if (~isempty(a_tabTech))
       gpsLocSbdFileDate = [gpsLocSbdFileDate; a_tabTech(idPos, 90)];
       gpsLocInTrajFlag = [gpsLocInTrajFlag; zeros(length(idPos), 1)];
 
-      cyProfNumList = [a_tabTech(idPos, 4) a_tabTech(idPos, 5)];
-      uCyProfNumList = unique(cyProfNumList, 'rows');
-      for idCy = 1:size(uCyProfNumList, 1)
-         
-         cycleNumber = uCyProfNumList(idCy, 1);
-         profNumber = uCyProfNumList(idCy, 2);
-         
-         % compute the JAMSTEC QC for the GPS locations of the current cycle
-         
-         lastLocDateOfPrevCycle = g_decArgo_dateDef;
-         lastLocLonOfPrevCycle = g_decArgo_argosLonDef;
-         lastLocLatOfPrevCycle = g_decArgo_argosLatDef;
-                  
-         % retrieve the last good GPS location of the previous surface phase
-         idF = find((gpsLocCycleNum == cycleNumber) & (gpsLocProfNum < profNumber) & (gpsLocQc == 1), 1, 'last');
-         if (isempty(idF))
-            idF = find((gpsLocCycleNum == cycleNumber-1) & (gpsLocQc == 1), 1, 'last');
-         end
-         if (~isempty(idF))
-            lastLocDateOfPrevCycle = gpsLocDate(idF);
-            lastLocLonOfPrevCycle = gpsLocLon(idF);
-            lastLocLatOfPrevCycle = gpsLocLat(idF);
-         end
-         
-         idF = find((gpsLocCycleNum == cycleNumber) & (gpsLocProfNum == profNumber));
-         locDate = gpsLocDate(idF);
-         locLon = gpsLocLon(idF);
-         locLat = gpsLocLat(idF);
-         locAcc = gpsLocAccuracy(idF);
-         
-         [locQc] = compute_jamstec_qc( ...
-            locDate, locLon, locLat, locAcc, ...
-            lastLocDateOfPrevCycle, lastLocLonOfPrevCycle, lastLocLatOfPrevCycle, []);
-         
-         gpsLocQc(idF) = str2num(locQc')';
-      end
-      
       % sort GPS data according to location dates
       [~, idSort] = sort(gpsLocDate);
       gpsLocCycleNum = gpsLocCycleNum(idSort);
@@ -120,6 +86,63 @@ if (~isempty(a_tabTech))
       gpsLocAccuracy = gpsLocAccuracy(idSort);
       gpsLocSbdFileDate = gpsLocSbdFileDate(idSort);
       gpsLocInTrajFlag = gpsLocInTrajFlag(idSort);
+
+      % for JAMSTEC QC, we need to retrieve the last good GPS location of the
+      % previous surface phase, for that we need to use an updated cycle and
+      % profile number for the second Iridium session locations
+      % (should be assigned to last deep cycle)
+      cyProfNumBis = nan(length(gpsLocCycleNum), 2);
+      for idCy = 1:length(gpsLocCycleNum)
+         if ((gpsLocPhase(idCy) == g_decArgo_phaseSurfWait) && (gpsLocCycleNum(idCy) > 0)) % second Iridium session
+            cyProfNumBis(idCy, 1) = gpsLocCycleNum(idCy) - 1;
+            idF = find(gpsLocCycleNum == gpsLocCycleNum(idCy) - 1);
+            if (~isempty(idF))
+               cyProfNumBis(idCy, 2) = max(gpsLocProfNum(idF)); % may fail in case of delayed transmission
+            else
+               cyProfNumBis(idCy, 2) = 0;
+            end
+         else
+            cyProfNumBis(idCy, 1) = gpsLocCycleNum(idCy);
+            cyProfNumBis(idCy, 2) = gpsLocProfNum(idCy);
+         end
+      end
+
+      cyProfNumListBis = cyProfNumBis(end-length(idPos)+1:end, :);
+      uCyProfNumListBis = unique(cyProfNumListBis, 'rows');
+      for idCy = 1:size(uCyProfNumListBis, 1)
+         
+         cycleNumber = uCyProfNumListBis(idCy, 1);
+         profNumber = uCyProfNumListBis(idCy, 2);
+         
+         % compute the JAMSTEC QC for the GPS locations of the current cycle
+         
+         lastLocDateOfPrevCycle = g_decArgo_dateDef;
+         lastLocLonOfPrevCycle = g_decArgo_argosLonDef;
+         lastLocLatOfPrevCycle = g_decArgo_argosLatDef;
+                  
+         % retrieve the last good GPS location of the previous surface phase
+         idF = find((cyProfNumBis(:, 1) == cycleNumber) & (cyProfNumBis(:, 2) < profNumber) & (gpsLocQc == 1), 1, 'last'); % they have been previously sorted
+         if (isempty(idF))
+            idF = find((cyProfNumBis(:, 1) == cycleNumber-1) & (gpsLocQc == 1), 1, 'last'); % they have been previously sorted
+         end
+         if (~isempty(idF))
+            lastLocDateOfPrevCycle = gpsLocDate(idF);
+            lastLocLonOfPrevCycle = gpsLocLon(idF);
+            lastLocLatOfPrevCycle = gpsLocLat(idF);
+         end
+         
+         idF = find((cyProfNumBis(:, 1) == cycleNumber) & (cyProfNumBis(:, 2) == profNumber));
+         locDate = gpsLocDate(idF);
+         locLon = gpsLocLon(idF);
+         locLat = gpsLocLat(idF);
+         locAcc = gpsLocAccuracy(idF);
+         
+         [locQc] = compute_jamstec_qc( ...
+            locDate, locLon, locLat, locAcc, ...
+            lastLocDateOfPrevCycle, lastLocLonOfPrevCycle, lastLocLatOfPrevCycle, []);
+         
+         gpsLocQc(idF) = str2num(locQc')';
+      end
 
       % update GPS data global variable
       g_decArgo_gpsData{1} = gpsLocCycleNum;
