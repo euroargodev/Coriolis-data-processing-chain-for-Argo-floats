@@ -211,7 +211,7 @@ for idFile = 1:length(a_systemLogFileList)
    idEvts = find(strcmp({events.functionName}, 'ICE') | ...
       strcmp({events.functionName}, 'ASCENT'));
    if (~isempty(idEvts))
-      iceDetectionTab = process_apx_apf11_ir_ice_evts_1126(events(idEvts));
+      iceDetectionTab = process_apx_apf11_ir_ice_evts_1121_1126(events(idEvts));
 
       if (~isempty(iceDetectionTab))
          o_iceDetection = iceDetectionTab;
