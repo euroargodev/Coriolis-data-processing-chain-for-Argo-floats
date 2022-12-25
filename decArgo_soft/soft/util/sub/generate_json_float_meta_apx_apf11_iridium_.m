@@ -536,11 +536,7 @@ for idFloat = 1:length(floatList)
          end
          
          if (~isempty(bddConfName))
-            
-            if (ismember(bddConfName, [{'ActiveIceDetectionMonth'} {'VitalsMask'}]))
-               floatConfValue = ['0x' floatConfValue];
-            end
-            
+                        
             nbLoops = 1;
             if (ismember(dacFormatId, [{'2.10.1.S'} {'2.11.1.S'} {'2.12.2.1.S'} {'2.10.4.R'} {'2.12.2.1.R'} {'2.12.3.R'} {'2.11.3.R'}]))
                if (strcmp(floatConfName, 'float_id'))

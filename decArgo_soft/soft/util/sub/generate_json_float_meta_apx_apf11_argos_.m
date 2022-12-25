@@ -330,11 +330,7 @@ for idFloat = 1:length(floatList)
          end
          
          if (~isempty(bddConfName))
-            
-            if (ismember(bddConfName, [{'ActiveIceDetectionMonth'} {'VitalsMask'} {'PTT_HEX'}]))
-               floatConfValue = ['0x' floatConfValue];
-            end
-            
+                        
             diffFlag = -1;
             idF = find(strcmp(metaData(idForWmo, 5), bddConfName) & (dimLevlist(idForWmo) == 1));
             if (~isempty(idF))
