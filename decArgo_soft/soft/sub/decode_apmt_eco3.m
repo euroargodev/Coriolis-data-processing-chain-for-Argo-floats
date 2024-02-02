@@ -98,55 +98,38 @@ while (currentByte <= lastByteNum)
    newTreatNum = -1;
    
    % look for a new phase header
-   anomalyFlag = 0;
    if (inputData(currentByte) == '[')
       for idPhase = 1:length(phaseList)
          phaseName = phaseList{idPhase};
-         if ((currentByte+length(phaseName)-1) <= length(inputData))
-            if (strcmp(char(inputData(currentByte:currentByte+length(phaseName)-1))', phaseName))
-               newPhaseNum = idPhase;
-               currentByte = currentByte + length(phaseName);
-               break
-            end
-         else
-            fprintf('WARNING: Unexpected end of data in file: %s\n', a_inputFilePathName);
-            anomalyFlag = 1;
+         if (strcmp(char(inputData(currentByte:currentByte+length(phaseName)-1))', phaseName))
+            newPhaseNum = idPhase;
+            currentByte = currentByte + length(phaseName);
             break
          end
       end
-   end
-   if (anomalyFlag)
-      break
    end
    
-   % look for a new treatment header
-   anomalyFlag = 0;
-   if (inputData(currentByte) == '(')
-      for idTreat = 1:length(treatList)
-         treatName = treatList{idTreat};
-         if ((currentByte+length(treatName)-1) <= length(inputData))
-            if (strcmp(char(inputData(currentByte:currentByte+length(treatName)-1))', treatName))
-               newTreatNum = idTreat;
-               currentByte = currentByte + length(treatName);
-               break
-            end
-         else
-            fprintf('WARNING: Unexpected end of data in file: %s\n', a_inputFilePathName);
-            anomalyFlag = 1;
-            break
-         end
-      end
-   end
-   if (anomalyFlag)
-      break
-   end
-
    % the treatment type of PARK, SHORT_PARK and SURFACE measurements is always
    % RAW (NKE personal communication)
    if (ismember(newPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
       newTreatNum = g_decArgo_cts5Treat_RW;
+   else
+
+      % look for a new treatment header
+      if (inputData(currentByte) == '(')
+         for idTreat = 1:length(treatList)
+            treatName = treatList{idTreat};
+            if (~isempty(treatName))
+               if (strcmp(char(inputData(currentByte:currentByte+length(treatName)-1))', treatName))
+                  newTreatNum = idTreat;
+                  currentByte = currentByte + length(treatName);
+                  break
+               end
+            end
+         end
+      end
    end
-   
+
    % consider modification of phase or treatment
    if ((newPhaseNum ~= -1) || (newTreatNum ~= -1))
       if (~isempty(currentDataStruct))

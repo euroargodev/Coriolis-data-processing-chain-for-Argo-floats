@@ -40,10 +40,10 @@ if (isempty(a_tabProfiles))
 end
 
 switch (a_decoderId)
-   case {126, 127, 128, 129, 130}
-      [o_tabProfiles] = merge_profile_meas_ir_rudics_cts5_usea_eco_126_to_130(a_tabProfiles);
-   case {131}
-      [o_tabProfiles] = merge_profile_meas_ir_rudics_cts5_usea_eco_131(a_tabProfiles);
+   case {126, 127, 128, 129, 130, 133}
+      [o_tabProfiles] = merge_profile_meas_ir_rudics_cts5_usea_eco_126_to_130_133(a_tabProfiles);
+   case {131, 132}
+      [o_tabProfiles] = merge_profile_meas_ir_rudics_cts5_usea_eco_131_132(a_tabProfiles);
    otherwise
       fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Nothing done yet to merge ECO profiles for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

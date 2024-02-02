@@ -59,9 +59,6 @@ elseif ((isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactBackscatter532')) && ...
       (isfield(g_decArgo_calibInfo.ECO3, 'KhiCoefBackscatter')))
    scaleFactBackscatter532 = double(g_decArgo_calibInfo.ECO3.ScaleFactBackscatter532);
    darkCountBackscatter532 = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter532);
-   if (isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter532_O'))
-      darkCountBackscatter532 = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter532_O);
-   end
    khiCoefBackscatter = double(g_decArgo_calibInfo.ECO3.KhiCoefBackscatter);
 else
    fprintf('ERROR: Float #%d Cycle #%d: inconsistent ECO3 sensor calibration information\n', ...

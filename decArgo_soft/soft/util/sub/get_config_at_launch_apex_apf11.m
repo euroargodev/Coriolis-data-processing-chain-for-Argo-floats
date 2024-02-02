@@ -53,7 +53,7 @@ if (length(files) == 1)
 elseif (isempty(files))
    fprintf('WARNING: mission.cfg file is missing for float %d in directory ''%s''\n', ...
       a_floatNum, a_configDirName);
-elseif (length(files) == 1)
+elseif (length(files) > 1)
    fprintf('WARNING: %d mission.cfg files found for float %d in directory ''%s''\n', ...
       length(files), a_floatNum, a_configDirName);
 end
@@ -67,7 +67,7 @@ if (length(files) == 1)
 elseif (isempty(files))
    fprintf('WARNING: system.cfg file is missing for float %d in directory ''%s''\n', ...
       a_floatNum, a_configDirName);
-elseif (length(files) == 1)
+elseif (length(files) > 1)
    fprintf('WARNING: %d system.cfg files found for float %d in directory ''%s''\n', ...
       length(files), a_floatNum, a_configDirName);
 end
@@ -81,7 +81,7 @@ if (length(files) == 1)
 elseif (isempty(files))
    fprintf('WARNING: sample.cfg file is missing for float %d in directory ''%s''\n', ...
       a_floatNum, a_configDirName);
-elseif (length(files) == 1)
+elseif (length(files) > 1)
    fprintf('WARNING: %d sample.cfg files found for float %d in directory ''%s''\n', ...
       length(files), a_floatNum, a_configDirName);
 end
@@ -208,9 +208,10 @@ while (1)
       end
       
       % default values
-      start = 2000;
+      start = 2500;
       stop = 0;
       interval = 0;
+      units = 1; % 1: DBAR, 2:SEC
       count = 1;
       
       info = textscan(line, '%s');
@@ -223,6 +224,12 @@ while (1)
       
       idF = find(strcmp('DBAR', info), 1);
       if (~isempty(idF))
+         units = 1;
+         info(idF) = [];
+      end
+      idF = find(strcmp('SEC', info), 1);
+      if (~isempty(idF))
+         units = 2;
          info(idF) = [];
       end
       
@@ -245,7 +252,7 @@ while (1)
       end
       
       o_confData.(phase).(sampType).(sensor) = [o_confData.(phase).(sampType).(sensor); ...
-         start stop interval count];
+         start stop interval units count];
       
    elseif (strncmpi(line, 'PROFILE', length('PROFILE')))
       

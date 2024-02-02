@@ -42,6 +42,7 @@ if (isfield(a_metaData, 'RT_OFFSET'))
    o_rtOffsetInfo.coefficient = [];
    o_rtOffsetInfo.comment = [];
    o_rtOffsetInfo.date = [];
+   o_rtOffsetInfo.dateApply = [];
 
    rtData = a_metaData.RT_OFFSET;
    params = unique(struct2cell(rtData.PARAM), 'stable');
@@ -57,6 +58,7 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       tabAdjErrorStr = [];
       tabAdjErrorMethod = [];
       tabDate = [];
+      tabDateApply = [];
       tabEquation = [];
       tabCoef = [];
       tabComment = [];
@@ -129,6 +131,21 @@ if (isfield(a_metaData, 'RT_OFFSET'))
             date = rtData.DATE.(['DATE_' paramNum]);
             date = datenum(date, 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
             tabDate = [tabDate date];
+            if (isfield(rtData, 'DATE_APPLY'))
+               if (isfield(rtData.DATE_APPLY, ['DATE_APPLY_' paramNum]))
+                  dateApply = rtData.DATE_APPLY.(['DATE_APPLY_' paramNum]);
+                  if (any(strfind(dateApply, '/')))
+                     dateApply = datenum(dateApply, 'dd/mm/yyyy HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
+                  else
+                     dateApply = datenum(dateApply, 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
+                  end
+                  tabDateApply = [tabDateApply dateApply];
+               else
+                  tabDateApply = [tabDateApply nan];
+               end
+            else
+               tabDateApply = [tabDateApply nan];
+            end
             
             % direct copy of DB information (to be reported in case of linear
             % adjustment)
@@ -157,6 +174,7 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       tabAdjError = tabAdjError(idSorted);
       tabAdjErrorStr = tabAdjErrorStr(idSorted);
       tabAdjErrorMethod = tabAdjErrorMethod(idSorted);
+      tabDateApply = tabDateApply(idSorted);
       tabEquation = tabEquation(idSorted);
       tabCoef = tabCoef(idSorted);
       tabComment = tabComment(idSorted);
@@ -175,6 +193,7 @@ if (isfield(a_metaData, 'RT_OFFSET'))
       o_rtOffsetInfo.coefficient{end+1} = tabCoef;
       o_rtOffsetInfo.comment{end+1} = tabComment;
       o_rtOffsetInfo.date{end+1} = tabDate;
+      o_rtOffsetInfo.dateApply{end+1} = tabDateApply;
    end
 end
 

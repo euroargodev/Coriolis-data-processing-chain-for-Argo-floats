@@ -35,6 +35,7 @@ if (~isempty(idF))
    dimLevelParam = [];
    dimLevelValueSlope = [];
    dimLevelDate = [];
+   dimLevelDateApply = [];
    
    dimLevelAdjError = [];
    dimLevelAdjErrorMethod = [];
@@ -162,6 +163,15 @@ if (~isempty(idF))
       rtOffsetDate.(fieldName) = a_metaData{a_idForWmo(idF(id)), 4};
       dimLevelDate = [dimLevelDate dimLevel];
    end
+
+   rtOffsetDateApply = [];
+   idF = find(strcmp(a_metaData(a_idForWmo, 5), 'CALIB_RT_DATE_APPLY') == 1);
+   for id = 1:length(idF)
+      dimLevel = str2num(a_metaData{a_idForWmo(idF(id)), 3});
+      fieldName = ['DATE_APPLY_' num2str(dimLevel)];
+      rtOffsetDateApply.(fieldName) = a_metaData{a_idForWmo(idF(id)), 4};
+      dimLevelDateApply = [dimLevelDateApply dimLevel];
+   end
    
    rtOffsetAdjError = [];
    idF = find(strcmp(a_metaData(a_idForWmo, 5), 'CALIB_RT_ADJUSTED_ERROR') == 1);
@@ -247,7 +257,10 @@ if (~isempty(idF))
       rtOffsetData.ADJUSTED_ERROR_METHOD = rtOffsetAdjErrorMethod;
    end
    rtOffsetData.DATE = rtOffsetDate;
-   
+   if (~isempty(rtOffsetDateApply))
+      rtOffsetData.DATE_APPLY = rtOffsetDateApply;
+   end
+
    o_rtOffsetStruct = rtOffsetData;
 end
 

@@ -149,7 +149,7 @@
       "CONF_PARAM_LABEL" : "MissionPrelude",
       "CONF_PARAM_DEFINITION" : "n/a",
       "CONF_PARAM_NAME" : "CONFIG_MissionPreludeTime_minutes",
-      "CONF_PARAM_DESCRIPTION" : "This is the duration the float transmits test messages for (from start up) before the first dive. It’s crucial in calculating the time of the first descent."
+      "CONF_PARAM_DESCRIPTION" : "This is the duration the float transmits test messages for (from start up) before the first dive. Itâ€™s crucial in calculating the time of the first descent."
    },
    "CONF_PARAM_20" :
    {
@@ -204,8 +204,8 @@
       "CONF_PARAM_DEC_ID" : "CONFIG_PDP",
       "CONF_PARAM_LABEL" : "ParkDescentTime",
       "CONF_PARAM_DEFINITION" : "n/a",
-      "CONF_PARAM_NAME" : "CONFIG_DescentToProfTimeOut_minutes",
-      "CONF_PARAM_DESCRIPTION" : "maximum amount of time allowed for the float to descend to Profile pressure from Park pressure"
+      "CONF_PARAM_NAME" : "CONFIG_DescentToParkTimeOut_minutes",
+      "CONF_PARAM_DESCRIPTION" : "maximum time a float will try to reach its target depth (park) before aborting this step"
    },
    "CONF_PARAM_27" :
    {

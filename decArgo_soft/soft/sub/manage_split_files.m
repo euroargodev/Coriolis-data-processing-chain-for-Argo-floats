@@ -86,6 +86,7 @@ for idFilePtn = 1:length(a_inputFileName)
    files = dir([a_inputFilePath{idFilePtn} '/' a_inputFileName{idFilePtn}]);
    if (~isempty(files))
       fileList = {files(:).name}';
+      fileSize = {files(:).bytes}';
 
       % manage ramses VS ramses2
       if (any(strfind(a_inputFileName{idFilePtn}, 'ramses2')))
@@ -94,21 +95,24 @@ for idFilePtn = 1:length(a_inputFileName)
          idToDel = find(~cellfun(@isempty, idToDel{:}) == 1);
          if (~isempty(idToDel))
             fileList(idToDel) = [];
+            fileSize(idToDel) = [];
          end
          idToDel = cellfun(@(x) strfind(fileList, x), {'ramses.'}, 'UniformOutput', 0);
          idToDel = find(~cellfun(@isempty, idToDel{:}) == 1);
          if (~isempty(idToDel))
             fileList(idToDel) = [];
+            fileSize(idToDel) = [];
          end
       elseif (any(strfind(a_inputFileName{idFilePtn}, 'ramses')))
          idToDel = cellfun(@(x) strfind(fileList, x), {'ramses2'}, 'UniformOutput', 0);
          idToDel = find(~cellfun(@isempty, idToDel{:}) == 1);
          if (~isempty(idToDel))
             fileList(idToDel) = [];
+            fileSize(idToDel) = [];
          end
       end
 
-      fileList = cat(2, fileList, cell(size(fileList)), cell(size(fileList)));
+      fileList = cat(2, fileList, cell(size(fileList)), cell(size(fileList)), fileSize);
       if (~isempty(fileList))
          while (1)
             idF = strfind(fileList(:, 1), '#');
@@ -123,6 +127,7 @@ for idFilePtn = 1:length(a_inputFileName)
                fileNameNew = fileName([1:idF{idL}-1  idF{idL}+3:end]);
                idF2 = strfind(fileList(:, 1), fileNameBase);
                fileSubList = [];
+               sizeSubList = [];
                idDel = [];
                for idL2 = 1:size(fileList, 1)
                   if (~isempty(idF2{idL2}))
@@ -132,14 +137,17 @@ for idFilePtn = 1:length(a_inputFileName)
                         idDel = [idDel idL2];
                      end
                      fileSubList{end+1} = fileList{idL2, 1};
+                     sizeSubList{end+1} = fileList{idL2, 4};
                   end
                end
                fileList{idFirst, 1} = fileNameNew;
                if (length(fileSubList) == 1) % if we have a unique file with a '#' inside its name
                   fileSubList{end+1} = '';
+                  sizeSubList{end+1} = '';
                end
                fileList{idFirst, 2} = fileSubList;
                fileList{idFirst, 3} = a_inputFilePath{idFilePtn};
+               fileList{idFirst, 4} = sizeSubList;
                fileList(idDel, :) = [];
             else
                break
@@ -159,15 +167,17 @@ for idFilePtn = 1:length(a_inputFileName)
 end
 
 % concat files
-o_fileList = cat(2, o_fileList, cell(size(o_fileList, 1), 1));
-for idFile = 1:size(o_fileList, 1)
-   nbFiles = length(o_fileList{idFile, 2});
-   if (nbFiles > 1)
-      o_fileList{idFile, 4} = [fileList{idFile, 3} '/tmp/'];
-      concat_files(fileList{idFile, 3}, fileList{idFile, 2}, ...
-         o_fileList{idFile, 4}, fileList{idFile, 1});
-   else
-      o_fileList{idFile, 4} = fileList{idFile, 3};
+if (~isempty(o_fileList))
+   o_fileList = cat(2, o_fileList(:, 1:3), cell(size(o_fileList, 1), 1), o_fileList(:, 4));
+   for idFile = 1:size(o_fileList, 1)
+      nbFiles = length(o_fileList{idFile, 2});
+      if (nbFiles > 1)
+         o_fileList{idFile, 4} = [fileList{idFile, 3} '/tmp/'];
+         concat_files(fileList{idFile, 3}, fileList{idFile, 2}, ...
+            o_fileList{idFile, 4}, fileList{idFile, 1});
+      else
+         o_fileList{idFile, 4} = fileList{idFile, 3};
+      end
    end
 end
 

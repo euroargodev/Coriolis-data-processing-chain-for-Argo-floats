@@ -256,17 +256,18 @@ if (nbMeasParam > 0)
    globalHistoryText = [globalHistoryText ...
       datestr(datenum(currentDate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis float real time data processing)'];
    netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
-   netcdf.putAtt(fCdf, globalVarId, 'references', ' ');
+   netcdf.putAtt(fCdf, globalVarId, 'references', 'http://www.argodatamgt.org/Documentation');
    netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '1.0');
    netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'CF-1.6 Coriolis-Argo-Aux-1.0');
    netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectoryCoriolisAux');
    netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
-   
+   netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
+
    resGlobalComment = get_global_comment_on_resolution(a_decoderId);
    if (~isempty(resGlobalComment))
       netcdf.putAtt(fCdf, globalVarId, 'comment_on_resolution', resGlobalComment);
    end
-   
+
    measGlobalComment = get_global_comment_on_measurement_code(a_decoderId);
    if (~isempty(measGlobalComment))
       netcdf.putAtt(fCdf, globalVarId, 'comment_on_measurement_code', measGlobalComment);

@@ -84,17 +84,18 @@ if (~isempty(a_tabTech))
                gpsValidFlagFromTech = a_tabTech(idPos(idP), 74);
                % no EOL FLAG for these firmware versions
 
-            case {210, 211, 212, 222, 224, 223, 213, 214, 217, 225}
+            case {210, 211, 212, 222, 224, 223, 213, 214, 217, 225, 226}
                % Arvor-ARN Iridium
                % Arvor-ARN-Ice Iridium
-               % Arvor-ARN-Ice RBR Iridium
+               % Arvor-ARN-Ice RBR Iridium 5.49
                % Provor-ARN-DO Iridium 5.45 & 5.47
                % Provor-ARN-DO-Ice Iridium 5.75
                % Arvor-ARN-DO-Ice Iridium 5.46
                % Provor-ARN-DO-Ice Iridium 5.76
+               % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
                gpsValidFlagFromTech = a_tabTech(idPos(idP), 62);
                eolFlag = min(eolFlag, a_tabTech(idPos(idP), 67));
-               
+
             case {219, 220}
                % Arvor-C 5.3 & 5.301
                gpsValidFlagFromTech = a_tabTech(idPos(idP), end-5);

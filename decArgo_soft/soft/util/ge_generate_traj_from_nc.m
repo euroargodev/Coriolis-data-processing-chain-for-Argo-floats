@@ -251,6 +251,7 @@ for idFloat = 1:nbFloats
    % on ne conserve que les positions Argos du fichier trajectoires (i.e. celles
    % qui ont une localisation)
    idF = find((measCode == g_MC_Surface) & (positionAccuracy ~= 'I'));
+   %    idF = find((measCode == g_MC_Surface));
    if (~isempty(idF))
       cycleNumber = cycleNumber(idF);
       juld = juld(idF);

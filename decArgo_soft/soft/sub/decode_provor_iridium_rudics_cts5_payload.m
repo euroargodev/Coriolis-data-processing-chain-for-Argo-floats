@@ -667,7 +667,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    % output NetCDF files
    
    % add interpolated/extrapolated profile locations
-   [o_tabProfiles] = fill_empty_profile_locations_ir_rudics(o_tabProfiles, g_decArgo_gpsData, ...
+   [o_tabProfiles] = fill_empty_profile_locations_cts5_ir_rudics(o_tabProfiles, g_decArgo_gpsData, ...
       o_tabTrajNMeas, o_tabTrajNCycle);
    
    % cut CTD profile at the cut-off pressure of the CTD pump
@@ -1057,8 +1057,8 @@ for typeNum = typeOrderList
                % apmt sensor data
                
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
-               apmtCtd = decode_apmt_ctd([fileNameInfo{4} fileNameInfo{1}], a_decoderId);
-               
+               apmtCtd = decode_apmt_ctd(fileNameInfo, a_decoderId);
+
                if (~isempty(g_decArgo_outputCsvFileId))
                   
                   for idFile2 = 1:length(fileNameInfo{2})

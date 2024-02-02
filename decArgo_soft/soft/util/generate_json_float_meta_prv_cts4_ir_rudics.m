@@ -62,23 +62,32 @@ else
 
    % meta-data file exported from Coriolis data base
    FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_CTS4_5906868.txt';
-   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_CTS4_7901001_reuse.txt';
+   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\new_rem_3902506.txt';
+   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB_2\db_export.txt';
 
    % list of sensors mounted on floats
    SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_DATA\IN\decArgo_config_floats\argoFloatInfo\float_sensor_list.txt';
+   SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\float_sensor_list.txt';
+   SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB_2\float_sensor_list.txt';
 
    % list of concerned floats
    FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_5906868.txt';
-   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_7901001.txt';
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_3902506.txt';
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_4903711_7901065.txt';
 
    % calibration coefficient file decoded from data
    CALIB_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
+   CALIB_FILE_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB_2\calib_coef.txt';
 
    % directory of individual configuration commands report files
    CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\meta_remocean_www\ConfigAtLaunch\';
+   CONFIG_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\';
+   CONFIG_DIR_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB_2\';
 
    % directory of SUNA calibration files
    SUNA_CALIB_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\meta_remocean_www\suna_calibration_file\';
+   SUNA_CALIB_DIR_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\';
+   SUNA_CALIB_DIR_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB_2\';
 
    % directory of individual json float meta-data files
    OUTPUT_DIR_NAME = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];

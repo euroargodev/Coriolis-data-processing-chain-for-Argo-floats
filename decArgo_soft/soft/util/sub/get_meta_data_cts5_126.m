@@ -43,8 +43,8 @@ global g_cogj_csvFileCoefPathName;
 metaData = decode_apmt_metadata_126(a_metaDataXmlFileName);
 
 % check meta-data and store meta-data if needed
-if (a_rtVersionFlag == 0)
-   if (isfield(metaData, 'profiler'))
+if (isfield(metaData, 'profiler'))
+   if (~a_rtVersionFlag)
       if (isfield(metaData.profiler, 'sn'))
          if (~strcmp(metaData.profiler.sn, o_metaStruct.FLOAT_SERIAL_NO))
             if (isempty(g_cogj_csvFileBddId) || (g_cogj_csvFileBddId == -1))
@@ -60,6 +60,8 @@ if (a_rtVersionFlag == 0)
                metaData.profiler.sn);
          end
       end
+   end
+   if (~a_rtVersionFlag)
       if (isfield(metaData.profiler, 'model'))
          if (~strcmp(metaData.profiler.model, o_metaStruct.PLATFORM_TYPE))
             if (isempty(g_cogj_csvFileBddId) || (g_cogj_csvFileBddId == -1))
@@ -76,7 +78,9 @@ if (a_rtVersionFlag == 0)
          end
       end
    end
-   if (isfield(metaData, 'telecom'))
+end
+if (isfield(metaData, 'telecom'))
+   if (~a_rtVersionFlag)
       if (isfield(metaData.telecom, 'type'))
          if (~strcmp(metaData.telecom.type, o_metaStruct.TRANS_SYSTEM{1}))
             if (isempty(g_cogj_csvFileBddId) || (g_cogj_csvFileBddId == -1))
@@ -92,25 +96,15 @@ if (a_rtVersionFlag == 0)
                metaData.telecom.type);
          end
       end
-      if (isfield(metaData.telecom, 'cid'))
-         if (~isfield(o_metaStruct, 'META_AUX_FLOAT_SIM_CARD_NUMBER'))
-            o_metaStruct.META_AUX_FLOAT_SIM_CARD_NUMBER = metaData.telecom.cid;
-         end
-      end
    end
-else
-   % for RT version
-   if (isfield(metaData, 'telecom'))
-      if (isfield(metaData.telecom, 'cid'))
-         if (~isfield(o_metaStruct, 'META_AUX_FLOAT_SIM_CARD_NUMBER'))
-            o_metaStruct.META_AUX_FLOAT_SIM_CARD_NUMBER = metaData.telecom.cid;
-         end
+   if (isfield(metaData.telecom, 'cid'))
+      if (~isfield(o_metaStruct, 'META_AUX_FLOAT_SIM_CARD_NUMBER'))
+         o_metaStruct.META_AUX_FLOAT_SIM_CARD_NUMBER = metaData.telecom.cid;
       end
    end
 end
-
-if (a_rtVersionFlag == 0)
-   if (isfield(metaData, 'hardware'))
+if (isfield(metaData, 'hardware'))
+   if (~a_rtVersionFlag)
       if (isfield(metaData.hardware, 'control_board'))
          if (isfield(metaData.hardware.control_board, 'model'))
             if (~strcmp(metaData.hardware.control_board.model, o_metaStruct.CONTROLLER_BOARD_TYPE_PRIMARY))
@@ -143,7 +137,9 @@ if (a_rtVersionFlag == 0)
             end
          end
       end
-      if (isfield(metaData.hardware, 'measure_board'))
+   end
+   if (isfield(metaData.hardware, 'measure_board'))
+      if (~a_rtVersionFlag)
          if (isfield(metaData.hardware.measure_board, 'model'))
             if (~strcmp(metaData.hardware.measure_board.model, o_metaStruct.CONTROLLER_BOARD_TYPE_SECONDARY))
                if (isempty(g_cogj_csvFileBddId) || (g_cogj_csvFileBddId == -1))
@@ -159,32 +155,21 @@ if (a_rtVersionFlag == 0)
                   metaData.hardware.measure_board.model);
             end
          end
-         if (isfield(metaData.hardware.measure_board, 'firmware'))
-            if (~isfield(o_metaStruct, 'META_AUX_FIRMWARE_VERSION_SECONDARY'))
-               o_metaStruct.META_AUX_FIRMWARE_VERSION_SECONDARY = metaData.hardware.measure_board.firmware;
-            end
-         end
       end
-   end
-else
-   % for RT version
-   if (isfield(metaData, 'hardware'))
-      if (isfield(metaData.hardware, 'measure_board'))
-         if (isfield(metaData.hardware.measure_board, 'firmware'))
-            if (~isfield(o_metaStruct, 'META_AUX_FIRMWARE_VERSION_SECONDARY'))
-               o_metaStruct.META_AUX_FIRMWARE_VERSION_SECONDARY = metaData.hardware.measure_board.firmware;
-            end
+      if (isfield(metaData.hardware.measure_board, 'firmware'))
+         if (~isfield(o_metaStruct, 'META_AUX_FIRMWARE_VERSION_SECONDARY'))
+            o_metaStruct.META_AUX_FIRMWARE_VERSION_SECONDARY = metaData.hardware.measure_board.firmware;
          end
       end
    end
 end
 
-if (a_rtVersionFlag == 0)
-   if (isfield(metaData, 'sensors'))
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      % CTD
-      if (any(a_sensorListNum == 1))
-         if (isfield(metaData.sensors, 'sensor_sbe41'))
+if (isfield(metaData, 'sensors'))
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % CTD
+   if (any(a_sensorListNum == 1))
+      if (isfield(metaData.sensors, 'sensor_sbe41'))
+         if (~a_rtVersionFlag)
             if (isfield(metaData.sensors.sensor_sbe41, 'sensor_pressure') && ...
                   isfield(metaData.sensors.sensor_sbe41.sensor_pressure, 'sn'))
                idF = find(strcmp('CTD_PRES', o_metaStruct.SENSOR));
@@ -296,9 +281,11 @@ if (a_rtVersionFlag == 0)
             end
          end
       end
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      % DO
-      if (any(a_sensorListNum == 2))
+   end
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % DO
+   if (any(a_sensorListNum == 2))
+      if (~a_rtVersionFlag)
          if (isfield(metaData.sensors, 'sensor_do'))
             idF = find(strcmp('OPTODE_DOXY', o_metaStruct.SENSOR));
             if (~isempty(idF))
@@ -467,9 +454,11 @@ if (a_rtVersionFlag == 0)
             end
          end
       end
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      % OCR
-      if (any(a_sensorListNum == 3))
+   end
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % OCR
+   if (any(a_sensorListNum == 3))
+      if (~a_rtVersionFlag)
          if (isfield(metaData.sensors, 'sensor_ocr'))
             idF = find(strcmp('RADIOMETER_DOWN_IRR380', o_metaStruct.SENSOR));
             idF2 = find(strcmp('RADIOMETER_DOWN_IRR412', o_metaStruct.SENSOR));
@@ -491,7 +480,7 @@ if (a_rtVersionFlag == 0)
                         fprintf(g_cogj_csvFileBddId, '%d;411;201;%s;SENSOR_SERIAL_NO\n', ...
                            a_floatNum, ...
                            metaData.sensors.sensor_ocr.sensor.sn);
-                        
+
                         fprintf('WARNING: BDD: Float #%d: SENSOR_SERIAL_NO for ''%s'' differ (database: ''%s'' xml:''%s'') - DB contents should be updated (see %s)\n', ...
                            a_floatNum, ...
                            'RADIOMETER_DOWN_IRR412', ...
@@ -501,7 +490,7 @@ if (a_rtVersionFlag == 0)
                         fprintf(g_cogj_csvFileBddId, '%d;411;202;%s;SENSOR_SERIAL_NO\n', ...
                            a_floatNum, ...
                            metaData.sensors.sensor_ocr.sensor.sn);
-                        
+
                         fprintf('WARNING: BDD: Float #%d: SENSOR_SERIAL_NO for ''%s'' differ (database: ''%s'' xml:''%s'') - DB contents should be updated (see %s)\n', ...
                            a_floatNum, ...
                            'RADIOMETER_DOWN_IRR490', ...
@@ -511,7 +500,7 @@ if (a_rtVersionFlag == 0)
                         fprintf(g_cogj_csvFileBddId, '%d;411;203;%s;SENSOR_SERIAL_NO\n', ...
                            a_floatNum, ...
                            metaData.sensors.sensor_ocr.sensor.sn);
-                        
+
                         fprintf('WARNING: BDD: Float #%d: SENSOR_SERIAL_NO for ''%s'' differ (database: ''%s'' xml:''%s'') - DB contents should be updated (see %s)\n', ...
                            a_floatNum, ...
                            'RADIOMETER_PAR', ...
@@ -537,7 +526,7 @@ if (a_rtVersionFlag == 0)
                         fprintf(g_cogj_csvFileBddId, '%d;410;201;%s;SENSOR_MODEL\n', ...
                            a_floatNum, ...
                            metaData.sensors.sensor_ocr.sensor.model);
-                        
+
                         fprintf('WARNING: BDD: Float #%d: SENSOR_MODEL for ''%s'' differ (database: ''%s'' xml:''%s'') - DB contents should be updated (see %s)\n', ...
                            a_floatNum, ...
                            'RADIOMETER_DOWN_IRR412', ...
@@ -547,7 +536,7 @@ if (a_rtVersionFlag == 0)
                         fprintf(g_cogj_csvFileBddId, '%d;410;202;%s;SENSOR_MODEL\n', ...
                            a_floatNum, ...
                            metaData.sensors.sensor_ocr.sensor.model);
-                        
+
                         fprintf('WARNING: BDD: Float #%d: SENSOR_MODEL for ''%s'' differ (database: ''%s'' xml:''%s'') - DB contents should be updated (see %s)\n', ...
                            a_floatNum, ...
                            'RADIOMETER_DOWN_IRR490', ...
@@ -557,7 +546,7 @@ if (a_rtVersionFlag == 0)
                         fprintf(g_cogj_csvFileBddId, '%d;410;203;%s;SENSOR_MODEL\n', ...
                            a_floatNum, ...
                            metaData.sensors.sensor_ocr.sensor.model);
-                        
+
                         fprintf('WARNING: BDD: Float #%d: SENSOR_MODEL for ''%s'' differ (database: ''%s'' xml:''%s'') - DB contents should be updated (see %s)\n', ...
                            a_floatNum, ...
                            'RADIOMETER_PAR', ...
@@ -898,9 +887,11 @@ if (a_rtVersionFlag == 0)
             end
          end
       end
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      % ECO
-      if (any(a_sensorListNum == 4))
+   end
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % ECO
+   if (any(a_sensorListNum == 4))
+      if (~a_rtVersionFlag)
          if (isfield(metaData.sensors, 'sensor_eco'))
             idF = find(strcmp('FLUOROMETER_CHLA', o_metaStruct.SENSOR));
             idF2 = find(strcmp('BACKSCATTERINGMETER_BBP700', o_metaStruct.SENSOR));
@@ -921,7 +912,7 @@ if (a_rtVersionFlag == 0)
                         fprintf(g_cogj_csvFileBddId, '%d;411;301;%s;SENSOR_SERIAL_NO\n', ...
                            a_floatNum, ...
                            metaData.sensors.sensor_eco.sensor.sn);
-                        
+
                         fprintf('WARNING: BDD: Float #%d: SENSOR_SERIAL_NO for ''%s'' differ (database: ''%s'' xml:''%s'') - DB contents should be updated (see %s)\n', ...
                            a_floatNum, ...
                            'BACKSCATTERINGMETER_BBP700', ...
@@ -931,7 +922,7 @@ if (a_rtVersionFlag == 0)
                         fprintf(g_cogj_csvFileBddId, '%d;411;302;%s;SENSOR_SERIAL_NO\n', ...
                            a_floatNum, ...
                            metaData.sensors.sensor_eco.sensor.sn);
-                        
+
                         fprintf('WARNING: BDD: Float #%d: SENSOR_SERIAL_NO for ''%s'' differ (database: ''%s'' xml:''%s'') - DB contents should be updated (see %s)\n', ...
                            a_floatNum, ...
                            'FLUOROMETER_CDOM', ...
@@ -957,7 +948,7 @@ if (a_rtVersionFlag == 0)
                         fprintf(g_cogj_csvFileBddId, '%d;410;301;%s;SENSOR_MODEL\n', ...
                            a_floatNum, ...
                            metaData.sensors.sensor_eco.sensor.model);
-                        
+
                         fprintf('WARNING: BDD: Float #%d: SENSOR_MODEL for ''%s'' differ (database: ''%s'' xml:''%s'') - DB contents should be updated (see %s)\n', ...
                            a_floatNum, ...
                            'BACKSCATTERINGMETER_BBP', ...
@@ -967,7 +958,7 @@ if (a_rtVersionFlag == 0)
                         fprintf(g_cogj_csvFileBddId, '%d;410;302;%s;SENSOR_MODEL\n', ...
                            a_floatNum, ...
                            metaData.sensors.sensor_eco.sensor.model);
-                        
+
                         fprintf('WARNING: BDD: Float #%d: SENSOR_MODEL for ''%s'' differ (database: ''%s'' xml:''%s'') - DB contents should be updated (see %s)\n', ...
                            a_floatNum, ...
                            'FLUOROMETER_CDOM', ...
@@ -1175,9 +1166,11 @@ if (a_rtVersionFlag == 0)
             end
          end
       end
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      % SBEPH
-      if (any(a_sensorListNum == 5))
+   end
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % SBEPH
+   if (any(a_sensorListNum == 5))
+      if (~a_rtVersionFlag)
          if (isfield(metaData.sensors, 'sensor_sbeph'))
             idF = find(strcmp('TRANSISTOR_PH', o_metaStruct.SENSOR));
             if (~isempty(idF))
@@ -1205,9 +1198,11 @@ if (a_rtVersionFlag == 0)
             end
          end
       end
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      % CROVER
-      if (any(a_sensorListNum == 6))
+   end
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % CROVER
+   if (any(a_sensorListNum == 6))
+      if (~a_rtVersionFlag)
          if (isfield(metaData.sensors, 'sensor_crover'))
             idF = find(strcmp('TRANSMISSOMETER_CP660', o_metaStruct.SENSOR));
             if (~isempty(idF))
@@ -1235,9 +1230,11 @@ if (a_rtVersionFlag == 0)
             end
          end
       end
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      % SUNA
-      if (any(a_sensorListNum == 7))
+   end
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % SUNA
+   if (any(a_sensorListNum == 7))
+      if (~a_rtVersionFlag)
          if (isfield(metaData.sensors, 'sensor_suna'))
             idF = find(strcmp('SPECTROPHOTOMETER_NITRATE', o_metaStruct.SENSOR));
             if (~isempty(idF))
@@ -1346,13 +1343,15 @@ if (a_rtVersionFlag == 0)
             end
          end
       end
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      % UVP
-      if (any(a_sensorListNum == 8))
-         if (isfield(metaData.sensors, 'sensor_uvp6'))
-            idF = find(strcmp('AUX_PARTICLES_PLANKTON_CAMERA', o_metaStruct.SENSOR));
-            if (~isempty(idF))
-               if (isfield(metaData.sensors.sensor_uvp6, 'sensor'))
+   end
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % UVP
+   if (any(a_sensorListNum == 8))
+      if (isfield(metaData.sensors, 'sensor_uvp6'))
+         idF = find(strcmp('AUX_PARTICLES_PLANKTON_CAMERA', o_metaStruct.SENSOR));
+         if (~isempty(idF))
+            if (isfield(metaData.sensors.sensor_uvp6, 'sensor'))
+               if (~a_rtVersionFlag)
                   if (isfield(metaData.sensors.sensor_uvp6.sensor, 'sn'))
                      if (~strcmp(metaData.sensors.sensor_uvp6.sensor.sn, o_metaStruct.SENSOR_SERIAL_NO{idF}))
                         if (isempty(g_cogj_csvFileBddId) || (g_cogj_csvFileBddId == -1))
@@ -1369,6 +1368,8 @@ if (a_rtVersionFlag == 0)
                            metaData.sensors.sensor_uvp6.sensor.sn);
                      end
                   end
+               end
+               if (~a_rtVersionFlag)
                   if (isfield(metaData.sensors.sensor_uvp6.sensor, 'model'))
                      if (~strcmp(metaData.sensors.sensor_uvp6.sensor.model, o_metaStruct.SENSOR_MODEL{idF}))
                         if (isempty(g_cogj_csvFileBddId) || (g_cogj_csvFileBddId == -1))
@@ -1386,66 +1387,7 @@ if (a_rtVersionFlag == 0)
                      end
                   end
                end
-               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-               % CONFIG
-               for idConf = 1:10
-                  confName = sprintf('acq_conf_%02d', idConf);
-                  if (isfield(metaData.sensors.sensor_uvp6, confName) && ...
-                        isfield(metaData.sensors.sensor_uvp6.(confName), 'frame'))
-                     if (~isfield(o_metaStruct, 'META_AUX_UVP_CONFIG_NAMES'))
-                        o_metaStruct.META_AUX_UVP_CONFIG_NAMES = [];
-                     end
-                     if (~isfield(o_metaStruct, 'META_AUX_UVP_CONFIG_PARAMETERS'))
-                        o_metaStruct.META_AUX_UVP_CONFIG_PARAMETERS = [];
-                     end
-                     frame = metaData.sensors.sensor_uvp6.(confName).frame;
-                     idFC = strfind(frame, ',');
-                     o_metaStruct.META_AUX_UVP_CONFIG_NAMES{idConf} = frame(1:idFC(1)-1);
-                     o_metaStruct.META_AUX_UVP_CONFIG_PARAMETERS{idConf} = frame;
-                  end
-               end
-               if (isfield(metaData.sensors.sensor_uvp6, 'hw_conf') && ...
-                     isfield(metaData.sensors.sensor_uvp6.hw_conf, 'frame'))
-                  if (~isfield(o_metaStruct, 'META_AUX_UVP_CONFIG_NAMES'))
-                     o_metaStruct.META_AUX_UVP_CONFIG_NAMES = [];
-                  end
-                  if (~isfield(o_metaStruct, 'META_AUX_UVP_CONFIG_PARAMETERS'))
-                     o_metaStruct.META_AUX_UVP_CONFIG_PARAMETERS = [];
-                  end
-                  frame = metaData.sensors.sensor_uvp6.hw_conf.frame;
-                  o_metaStruct.META_AUX_UVP_CONFIG_NAMES{end+1} = 'HW_CONF';
-                  o_metaStruct.META_AUX_UVP_CONFIG_PARAMETERS{end+1} = frame;
-               end
-               if (isfield(o_metaStruct, 'META_AUX_UVP_CONFIG_NAMES'))
-                  o_metaStruct.META_AUX_UVP_CONFIG_NAMES = o_metaStruct.META_AUX_UVP_CONFIG_NAMES';
-               end
-               if (isfield(o_metaStruct, 'META_AUX_UVP_CONFIG_PARAMETERS'))
-                  o_metaStruct.META_AUX_UVP_CONFIG_PARAMETERS = o_metaStruct.META_AUX_UVP_CONFIG_PARAMETERS';
-               end
-            else
-               fprintf('ERROR: Float #%d: cannot find expected ''AUX_PARTICLES_PLANKTON_CAMERA'' sensor in DB contents - UVP metadata ignored\n', ...
-                  a_floatNum);
             end
-         end
-      end
-   end
-   
-   if (~isempty(g_cogj_csvFileCoefId))
-      fclose(g_cogj_csvFileCoefId);
-      g_cogj_csvFileCoefId = '';
-   end
-   
-   if (~isempty(g_cogj_csvFileBddId))
-      fclose(g_cogj_csvFileBddId);
-      g_cogj_csvFileBddId = '';
-   end
-else
-   % for RT version
-   if (isfield(metaData, 'sensors'))
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      % UVP
-      if (any(a_sensorListNum == 8))
-         if (isfield(metaData.sensors, 'sensor_uvp6'))
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % CONFIG
             for idConf = 1:10
@@ -1473,8 +1415,7 @@ else
                   o_metaStruct.META_AUX_UVP_CONFIG_PARAMETERS = [];
                end
                frame = metaData.sensors.sensor_uvp6.hw_conf.frame;
-               idFC = strfind(frame, ',');
-               o_metaStruct.META_AUX_UVP_CONFIG_NAMES{end+1} = frame(1:idFC(1)-1);
+               o_metaStruct.META_AUX_UVP_CONFIG_NAMES{end+1} = 'HW_CONF';
                o_metaStruct.META_AUX_UVP_CONFIG_PARAMETERS{end+1} = frame;
             end
             if (isfield(o_metaStruct, 'META_AUX_UVP_CONFIG_NAMES'))
@@ -1483,9 +1424,22 @@ else
             if (isfield(o_metaStruct, 'META_AUX_UVP_CONFIG_PARAMETERS'))
                o_metaStruct.META_AUX_UVP_CONFIG_PARAMETERS = o_metaStruct.META_AUX_UVP_CONFIG_PARAMETERS';
             end
+         else
+            fprintf('ERROR: Float #%d: cannot find expected ''AUX_PARTICLES_PLANKTON_CAMERA'' sensor in DB contents - UVP metadata ignored\n', ...
+               a_floatNum);
          end
       end
    end
+end
+
+if (~isempty(g_cogj_csvFileCoefId))
+   fclose(g_cogj_csvFileCoefId);
+   g_cogj_csvFileCoefId = '';
+end
+
+if (~isempty(g_cogj_csvFileBddId))
+   fclose(g_cogj_csvFileBddId);
+   g_cogj_csvFileBddId = '';
 end
 
 return

@@ -2304,6 +2304,7 @@ netcdf.putAtt(fCdf, globalVarId, 'references', 'http://www.argodatamgt.org/Docum
 netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '1.0');
 netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
 netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectoryProfile');
+netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
 
 % fill specific attributes
 netcdf.putAtt(fCdf, netcdf.inqVarID(fCdf, 'JULD'), 'resolution', a_profData.juldResolution);
@@ -3251,6 +3252,7 @@ netcdf.putAtt(fCdf, globalVarId, 'references', 'http://www.argodatamgt.org/Docum
 netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '1.0');
 netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
 netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectoryProfile');
+netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
 
 % fill specific attributes
 netcdf.putAtt(fCdf, netcdf.inqVarID(fCdf, 'JULD'), 'resolution', a_profData(1).juldResolution);

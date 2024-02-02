@@ -28,19 +28,22 @@ function create_nc_mono_prof_files_3_1( ...
 [cFileInfo] = create_nc_mono_prof_c_files_3_1(a_decoderId, a_tabProfiles, a_metaDataFromJson, []);
 
 % create the b files
-[bParamFlag] = create_nc_mono_prof_b_files_3_1(a_decoderId, a_tabProfiles, a_metaDataFromJson, cFileInfo);
+[bFileInfo] = create_nc_mono_prof_b_files_3_1(a_decoderId, a_tabProfiles, a_metaDataFromJson, cFileInfo);
 
-% check that no B-PROF files have been generated without their associated C-PROF
-% files
-% note that this should not theoretically happen (because PRES is present in
-% all profiles), however this happended when the FillValue of a parameter is
-% modified (the B-PROF file may need to be generated but not the C-PROF file).
-if (bParamFlag == 1)
-   [cFileToCreate] = get_missing_c_prof_files;
-
-   if (~isempty(cFileToCreate))
-      create_nc_mono_prof_c_files_3_1(a_decoderId, a_tabProfiles, a_metaDataFromJson, cFileToCreate);
+% the C-PROF file of each new or updated B-PROF file should be also created or updated
+cFileToCreate = [];
+if (~isempty(cFileInfo) && ~isempty(bFileInfo))
+   cFileInfoNum = cFileInfo(:, 1)*10 + cFileInfo(:, 2);
+   bFileInfoNum = bFileInfo(:, 1)*10 + bFileInfo(:, 2);
+   [~, id] = setdiff(bFileInfoNum, cFileInfoNum);
+   if (~isempty(id))
+      cFileToCreate = bFileInfo(id, :);
    end
+elseif (~isempty(bFileInfo))
+   cFileToCreate = bFileInfo;
+end
+if (~isempty(cFileToCreate))
+   create_nc_mono_prof_c_files_3_1(a_decoderId, a_tabProfiles, a_metaDataFromJson, cFileToCreate);
 end
 
 fprintf('... NetCDF MONO-PROFILE files created\n');

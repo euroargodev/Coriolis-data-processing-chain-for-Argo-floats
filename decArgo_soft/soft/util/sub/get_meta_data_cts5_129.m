@@ -40,7 +40,7 @@ global g_cogj_csvFileCoefPathName;
 
 
 % read meta-data file
-metaData = decode_apmt_metadata_129_130_131(a_metaDataXmlFileName);
+metaData = decode_apmt_metadata_129_to_133(a_metaDataXmlFileName);
 
 % check meta-data and store meta-data if needed
 if (isfield(metaData, 'profiler'))

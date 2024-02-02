@@ -54,14 +54,14 @@ switch (a_floatTransType)
       
       switch (a_decoderId)
          
-         case {105, 106, 107, 109, 110, 111, 112, 113, 114, 115, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131} % NKE CTS4 and CTS5 floats
+         case {105, 106, 107, 109, 110, 111, 112, 113, 114, 115, 116, 21, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133} % NKE CTS4 and CTS5 floats
             o_profJuldRes = double(1/1440); % 1 minute
             o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';
             
          case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1201, 1314} % Apex Ir Rudics & navis floats
             o_profJuldRes = double(1/86400); % 1 second
             
-         case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128} % Apex APF11 Ir
+         case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130} % Apex APF11 Ir
             o_profJuldRes = double(1/86400); % 1 second
             
          case {3001} % NEMO
@@ -84,7 +84,7 @@ switch (a_floatTransType)
             o_profJuldRes = double(1/1440); % 1 minute
             o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';
         
-         case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225}
+         case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225, 226}
             o_profJuldRes = double(1/1440); % 1 minute
             o_profJulDComment = 'JULD resolution is 1 minute, except when JULD = JULD_LOCATION or when JULD = JULD_FIRST_MESSAGE (TRAJ file variable); in that case, JULD resolution is 1 second';
             

@@ -666,13 +666,14 @@ end
 % specific
 if (ismember(g_decArgo_floatNum, [ ...
       6903865, 6903771, 7900543, 6900790, 6901880, 6903229, 6902802, 7900522, ...
-      6903774, 3901644, 6903010, 6902938, 6903777, 6902989]))
+      6903774, 3901644, 6903010, 6902938, 6903777, 6902989, 6903256, 6903000, ...
+      6903009]))
    switch g_decArgo_floatNum
       case 6903865
          % cycle #58 data are separated
          id = find((tabCyNum == 58) & (tabBase == 1));
          tabRank(tabCyNum == 58) = tabRank(id);
-         tabRankByCycle(tabCyNum == 58) = tabRankByCycle(id);
+
       case 6903771
          % tech#1, tech#2 and prog#1 packets are transmitted twice at cycle #60
          idDel = find((tabCyNum == 60) & (tabPackType == 0), 1, 'first');
@@ -682,38 +683,36 @@ if (ismember(g_decArgo_floatNum, [ ...
          idDel = [idDel id];
          tabRank(idDel) = -1;
          tabRankByCycle(idDel) = -1;
+
       case 7900543
          % cycle #42 data are separated
          id = find((tabCyNum == 42) & (tabBase == 1));
          id = id(1);
          tabRank(tabCyNum == 42) = tabRank(id);
-         tabRankByCycle(tabCyNum == 42) = tabRankByCycle(id);
          tabDeep(tabCyNum == 42) = 1;   
          % cycle #59 data are separated
          id = find((tabCyNum == 59) & (tabBase == 1));
          id = id(1);
          tabRank(tabCyNum == 59) = tabRank(id);
-         tabRankByCycle(tabCyNum == 59) = tabRankByCycle(id);
          % cycle #62 data are separated
          id = find((tabCyNum == 62) & (tabBase == 1));
          id = id(1);
          tabRank(tabCyNum == 62) = tabRank(id);
-         tabRankByCycle(tabCyNum == 62) = tabRankByCycle(id);
+         
       case 6900790
          % cycle #107 data are separated
          id = find((tabCyNum == 107) & (tabBase == 1));
          id = id(1);
          tabRank(tabCyNum == 107) = tabRank(id);
-         tabRankByCycle(tabCyNum == 107) = tabRankByCycle(id);
          tabDeep(tabCyNum == 107) = 1;
          tabDelayed(tabCyNum == 107) = 1;
+
       case 6901880
          % cycle #101 in 2 sessions
          idF101 = find(tabCyNum == 101);
          sessions = unique(tabSession(idF101));
          id = find((tabCyNum == 101) & (tabSession == sessions(2)));
          tabRank(id) = tabRank(idF101(1));
-         tabRankByCycle(id) = tabRankByCycle(idF101(1));
          tabSession(idF101) = tabSession(idF101(1));
          tabCompleted(idF101) = 1;
          % cycle #116 in 2 sessions
@@ -721,7 +720,6 @@ if (ismember(g_decArgo_floatNum, [ ...
          sessions = unique(tabSession(idF116));
          id = find((tabCyNum == 116) & (tabSession == sessions(2)));
          tabRank(id) = tabRank(idF116(1));
-         tabRankByCycle(id) = tabRankByCycle(idF116(1));
          tabSession(idF116) = tabSession(idF116(1));
          tabCompleted(idF116) = 1;
          % cycle #120 in 2 sessions
@@ -729,26 +727,24 @@ if (ismember(g_decArgo_floatNum, [ ...
          sessions = unique(tabSession(idF120));
          id = find((tabCyNum == 120) & (tabSession == sessions(2)));
          tabRank(id) = tabRank(idF120(1));
-         tabRankByCycle(id) = tabRankByCycle(idF120(1));
          tabSession(idF120) = tabSession(idF120(1));
          idF120 = find(tabCyNum == 120);
          tabRank(idF120) = tabRank(idF120(1));
-         tabRankByCycle(idF120) = tabRankByCycle(idF120(1));
          tabSession(idF120) = tabSession(idF120(1));
          tabCompleted(idF120) = 1;
+
       case 6903229
          % cycle #120 in 2 sessions
          idRef120 = find((tabCyNum == 120) & (tabBase == 1));
          idRef120 = idRef120(1);
          idF120 = find(tabCyNum == 120);
          tabRank(idF120) = tabRank(idRef120);
-         tabRankByCycle(idF120) = tabRankByCycle(idRef120);
+
       case 6902802
          % for delayed cycles #134 to 140, second Iridium session are also
          % transmitted, they should be in dedicated buffers
          idF = find(tabCyNum == 133);
          rank133 = tabRank(idF(end));
-         rankByCycle133 = tabRankByCycle(idF(end));
          cpt = 1;
          for cyNum = 134:141
             if (cyNum == 141)
@@ -769,14 +765,12 @@ if (ismember(g_decArgo_floatNum, [ ...
             tabCompleted(idCy1) = 1;
             tabGo(idCy1) = 1;
             tabRank(idCy1) = rank133 + cpt;
-            tabRankByCycle(idCy1) = rankByCycle133 + cpt;
             cpt = cpt + 1;
 
             if (cyNum ~= 141)
                tabCompleted(idCy2) = 1;
                tabGo(idCy2) = 1;
                tabRank(idCy2) = rank133 + cpt;
-               tabRankByCycle(idCy2) = rankByCycle133 + cpt;
                cpt = cpt + 1;
             end
          end
@@ -785,41 +779,55 @@ if (ismember(g_decArgo_floatNum, [ ...
          idF = idF(2);
          offset = unique(tabRank(idCy1)) - tabRank(idF) + 1;
          tabRank(idF:end) = tabRank(idF:end) + offset;
-         offset = unique(tabRankByCycle(idCy1)) - tabRankByCycle(idF) + 1;
-         tabRankByCycle(idF:end) = tabRankByCycle(idF:end) + offset;
+
       case 7900522
          % cycle #107 in 2 sessions
          id = find((tabCyNum == 107) & (tabBase == 1));
          id = id(1);
          tabRank(tabCyNum == 107) = tabRank(id);
-         tabRankByCycle(tabCyNum == 107) = tabRankByCycle(id);
          tabSession(tabCyNum == 107) = tabSession(id);   
          tabCompleted(tabCyNum == 107) = 1;
+
       case 6903774
          % cycle #83 data are separated
          id = find(tabCyNum == 83);
          id = id(1);
          tabRank(tabCyNum == 83) = tabRank(id);
-         tabRankByCycle(tabCyNum == 83) = tabRankByCycle(id);
          tabSession(tabCyNum == 83) = tabSession(id);   
          tabCompleted(tabCyNum == 83) = 1;
+
       case 3901644
          % cycle #126 data are separated
          id = find(tabCyNum == 126);
          id = id(1);
          tabRank(tabCyNum == 126) = tabRank(id);
-         tabRankByCycle(tabCyNum == 126) = tabRankByCycle(id);
          tabSession(tabCyNum == 126) = tabSession(id);   
          tabSessionDeep(tabCyNum == 126) = tabSessionDeep(id);   
          tabCompleted(tabCyNum == 126) = 1;
+
+         % cycle #165 data are separated
+         id = find(tabCyNum == 165);
+         id = id(1);
+         tabRank(tabCyNum == 165) = tabRank(id);
+         tabSession(tabCyNum == 165) = tabSession(id);   
+         tabSessionDeep(tabCyNum == 165) = tabSessionDeep(id);   
+         tabCompleted(tabCyNum == 165) = 1;
+
       case 6903010
          % one data packet and the second iridium session of cycle #60 delayed
          idRank60 = find(tabCyNum == 60, 1);
          idDataKo = find((tabCyNum == 60) & (tabPackType == 3), 1, 'last');
          tabRank(idDataKo) = tabRank(idRank60);
-         tabRankByCycle(idDataKo) = tabRankByCycle(idRank60);
          idSecondIs = find((tabCyNum == 60) & (tabPackType == 0), 1, 'last');
          tabDeep(tabRank == tabRank(idSecondIs)) = 0;  
+         % three data packet and the second iridium session of cycle #74 delayed
+         idRank74 = find(tabCyNum == 74, 1);
+         idDataKo = find((tabCyNum == 74) & (tabPackType == 3));
+         idDataKo = idDataKo(end-2:end);
+         tabRank(idDataKo) = tabRank(idRank74);
+         idSecondIs = find((tabCyNum == 74) & (tabPackType == 0), 1, 'last');
+         tabDeep(tabRank == tabRank(idSecondIs)) = 0;  
+
       case 6902938
          % cycle #133 data are delayed and scrambled
          id = find(tabCyNum == 133);
@@ -829,13 +837,12 @@ if (ismember(g_decArgo_floatNum, [ ...
          idF5 = find((tabCyNum == 133) & (tabPackType == 5));
          id2 = setdiff(id, [idF0(end) idF4(end) idF5(end)]);
          tabRank(id2) = tabRank(id2(1));
-         tabRankByCycle(id2) = tabRankByCycle(id2(1));
          tabDeep([idF0(end) idF4(end) idF5(end)]) = 0;
+
       case 6903777
          % cycle #55 data are delayed and scrambled
          id = find(tabCyNum == 55);
          tabRank(id) = tabRank(id(1));
-         tabRankByCycle(id) = tabRankByCycle(id(1));
          tabDelayed(id) = 1;
          tabCompleted(id) = 1;
          % cycles #59 to #88 data are transmitted twice
@@ -845,33 +852,146 @@ if (ismember(g_decArgo_floatNum, [ ...
             tabRank(idDel) = -1;
             tabRankByCycle(idDel) = -1;
          end
+
       case 6902989
          % second Iridium session of cycle #129 delayed but in different session
          % than the first Iridium session
          id129 = find(tabCyNum == 129);
          tabRank(id129) = tabRank(id129(1));
-         tabRankByCycle(id129) = tabRankByCycle(id129(1));
          idStart = find(tabIrSession(id129) == 1);
          idShift129 = id129(idStart(1):end);
          tabRank(tabRank > tabRank(idShift129(1))) = tabRank(tabRank > tabRank(idShift129(1))) + 1;
          tabRank(idShift129) = tabRank(idShift129) + 1;
-         tabRankByCycle(tabRankByCycle > tabRankByCycle(idShift129(1))) = tabRankByCycle(tabRankByCycle > tabRankByCycle(idShift129(1))) + 1;
-         tabRankByCycle(idShift129) = tabRankByCycle(idShift129) + 1;
          tabDeep(idShift129) = 0;
+
+         % cycle #161 in 2 sessions
+         id161 = find(tabCyNum == 161);
+         idSurf = find((tabCyNum == 161) & (tabIrSession == 1), 1, 'first');
+         id161D = id161;
+         id161D(id161 >= idSurf) = [];
+         tabRank(id161D) = tabRank(id161(1));
+         tabDelayed(id161D) = 0;
+         tabCompleted(id161D) = 1;
+         id161S = id161;
+         id161S(id161 < idSurf) = [];
+         tabDeep(id161S) = 0;
+         tabDelayed(id161S) = 1;
+
+         % cycle #168 delayed in 2 sessions
+         id168 = find(tabCyNum == 168);
+         idSurf = find((tabCyNum == 168) & (tabIrSession == 1), 1, 'first');
+         id168D = id168;
+         id168D(id168 >= idSurf) = [];
+         tabRank(id168D) = tabRank(id168(1));
+         tabCompleted(id168D) = 1;
+         id168S = id168;
+         id168S(id168 < idSurf) = [];
+         tabDeep(id168S) = 0;
+
+         % cycle #173 in 2 sessions
+         id173 = find(tabCyNum == 173);
+         idSurf = find((tabCyNum == 173) & (tabIrSession == 1), 1, 'first');
+         id173D = id173;
+         id173D(id173 >= idSurf) = [];
+         tabRank(id173D) = tabRank(id173(1));
+         tabDelayed(id173D) = 0;
+         tabCompleted(id173D) = 1;
+         id173S = id173;
+         id173S(id173 < idSurf) = [];
+         tabDeep(id173S) = 0;
+
+      case 6903256
+         % cycle #145 in 2 sessions
+         id = find(tabCyNum == 145);
+         tabRank(id) = tabRank(id(1));
+         tabSession(id) = tabSession(id(1));   
+         tabCompleted(id) = 1;
+
+         % cycle #156 in 2 sessions
+         id = find(tabCyNum == 156);
+         tabRank(id) = tabRank(id(1));
+         tabCompleted(id) = 1;
+         tabDelayed(id) = 0;
+         sessions = unique(tabSession(id));
+         id = find((tabCyNum == 156) & ((tabSession == sessions(1)) | (tabSession == sessions(2))));
+         tabSession(id) = tabSession(id(1));   
+
+      case 6903000
+         % cycle #83 in 2 sessions
+         id1 = find(tabCyNum == 83, 1, 'first');
+         id2 = find((tabCyNum == 83) & (tabBase == 1) & (tabIrSession == 0));
+         tabRank(tabRank == tabRank(id2)) = tabRank(id1);
+         tabSession(tabSession == tabSession(id2)) = tabSession(id1);
+         tabCompleted(tabCyNum == 83) = 1;
+
+         % cycle #121 in 2 sessions
+         id1 = find(tabCyNum == 121, 1, 'first');
+         id2 = find((tabCyNum == 121) & (tabBase == 1) & (tabIrSession == 0));
+         tabRank(tabRank == tabRank(id2)) = tabRank(id1);
+         tabSession(tabSession == tabSession(id2)) = tabSession(id1);
+         tabCompleted(tabCyNum == 121) = 1;
+
+         % cycle #123 in 2 sessions
+         id123 = find(tabCyNum == 123);
+         tabCompleted(id123) = 1;
+         tabDelayed(id123) = 0;
+         id124 = find(tabCyNum == 124, 1, 'first');
+         id123bisAll = find((tabCyNum == 123) & (tabSession == tabSession(id124)));
+         id123Ir2 = find((tabCyNum == 123) & (tabIrSession == 1), 1, 'first');
+         id123bis = id123bisAll;
+         id123bis(id123bis >= id123Ir2) = [];
+         tabRank(id123bis) = tabRank(id123(1));
+         id123ter = id123bisAll;
+         id123ter(id123ter < id123Ir2) = [];
+         tabDeep(id123ter) = 0;
+
+         % cycle #126 in 2 sessions
+         id1 = find(tabCyNum == 126, 1, 'first');
+         id2 = find((tabCyNum == 126) & (tabBase == 1) & (tabIrSession == 0));
+         tabRank(tabRank == tabRank(id2)) = tabRank(id1);
+         tabSession(tabSession == tabSession(id2)) = tabSession(id1);
+         tabCompleted(tabCyNum == 126) = 1;
+
+      case 6903009
+         % cycle #213 in 2 sessions
+         id213 = find(tabCyNum == 213);
+         tabCompleted(id213) = 1;
+         tabDelayed(id213) = 0;
+         id214 = find(tabCyNum == 214);
+         id213bis = find((tabCyNum == 213) & (tabSession == tabSession(id214(1))));
+         tabRank(id213bis) = tabRank(id213(1));
+         id213ter = find((tabCyNum == 213) & (tabIrSession == 1), 1, 'first');
+         id213ter = find((tabCyNum == 213) & (tabSession == tabSession(id213ter)));
+         tabDeep(id213ter) = 0;
+   end
+
+   % sort rank numbers according to cycle numbers
+   rank = 1;
+   cyNumList = unique(tabCyNum);
+   for cyNum = cyNumList
+      idForCy = find(tabCyNum == cyNum);
+      rankNumList = setdiff(unique(tabRank(idForCy)), -1);
+      for rankNum = rankNumList
+         idForRankCy = idForCy(find(tabRank(idForCy) == rankNum));
+         tabRankByCycle(idForRankCy) = rank;
+         rank = rank + 1;
+      end
    end
 end
 
 % update tabCompleted array
-cyNumList = unique(tabRankByCycle);
-cyNumList(cyNumList < 0) = [];
-for cyId = 1:length(cyNumList)
-   cyNum = cyNumList(cyId);
-   idForCheck = find(tabRankByCycle == cyNum);
+rankByCycleList = unique(tabRankByCycle);
+rankByCycleList(rankByCycleList < 0) = [];
+for cyId = 1:length(rankByCycleList)
+   idForCheck = find(tabRankByCycle == rankByCycleList(cyId));
+   cyNum = unique(tabCyNum(idForCheck));
 
    % check current session contents
    [completed, ~, ~] = check_buffer(idForCheck, tabPackType, tabExpNbDesc, tabExpNbDrift, tabExpNbAsc, a_decoderId, cyNum, 0, 1);
    if (completed == 1)
       tabCompleted(idForCheck) = 1;
+   else
+      tabCompleted(idForCheck) = 0;
    end
 end
 

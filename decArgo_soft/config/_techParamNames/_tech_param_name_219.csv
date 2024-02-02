@@ -6,7 +6,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 104;6;Time at end of ascent;CLOCK_EndAscentToSurface_HHMM;ascent end time, just before Argos transmission  - note units can vary and the raw values can be in the tech file only if it's not possible to calculate the final JULD in real time.
 105;7;Transmission start time;CLOCK_TransmissionStart_HHMM;time of the first transmission for this cycle
 106;11;Number of valve actions in descent;NUMBER_ValveActionsDuringDescentToPark_COUNT;number of valve actions between the crossing  of the gap threshold and the end of descent at park pressure
-107;12;Number of pump actions in descent;NUMBER_PumpActionsDuringDescentToPark_COUNT;number of pump actions between the crossing  of the gap threshold and the end of descent at park pressure
+107;12;Number of pump actions in ascent;NUMBER_PumpActionsDuringAscentToSurface_COUNT;number of pump actions between start and end of ascent 
 108;13;Number of re-grounding in drift;FLAG_Grounded_NUMBER;grounded flag , diagnostic bit - could also be logical?  Yes/no? 0/1? Or can be number of profiles during which the float grounded
 109;15;Pressure sensor offset (two’s complement coded);PRES_SurfaceOffsetCorrectedNotReset_1dbarResolution_dbar;Surface pressure recorded just before the previous descent but data is corrected on board the float. Note: cumulative offset but no further correction required. Autocorrected
 110;16;Internal pressure;PRESSURE_InternalVacuumAtSurface_mbar;Surface internal pressure

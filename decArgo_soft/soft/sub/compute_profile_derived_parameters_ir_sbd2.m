@@ -227,6 +227,19 @@ for idP = 1:length(paramToDeriveList)
       a_profFlbb.dataQc(:, end+1) = chlaQc;
       
       a_profFlbb.paramList = [a_profFlbb.paramList derivedParam];
+
+      % duplicate CHLA profile as CHLA_FLUORESCENCE one
+      a_profFlbb.data(:, end+1) = chla;
+      if (isempty(a_profFlbb.dataQc))
+         a_profFlbb.dataQc = ones(size(a_profFlbb.data, 1), length(a_profFlbb.paramList))*g_decArgo_qcDef;
+      end
+      chlaFluoQc = ones(size(a_profFlbb.data, 1), 1)*g_decArgo_qcDef;
+      chlaFluoQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_profFlbb.dataQc(:, end+1) = chlaFluoQc;
+      
+      chlaFluoParam = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
+
+      a_profFlbb.paramList = [a_profFlbb.paramList chlaFluoParam];
    end
 end
 
@@ -315,7 +328,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      cdom = compute_CDOM_105_to_107_110_112_121_to_130_1121_to_28_1322_1323( ...
+      cdom = compute_CDOM_105_to_107_110_112_121_to_133_1121_to_28_1322_1323( ...
          a_profFlbb.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -396,6 +409,19 @@ for idP = 1:length(paramToDeriveList)
       a_profFlntu.dataQc(:, end+1) = chlaQc;
       
       a_profFlntu.paramList = [a_profFlntu.paramList derivedParam];
+
+      % duplicate CHLA profile as CHLA_FLUORESCENCE one
+      a_profFlntu.data(:, end+1) = chla;
+      if (isempty(a_profFlntu.dataQc))
+         a_profFlntu.dataQc = ones(size(a_profFlntu.data, 1), length(a_profFlntu.paramList))*g_decArgo_qcDef;
+      end
+      chlaFluoQc = ones(size(a_profFlntu.data, 1), 1)*g_decArgo_qcDef;
+      chlaFluoQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_profFlntu.dataQc(:, end+1) = chlaFluoQc;
+
+      chlaFluoParam = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
+
+      a_profFlntu.paramList = [a_profFlntu.paramList chlaFluoParam];
    end
 end
 
@@ -493,6 +519,19 @@ for idP = 1:length(paramToDeriveList)
       a_profCyc.dataQc(:, end+1) = chlaQc;
       
       a_profCyc.paramList = [a_profCyc.paramList derivedParam];
+
+      % duplicate CHLA2 profile as CHLA_FLUORESCENCE2 one
+      a_profCyc.data(:, end+1) = chla;
+      if (isempty(a_profCyc.dataQc))
+         a_profCyc.dataQc = ones(size(a_profCyc.data, 1), length(a_profCyc.paramList))*g_decArgo_qcDef;
+      end
+      chlaFluoQc = ones(size(a_profCyc.data, 1), 1)*g_decArgo_qcDef;
+      chlaFluoQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_profCyc.dataQc(:, end+1) = chlaFluoQc;
+
+      chlaFluoParam = get_netcdf_param_attributes('CHLA_FLUORESCENCE2');
+
+      a_profCyc.paramList = [a_profCyc.paramList chlaFluoParam];
    end
 end
 

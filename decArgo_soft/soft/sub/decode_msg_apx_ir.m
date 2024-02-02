@@ -142,12 +142,26 @@ for idFile = 1:length(a_msgFileList)
             o_miscInfo{end+1} = dataStruct;
          end
          if (isfield(profInfo, 'ProfTime'))
-            dataStruct = get_apx_misc_data_init_struct('Profile', [], [], []);
-            dataStruct.label = 'Profile terminated date';
-            dataStruct.value = julian_2_gregorian_dec_argo(profInfo.ProfTime);
-            dataStruct.format = '%s';
-            o_miscInfo{end+1} = dataStruct;
-            o_profEndDate = profInfo.ProfTime;
+            % specific to PTT 9568, i.e. floats 6902019, 6902024, 6903697, 4903714
+            if (ismember(g_decArgo_floatNum, [6902019, 6902024, 6903697, 4903714]))
+               if (~isempty(o_driftData) && ~isempty(o_driftData.dates))
+                  if (profInfo.ProfTime >= max(o_driftData.dates)) % see #4903714 #11 for example
+                     dataStruct = get_apx_misc_data_init_struct('Profile', [], [], []);
+                     dataStruct.label = 'Profile terminated date';
+                     dataStruct.value = julian_2_gregorian_dec_argo(profInfo.ProfTime);
+                     dataStruct.format = '%s';
+                     o_miscInfo{end+1} = dataStruct;
+                     o_profEndDate = profInfo.ProfTime;
+                  end
+               end
+            else
+               dataStruct = get_apx_misc_data_init_struct('Profile', [], [], []);
+               dataStruct.label = 'Profile terminated date';
+               dataStruct.value = julian_2_gregorian_dec_argo(profInfo.ProfTime);
+               dataStruct.format = '%s';
+               o_miscInfo{end+1} = dataStruct;
+               o_profEndDate = profInfo.ProfTime;
+            end
          end
       end
    end

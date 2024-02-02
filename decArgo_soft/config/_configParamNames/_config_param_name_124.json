@@ -1273,13 +1273,21 @@
    },
    "CONF_PARAM_160" :
    {
+      "CONF_PARAM_DEC_ID" : "409",
+      "CONF_PARAM_TYPE" : "META_AUX",
+      "CONF_PARAM_MSG_LABEL" : "-",
+      "CONF_PARAM_NAME" : "META_AUX_UVP_FIRMWARE_VERSION",
+      "CONF_PARAM_DESCRIPTION" : "Firmware version of the UVP sensor"
+   },
+   "CONF_PARAM_161" :
+   {
       "CONF_PARAM_DEC_ID" : "116003",
       "CONF_PARAM_TYPE" : "CONFIG",
       "CONF_PARAM_MSG_LABEL" : "Payload sensor miscellaneous static configuration parameter",
       "CONF_PARAM_NAME" : "CONFIG_SunaApfFrameOutputPixelBegin_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "The Apf frame definition allows for a variable number of spectrometer pixels (also called channels) to be included in the frame. The two pixel values are configured indirectly via the wavelength range of the spectrum to be output (Suna Hardware Manual, section 4.2.3, input/output configuration parameters, data wavelength low/high.) The firmware converts the wavelength values to spectrometer pixels."
    },
-   "CONF_PARAM_161" :
+   "CONF_PARAM_162" :
    {
       "CONF_PARAM_DEC_ID" : "116004",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1287,7 +1295,7 @@
       "CONF_PARAM_NAME" : "CONFIG_SunaApfFrameOutputPixelEnd_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "The Apf frame definition allows for a variable number of spectrometer pixels (also called channels) to be included in the frame. The two pixel values are configured indirectly via the wavelength range of the spectrum to be output (Suna Hardware Manual, section 4.2.3, input/output configuration parameters, data wavelength low/high.) The firmware converts the wavelength values to spectrometer pixels."
    },
-   "CONF_PARAM_162" :
+   "CONF_PARAM_163" :
    {
       "CONF_PARAM_DEC_ID" : "113002",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1295,7 +1303,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoBetaAngle_angularDeg",
       "CONF_PARAM_DESCRIPTION" : "Angle of Beta measurements  (in degrees) "
    },
-   "CONF_PARAM_163" :
+   "CONF_PARAM_164" :
    {
       "CONF_PARAM_DEC_ID" : "133011",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1303,7 +1311,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoBetaBandwidth1_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of EcoBeta  #1measurements (in nanometer)."
    },
-   "CONF_PARAM_164" :
+   "CONF_PARAM_165" :
    {
       "CONF_PARAM_DEC_ID" : "133010",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1311,7 +1319,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoBetaWavelength1_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco Beta  #1 measurements (in nanometer)."
    },
-   "CONF_PARAM_165" :
+   "CONF_PARAM_166" :
    {
       "CONF_PARAM_DEC_ID" : "123103",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1319,7 +1327,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceEmissionBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for emission of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_166" :
+   "CONF_PARAM_167" :
    {
       "CONF_PARAM_DEC_ID" : "123101",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1327,7 +1335,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceEmissionWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for emission of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_167" :
+   "CONF_PARAM_168" :
    {
       "CONF_PARAM_DEC_ID" : "123102",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1335,7 +1343,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceExcitationBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for excitation of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_168" :
+   "CONF_PARAM_169" :
    {
       "CONF_PARAM_DEC_ID" : "123100",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1343,7 +1351,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceExcitationWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for excitation of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_169" :
+   "CONF_PARAM_170" :
    {
       "CONF_PARAM_DEC_ID" : "123003",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1351,7 +1359,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceEmissionBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for emission of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_170" :
+   "CONF_PARAM_171" :
    {
       "CONF_PARAM_DEC_ID" : "123001",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1359,7 +1367,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceEmissionWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for emission of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_171" :
+   "CONF_PARAM_172" :
    {
       "CONF_PARAM_DEC_ID" : "123002",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1367,7 +1375,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceExcitationBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for excitation of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_172" :
+   "CONF_PARAM_173" :
    {
       "CONF_PARAM_DEC_ID" : "123000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1375,7 +1383,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceExcitationWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for excitation of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_173" :
+   "CONF_PARAM_174" :
    {
       "CONF_PARAM_DEC_ID" : "113000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1383,7 +1391,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_174" :
+   "CONF_PARAM_175" :
    {
       "CONF_PARAM_DEC_ID" : "132013",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1391,7 +1399,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrBandwidth1_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Ocr DownIrr #1 measurements (in nanometer)."
    },
-   "CONF_PARAM_175" :
+   "CONF_PARAM_176" :
    {
       "CONF_PARAM_DEC_ID" : "132023",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1399,7 +1407,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrBandwidth2_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Ocr DownIrr #2 measurements (in nanometer)."
    },
-   "CONF_PARAM_176" :
+   "CONF_PARAM_177" :
    {
       "CONF_PARAM_DEC_ID" : "132033",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1407,7 +1415,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrBandwidth3_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Ocr DownIrr #3 measurements (in nanometer)."
    },
-   "CONF_PARAM_177" :
+   "CONF_PARAM_178" :
    {
       "CONF_PARAM_DEC_ID" : "132012",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1415,7 +1423,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength1_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #1measurements (in nanometer)."
    },
-   "CONF_PARAM_178" :
+   "CONF_PARAM_179" :
    {
       "CONF_PARAM_DEC_ID" : "132022",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1423,7 +1431,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength2_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #2 measurements (in nanometer)."
    },
-   "CONF_PARAM_179" :
+   "CONF_PARAM_180" :
    {
       "CONF_PARAM_DEC_ID" : "132032",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1431,7 +1439,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength3_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #3 measurements (in nanometer)."
    },
-   "CONF_PARAM_180" :
+   "CONF_PARAM_181" :
    {
       "CONF_PARAM_DEC_ID" : "112000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1439,7 +1447,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_181" :
+   "CONF_PARAM_182" :
    {
       "CONF_PARAM_DEC_ID" : "111000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1447,7 +1455,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_182" :
+   "CONF_PARAM_183" :
    {
       "CONF_PARAM_DEC_ID" : "111007",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1455,7 +1463,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeMeasurementsInAir_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Sensors can be mounted on a stick to perform measurements in Air. Values: Yes = 1, No = 0"
    },
-   "CONF_PARAM_183" :
+   "CONF_PARAM_184" :
    {
       "CONF_PARAM_DEC_ID" : "111008",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1463,7 +1471,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeTimePressureOffset_seconds",
       "CONF_PARAM_DESCRIPTION" : "Time interval between  optode and pressure measurements due to the fact that the optode answer is not simultaneous with the CTD/pressure answer"
    },
-   "CONF_PARAM_184" :
+   "CONF_PARAM_185" :
    {
       "CONF_PARAM_DEC_ID" : "116000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -1471,7 +1479,7 @@
       "CONF_PARAM_NAME" : "CONFIG_SunaVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_185" :
+   "CONF_PARAM_186" :
    {
       "CONF_PARAM_DEC_ID" : "116005",
       "CONF_PARAM_TYPE" : "CONFIG",

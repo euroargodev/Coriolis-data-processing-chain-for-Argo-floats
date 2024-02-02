@@ -161,6 +161,7 @@ expectedTestList = [ ...
    {'TEST020_QUESTIONABLE_ARGOS_POSITION'} ...
    {'TEST021_NS_UNPUMPED_SALINITY'} ...
    {'TEST022_NS_MIXED_AIR_WATER'} ...
+   {'TEST056_PH'} ...
    {'TEST057_DOXY'} ...
    {'TEST059_NITRATE'} ...
    {'TEST062_BBP'} ...
@@ -1635,6 +1636,9 @@ global g_copq_addDoRtqcToProfAndTrajVersion;
 % QC flag values
 global g_decArgo_qcStrDef;           % ' '
 
+% list of parameters that have an extra dimension (N_VALUESx)
+global g_decArgo_paramWithExtraDimList;
+
 
 % list of parameters managed by RTQC
 doQcParameterList = [ ...
@@ -1731,7 +1735,7 @@ for idFile = 2
             nbColToAdd = nMeasurement - size(dataQc, 2);
             dataQc = cat(2, dataQc, repmat(g_decArgo_qcStrDef, 1, nbColToAdd));
          end
-         
+
          paramName2 = paramName;
          idF = strfind(paramName2, '_ADJUSTED');
          if (~isempty(idF))
@@ -1739,8 +1743,8 @@ for idFile = 2
          end
          paramInfo = get_netcdf_param_attributes(paramName2);
          paramData = get_data_from_name(paramName, ncTrajData);
-         
-         if (~strcmp(paramName2, 'UV_INTENSITY_NITRATE'))
+
+         if (~ismember(paramName2, g_decArgo_paramWithExtraDimList))
             idF = find(paramData == paramInfo.fillValue);
             dataQc(idF) = g_decArgo_qcStrDef;
          else
@@ -1752,7 +1756,7 @@ for idFile = 2
             end
             dataQc(idF) = g_decArgo_qcStrDef;
          end
-         
+
          netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), dataQc');
       end
    end

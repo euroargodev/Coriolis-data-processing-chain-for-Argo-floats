@@ -162,7 +162,7 @@
    "CONF_PARAM_21" :
    {
       "CONF_PARAM_DEC_ID" : "PT3",
-      "CONF_PARAM_LABEL" : "duree d'ouverture maximale de l'électrovanne en surface",
+      "CONF_PARAM_LABEL" : "duree d'ouverture maximale de l'Ã©lectrovanne en surface",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_SurfaceValveMaxTimeAdditionalActions_csec",
       "CONF_PARAM_DESCRIPTION" : "Maximum duration of the additional valve actions performed at the surface during the buoyancy reduction phase (in centi-seconds)."
@@ -170,7 +170,7 @@
    "CONF_PARAM_22" :
    {
       "CONF_PARAM_DEC_ID" : "PT4",
-      "CONF_PARAM_LABEL" : "volume maxi transféré par l'electrovanne en profondeur",
+      "CONF_PARAM_LABEL" : "volume maxi transfÃ©rÃ© par l'electrovanne en profondeur",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_OilVolumeMaxPerValveAction_cm^3",
       "CONF_PARAM_DESCRIPTION" : "This information is used as a threshold for the valve action durations. The valve flow is known for each float and CONFIG_OilVolumeMaxPerValveAction_cm^3 is converted to a maxDurationOfValveAction.  During descent phases the float regularly computes a valve duration to sink to the target depth. In some specific cases the result can be a huge valve action duration and the result must be thresholded by maxDurationOfValveAction. So yes, this information is a configuration parameter (and for Remocean float it can be modified via remote controls, but of course by specialist in PROVOR vector configuration)."
@@ -178,7 +178,7 @@
    "CONF_PARAM_23" :
    {
       "CONF_PARAM_DEC_ID" : "PT5",
-      "CONF_PARAM_LABEL" : "durée maxi d'activation pompe en profondeur",
+      "CONF_PARAM_LABEL" : "durÃ©e maxi d'activation pompe en profondeur",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PumpActionMaxTimeReposition_csec",
       "CONF_PARAM_DESCRIPTION" : "Maximum duration of the pump action for a drift readjustment (in centi-seconds)."
@@ -186,15 +186,15 @@
    "CONF_PARAM_24" :
    {
       "CONF_PARAM_DEC_ID" : "PT6",
-      "CONF_PARAM_LABEL" : "volume imposé transféré par l'electrovanne en profondeur",
+      "CONF_PARAM_LABEL" : "volume imposÃ© transfÃ©rÃ© par l'electrovanne en profondeur",
       "CONF_PARAM_DEFINITION" : "TBD",
-      "CONF_PARAM_NAME" : "CONFIG_OilVolumeMaxPerValveAction_cm^3",
-      "CONF_PARAM_DESCRIPTION" : "This information is used as a threshold for the valve action durations. The valve flow is known for each float and CONFIG_OilVolumeMaxPerValveAction_cm^3 is converted to a maxDurationOfValveAction.  During descent phases the float regularly computes a valve duration to sink to the target depth. In some specific cases the result can be a huge valve action duration and the result must be thresholded by maxDurationOfValveAction. So yes, this information is a configuration parameter (and for Remocean float it can be modified via remote controls, but of course by specialist in PROVOR vector configuration)."
+      "CONF_PARAM_NAME" : "CONFIG_OilVolumeMinPerValveAction_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "This information is used as a threshold for the valve action durations. The valve flow is known for each float and CONFIG_OilVolumeMinPerValveAction_cm^3 is converted to a minDurationOfValveAction.  During descent phases the float regularly computes a valve duration to sink to the target depth. In some specific cases the result can be a brief valve action duration and the result must be thresholded by minDurationOfValveAction."
    },
    "CONF_PARAM_25" :
    {
       "CONF_PARAM_DEC_ID" : "PT7",
-      "CONF_PARAM_LABEL" : "durée d'activation pompe en remontée",
+      "CONF_PARAM_LABEL" : "durÃ©e d'activation pompe en remontÃ©e",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PumpActionMaxTimeAscent_csec",
       "CONF_PARAM_DESCRIPTION" : "Maximum duration of a pump action during ascent (in centi-seconds)."
@@ -202,7 +202,7 @@
    "CONF_PARAM_26" :
    {
       "CONF_PARAM_DEC_ID" : "PT10",
-      "CONF_PARAM_LABEL" : "durée nominale d'activation pompe en émergence",
+      "CONF_PARAM_LABEL" : "durÃ©e nominale d'activation pompe en Ã©mergence",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PumpActionTimeBuoyancyAcquisition_csec",
       "CONF_PARAM_DESCRIPTION" : "Duration of the last pump action of the buoyancy acquisition phase (in centi-seconds)."
@@ -210,7 +210,7 @@
    "CONF_PARAM_27" :
    {
       "CONF_PARAM_DEC_ID" : "PT11",
-      "CONF_PARAM_LABEL" : "périodicité de mesures de pression en remontée",
+      "CONF_PARAM_LABEL" : "pÃ©riodicitÃ© de mesures de pression en remontÃ©e",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PressureCheckTimeAscent_minutes",
       "CONF_PARAM_DESCRIPTION" : "Period of the pressure checks during the float ascent to surface (in minutes)."
@@ -218,7 +218,7 @@
    "CONF_PARAM_28" :
    {
       "CONF_PARAM_DEC_ID" : "PT12",
-      "CONF_PARAM_LABEL" : "périodicité de mesures en surface",
+      "CONF_PARAM_LABEL" : "pÃ©riodicitÃ© de mesures en surface",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PressureCheckTimeBuoyancyReductionPhase_seconds",
       "CONF_PARAM_DESCRIPTION" : "Time delay after each valve action before checking the pressure during the buoyancy reduction phase (in seconds)."
@@ -226,7 +226,7 @@
    "CONF_PARAM_29" :
    {
       "CONF_PARAM_DEC_ID" : "PT14",
-      "CONF_PARAM_LABEL" : "tolérance sur l'atteinte de la pression de consigne (+/-)",
+      "CONF_PARAM_LABEL" : "tolÃ©rance sur l'atteinte de la pression de consigne (+/-)",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PressureTargetToleranceForStabilisation_dbar",
       "CONF_PARAM_DESCRIPTION" : "Defines the target pressure interval for float stabilisation at parking or profile depth (in dbars)."
@@ -234,7 +234,7 @@
    "CONF_PARAM_30" :
    {
       "CONF_PARAM_DEC_ID" : "PT16",
-      "CONF_PARAM_LABEL" : "pression maxi à ne pas dépasser",
+      "CONF_PARAM_LABEL" : "pression maxi Ã  ne pas dÃ©passer",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PressureMaxBeforeEmergencyAscent_dbar",
       "CONF_PARAM_DESCRIPTION" : "Emergency ascent phase start pressure (in dbars)."
@@ -242,7 +242,7 @@
    "CONF_PARAM_31" :
    {
       "CONF_PARAM_DEC_ID" : "PT17",
-      "CONF_PARAM_LABEL" : "pression de début de réduction de la durée d'activation ev en surface",
+      "CONF_PARAM_LABEL" : "pression de dÃ©but de rÃ©duction de la durÃ©e d'activation ev en surface",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_BuoyancyReductionFirstThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "First threshold of the buoyancy reduction phase (in dbars). From the surface to this first threshold, the float performs one initial valve action (of a computed duration) and N1 additional valve actions (of fixed durations) until the crossing of this first threshold."
@@ -250,7 +250,7 @@
    "CONF_PARAM_32" :
    {
       "CONF_PARAM_DEC_ID" : "PT18",
-      "CONF_PARAM_LABEL" : "critère de pression de début de plongée",
+      "CONF_PARAM_LABEL" : "critÃ¨re de pression de dÃ©but de plongÃ©e",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_BuoyancyReductionSecondThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "Second threshold of the buoyancy reduction phase (in dbars). From the first threshold to this second threshold, the float performs N2 additional valve actions (of computed durations) until the crossing of this second threshold. The descent to park phase starts at the crossing of this second threshold."
@@ -258,7 +258,7 @@
    "CONF_PARAM_33" :
    {
       "CONF_PARAM_DEC_ID" : "PT20",
-      "CONF_PARAM_LABEL" : "nombre de positions hors tolérance autorisé en dérive conduisant à repositionnement",
+      "CONF_PARAM_LABEL" : "nombre de positions hors tolÃ©rance autorisÃ© en dÃ©rive conduisant Ã  repositionnement",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_NumberOfOutOfTolerancePresBeforeReposition_COUNT",
       "CONF_PARAM_DESCRIPTION" : "Number of consecutive pressure measurements outside the target pressure interval before performing a drift readjustment."
@@ -266,7 +266,7 @@
    "CONF_PARAM_34" :
    {
       "CONF_PARAM_DEC_ID" : "PT21",
-      "CONF_PARAM_LABEL" : "mode de gestion de l'échouage en descente à la pression de dérive (0 = décalage, 1 = attente)",
+      "CONF_PARAM_LABEL" : "mode de gestion de l'Ã©chouage en descente Ã  la pression de dÃ©rive (0 = dÃ©calage, 1 = attente)",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_GroundingMode_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Action performed by the float when a grounding is detected. 0: the float changes its drift pressure, 1: the float stays on the seabed until the next phase of the cycle."
@@ -274,7 +274,7 @@
    "CONF_PARAM_35" :
    {
       "CONF_PARAM_DEC_ID" : "PT23",
-      "CONF_PARAM_LABEL" : "critère d'échouage: volume cumulé",
+      "CONF_PARAM_LABEL" : "critÃ¨re d'Ã©chouage: volume cumulÃ©",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_OilVolumeMinForGroundingDetection_cm^3",
       "CONF_PARAM_DESCRIPTION" : "This information is a threshold used to detect a grounding of the float. If there is no vertical motion after having tranfered CONFIG_OilVolumeMinForGroundingDetection_cm^3 through the valve, the gounded flag is activated and the float acts as configurated by the CONFIG_GroundingMode_LOGICAL parameter.So, yes it is a configuration parameter (and I can easily understand that it can be modified via remote control since some PROVOR floats have experienced erroneous grounding detection (under study but perhaps due to in-situ conditions)."
@@ -282,7 +282,7 @@
    "CONF_PARAM_36" :
    {
       "CONF_PARAM_DEC_ID" : "PT24",
-      "CONF_PARAM_LABEL" : "pression en dessous de laquelle le flotteur reste posé en attente profil remontée",
+      "CONF_PARAM_LABEL" : "pression en dessous de laquelle le flotteur reste posÃ© en attente profil remontÃ©e",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_GroundingModeMinPresThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "If in grounding mode 0, the float changes its drift pressure only if its current pressure is greater than this value."
@@ -290,7 +290,7 @@
    "CONF_PARAM_37" :
    {
       "CONF_PARAM_DEC_ID" : "PT25",
-      "CONF_PARAM_LABEL" : "diminution de la pression visée en cas d'échouage(Pcourante - decal)",
+      "CONF_PARAM_LABEL" : "diminution de la pression visÃ©e en cas d'Ã©chouage(Pcourante - decal)",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_GroundingModePresAdjustment_dbar",
       "CONF_PARAM_DESCRIPTION" : "If in grounding mode 0, the float changes its drift pressure to its programmed one minus this value only if its current pressure is greater than this value."
@@ -298,7 +298,7 @@
    "CONF_PARAM_38" :
    {
       "CONF_PARAM_DEC_ID" : "PT26",
-      "CONF_PARAM_LABEL" : "tolérance sur maintien de la pression de consigne (+/-)",
+      "CONF_PARAM_LABEL" : "tolÃ©rance sur maintien de la pression de consigne (+/-)",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PressureTargetToleranceDuringDrift_dbar",
       "CONF_PARAM_DESCRIPTION" : "Defines the target pressure interval for float drift at parking or profile depth (in dbars)."

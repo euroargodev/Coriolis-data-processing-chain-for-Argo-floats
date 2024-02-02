@@ -48,12 +48,23 @@ for idP = 1:length(a_tabProfiles)
             g_decArgo_patternNumFloat), configNames, configValues);
          threshold = ones(4, 1)*-1;
          for id = 1:4
-            threshold(id) = get_config_value(sprintf('CONFIG_APMT_SENSOR_%02d_P%02d', ...
-               prof.payloadSensorNumber, 46+id-1), configNames, configValues);
+            configName = sprintf('CONFIG_APMT_SENSOR_%02d_P%02d', ...
+               prof.payloadSensorNumber, 46+id-1);
+            configValue = get_config_value(configName, configNames, configValues);
+            if (~isempty(configValue))
+               threshold(id) = configValue;
+            else
+               fprintf('ERROR: Float #%dA: (Cy,Ptn)=(%d,%d): Configuration parameter value is missing for ''%s''\n', ...
+                  g_decArgo_floatNum, prof.cycleNumber, prof.profileNumber, configName);
+            end
          end
 
-         idStart = find(threshold < profPres);
-         idStart = idStart(end) + 1;
+         idStart = find(threshold < profPres, 1, 'last');
+         if (~isempty(idStart))
+            idStart = idStart + 1;
+         else
+            idStart = 1;
+         end
          threshold(idStart) = profPres;
 
          flagAvgSecondary = 0;
@@ -131,8 +142,12 @@ for idP = 1:length(a_tabProfiles)
                prof.payloadSensorNumber, 46+id-1), configNames, configValues);
          end
 
-         idEnd = find(threshold < parkPres);
-         idEnd = idEnd(end) + 1;
+         idEnd = find(threshold < parkPres, 1, 'last');
+         if (~isempty(idEnd))
+            idEnd = idEnd + 1;
+         else
+            idEnd = 1;
+         end
          threshold(idEnd) = parkPres;
 
          flagAvg = 0;

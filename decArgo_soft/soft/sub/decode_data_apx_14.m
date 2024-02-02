@@ -885,6 +885,7 @@ for idL = 1:size(a_sensorData, 1)
       paramBlueRef = get_netcdf_param_attributes('BLUE_REF');
       paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
       paramChla = get_netcdf_param_attributes('CHLA');
+      paramChlaFluo = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
       paramNtuRef = get_netcdf_param_attributes('NTU_REF');
       paramSideScatteringTurbidity = get_netcdf_param_attributes('SIDE_SCATTERING_TURBIDITY');
       paramTurbidity = get_netcdf_param_attributes('TURBIDITY');
@@ -919,7 +920,9 @@ for idL = 1:size(a_sensorData, 1)
       surfChla = compute_CHLA_302_303_1014( ...
          surfFluorescenceChla, ...
          g_decArgo_fluorescenceChlaDef, g_decArgo_chloroADef);
-      
+      % duplicate CHLA profile as CHLA_FLUORESCENCE one
+      surfChlaFluo = surfChla;
+
       % compute TURBIDITY
       surfTurbidity = compute_TURBIDITY_302_303_1014( ...
          surfSideScatteringTurbidity, ...
@@ -933,6 +936,7 @@ for idL = 1:size(a_sensorData, 1)
       surfBlueRef(find(surfBlueRef == g_decArgo_blueRefDef)) = paramBlueRef.fillValue;
       surfFluorescenceChla(find(surfFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
       surfChla(find(surfChla == g_decArgo_chloroADef)) = paramChla.fillValue;
+      surfChlaFluo(find(surfChla == g_decArgo_chloroADef)) = paramChlaFluo.fillValue;
       surfNtuRef(find(surfNtuRef == g_decArgo_ntuRefDef)) = paramNtuRef.fillValue;
       surfSideScatteringTurbidity(find(surfSideScatteringTurbidity == g_decArgo_sideScatteringTurbidityDef)) = paramSideScatteringTurbidity.fillValue;
       surfTurbidity(find(surfTurbidity == g_decArgo_turbiDef)) = paramTurbidity.fillValue;
@@ -943,13 +947,13 @@ for idL = 1:size(a_sensorData, 1)
       % add parameter variables to the data structure
       o_surfData.paramList = [paramPres ...
          paramBPhaseDoxy paramTempDoxy paramPpoxDoxy ...
-         paramBlueRef paramFluorescenceChla paramChla ...
+         paramBlueRef paramFluorescenceChla paramChla paramChlaFluo ...
          paramNtuRef paramSideScatteringTurbidity paramTurbidity];
       
       % add parameter data to the data structure
       o_surfData.data = [surfPres ...
          surfBPhaseDoxy surfTempDoxy surfDoxy ...
-         surfBlueRef surfFluorescenceChla surfChla ...
+         surfBlueRef surfFluorescenceChla surfChla surfChlaFluo ...
          surfNtuRef surfSideScatteringTurbidity surfTurbidity];
       
       % add parameter data redundancy to the profile structure
@@ -977,7 +981,9 @@ for idL = 1:size(a_sensorData, 1)
       parkChla = compute_CHLA_302_303_1014( ...
          parkFluorescenceChla, ...
          g_decArgo_fluorescenceChlaDef, g_decArgo_chloroADef);
-      
+      % duplicate CHLA profile as CHLA_FLUORESCENCE one
+      parkChlaFluo = parkChla;
+
       % compute TURBIDITY
       parkTurbidity = compute_TURBIDITY_302_303_1014( ...
          parkSideScatteringTurbidity, ...
@@ -992,6 +998,8 @@ for idL = 1:size(a_sensorData, 1)
       parkDoxy(find(parkDoxy == g_decArgo_doxyDef)) = paramDoxy.fillValue;
       parkBlueRef(find(parkBlueRef == g_decArgo_blueRefDef)) = paramBlueRef.fillValue;
       parkFluorescenceChla(find(parkFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
+      parkChla(find(parkChla == g_decArgo_chloroADef)) = paramChla.fillValue;
+      parkChlaFluo(find(parkChla == g_decArgo_chloroADef)) = paramChlaFluo.fillValue;
       parkNtuRef(find(parkNtuRef == g_decArgo_ntuRefDef)) = paramNtuRef.fillValue;
       parkSideScatteringTurbidity(find(parkSideScatteringTurbidity == g_decArgo_sideScatteringTurbidityDef)) = paramSideScatteringTurbidity.fillValue;
       parkTurbidity(find(parkTurbidity == g_decArgo_turbiDef)) = paramTurbidity.fillValue;
@@ -1002,17 +1010,17 @@ for idL = 1:size(a_sensorData, 1)
       % add parameter variables to the data structure
       o_parkData.paramList = [paramPres paramTemp paramSal ...
          paramBPhaseDoxy paramTempDoxy paramDoxy ...
-         paramBlueRef paramFluorescenceChla paramChla ...
+         paramBlueRef paramFluorescenceChla paramChla paramChlaFluo ...
          paramNtuRef paramSideScatteringTurbidity paramTurbidity];
       
       % add parameter data to the data structure
       o_parkData.data = [parkPres parkTemp parkSal ...
          parkBPhaseDoxy parkTempDoxy parkDoxy ...
-         parkBlueRef parkFluorescenceChla parkChla ...
+         parkBlueRef parkFluorescenceChla parkChla parkChlaFluo ...
          parkNtuRef parkSideScatteringTurbidity parkTurbidity];
       
       % add parameter data redundancy to the profile structure
-      o_parkData.dataRed = repmat(msgRed, 1, 12);
+      o_parkData.dataRed = repmat(msgRed, 1, 13);
       
    else
       
@@ -1283,6 +1291,7 @@ if (nbLev > 0)
    paramBlueRef = get_netcdf_param_attributes('BLUE_REF');
    paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
    paramChla = get_netcdf_param_attributes('CHLA');
+   paramChlaFluo = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
    paramNtuRef = get_netcdf_param_attributes('NTU_REF');
    paramSideScatteringTurbidity = get_netcdf_param_attributes('SIDE_SCATTERING_TURBIDITY');
    paramTurbidity = get_netcdf_param_attributes('TURBIDITY');
@@ -1295,14 +1304,17 @@ if (nbLev > 0)
       g_decArgo_doxyDef);
    
    profDoxyRed = min([profPresRed profTempRed profSalRed profBPhaseDoxyRed], [], 2);
-   
+
    % compute CHLA
    profChla = compute_CHLA_302_303_1014( ...
       profFluorescenceChla, ...
       g_decArgo_fluorescenceChlaDef, g_decArgo_chloroADef);
-   
+   % duplicate CHLA profile as CHLA_FLUORESCENCE one
+   profChlaFluo = profChla;
+
    profChlaRed = profFluorescenceChlaRed;
-   
+   profChlaFluoRed = profFluorescenceChlaRed;
+
    % compute TURBIDITY
    profTurbidity = compute_TURBIDITY_302_303_1014( ...
       profSideScatteringTurbidity, ...
@@ -1320,6 +1332,7 @@ if (nbLev > 0)
    profBlueRef(find(profBlueRef == g_decArgo_blueRefDef)) = paramBlueRef.fillValue;
    profFluorescenceChla(find(profFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
    profChla(find(profChla == g_decArgo_chloroADef)) = paramChla.fillValue;
+   profChlaFluo(find(profChlaFluo == g_decArgo_chloroADef)) = paramChlaFluo.fillValue;
    profNtuRef(find(profNtuRef == g_decArgo_ntuRefDef)) = paramNtuRef.fillValue;
    profSideScatteringTurbidity(find(profSideScatteringTurbidity == g_decArgo_sideScatteringTurbidityDef)) = paramSideScatteringTurbidity.fillValue;
    profTurbidity(find(profTurbidity == g_decArgo_turbiDef)) = paramTurbidity.fillValue;
@@ -1327,19 +1340,19 @@ if (nbLev > 0)
    % add parameter variables to the profile structure
    o_profData.paramList = [paramPres paramTemp paramSal ...
       paramBPhaseDoxy paramTempDoxy paramDoxy ...
-      paramBlueRef paramFluorescenceChla paramChla ...
+      paramBlueRef paramFluorescenceChla paramChla paramChlaFluo ...
       paramNtuRef paramSideScatteringTurbidity paramTurbidity];
    
    % add parameter data to the profile structure
    o_profData.data = [profPres profTemp profSal ...
       profBPhaseDoxy profTempDoxy profDoxy ...
-      profBlueRef profFluorescenceChla profChla ...
+      profBlueRef profFluorescenceChla profChla profChlaFluo ...
       profNtuRef profSideScatteringTurbidity profTurbidity];
    
    % add parameter data redundancy to the profile structure
    o_profData.dataRed = [profPresRed profTempRed profSalRed ...
       profBPhaseDoxyRed profTempDoxyRed profDoxyRed ...
-      profBlueRefRed profFluorescenceChlaRed profChlaRed ...
+      profBlueRefRed profFluorescenceChlaRed profChlaRed profChlaFluoRed ...
       profNtuRefRed profSideScatteringTurbidityRed profTurbidityRed];
 end
 

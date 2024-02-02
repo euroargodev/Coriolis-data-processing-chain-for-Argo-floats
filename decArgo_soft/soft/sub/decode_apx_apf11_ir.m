@@ -224,11 +224,11 @@ if (~isempty(a_systemLogFileList))
 
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          
-      case {1128} % 2.15.2.R & 2.15.5.R
+      case {1128, 1129, 1130} % 2.15.2.R & 2.15.5.R, 2.16.0.R, 2.17.4.R
          
          [o_miscInfoSys, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
             o_gpsDataSys, o_grounding, o_iceDetection, o_buoyancy, o_miscEvtsSys, o_cycleTimeData, o_presOffsetData] = ...
-            decode_system_log_apx_apf11_ir_1128(a_systemLogFileList, o_cycleTimeData, o_presOffsetData, o_techData, a_decoderId);
+            decode_system_log_apx_apf11_ir_1128_to_1130(a_systemLogFileList, o_cycleTimeData, o_presOffsetData, o_techData, a_decoderId);
 
       otherwise
          

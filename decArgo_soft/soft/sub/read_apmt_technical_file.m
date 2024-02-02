@@ -43,7 +43,6 @@ global g_MC_DST;
 global g_MC_PST;
 global g_MC_PET;
 
-
 if ~(exist(a_inputFilePathName, 'file') == 2)
    fprintf('ERROR: read_apmt_technical: File not found: %s\n', a_inputFilePathName);
    return
@@ -67,6 +66,10 @@ while (1)
    data{end+1} = line;
 end
 fclose(fId);
+
+if (isempty(data)) % 36b3_130_01_default_00097_20221024191156.txt is empty
+   return
+end
 
 % delete the part of the file padded with 0x1A
 uLastLine = unique(data{end});
@@ -503,8 +506,8 @@ switch (a_decoderId)
    case {128}
       [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_128;
 
-   case {129, 130, 131}
-      [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_129_130_131;
+   case {129, 130, 131, 132, 133}
+      [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_129_to_133;
 
    otherwise
       fprintf('ERROR: init_tech_info_struct: Don''t know how to parse APMT technical data for techId #%d\n', ...

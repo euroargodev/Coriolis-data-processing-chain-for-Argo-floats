@@ -95,22 +95,25 @@ while (currentByte <= lastByteNum)
       end
    end
    
-   % look for a new treatment header
-   if (inputData(currentByte) == '(')
-      for idTreat = 1:length(treatList)
-         treatName = treatList{idTreat};
-         if (strcmp(char(inputData(currentByte:currentByte+length(treatName)-1))', treatName))
-            newTreatNum = idTreat;
-            currentByte = currentByte + length(treatName);
-            break
-         end
-      end
-   end
-   
    % the treatment type of PARK, SHORT_PARK and SURFACE measurements is always
    % RAW (NKE personal communication)
    if (ismember(newPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
       newTreatNum = g_decArgo_cts5Treat_RW;
+   else
+
+      % look for a new treatment header
+      if (inputData(currentByte) == '(')
+         for idTreat = 1:length(treatList)
+            treatName = treatList{idTreat};
+            if (~isempty(treatName))
+               if (strcmp(char(inputData(currentByte:currentByte+length(treatName)-1))', treatName))
+                  newTreatNum = idTreat;
+                  currentByte = currentByte + length(treatName);
+                  break
+               end
+            end
+         end
+      end
    end
    
    % consider modification of phase or treatment

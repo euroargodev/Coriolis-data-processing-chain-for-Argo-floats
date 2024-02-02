@@ -61,6 +61,7 @@ global g_decArgo_decoderVersion;
 
 % lists of managed decoders
 global g_decArgo_decoderIdListNkeCts5Usea;
+global g_decArgo_decoderIdListNkeCts5Osean;
 
 % sensor list
 global g_decArgo_sensorMountedOnFloat;
@@ -229,6 +230,23 @@ switch (a_decoderId)
                for idC = 1:length(metaData.CONFIG_PARAMETER_VALUE)
                   metaData.CONFIG_PARAMETER_VALUE{idC}.(sprintf('CONFIG_PARAMETER_VALUE_%d_%d', configParamNum, idC)) = ...
                      num2str(g_decArgo_jsonMetaData.PRES_CUT_OFF_PROF);
+               end
+            end
+         end
+
+         % remove CONFIG_PT20_CTDPumpSwitchOffPres configuration parameter for
+         % decId 31
+         if (a_decoderId == 31)
+            idL = find(strcmp(struct2cell(metaData.CONFIG_PARAMETER_NAME), 'CONFIG_PT20_CTDPumpSwitchOffPres'));
+            if (~isempty(idL))
+               fieldNames = fieldnames(metaData.CONFIG_PARAMETER_NAME);
+               fieldName = fieldNames{idL};
+               idFUs = strfind(fieldName, '_');
+               paramNum = fieldName(idFUs(end)+1:end);
+               metaData.CONFIG_PARAMETER_NAME = rmfield(metaData.CONFIG_PARAMETER_NAME, fieldName);
+               for idC = 1:length(metaData.CONFIG_PARAMETER_VALUE)
+                  fieldName = ['CONFIG_PARAMETER_VALUE_' paramNum '_' num2str(idC)];
+                  metaData.CONFIG_PARAMETER_VALUE{idC} = rmfield(metaData.CONFIG_PARAMETER_VALUE{idC}, fieldName);
                end
             end
          end
@@ -448,7 +466,7 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 301, 302}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 301, 302}
       
       % Remocean floats
       
@@ -740,7 +758,7 @@ switch (a_decoderId)
       nbConfigParam = length(missionConfigName);
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131}
+   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133}
       
       % CTS5 floats
       
@@ -838,15 +856,24 @@ switch (a_decoderId)
             {'META_AUX_SBE41_FIRMWARE_VERSION'} ...
             {'META_AUX_SUNA_FIRMWARE_VERSION'} ...
             {'META_AUX_SUNA_SPECTROMETER_INTEGRATION_TIME'} ...
+            {'META_AUX_UVP_FIRMWARE_VERSION'} ...
+            {'META_AUX_UVP_ECOTAXA_NAMES'} ...
+            {'META_AUX_UVP_ECOTAXA_IDS'} ...
             ];
          for idMA = 1:length(metaAuxLabelList)
             if (isfield(metaData, metaAuxLabelList{idMA}))
-               inputAuxMetaName = [inputAuxMetaName; metaAuxLabelList{idMA}];
-               idF = find(strcmp(metaAuxLabelList{idMA}, g_decArgo_outputNcConfParamLabel), 1);
-               inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
-               inputAuxMetaValue = [inputAuxMetaValue; metaData.(metaAuxLabelList{idMA})];
-               inputAuxMetaDescription = [inputAuxMetaDescription; ...
-                  g_decArgo_outputNcConfParamDescription(find(strcmp(metaAuxLabelList{idMA}, g_decArgo_outputNcConfParamLabel), 1))];
+               if (~isempty(metaData.(metaAuxLabelList{idMA})))
+                  inputAuxMetaName = [inputAuxMetaName; metaAuxLabelList{idMA}];
+                  idF = find(strcmp(metaAuxLabelList{idMA}, g_decArgo_outputNcConfParamLabel), 1);
+                  inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+                  inputAuxMetaValue = [inputAuxMetaValue; metaData.(metaAuxLabelList{idMA})];
+                  inputAuxMetaDescription = [inputAuxMetaDescription; ...
+                     g_decArgo_outputNcConfParamDescription(find(strcmp(metaAuxLabelList{idMA}, g_decArgo_outputNcConfParamLabel), 1))];
+               else
+                  fprintf('ERROR: Float #%d: Empty parameter value for ''%s'' configuration parameter\n', ...
+                     g_decArgo_floatNum, ...
+                     metaAuxLabelList{idMA});
+               end
             end
          end
 
@@ -872,6 +899,28 @@ switch (a_decoderId)
                inputAuxMetaValue = [inputAuxMetaValue; metaData.META_AUX_UVP_CONFIG_PARAMETERS.(fieldNames2{idConf})];
                inputAuxMetaDescription = [inputAuxMetaDescription; ...
                   g_decArgo_outputNcConfParamDescription(find(strcmp(confLabel, g_decArgo_outputNcConfParamLabel), 1))];
+            end
+         end
+
+      elseif (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Osean))
+         %CTS5-OSEAN
+         metaAuxLabelList = [ ...
+            {'META_AUX_UVP_FIRMWARE_VERSION'} ...
+            ];
+         for idMA = 1:length(metaAuxLabelList)
+            if (isfield(metaData, metaAuxLabelList{idMA}))
+               if (~isempty(metaData.(metaAuxLabelList{idMA})))
+                  inputAuxMetaName = [inputAuxMetaName; metaAuxLabelList{idMA}];
+                  idF = find(strcmp(metaAuxLabelList{idMA}, g_decArgo_outputNcConfParamLabel), 1);
+                  inputAuxMetaId = [inputAuxMetaId; g_decArgo_outputNcConfParamId(idF)];
+                  inputAuxMetaValue = [inputAuxMetaValue; metaData.(metaAuxLabelList{idMA})];
+                  inputAuxMetaDescription = [inputAuxMetaDescription; ...
+                     g_decArgo_outputNcConfParamDescription(find(strcmp(metaAuxLabelList{idMA}, g_decArgo_outputNcConfParamLabel), 1))];
+               else
+                  fprintf('ERROR: Float #%d: Empty parameter value for ''%s'' configuration parameter\n', ...
+                     g_decArgo_floatNum, ...
+                     metaAuxLabelList{idMA});
+               end
             end
          end
       end
@@ -1047,7 +1096,7 @@ switch (a_decoderId)
       
       % CTS5-USEA
       if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
-         if (ismember(a_decoderId, [129 130 131]) && any(strcmp(g_decArgo_sensorMountedOnFloat, 'UVP')))
+         if (any(strcmp(g_decArgo_sensorMountedOnFloat, 'UVP')))
             % dispatch each configuration parameter on the UVP sensor in the
             % configuration
             [launchAuxConfigName, launchAuxConfigId, launchAuxConfigValue, ...
@@ -1350,12 +1399,13 @@ switch (a_decoderId)
          metaDataAux);
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {222, 223, 224, 225}
+   case {222, 223, 224, 225, 226}
       
       % Arvor-ARN-Ice Iridium 5.47
       % Arvor-ARN-DO-Ice Iridium 5.48
       % Arvor-ARN-Ice RBR Iridium 5.49
       % Provor-ARN-DO-Ice Iridium 5.76
+      % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
 
       % select Argo and Auxiliary configuration information
       staticConfigName = a_structConfig.STATIC_NC.NAMES;
@@ -1680,7 +1730,7 @@ switch (a_decoderId)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % APEX APF11 Iridium
       
-   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1321, 1322, 1323}
+   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1321, 1322, 1323}
                   
       % retrieve mandatory configuration names for this decoder
       mandatoryConfigName = get_config_param_mandatory(a_decoderId);
@@ -2238,6 +2288,7 @@ netcdf.putAtt(fCdf, globalVarId, 'references', 'http://www.argodatamgt.org/Docum
 netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '3.1');
 netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
 netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
+netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
 
 % general information on the meta-data file
 dataTypeVarId = netcdf.defVar(fCdf, 'DATA_TYPE', 'NC_CHAR', string16DimId);

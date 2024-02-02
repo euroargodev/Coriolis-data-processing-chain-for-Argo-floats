@@ -113,11 +113,11 @@ end
 % create parameters
 paramJuld = get_netcdf_param_attributes('JULD');
 paramPres = get_netcdf_param_attributes('PRES');
-paramImNumPartTaxo = get_netcdf_param_attributes('NUMBER_IMAGES_PARTICLES_TAXO');
-paramNumCatTaxo = get_netcdf_param_attributes('NUMBER_CATEGORIES_TAXO');
+paramImNumPartTaxo = get_netcdf_param_attributes('NB_IMAGE_CATEGORY');
+paramNbCat = get_netcdf_param_attributes('NB_CATEGORY');
 paramIndexCat = get_netcdf_param_attributes('INDEX_CATEGORY');
-paramNumObjCat = get_netcdf_param_attributes('NUMBER_OBJECTS_CATEGORY');
-paramObjectMeanSizeCat = get_netcdf_param_attributes('OBJECT_MEAN_SIZE_CATEGORY');
+paramNbObjCat = get_netcdf_param_attributes('NB_OBJECT_CATEGORY');
+paramObjectMeanVolCat = get_netcdf_param_attributes('OBJECT_MEAN_VOLUME_CATEGORY');
 paramObjectMeanGreyLevelVCat = get_netcdf_param_attributes('OBJECT_MEAN_GREY_LEVEL_CATEGORY');
 
 % create final profile(s)
@@ -151,7 +151,7 @@ for idDir = 1:length(uDir)
    end
    
    paramList = [ ...
-      paramPres paramImNumPartTaxo paramNumCatTaxo paramIndexCat paramNumObjCat paramObjectMeanSizeCat paramObjectMeanGreyLevelVCat ...
+      paramPres paramImNumPartTaxo paramNbCat paramIndexCat paramNbObjCat paramObjectMeanVolCat paramObjectMeanGreyLevelVCat ...
       ];
    
    newProfile = a_tabProfiles(idProfForDir(1));

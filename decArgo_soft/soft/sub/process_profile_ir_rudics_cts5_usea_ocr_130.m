@@ -2,7 +2,7 @@
 % Create the OCR profiles of CTS5-USEA decoded data.
 %
 % SYNTAX :
-%  [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf] = ...
+%  [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabDeepDrift, o_tabSurf] = ...
 %    process_profile_ir_rudics_cts5_usea_ocr_130(a_ocrData, a_timeData, a_gpsData)
 %
 % INPUT PARAMETERS :
@@ -14,6 +14,7 @@
 %   o_tabProfiles  : created output profiles
 %   o_tabDrift     : created output drift measurement profiles
 %   o_tabDesc2Prof : created output descent 2 prof measurement profiles
+%   o_tabDeepDrift : created output deep drift measurement profiles
 %   o_tabSurf      : created output surface measurement profiles
 %
 % EXAMPLES :
@@ -24,13 +25,14 @@
 % RELEASES :
 %   10/31/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf] = ...
+function [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabDeepDrift, o_tabSurf] = ...
    process_profile_ir_rudics_cts5_usea_ocr_130(a_ocrData, a_timeData, a_gpsData)
 
 % output parameters initialization
 o_tabProfiles = [];
 o_tabDrift = [];
 o_tabDesc2Prof = [];
+o_tabDeepDrift = [];
 o_tabSurf = [];
 
 % current float WMO number
@@ -47,6 +49,7 @@ global g_decArgo_patternNumFloat;
 global g_decArgo_phaseDsc2Prk;
 global g_decArgo_phaseParkDrift;
 global g_decArgo_phaseDsc2Prof;
+global g_decArgo_phaseProfDrift;
 global g_decArgo_phaseAscProf;
 global g_decArgo_phaseSatTrans;
 
@@ -60,8 +63,9 @@ global g_decArgo_treatAverageAndStDevAndMedian;
 
 % codes for CTS5 phases
 global g_decArgo_cts5PhaseDescent;
-global g_decArgo_cts5PhaseDeepProfile;
 global g_decArgo_cts5PhasePark;
+global g_decArgo_cts5PhaseDeepProfile;
+global g_decArgo_cts5PhaseShortPark;
 global g_decArgo_cts5PhaseAscent;
 global g_decArgo_cts5PhaseSurface;
 
@@ -84,18 +88,20 @@ end
 
 % process the profiles
 for idP = 1:length(a_ocrData)
-   
+
    dataStruct = a_ocrData{idP};
    phaseId = dataStruct.phaseId;
    treatId = dataStruct.treatId;
    data = dataStruct.data;
-   
+
    if (phaseId == g_decArgo_cts5PhaseDescent)
       phaseNum = g_decArgo_phaseDsc2Prk;
    elseif (phaseId == g_decArgo_cts5PhasePark)
       phaseNum = g_decArgo_phaseParkDrift;
    elseif (phaseId == g_decArgo_cts5PhaseDeepProfile)
       phaseNum = g_decArgo_phaseDsc2Prof;
+   elseif (phaseId == g_decArgo_cts5PhaseShortPark)
+      phaseNum = g_decArgo_phaseProfDrift;
    elseif (phaseId == g_decArgo_cts5PhaseAscent)
       phaseNum = g_decArgo_phaseAscProf;
    elseif (phaseId == g_decArgo_cts5PhaseSurface)
@@ -108,20 +114,20 @@ for idP = 1:length(a_ocrData)
          g_decArgo_patternNumFloat, ...
          phaseId);
    end
-   
+
    profStruct = get_profile_init_struct( ...
       g_decArgo_cycleNumFloat, g_decArgo_patternNumFloat, phaseNum, 0);
    profStruct.outputCycleNumber = g_decArgo_cycleNum;
    profStruct.sensorNumber = 2;
    profStruct.payloadSensorNumber = 3;
-   
+
    % store data measurements
    if (~isempty(data))
-      
+
       switch (treatId)
          case {g_decArgo_cts5Treat_RW, g_decArgo_cts5Treat_AM, g_decArgo_cts5Treat_DW}
             % OCR (raw) (mean) (decimated raw)
-            
+
             % create parameters
             paramJuld = get_netcdf_param_attributes('JULD');
             paramPres = get_netcdf_param_attributes('PRES');
@@ -129,11 +135,11 @@ for idP = 1:length(a_ocrData)
             paramIr2 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE443');
             paramIr3 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490');
             paramIr4 = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE665');
-            
+
             profStruct.paramList = [ ...
                paramPres paramIr1 paramIr2 paramIr3 paramIr4 ...
                ];
-            
+
             % treatment type
             if (treatId == g_decArgo_cts5Treat_RW)
                profStruct.treatType = g_decArgo_treatRaw;
@@ -142,10 +148,10 @@ for idP = 1:length(a_ocrData)
             else
                profStruct.treatType = g_decArgo_treatDecimatedRaw;
             end
-            
+
          case g_decArgo_cts5Treat_AM_SD
             % OCR (mean & stDev)
-            
+
             % create parameters
             paramJuld = get_netcdf_param_attributes('JULD');
             paramPres = get_netcdf_param_attributes('PRES');
@@ -157,12 +163,12 @@ for idP = 1:length(a_ocrData)
             paramIr2StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE443_STD');
             paramIr3StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490_STD');
             paramIr4StDev = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE665_STD');
-            
+
             profStruct.paramList = [ ...
                paramPres paramIr1 paramIr2 paramIr3 paramIr4 ...
                paramIr1StDev paramIr2StDev paramIr3StDev paramIr4StDev ...
                ];
-            
+
             % treatment type
             profStruct.treatType = g_decArgo_treatAverageAndStDev;
 
@@ -175,7 +181,7 @@ for idP = 1:length(a_ocrData)
 
          case g_decArgo_cts5Treat_AM_MD
             % OCR (mean & median)
-            
+
             % create parameters
             paramJuld = get_netcdf_param_attributes('JULD');
             paramPres = get_netcdf_param_attributes('PRES');
@@ -188,7 +194,7 @@ for idP = 1:length(a_ocrData)
             paramIr2Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE443_MED');
             paramIr3Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490_MED');
             paramIr4Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE665_MED');
-            
+
             profStruct.paramList = [ ...
                paramPres paramIr1 paramIr2 paramIr3 paramIr4 ...
                paramPresMed paramIr1Med paramIr2Med paramIr3Med paramIr4Med ...
@@ -226,7 +232,7 @@ for idP = 1:length(a_ocrData)
             paramIr2Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE443_MED');
             paramIr3Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE490_MED');
             paramIr4Med = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE665_MED');
-            
+
             profStruct.paramList = [ ...
                paramPres paramIr1 paramIr2 paramIr3 paramIr4 ...
                paramIr1StDev paramIr2StDev paramIr3StDev paramIr4StDev ...
@@ -259,42 +265,44 @@ for idP = 1:length(a_ocrData)
                treatId);
             continue
       end
-      
+
       profStruct.dateList = paramJuld;
-      
+
       profStruct.data = data(:, 2:end);
       profStruct.dates = data(:, 1);
       profStruct.datesAdj = adjust_time_cts5(profStruct.dates);
-      
+
       % measurement dates
       dates = profStruct.datesAdj;
       profStruct.minMeasDate = min(dates);
       profStruct.maxMeasDate = max(dates);
    end
-   
+
    if (~isempty(profStruct.paramList))
-      
+
       % profile direction
       if (phaseNum == g_decArgo_phaseDsc2Prk)
          profStruct.direction = 'D';
       end
-      
+
       % add profile additional information
       if (phaseNum == g_decArgo_phaseParkDrift)
          o_tabDrift = [o_tabDrift profStruct];
       elseif (phaseNum == g_decArgo_phaseDsc2Prof)
          o_tabDesc2Prof = [o_tabDesc2Prof profStruct];
+      elseif (phaseNum == g_decArgo_phaseProfDrift)
+         o_tabDeepDrift = [o_tabDeepDrift profStruct];
       elseif (phaseNum == g_decArgo_phaseSatTrans)
          o_tabSurf = [o_tabSurf profStruct];
       else
-         
+
          % positioning system
          profStruct.posSystem = 'GPS';
-         
+
          % profile date and location information
          [profStruct] = add_profile_date_and_location_ir_rudics_cts5( ...
             profStruct, a_timeData, a_gpsData);
-         
+
          o_tabProfiles = [o_tabProfiles profStruct];
       end
    end

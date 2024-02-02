@@ -1,5 +1,5 @@
 % ------------------------------------------------------------------------------
-% Adjust PRES values of BGC measurements sampled during the drift phase.
+% Adjust PRES values of BGC measurements sampled during the drift phases.
 % Adjust PRES values of all SUNA measurements.
 %
 % Concerning BGC measurements sampled during the drift phase:
@@ -17,15 +17,18 @@
 % of the SUNA measurement reporting time).
 %
 % SYNTAX :
-%  [o_tabProfiles, o_tabDrift] = adjust_bgc_pres_cts5_usea(a_tabProfiles, a_tabDrift)
+% [o_tabProfiles, o_tabDrift, o_tabDeepDrift] = ...
+%   adjust_bgc_pres_cts5_usea(a_tabProfiles, a_tabDrift, a_tabDeepDrift)
 %
 % INPUT PARAMETERS :
-%   a_tabProfiles : input profile structures
-%   a_tabDrift    : input drift profile structures
+%   a_tabProfiles  : input profile structures
+%   a_tabDrift     : input drift profile structures
+%   a_tabDeepDrift : input deep drift profile structures
 %
 % OUTPUT PARAMETERS :
-%   o_tabProfiles : output profile structures
-%   o_tabDrift    : output drift profile structures
+%   o_tabProfiles  : output profile structures
+%   o_tabDrift     : output drift profile structures
+%   o_tabDeepDrift : output deep drift profile structures
 %
 % EXAMPLES :
 %
@@ -35,11 +38,13 @@
 % RELEASES :
 %   02/01/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabProfiles, o_tabDrift] = adjust_bgc_pres_cts5_usea(a_tabProfiles, a_tabDrift)
+function [o_tabProfiles, o_tabDrift, o_tabDeepDrift] = ...
+   adjust_bgc_pres_cts5_usea(a_tabProfiles, a_tabDrift, a_tabDeepDrift)
 
 % output parameters initialization
 o_tabProfiles = a_tabProfiles;
 o_tabDrift = a_tabDrift;
+o_tabDeepDrift = a_tabDeepDrift;
 
 % current cycle number
 global g_decArgo_cycleNum;
@@ -136,13 +141,38 @@ for idProf = 1:size(profInfo, 1)
    end
 end
 
+% collect information on drift profiles
+profInfo = [];
+for idProf = 1:length(o_tabDeepDrift)
+
+   profile = o_tabDeepDrift(idProf);
+   profInfo = [profInfo;
+      idProf profile.sensorNumber profile.cycleNumber profile.profileNumber];
+end
+
+% adjust BGC pressures with CTD ones
+for idProf = 1:size(profInfo, 1)
+   if (profInfo(idProf, 2) ~= 0)
+      idCtd = find((profInfo(:, 2) == 0) & (profInfo(:, 3) == profInfo(idProf, 3)) & (profInfo(:, 4) == profInfo(idProf, 4)));
+      if (~isempty(idCtd))
+         tabDriftCtd = o_tabDeepDrift(profInfo(idCtd, 1));
+      else
+         tabDriftCtd = [];
+      end
+      [o_tabDeepDrift(profInfo(idProf, 1)), doneForProf] = adjust_bgc_pres_drift(o_tabDeepDrift(profInfo(idProf, 1)), tabDriftCtd, presCheckJuld, presCheckPres);
+      if (doneForProf == 1)
+         doneForDrift = 1;
+      end
+   end
+end
+
 if (doneForDrift)
    if ~(~isempty(g_decArgo_paramTrajAdjInfo) && any([g_decArgo_paramTrajAdjInfo{:, 2}] == 4))
 
       param = 'PRES';
-      equation = 'PRES_ADJUSTED = time interpolated CTD PRES (for BGC pressures sampled during the drift phase at parking depth that are not consistent with CTD PRES (from PTS measurements or pressure checks))';
+      equation = 'PRES_ADJUSTED = time interpolated CTD PRES (for BGC pressures sampled during the drift phase at parking (or profile) depth that are not consistent with CTD PRES (from PTS measurements or pressure checks))';
       coefficient = 'not applicable';
-      comment = 'Inconsistent BGC pressures, sampled during the drift phase at parking depth, are adjusted in real time with time interpolated CTD pressures (from PTS measurements or pressure checks). Concerned Measurement Codes are: 290 and 301.';
+      comment = 'Inconsistent BGC pressures, sampled during the drift phase at parking (or profile) depth, are adjusted in real time with time interpolated CTD pressures (from PTS measurements or pressure checks). Concerned Measurement Codes are: 290 and 301 (or 490).';
 
       g_decArgo_paramTrajAdjInfo = [g_decArgo_paramTrajAdjInfo;
          g_decArgo_paramTrajAdjId 4 -1 ...

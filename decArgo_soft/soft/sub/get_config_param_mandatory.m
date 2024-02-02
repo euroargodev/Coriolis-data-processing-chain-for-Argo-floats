@@ -37,7 +37,7 @@ switch (a_decoderId)
          {'CONFIG_ProfilePressure_dbar'}; ...
          ];
             
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 301, 302, 303}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 301, 302, 303}
       % Remocean & Arvor-CM
       o_configParamName = [ ...
          {'CONFIG_NumberOfSubCycles_NUMBER'}; ...
@@ -47,7 +47,7 @@ switch (a_decoderId)
          {'CONFIG_TransmissionEndCycle_LOGICAL'}; ...
          ];
       
-   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131}
+   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133}
       % CTS5
       o_configParamName = [ ...
          {'CONFIG_CycleTime_seconds'}; ...
@@ -63,7 +63,7 @@ switch (a_decoderId)
          {'CONFIG_ProfilePressure_dbar'}; ...
          ];
       
-   case {210, 211, 212, 222, 213, 214, 217, 223, 224, 225}
+   case {210, 211, 212, 222, 213, 214, 217, 223, 224, 225, 226}
       % Arvor-ARN Iridium
       % Arvor-ARN-Ice Iridium 5.45 & 5.47
       % Provor-ARN-DO Iridium
@@ -72,6 +72,7 @@ switch (a_decoderId)
       % Arvor-ARN-DO-Ice Iridium 5.48
       % Arvor-ARN-Ice RBR Iridium 5.49
       % Provor-ARN-DO-Ice Iridium 5.76
+      % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
       o_configParamName = [ ...
          {'CONFIG_CycleTime_hours'}; ...
          {'CONFIG_ParkPressure_dbar'}; ...
@@ -101,7 +102,7 @@ switch (a_decoderId)
          {'CONFIG_ProfilePressure_dbar'}; ...
          ];
       
-   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1321, 1322, 1323}
+   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1321, 1322, 1323}
       % Apex APF11 Iridium
       o_configParamName = [ ...
          {'CONFIG_CycleTime_minutes'}; ...

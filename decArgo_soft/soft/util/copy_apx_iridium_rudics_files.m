@@ -162,7 +162,14 @@ for idFloat = 1:nbFloats
          end
          profInfo = parse_apx_ir_profile_info(profInfoDataStr);
          if (~isempty(profInfo) && isfield(profInfo, 'ProfTime'))
-            dates = [dates; profInfo.ProfTime];
+            % specific to PTT 9568, i.e. floats 6902019, 6902024, 6903697, 4903714
+            if (ismember(floatNum, [6902019, 6902024, 6903697, 4903714]))
+               if (profInfo.ProfTime >= max(dates)) % see #4903714 #11 for example
+                  dates = [dates; profInfo.ProfTime];
+               end
+            else
+               dates = [dates; profInfo.ProfTime];
+            end
          end
          [gpsLocDate, gpsLocLon, gpsLocLat, ...
             gpsLocNbSat, gpsLocAcqTime, ...

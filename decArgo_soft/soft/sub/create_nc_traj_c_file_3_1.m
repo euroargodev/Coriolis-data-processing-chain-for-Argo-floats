@@ -33,7 +33,7 @@ global g_decArgo_qcStrDef;
 global g_decArgo_qcStrNoQc;
 
 % configuration values
-global g_decArgo_dirOutputNetcdfFile;
+global g_decArgo_dirOutputTraj31NetcdfFile;
 global g_decArgo_applyRtqc;
 
 % decoder version
@@ -142,7 +142,7 @@ nbMeasAddParam = length(measAddParamName);
 
 % create output file pathname
 floatNumStr = num2str(g_decArgo_floatNum);
-outputDirName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/'];
+outputDirName = [g_decArgo_dirOutputTraj31NetcdfFile '/' floatNumStr '/'];
 if ~(exist(outputDirName, 'dir') == 7)
    mkdir(outputDirName);
 end
@@ -289,6 +289,7 @@ netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '3.1');
 netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
 netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectory');
 netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
+netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
 
 resGlobalComment = get_global_comment_on_resolution(a_decoderId);
 if (~isempty(resGlobalComment))

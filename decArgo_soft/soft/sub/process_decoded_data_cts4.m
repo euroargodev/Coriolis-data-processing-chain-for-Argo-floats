@@ -85,6 +85,13 @@ global g_decArgo_realtimeFlag;
 % report information structure
 global g_decArgo_reportStruct;
 
+% array to store :
+% - all configuration parameters of a second Iridium session (that
+% should not be used immediatly)
+% - PV & PM parameters that should be use on a new cycle only (in case of
+% multi-profile mode)
+global g_decArgo_floatProgTab;
+
 
 % no data to process
 if (isempty(a_decodedDataTab))
@@ -96,7 +103,7 @@ g_decArgo_generateNcFlag = 1;
 % set information on current cycle
 g_decArgo_cycleNum = unique([a_decodedDataTab.cyNumOut]);
 g_decArgo_cycleProfNum = unique([a_decodedDataTab.cyNum]);
-deepCycleFlag =  unique([a_decodedDataTab.deep]);
+deepCycleFlag = unique([a_decodedDataTab.deep]);
 
 if (g_decArgo_realtimeFlag == 1)
    % update the reports structure cycle list
@@ -131,7 +138,7 @@ tabTechNMeas = [];
 switch (a_decoderId)
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {111, 113, 114, 115} % Remocean V3.00 and higher
+   case {111, 113, 114, 115, 116} % Remocean V3.00 and higher
       
       % get decoded data
       [cyProfPhaseList, ...
@@ -148,12 +155,22 @@ switch (a_decoderId)
       
       % assign the current configuration to the current deep cycle
       if (deepCycleFlag == 1)
-         set_float_config_ir_rudics_cts4_111_113_114_115(g_decArgo_cycleProfNum);
+
+         % IN CASE OF MULTI-PROFILE MODE
+         % PV and PM commands are considered on a new cycle only (i.e. when
+         % profNum = 0)
+         % profNum = 0 => update the configuration with already received floatProgParam packets
+         if (~isempty(g_decArgo_floatProgTab) && ...)
+               (g_decArgo_cycleProfNum - fix(g_decArgo_cycleProfNum/100)*100 == 0)) % profNum = 0
+            update_float_config_ir_rudics_111_113_to_116('', '', '', '', 0, 1);
+         end
+         set_float_config_ir_rudics_cts4_111_113_to_116(g_decArgo_cycleProfNum);
       end
       
       % update float configuration for the next cycles
       if (~isempty(floatProgRudics) || ~isempty(floatProgTech) || ...
             ~isempty(floatProgParam) || ~isempty(floatProgSensor))
+         
          % BE CAREFUL!
          % in this firmware, configuration parameters of the second Iridium
          % session are considered one deep cycle later
@@ -165,21 +182,21 @@ switch (a_decoderId)
          if ((deepCycleFlag == 0) && (fix(g_decArgo_cycleProfNum/100) > 0))
             irSessionNum = 2;
          end
-         update_float_config_ir_rudics_111_113_114_115( ...
-            floatProgRudics, floatProgTech, floatProgParam, floatProgSensor, irSessionNum);
+         update_float_config_ir_rudics_111_113_to_116( ...
+            floatProgRudics, floatProgTech, floatProgParam, floatProgSensor, irSessionNum, 0);
       end
       
       % keep only new GPS locations (acquired during a surface phase)
-      [tabTech] = clean_gps_data_ir_rudics_111_113_114_115(tabTech);
+      [tabTech] = clean_gps_data_ir_rudics_111_113_to_116(tabTech);
       
       % store GPS data
-      store_gps_data_ir_rudics_111_113_114_115(tabTech);
+      store_gps_data_ir_rudics_111_113_to_116(tabTech);
       
       % add dates to drift measurements
       [dataCTD, dataOXY, dataOCR, ...
          dataECO2, dataECO3, dataFLNTU, ...
          dataCROVER, dataSUNA, dataSEAFET, measDates] = ...
-         add_drift_meas_dates_ir_rudics_111_113_114_115(a_decoderId, ...
+         add_drift_meas_dates_ir_rudics_111_113_to_116(a_decoderId, ...
          dataCTD, dataOXY, dataOCR, ...
          dataECO2, dataECO3, dataFLNTU, ...
          dataCROVER, dataSUNA, dataSEAFET);
@@ -199,7 +216,7 @@ switch (a_decoderId)
          firstGroundDate, firstGroundPres, ...
          firstHangDate, firstHangPres, ...
          firstEmerAscentDate, firstEmergencyAscentPres] = ...
-         compute_prv_dates_ir_rudics_111_113_114_115(tabTech, ...
+         compute_prv_dates_ir_rudics_111_113_to_116(tabTech, ...
          floatClockDrift, a_refDay, measDates);
             
       if (~isempty(g_decArgo_outputCsvFileId))
@@ -207,7 +224,7 @@ switch (a_decoderId)
          % output CSV file
          
          % print decoded data in CSV file
-         print_info_in_csv_file_ir_rudics_cts4_111_113_114_115( ...
+         print_info_in_csv_file_ir_rudics_cts4_111_113_to_116( ...
             a_decoderId, ...
             cyProfPhaseList, ...
             dataCTD, dataOXY, dataOCR, ...
@@ -222,7 +239,7 @@ switch (a_decoderId)
          
          % print dated data in CSV file
          if (~isempty(tabTech))
-            print_dates_in_csv_file_ir_rudics_cts4_111_113_114_115( ...
+            print_dates_in_csv_file_ir_rudics_cts4_111_113_to_116( ...
                a_decoderId, ...
                cycleStartDate, buoyancyRedStartDate, ...
                descentToParkStartDate, ...
@@ -248,7 +265,7 @@ switch (a_decoderId)
          % PROF NetCDF file
          
          % process profile data for PROF NetCDF file
-         [tabProfiles, tabDrift] = process_profiles_ir_rudics_cts4_111_113_114_115( ...
+         [tabProfiles, tabDrift] = process_profiles_ir_rudics_cts4_111_113_to_116( ...
             a_decoderId, ...
             cyProfPhaseList, ...
             dataCTD, dataOXY, dataOCR, ...
@@ -303,7 +320,7 @@ switch (a_decoderId)
          [tabDrift] = compute_drift_derived_parameters_ir_rudics(tabDrift, a_decoderId);
          
          % collect trajectory data for TRAJ NetCDF file
-         [tabTrajIndex, tabTrajData] = collect_trajectory_data_ir_rudics_111_113_114_115(a_decoderId, ...
+         [tabTrajIndex, tabTrajData] = collect_trajectory_data_ir_rudics_111_113_to_116(a_decoderId, ...
             tabProfiles, tabDrift, ...
             floatPres, grounding, tabTech, a_refDay, ...
             cycleStartDate, buoyancyRedStartDate, ...
@@ -327,7 +344,7 @@ switch (a_decoderId)
          % TECH NetCDF file
          
          % process technical data for TECH NetCDF file
-         process_technical_data_ir_rudics_111_113_114_115( ...
+         process_technical_data_ir_rudics_111_113_to_116( ...
             a_decoderId, cyProfPhaseList, ...
             sensorTechCTD, sensorTechOPTODE, sensorTechOCR, ...
             sensorTechECO2, sensorTechECO3, ...

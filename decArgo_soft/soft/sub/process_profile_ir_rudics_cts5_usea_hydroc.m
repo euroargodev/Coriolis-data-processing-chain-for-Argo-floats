@@ -2,7 +2,7 @@
 % Create the HYDROC profiles of CTS5-USEA decoded data.
 %
 % SYNTAX :
-%  [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf] = ...
+%  [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabDeepDrift, o_tabSurf] = ...
 %    process_profile_ir_rudics_cts5_usea_hydroc(a_hydrocMData, a_hydrocCData, a_timeData, a_gpsData)
 %
 % INPUT PARAMETERS :
@@ -15,6 +15,7 @@
 %   o_tabProfiles  : created output profiles
 %   o_tabDrift     : created output drift measurement profiles
 %   o_tabDesc2Prof : created output descent 2 prof measurement profiles
+%   o_tabDeepDrift : created output deep drift measurement profiles
 %   o_tabSurf      : created output surface measurement profiles
 %
 % EXAMPLES :
@@ -25,13 +26,14 @@
 % RELEASES :
 %   05/12/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf] = ...
+function [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabDeepDrift, o_tabSurf] = ...
    process_profile_ir_rudics_cts5_usea_hydroc(a_hydrocMData, a_hydrocCData, a_timeData, a_gpsData)
 
 % output parameters initialization
 o_tabProfiles = [];
 o_tabDrift = [];
 o_tabDesc2Prof = [];
+o_tabDeepDrift = [];
 o_tabSurf = [];
 
 % current float WMO number
@@ -48,6 +50,7 @@ global g_decArgo_patternNumFloat;
 global g_decArgo_phaseDsc2Prk;
 global g_decArgo_phaseParkDrift;
 global g_decArgo_phaseDsc2Prof;
+global g_decArgo_phaseProfDrift;
 global g_decArgo_phaseAscProf;
 global g_decArgo_phaseSatTrans;
 
@@ -57,8 +60,9 @@ global g_decArgo_treatDecimatedRaw;
 
 % codes for CTS5 phases
 global g_decArgo_cts5PhaseDescent;
-global g_decArgo_cts5PhaseDeepProfile;
 global g_decArgo_cts5PhasePark;
+global g_decArgo_cts5PhaseDeepProfile;
+global g_decArgo_cts5PhaseShortPark;
 global g_decArgo_cts5PhaseAscent;
 global g_decArgo_cts5PhaseSurface;
 
@@ -92,6 +96,8 @@ for idLoop = 1:2
          phaseNum = g_decArgo_phaseParkDrift;
       elseif (phaseId == g_decArgo_cts5PhaseDeepProfile)
          phaseNum = g_decArgo_phaseDsc2Prof;
+      elseif (phaseId == g_decArgo_cts5PhaseShortPark)
+         phaseNum = g_decArgo_phaseProfDrift;
       elseif (phaseId == g_decArgo_cts5PhaseAscent)
          phaseNum = g_decArgo_phaseAscProf;
       elseif (phaseId == g_decArgo_cts5PhaseSurface)
@@ -180,6 +186,8 @@ for idLoop = 1:2
             o_tabDrift = [o_tabDrift profStruct];
          elseif (phaseNum == g_decArgo_phaseDsc2Prof)
             o_tabDesc2Prof = [o_tabDesc2Prof profStruct];
+         elseif (phaseNum == g_decArgo_phaseProfDrift)
+            o_tabDeepDrift = [o_tabDeepDrift profStruct];
          elseif (phaseNum == g_decArgo_phaseSatTrans)
             o_tabSurf = [o_tabSurf profStruct];
          else

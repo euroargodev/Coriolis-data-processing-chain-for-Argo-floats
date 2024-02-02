@@ -121,7 +121,7 @@ else
 end
 
 % retrieve configuration information
-if (isempty(floatPixelBegin) || isempty(floatPixelBegin))
+if (isempty(floatPixelBegin) || isempty(floatPixelEnd))
    fprintf('WARNING: Float #%d Cycle #%d Profile #%d: SUNA information (PIXEL_BEGIN, PIXEL_END) are missing - NITRATE data set to fill value in ''%c'' profile of SUNA sensor\n', ...
       g_decArgo_floatNum, ...
       a_profSuna.cycleNumber, ...
@@ -135,10 +135,8 @@ end
 ctdLinkData = assign_CTD_measurements(a_ctdDates, a_ctdData, a_UV_INTENSITY_NITRATE_dates);
 
 % compute pixel interval that covers the [217 nm, 280 nm] wavelength interval
-idF1 = find(tabOpticalWavelengthUv >= 217);
-idF2 = find(tabOpticalWavelengthUv <= 280);
-pixelBegin = idF1(1);
-pixelEnd = idF2(end);
+pixelBegin = find(tabOpticalWavelengthUv >= 217, 1, 'first');
+pixelEnd = find(tabOpticalWavelengthUv <= 280, 1, 'last');
 if ((pixelBegin < floatPixelBegin) || (pixelEnd > floatPixelEnd))
    fprintf('WARNING: Float #%d Cycle #%d Profile #%d: not enough SUNA transmitted pixels - NITRATE data set to fill value in ''%c'' profile of SUNA sensor\n', ...
       g_decArgo_floatNum, ...

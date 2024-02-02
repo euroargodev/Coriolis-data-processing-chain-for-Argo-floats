@@ -713,12 +713,19 @@ switch (a_decoderId)
          idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PX%02d', id)) == 1);
          ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
       end
-      
+
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {224}
+   case {224, 226}
       % Arvor-ARN-Ice RBR Iridium 5.49
-      
-      for id = [0 4:10 17:26 29:31]
+      % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
+
+      if (a_decoderId == 224)
+         mcList = [0 4:10 17:26 29:31];
+      elseif (a_decoderId == 226)
+         mcList = [0 4:10 17:26 29:34];
+      end
+
+      for id = mcList
          decConfNames{end+1} = sprintf('CONFIG_MC%02d_', id);
          idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('MC%02d', id)) == 1);
          ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
@@ -743,7 +750,7 @@ switch (a_decoderId)
          idParamName = find(strcmp(g_decArgo_outputNcConfParamId, sprintf('PX%02d', id)) == 1);
          ncConfNames{end+1} = g_decArgo_outputNcConfParamLabel{idParamName};
       end
-      
+
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {223, 225}
       % Arvor-ARN-DO-Ice Iridium 5.48

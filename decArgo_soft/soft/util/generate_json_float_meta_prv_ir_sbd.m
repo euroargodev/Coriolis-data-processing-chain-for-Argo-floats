@@ -21,7 +21,7 @@
 function generate_json_float_meta_prv_ir_sbd()
 
 % to switch between Coriolis and JPR configurations
-CORIOLIS_CONFIGURATION_FLAG = 1;
+CORIOLIS_CONFIGURATION_FLAG = 0;
 
 if (CORIOLIS_CONFIGURATION_FLAG)
 
@@ -30,6 +30,9 @@ if (CORIOLIS_CONFIGURATION_FLAG)
 
    % meta-data file exported from Coriolis data base
    FLOAT_META_FILE_NAME = '/home/idmtmp7/vincent/matlab/DB_export/new_iridium_meta.txt';
+
+   % list of sensors mounted on floats
+   SENSOR_LIST_FILE_NAME = '/home/coriolis_exp/binlx/co04/co0414/co041404/decArgo_config_floats/argoFloatInfo/float_sensor_list.txt';
 
    % list of concerned floats
    FLOAT_LIST_FILE_NAME = '/home/idmtmp7/vincent/matlab/list/new_iridium.txt';
@@ -52,12 +55,20 @@ else
    % JPR CONFIGURATION - START
 
    % meta-data file exported from Coriolis data base
-   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_6901471_pour_codage_slope_adj_rt.txt';
+   % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB\new_iridium_meta.txt';
+   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_5.67_5906993.txt';
+   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_5.67_4903712.txt';
+
+   % list of sensors mounted on floats
+   SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB\float_sensor_list.txt';
+   SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
 
    % list of concerned floats
-   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+   % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB\new_iridium.txt';
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
 
    % directory of RBR CTD metadata files
+   % RBR_META_DATA_DIR_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB\';
    RBR_META_DATA_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_WITH_RBR\RBR_META_DATA_FILES\';
 
    % directory of individual json float meta-data files
@@ -83,6 +94,7 @@ fprintf('Log file: %s\n', logFileName);
 % generate JSON meta-data files
 generate_json_float_meta_prv_ir_sbd_(...
    FLOAT_META_FILE_NAME, ...
+   SENSOR_LIST_FILE_NAME, ...
    FLOAT_LIST_FILE_NAME, ...
    RBR_META_DATA_DIR_NAME, ...
    OUTPUT_DIR_NAME);

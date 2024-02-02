@@ -87,6 +87,7 @@ global g_decArgo_archiveDirectory;
 global g_decArgo_archiveDmDirectory;
 global g_decArgo_historyDirectory;
 global g_decArgo_dirInputDmBufferList;
+global g_decArgo_unusedDirectory;
 
 % arrays to store rough information on received data
 global g_decArgo_0TypeReceivedData;
@@ -196,6 +197,10 @@ g_decArgo_archiveDirectory = [floatIriDirName 'archive/'];
 if ~(exist(g_decArgo_archiveDirectory, 'dir') == 7)
    mkdir(g_decArgo_archiveDirectory);
 end
+g_decArgo_unusedDirectory = [g_decArgo_archiveDirectory '/unused_files/']; % to store files that shold not be used (they need to be deleted from the rudics server)
+if ~(exist(g_decArgo_unusedDirectory, 'dir') == 7)
+   mkdir(g_decArgo_unusedDirectory);
+end
 if (g_decArgo_realtimeFlag)
    g_decArgo_historyDirectory = [floatIriDirName 'history_of_processed_data/'];
    if ~(exist(g_decArgo_historyDirectory, 'dir') == 7)
@@ -272,19 +277,21 @@ if (~a_floatDmFlag)
                a_floatLoginName, cycleNum)])];
             
             for idFile = 1:length(sbdCyFiles)
-               
-               sbdCyFileName = sbdCyFiles(idFile).name;
-               
-               cyIrJulD = datenum(sbdCyFileName(1:13), 'yymmdd_HHMMSS') - g_decArgo_janFirst1950InMatlab;
-               if (cyIrJulD < a_launchDate)
-                  fprintf('BUFF_WARNING: Float #%d: input file "%s" ignored because dated before float launch date (%s)\n', ...
-                     g_decArgo_floatNum, ...
-                     sbdCyFileName, julian_2_gregorian_dec_argo(a_launchDate));
-                  continue
+
+               if (sbdCyFiles(idFile).bytes > 0)
+
+                  sbdCyFileName = sbdCyFiles(idFile).name;
+                  cyIrJulD = datenum(sbdCyFileName(1:13), 'yymmdd_HHMMSS') - g_decArgo_janFirst1950InMatlab;
+                  if (cyIrJulD < a_launchDate)
+                     fprintf('BUFF_WARNING: Float #%d: input file "%s" ignored because dated before float launch date (%s)\n', ...
+                        g_decArgo_floatNum, ...
+                        sbdCyFileName, julian_2_gregorian_dec_argo(a_launchDate));
+                     continue
+                  end
+
+                  add_to_list_ir_rudics(sbdCyFileName, 'spool');
+                  nbFiles = nbFiles + 1;
                end
-               
-               add_to_list_ir_rudics(sbdCyFileName, 'spool');
-               nbFiles = nbFiles + 1;
             end
          end
          
@@ -317,18 +324,20 @@ if (~a_floatDmFlag)
             nbFiles = 0;
             for idF = 1:length(fileList)
                
-               sbdFileName = fileList(idF).name;
-               cyIrJulD = datenum(sbdFileName(1:13), 'yymmdd_HHMMSS') - g_decArgo_janFirst1950InMatlab;
-               
-               if (cyIrJulD < a_launchDate)
-                  fprintf('BUFF_WARNING: Float #%d: input file "%s" ignored because dated before float launch date (%s)\n', ...
-                     g_decArgo_floatNum, ...
-                     sbdFileName, julian_2_gregorian_dec_argo(a_launchDate));
-                  continue
+               if (fileList(idF).bytes > 0)
+
+                  sbdFileName = fileList(idF).name;
+                  cyIrJulD = datenum(sbdFileName(1:13), 'yymmdd_HHMMSS') - g_decArgo_janFirst1950InMatlab;
+                  if (cyIrJulD < a_launchDate)
+                     fprintf('BUFF_WARNING: Float #%d: input file "%s" ignored because dated before float launch date (%s)\n', ...
+                        g_decArgo_floatNum, ...
+                        sbdFileName, julian_2_gregorian_dec_argo(a_launchDate));
+                     continue
+                  end
+
+                  add_to_list_ir_rudics(sbdFileName, 'spool');
+                  nbFiles = nbFiles + 1;
                end
-               
-               add_to_list_ir_rudics(sbdFileName, 'spool');
-               nbFiles = nbFiles + 1;
             end
             
             fprintf('BUFF_INFO: %d Iridium mail files moved from float archive dir to float spool dir\n', nbFiles);
@@ -859,7 +868,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabTrajNMeas, o_tabTrajNCycle, a_decoderId);
    
    % add interpolated/extrapolated profile locations
-   [o_tabProfiles] = fill_empty_profile_locations_ir_rudics(o_tabProfiles, g_decArgo_gpsData, ...
+   [o_tabProfiles] = fill_empty_profile_locations_cts4_ir_rudics(o_tabProfiles, g_decArgo_gpsData, ...
       o_tabTrajNMeas, o_tabTrajNCycle);
    
    % add MTIME in profiles

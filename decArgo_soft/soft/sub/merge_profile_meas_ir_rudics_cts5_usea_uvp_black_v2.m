@@ -112,7 +112,7 @@ end
 % create parameters
 paramJuld = get_netcdf_param_attributes('JULD');
 paramPres = get_netcdf_param_attributes('PRES');
-paramBlackNumImPart = get_netcdf_param_attributes('BLACK_NUMBER_IMAGES_PARTICLES');
+paramBlackNbImPart = get_netcdf_param_attributes('BLACK_NB_IMAGE_PARTICLES');
 paramBlackTempParticles = get_netcdf_param_attributes('BLACK_TEMP_PARTICLES');
 paramBlackNbSizeSpecPart = get_netcdf_param_attributes('BLACK_NB_SIZE_SPECTRA_PARTICLES');
 
@@ -147,7 +147,7 @@ for idDir = 1:length(uDir)
    end
    
    paramList = [ ...
-      paramPres paramBlackNumImPart paramBlackTempParticles paramBlackNbSizeSpecPart ...
+      paramPres paramBlackNbImPart paramBlackTempParticles paramBlackNbSizeSpecPart ...
       ];
       
    newProfile = a_tabProfiles(idProfForDir(1));

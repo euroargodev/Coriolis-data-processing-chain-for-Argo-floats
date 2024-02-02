@@ -24,7 +24,7 @@ CONFIG_OVO;OptodeVerticalPresOffset;n/a;CONFIG_OptodeVerticalPressureOffset_dbar
 CONFIG_OK;OkVacuum;n/a;CONFIG_OkVacuum_COUNT;Internal vacuum threshold (counts).
 CONFIG_PACT;PActivationBuoyancyPosition;n/a;CONFIG_PistonPositionPressureActivation_COUNT;preset piston position for pressure activation
 CONFIG_PPP;ParkBuoyancyPos;n/a;CONFIG_PistonPark_COUNT;preset park piston position, in counts   
-CONFIG_PDP;ParkDescentTime;n/a;CONFIG_DescentToProfTimeOut_minutes;maximum amount of time allowed for the float to descend to Profile pressure from Park pressure
+CONFIG_PDP;ParkDescentTime;n/a;CONFIG_DescentToParkTimeOut_minutes;maximum time a float will try to reach its target depth (park) before aborting this step
 CONFIG_PRKP;ParkPressure;n/a;CONFIG_ParkPressure_dbar;park pressure - this may change if the float is reprogrammed and must be reported in the mission configuration settings
 CONFIG_N;PnPCycleLen;n/a;CONFIG_ParkAndProfileCycleCounter_COUNT;The number of profiles performed from Park depth before a deep profile is done.
 CONFIG_DIR;ProfilingDirection;n/a;CONFIG_Direction_NUMBER;Ascending = 1, Descending = 2, Ascending and Descending = 3

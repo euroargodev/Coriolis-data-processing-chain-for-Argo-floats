@@ -92,7 +92,7 @@ while (currentByte <= lastByteNum)
    
    newPhaseNum = -1;
    newTreatNum = -1;
-   
+
    % look for a new phase header
    if (inputData(currentByte) == '[')
       for idPhase = 1:length(phaseList)
@@ -104,25 +104,28 @@ while (currentByte <= lastByteNum)
          end
       end
    end
-   
-   % look for a new treatment header
-   if (inputData(currentByte) == '(')
-      for idTreat = 1:length(treatList)
-         treatName = treatList{idTreat};
-         if (strcmp(char(inputData(currentByte:currentByte+length(treatName)-1))', treatName))
-            newTreatNum = idTreat;
-            currentByte = currentByte + length(treatName);
-            break
-         end
-      end
-   end
-   
+
    % the treatment type of PARK, SHORT_PARK and SURFACE measurements is always
    % RAW (NKE personal communication)
    if (ismember(newPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
       newTreatNum = g_decArgo_cts5Treat_RW;
+   else
+
+      % look for a new treatment header
+      if (inputData(currentByte) == '(')
+         for idTreat = 1:length(treatList)
+            treatName = treatList{idTreat};
+            if (~isempty(treatName))
+               if (strcmp(char(inputData(currentByte:currentByte+length(treatName)-1))', treatName))
+                  newTreatNum = idTreat;
+                  currentByte = currentByte + length(treatName);
+                  break
+               end
+            end
+         end
+      end
    end
-   
+
    % consider modification of phase or treatment
    if ((newPhaseNum ~= -1) || (newTreatNum ~= -1))
       if (~isempty(currentDataStruct))
@@ -201,8 +204,8 @@ while (currentByte <= lastByteNum)
          data(3) = rawData(3);
          data(4) = rawData(4)/20 - 100;
          data(5) = rawData(5)/20 - 100;
-         data(6) = rawData(6)/10;
-         data(7) = rawData(7)/10;
+         data(6) = rawData(6)/100;
+         data(7) = rawData(7)/100;
          data(8) = rawData(8);
          data(9) = rawData(9);
          data(10:9+nbChannels) = rawData(10:end);

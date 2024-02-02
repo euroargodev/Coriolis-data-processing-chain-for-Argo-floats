@@ -70,6 +70,9 @@ global g_decArgo_decoderIdListDeepFloat;
 global g_decArgo_decoderIdListBgcFloatAll;
 global g_decArgo_decoderIdListProfWithDatedLev;
 
+% list of parameters that have an extra dimension (N_VALUESx)
+global g_decArgo_paramWithExtraDimList;
+
 % temporary trajectory data
 global g_rtqc_trajData;
 
@@ -204,6 +207,7 @@ expectedTestList = [ ...
    {'TEST024_RBR_FLOAT'} ...
    {'TEST025_MEDD'} ...
    {'TEST026_TEMP_CNDC'} ...
+   {'TEST056_PH'} ...
    {'TEST057_DOXY'} ...
    {'TEST059_NITRATE'} ...
    {'TEST062_BBP'} ...
@@ -3713,7 +3717,7 @@ if (~isempty(g_rtqc_trajData))
          for idP = 1:length(ncProfTrajNameList)
             idParam = find(strcmp(ncProfTrajNameList{idP}, ncParamNameList) == 1, 1);
             data = dataStruct.(ncParamDataList{idParam});
-            if (strcmp(ncProfTrajNameList{idP}, 'UV_INTENSITY_NITRATE'))
+            if (ismember(ncProfTrajNameList{idP}, g_decArgo_paramWithExtraDimList))
                dimNValuesProf = [dimNValuesProf size(data, 3)];
             end
             if (ndims(data) == 3)
@@ -3732,7 +3736,7 @@ if (~isempty(g_rtqc_trajData))
       for idP = 1:length(ncProfTrajNameList)
          idParam = find(strcmp(ncProfTrajNameList{idP}, g_rtqc_trajData.ncTrajParamNameList) == 1, 1);
          data = g_rtqc_trajData.(g_rtqc_trajData.ncTrajParamDataList{idParam});
-         if (strcmp(ncProfTrajNameList{idP}, 'UV_INTENSITY_NITRATE'))
+         if (ismember(ncProfTrajNameList{idP}, g_decArgo_paramWithExtraDimList))
             dimNValuesTraj = size(data, 2);
             if (dimNValuesTraj > dimNValuesProf)
                % anomaly in Remocean floats (Ex:6901440 #10)

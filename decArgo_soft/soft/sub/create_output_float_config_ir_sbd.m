@@ -36,6 +36,9 @@ global g_decArgo_floatNum;
 % to detect ICE mode activation
 global g_decArgo_7TypePacketReceivedCyNum;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 
 % current configuration
 inputConfigNum = g_decArgo_floatConfig.DYNAMIC.NUMBER;
@@ -123,7 +126,18 @@ switch (a_decoderId)
             finalConfigValue(idDel, :) = [];
          end
       end
-      
+
+      % remove PT21 and PX04 from configuration if no Optode is mounted on the
+      % Arvor Deep float
+      if (ismember(a_decoderId, [221]))
+         if (~ismember('OPTODE', g_decArgo_sensorMountedOnFloat))
+            idDel = find(strcmp(finalConfigName, 'CONFIG_PT21'));
+            idDel = [idDel find(strcmp(finalConfigName, 'CONFIG_PX04'))];
+            finalConfigName(idDel) = [];
+            finalConfigValue(idDel, :) = [];
+         end
+      end
+
    case {210, 211, 213}
       
       % use CONFIG_MC28 to fill CONFIG_PX02 = CONFIG_MC28 + 0.5
@@ -192,7 +206,7 @@ switch (a_decoderId)
          finalConfigValue(idDel, :) = [];
       end
       
-   case {224}
+   case {224, 226}
             
       if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
          
@@ -259,6 +273,19 @@ finalConfigValue(idDel, :) = [];
 % static configuration parameters
 staticConfigName = g_decArgo_floatConfig.STATIC.NAMES;
 staticConfigValue = g_decArgo_floatConfig.STATIC.VALUES;
+
+if (ismember(a_decoderId, [222, 223, 224, 225, 226]))
+
+   % CONFIG_MC08_ has been temporarily stored in static configuration (and not
+   % removed if at least one deep cycle has not been performed)
+   % we should remove it otherwise the configuration label will be present twice
+   % in the META file
+   idDel= find(strcmp('CONFIG_MC08_', staticConfigName));
+   if (~isempty(idDel))
+      staticConfigName(idDel) = [];
+      staticConfigValue(idDel) = [];
+   end
+end
 
 % convert decoder names into NetCDF ones
 if (~isempty(a_decArgoConfParamNames))

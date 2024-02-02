@@ -134,10 +134,8 @@ ctdIntData = compute_interpolated_CTD_measurements( ...
    a_ctdData, a_UV_INTENSITY_NITRATE_pres+sunaVerticalOffset, a_profDir);
 
 % compute pixel interval that covers the [217 nm, 240 nm] wavelength interval
-idF1 = find(tabOpticalWavelengthUv >= 217);
-idF2 = find(tabOpticalWavelengthUv <= 240);
-pixelBegin = idF1(1);
-pixelEnd = idF2(end);
+pixelBegin = find(tabOpticalWavelengthUv >= 217, 1, 'first');
+pixelEnd = find(tabOpticalWavelengthUv <= 240, 1, 'last');
 if ((pixelBegin < floatPixelBegin) || (pixelEnd > floatPixelEnd))
    fprintf('RTQC_WARNING: Float #%d Cycle #%d: not enough SUNA transmitted pixels - unable to perform NITRATE RTQC specific test (Test #59)\n', ...
       a_floatNum, a_cyNum);

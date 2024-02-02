@@ -327,11 +327,12 @@ for idProf = 1:length(a_tabProfiles)
          globalHistoryText = [globalHistoryText ...
             datestr(datenum(currentDate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis float real time data processing)'];
          netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
-         netcdf.putAtt(fCdf, globalVarId, 'references', ' ');
+         netcdf.putAtt(fCdf, globalVarId, 'references', 'http://www.argodatamgt.org/Documentation');
          netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '1.0');
          netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'CF-1.6 Coriolis-Argo-Aux-1.0');
          netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectoryProfileCoriolisAux');
          netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
+         netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
 
          % create misc variables
          dataTypeVarId = netcdf.defVar(fCdf, 'DATA_TYPE', 'NC_CHAR', string32DimId);
@@ -1322,7 +1323,7 @@ for idProf = 1:length(a_tabProfiles)
          end
 
          netcdf.reDef(fCdf);
-
+                  
          nCalibDimId = netcdf.defDim(fCdf, 'N_CALIB', nbCalib);
 
          % calibration information

@@ -224,7 +224,8 @@ for idFloat = 1:length(floatList)
    end
    
    % check if the float version is concerned by this tool
-   if (~ismember(dacFormatId, [{'5.9'} {'5.91'} {'5.92'} {'5.93'} {'5.94'} {'6.01'} {'6.11'} {'6.12'} {'6.13'} {'6.14'}]))
+   if (~ismember(dacFormatId, [{'5.9'} {'5.91'} {'5.92'} {'5.93'} {'5.94'} ...
+         {'6.01'} {'6.11'} {'6.12'} {'6.13'} {'6.14'} {'6.15'}]))
       fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
          floatNum, dacFormatId);
       continue
@@ -296,6 +297,7 @@ for idFloat = 1:length(floatList)
       {'CALIB_RT_COEFFICIENT'} ...
       {'CALIB_RT_COMMENT'} ...
       {'CALIB_RT_DATE'} ...
+      {'CALIB_RT_DATE_APPLY'} ...
       {'CALIB_RT_ADJUSTED_ERROR'} ...
       {'CALIB_RT_ADJ_ERROR_METHOD'} ...
       ];
@@ -333,36 +335,6 @@ for idFloat = 1:length(floatList)
       dataStruct.(fieldName1).(fieldName2) = calibData{idF(id), 4};
    end
    metaStruct.CALIBRATION_COEFFICIENT = dataStruct;
-
-   % add DARK_O coefficients for ECO3 sensor
-   if (isfield(metaStruct.CALIBRATION_COEFFICIENT, 'ECO3'))
-      idForWmo = find(wmoList == floatNum);
-      idF = find(strcmp(metaData(idForWmo, 5), 'NEW_DARK_FOR_FLUOROMETER_CHLA'));
-      if (~isempty(idF))
-         idF2 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 1); % always dim level 1 for DarkCountChloroA_O
-         if (~isempty(idF2))
-            metaStruct.CALIBRATION_COEFFICIENT.ECO3.DarkCountChloroA_O = metaData{idForWmo(idF(idF2)), 4};
-         end
-      end
-      idF = find(strcmp(metaData(idForWmo, 5), 'NEW_DARK_FOR_FLUOROMETER_CDOM'));
-      if (~isempty(idF))
-         idF2 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 1); % always dim level 1 for DarkCountCDOM_O
-         if (~isempty(idF2))
-            metaStruct.CALIBRATION_COEFFICIENT.ECO3.DarkCountCDOM_O = metaData{idForWmo(idF(idF2)), 4};
-         end
-      end      
-      idF = find(strcmp(metaData(idForWmo, 5), 'NEW_DARK_FOR_SCATTEROMETER_BBP'));
-      if (~isempty(idF))
-         idF2 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 1); % dim level 1 for DarkCountBackscatter700_O
-         if (~isempty(idF2))
-            metaStruct.CALIBRATION_COEFFICIENT.ECO3.DarkCountBackscatter700_O = metaData{idForWmo(idF(idF2)), 4};
-         end
-         idF3 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 2); % dim level 2 for DarkCountBackscatter532_O
-         if (~isempty(idF3))
-            metaStruct.CALIBRATION_COEFFICIENT.ECO3.DarkCountBackscatter532_O = metaData{idForWmo(idF(idF3)), 4};
-         end
-      end
-   end
       
    % add the calibration coefficients for OPTODE sensor (coming from the
    % data base)
@@ -395,7 +367,7 @@ for idFloat = 1:length(floatList)
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
          end
-      case {'5.92', '5.93', '6.01', '6.11', '6.12', '6.13', '6.14'}
+      case {'5.92', '5.93', '6.01', '6.11', '6.12', '6.13', '6.14', '6.15'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
@@ -502,10 +474,15 @@ for idFloat = 1:length(floatList)
       phCalibData = [];
       for id = 1:length(idF)
          calibName = metaData{idForWmo(idF(id)), 5};
-         if (strncmp(calibName, 'SBE_TRANSISTOR_PH_K', length('SBE_TRANSISTOR_PH_K')) == 1)
-            fieldName = ['k' calibName(end)];
+         if (strcmp(calibName, 'SBE_TRANSISTOR_PH_K0'))
+            fieldName = 'k0';
+         elseif (strncmp(calibName, 'SBE_TRANSISTOR_PH_K2_F', length('SBE_TRANSISTOR_PH_K2_F')) == 1)
+            fieldName = ['k2f' calibName(end)];
+         elseif (strcmp(calibName, 'SBE_TRANSISTOR_PH_K2'))
+            fieldName = 'k2';
          elseif (strncmp(calibName, 'SBE_TRANSISTOR_PH_F', length('SBE_TRANSISTOR_PH_F')) == 1)
-            fieldName = ['f' calibName(end)];
+            idS = strfind(calibName, '_F');
+            fieldName = ['f' calibName(idS+2:end)];
          end
          phCalibData.(fieldName) = metaData{idForWmo(idF(id)), 4};
       end
@@ -519,11 +496,11 @@ for idFloat = 1:length(floatList)
    % retrieve configuration names and values at launch from configuration
    % commands report files
    configReportFileName = [a_configDirName '/' metaStruct.PLATFORM_NUMBER '_2.txt'];
-   if (~ismember(dacFormatId, [{'6.11'}, {'6.12'}, {'6.13'}, {'6.14'}]))
+   if (~ismember(dacFormatId, [{'6.11'}, {'6.12'}, {'6.13'}, {'6.14'}, {'6.15'}]))
       configDefaultFilename = [a_configDirName '/defaultConfiguration_v1.txt'];
       [configParamNames, configParamValues] = read_conf_cmd_report_105_to_110_112(configReportFileName, configDefaultFilename, sensorList, floatNum);
    else
-      [configParamNames, configParamValues] = read_conf_cmd_report_111_113_114(configReportFileName, sensorList, floatNum);
+      [configParamNames, configParamValues] = read_conf_cmd_report_111_113_to_116(configReportFileName, sensorList, floatNum);
    end
    
    idF = find(strcmp('CONFIG_PT_27', configParamNames) ==1, 1);

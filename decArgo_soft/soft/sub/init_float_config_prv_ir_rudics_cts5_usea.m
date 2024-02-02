@@ -160,7 +160,7 @@ end
 % create static configuration names
 configNames1 = [];
 switch (a_decoderId)
-   case {126, 127, 128, 129, 130, 131}
+   case {126, 127, 128, 129, 130, 131, 132, 133}
       configInfoList = [ ...
          {'SYSTEM'} {[0:4 7 9:12]} {[]}; ...
          {'TECHNICAL'} {[0:1 8:15 17 18 20]} {[]}; ...
@@ -248,12 +248,17 @@ configNames1 = [configNames1 ...
    {'CONFIG_PX_1_1_0_0_8'} ... % CONFIG_OptodeTimePressureOffset_seconds / OPTODE_TIME_PRESSURE_OFFSET
    {'CONFIG_PX_1_6_0_0_0'} ... % CONFIG_SunaVerticalPressureOffset_dbar / SUNA_VERTICAL_PRES_OFFSET
    {'CONFIG_PX_1_6_0_0_5'} ... % CONFIG_SunaWithScoop_LOGICAL / SUNA_WITH_SCOOP
+   {'CONFIG_PX_1_5_0_0_0'} ... % CONFIG_CroverVerticalPressureOffset_dbar / CROVER_VERTICAL_PRES_OFFSET
+   {'CONFIG_PX_1_10_0_0_0'} ... % CONFIG_AUX_UvpVerticalPressureOffset_dbar / UVP_VERTICAL_PRES_OFFSET
+   {'CONFIG_PX_1_11_0_0_0'} ... % CONFIG_AUX_RamsesAccVerticalPressureOffset_dbar / RAMSES_ACC_VERTICAL_PRES_OFFSET
+   {'CONFIG_PX_1_12_0_0_0'} ... % CONFIG_AUX_RamsesArcVerticalPressureOffset_dbar / RAMSES_ARC_VERTICAL_PRES_OFFSET
+   {'CONFIG_PX_1_13_0_0_0'} ... % CONFIG_AUX_MpeVerticalPressureOffset_dbar / MPE_VERTICAL_PRES_OFFSET
    ];
 
 % create dynamic configuration names
 configNames2 = [];
 switch (a_decoderId)
-   case {126, 127, 128, 129, 130, 131}
+   case {126, 127, 128, 129, 130, 131, 132, 133}
       configInfoList = [ ...
          {'SYSTEM'} {[5 6 8]} {[]}; ...
          {'TECHNICAL'} {[2:7 16 19 21 22 23 24]} {[]}; ...
@@ -616,7 +621,7 @@ if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
       
       % create the tabDoxyCoef array
       switch (a_decoderId)
-         case {126, 127, 128, 129, 130, 131}
+         case {126, 127, 128, 129, 130, 131, 132, 133}
             if (any(strcmp(g_decArgo_sensorMountedOnFloat, 'OPTODE')))
                if (isfield(g_decArgo_calibInfo, 'OPTODE'))
                   calibData = g_decArgo_calibInfo.OPTODE;
@@ -653,7 +658,7 @@ if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
                
                switch (a_decoderId)
                   
-                  case {126, 128, 129, 130, 131}
+                  case {126, 128, 129, 130, 131, 132, 133}
                      calibData = g_decArgo_calibInfo.SUNA;
                      tabOpticalWavelengthUv = [];
                      tabENitrate = [];
@@ -758,6 +763,14 @@ if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
          end
       end
    end
+end
+
+% calibration coefficients for UVP sensor
+if (isfield(g_decArgo_jsonMetaData, 'CONFIG_UVP_PIXEL_SIZE'))
+   g_decArgo_calibInfo.UVP.PixelSize = g_decArgo_jsonMetaData.CONFIG_UVP_PIXEL_SIZE;
+end
+if (isfield(g_decArgo_jsonMetaData, 'CONFIG_UVP_IMAGE_VOLUME'))
+   g_decArgo_calibInfo.UVP.ImageVolume = g_decArgo_jsonMetaData.CONFIG_UVP_IMAGE_VOLUME;
 end
 
 % temporary calibration coefficient for MPE sensor

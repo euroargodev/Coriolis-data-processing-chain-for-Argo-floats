@@ -210,10 +210,11 @@ end
 globalHistoryText = [globalHistoryText ...
    datestr(datenum(currentDate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis float real time data processing)'];
 netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
-netcdf.putAtt(fCdf, globalVarId, 'references', ' ');
+netcdf.putAtt(fCdf, globalVarId, 'references', 'http://www.argodatamgt.org/Documentation');
 netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '1.0');
 netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'CF-1.6 Coriolis-Argo-Aux-1.0');
 netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
+netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
 
 % create general information variables
 platformNumberVarId = netcdf.defVar(fCdf, 'PLATFORM_NUMBER', 'NC_CHAR', string8DimId);
@@ -462,36 +463,38 @@ end
 netcdf.putVar(fCdf, dateUpdateVarId, currentDate);
 
 % fill technical parameter variables
-paramPos = 0;
-for outputCycleNumber = min(a_tabNcTechIndex(:, 6)):max(a_tabNcTechIndex(:, 6))
+if (~isempty(a_tabNcTechIndex))
+   paramPos = 0;
+   for outputCycleNumber = min(a_tabNcTechIndex(:, 6)):max(a_tabNcTechIndex(:, 6))
 
-   % list of concerned parameters
-   idParam = find(a_tabNcTechIndex(:, 6) == outputCycleNumber);
-   
-   if (~isempty(idParam))
-      for idP = 1:length(idParam)
-         idPar = idParam(idP);
-         
-         idParamName = find(g_decArgo_outputNcParamId == a_tabNcTechIndex(idPar, 5));
-         paramName = char(g_decArgo_outputNcParamLabel{idParamName});
-         paramName = regexprep(paramName, 'TECH_AUX_', 'TECH_');
-      
-         if (a_tabNcTechIndex(idPar, 4) < -1)
-            [paramName] = create_param_name_ir_rudics_sbd2(paramName, a_tabNcTechLabelInfo{a_tabNcTechIndex(idPar, 4)*-1});
+      % list of concerned parameters
+      idParam = find(a_tabNcTechIndex(:, 6) == outputCycleNumber);
+
+      if (~isempty(idParam))
+         for idP = 1:length(idParam)
+            idPar = idParam(idP);
+
+            idParamName = find(g_decArgo_outputNcParamId == a_tabNcTechIndex(idPar, 5));
+            paramName = char(g_decArgo_outputNcParamLabel{idParamName});
+            paramName = regexprep(paramName, 'TECH_AUX_', 'TECH_');
+
+            if (a_tabNcTechIndex(idPar, 4) < -1)
+               [paramName] = create_param_name_ir_rudics_sbd2(paramName, a_tabNcTechLabelInfo{a_tabNcTechIndex(idPar, 4)*-1});
+            end
+            netcdf.putVar(fCdf, technicalParameterNameVarId, fliplr([paramPos 0]), fliplr([1 length(paramName)]), paramName');
+
+            paramValue = a_tabNcTechVal{idPar};
+            if (isnumeric(paramValue))
+               paramValueStr = num2str(paramValue);
+            else
+               paramValueStr = paramValue;
+            end
+            netcdf.putVar(fCdf, technicalParameterValueVarId, fliplr([paramPos 0]), fliplr([1 length(paramValueStr)]), paramValueStr');
+
+            netcdf.putVar(fCdf, cycleNumberVarId, paramPos, 1, outputCycleNumber);
+
+            paramPos = paramPos + 1;
          end
-         netcdf.putVar(fCdf, technicalParameterNameVarId, fliplr([paramPos 0]), fliplr([1 length(paramName)]), paramName');
-         
-         paramValue = a_tabNcTechVal{idPar};
-         if (isnumeric(paramValue))
-            paramValueStr = num2str(paramValue);
-         else
-            paramValueStr = paramValue;
-         end
-         netcdf.putVar(fCdf, technicalParameterValueVarId, fliplr([paramPos 0]), fliplr([1 length(paramValueStr)]), paramValueStr');
-         
-         netcdf.putVar(fCdf, cycleNumberVarId, paramPos, 1, outputCycleNumber);
-         
-         paramPos = paramPos + 1;
       end
    end
 end

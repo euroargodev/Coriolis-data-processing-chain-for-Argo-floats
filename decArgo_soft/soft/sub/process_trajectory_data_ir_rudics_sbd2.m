@@ -273,7 +273,7 @@ for idCyc = 1:length(cycleNumList)
       % data during the dive
       
       % store descent surface DO measurements in PPOX_DOXY
-      if (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113, 114, 115]))
+      if (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113, 114, 115, 116]))
 
          % fill value for JULD parameter
          paramJuld = get_netcdf_param_attributes('JULD');
@@ -1034,7 +1034,7 @@ for idCyc = 1:length(cycleNumList)
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
             
             % store ascent surface DO measurements in PPOX_DOXY
-            if (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113, 114, 115]))
+            if (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113, 114, 115, 116]))
 
                % fill value for JULD parameter
                paramJuld = get_netcdf_param_attributes('JULD');

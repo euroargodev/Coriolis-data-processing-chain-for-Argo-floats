@@ -166,6 +166,18 @@ for idNCy = 1:length(o_tabTrajNCycle)
             if (isempty(juldFinal) || (juldFinal == g_decArgo_ncDateDef))
                juldFinal = juld;
                juldStatusFinal = juldStatus;
+            else
+               if (ismember(measCode, [g_MC_FMT]))
+                  [juldFinal, idMin] = min([juldFinal juld]);
+                  if (idMin == 2)
+                     juldStatusFinal = juldStatus;
+                  end
+               elseif (ismember(measCode, [g_MC_LMT]))
+                  [juldFinal, idMax] = max([juldFinal juld]);
+                  if (idMax == 2)
+                     juldStatusFinal = juldStatus;
+                  end
+               end
                %             else
                %                if (ismember(measCode, [g_MC_DST g_MC_FST g_MC_PST g_MC_DPST g_MC_AST g_MC_TST g_MC_FMT]))
                %                   [juldFinal, idMin] = min([juldFinal juld]);
@@ -204,6 +216,7 @@ for idNCy = 1:length(o_tabTrajNCycle)
    % check consistency for JULD_FIRST_LOCATION(_STATUS) and JULD_LAST_LOCATION(_STATUS)
    juld = [];
    juldStatus = [];
+   idList = [];
    for idNMeas = 1:length(idFNMeas)
       trajNMeas = o_tabTrajNMeas(idFNMeas(idNMeas));
       if (~isempty(trajNMeas.tabMeas) && any([trajNMeas.tabMeas.measCode] == g_MC_Surface))
@@ -219,14 +232,20 @@ for idNCy = 1:length(o_tabTrajNCycle)
                   juld = [juld trajNMeas.tabMeas(idFSurf(idSurf)).juldAdj];
                   juldStatus = [juldStatus trajNMeas.tabMeas(idFSurf(idSurf)).juldAdjStatus];
                end
+               idList = [idList; [idFNMeas(idNMeas) idFSurf(idSurf)]];
             end
          end
       end
    end
    [juldMin, idMin] = min(juld);
    [juldMax, idMax] = max(juld);
-   juldStatusMin = juldStatus(idMin);
-   juldStatusMax = juldStatus(idMax);
+   if ((length(juld) == 2) && (idMin == idMax)) % see 4901422 #0
+      juldStatusMin = juldStatus(1);
+      juldStatusMax = juldStatus(2);
+   else
+      juldStatusMin = juldStatus(idMin);
+      juldStatusMax = juldStatus(idMax);
+   end
    if ((isempty(trajNCycle.juldFirstLocation) && ~isempty(juldMin)) || ...
          (~isempty(trajNCycle.juldFirstLocation) && isempty(juldMin)) || ...
          (~isempty(trajNCycle.juldFirstLocation) && ~isempty(juldMin) && (trajNCycle.juldFirstLocation ~= juldMin)))
@@ -263,7 +282,32 @@ for idNCy = 1:length(o_tabTrajNCycle)
       %          juldStatus);
       o_tabTrajNCycle(idNCy).juldLastLocationStatus = juldStatusMax;
    end
-   
+   % the GDAC file checker needs JULD_FIRST/LAST_LOCATION to be the first/last
+   % location in the file. Otherwise a warning is set
+   if (~isempty(juld))
+      if ((idMin ~=1) || (idMax ~= length(juld)))
+         [~, idSort] = sort(juld);
+         newTabTrajNMeas = o_tabTrajNMeas(idList(1, 1));
+         newTabTrajNMeas.tabMeas = [];
+         tabMeas = [];
+         for idS = idSort
+            tabMeas = [tabMeas; o_tabTrajNMeas(idList(idS, 1)).tabMeas(idList(idS, 2))];
+         end
+         newTabTrajNMeas.tabMeas = tabMeas;
+         if (size(o_tabTrajNMeas, 1) > size(o_tabTrajNMeas, 2))
+            o_tabTrajNMeas = [o_tabTrajNMeas; newTabTrajNMeas];
+         else
+            o_tabTrajNMeas = [o_tabTrajNMeas newTabTrajNMeas];
+         end
+         for idS = size(idList, 1):-1:1
+            o_tabTrajNMeas(idList(idS, 1)).tabMeas(idList(idS, 2)) = [];
+            if (isempty(o_tabTrajNMeas(idList(idS, 1)).tabMeas))
+               o_tabTrajNMeas(idList(idS, 1)) = [];
+            end
+         end
+      end
+   end
+
    % check consistency for GROUNDED
    grdFlag = 0;
    for idNMeas = 1:length(idFNMeas)

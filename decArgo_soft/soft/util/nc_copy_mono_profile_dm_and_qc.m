@@ -62,6 +62,16 @@
 %   09/15/2022 - RNU - V 1.11: version of 
 %                              nc_copy_mono_profile_dm_and_qc_specific only
 %   10/03/2022 - RNU - V 1.12: creation of the RT version of the tool
+%   09/11/2023 - RNU - V 1.13: all parameter data of DATA_MODE(N_PROF) = 'D'
+%                              were copied (without considering
+%                              PARAMETER_DATA_MODE(N_ PROF, N_PARAM)). The
+%                              copy should concern only parameter data with
+%                              PARAMETER_DATA_MODE(N_ PROF, N_PARAM) = 'D'
+%   09/13/2023 - RNU - V 1.14: added KEEP_PROFILE_LOCATION_FOR_ALL_FLAG to
+%                              report the location information of the first DM
+%                              profile on all the profiles of the file
+%   09/19/2023 - RNU - V 1.15: error while accessing to PARAMETER(N_PROF,
+%                              N_CALIB, N_PARAM, STRING16)
 % ------------------------------------------------------------------------------
 function nc_copy_mono_profile_dm_and_qc(varargin)
 
@@ -74,12 +84,12 @@ function nc_copy_mono_profile_dm_and_qc(varargin)
 %    {'DOWN_IRRADIANCE490'} ...
 %    {'DOWNWELLING_PAR'} ...
 %    ];
-IGNORED_PARAMETER_LIST = [ ...
-   {'NITRATE'} ...
-   {'DOXY'} ...
-   ];
 % IGNORED_PARAMETER_LIST = [ ...
+%    {'NITRATE'} ...
+%    {'DOXY'} ...
 %    ];
+IGNORED_PARAMETER_LIST = [ ...
+   ];
 
 % information to set in 'HISTORY_REFERENCE (N_HISTORY, STRING64)' for the
 % current action (64 characters max)
@@ -101,13 +111,17 @@ DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log';
 % keep DM profile location information in output file
 KEEP_PROFILE_LOCATION_FLAG =  1;
 
+% when KEEP_PROFILE_LOCATION_FLAG =1, you can choose to report the first DM
+% profile location information on all the profiles (DM or RT) of the file
+KEEP_PROFILE_LOCATION_FOR_ALL_FLAG =  1;
+
 % RT processing flag
 global g_cocd_realtimeFlag;
 g_cocd_realtimeFlag = 0;
 
 % program version
 global g_cocd_ncCopyMonoProfileDmAndQcVersion;
-g_cocd_ncCopyMonoProfileDmAndQcVersion = '1.12';
+g_cocd_ncCopyMonoProfileDmAndQcVersion = '1.15';
 
 % information to set in 'HISTORY_REFERENCE (N_HISTORY, STRING64);' for the current action
 global g_cocd_historyReferenceToReport;
@@ -123,7 +137,9 @@ g_cocd_deletedFileNameList = [];
 
 % flag to keep DM profile location
 global g_cocd_reportProfLocFlag;
+global g_cocd_reportProfLocAllFlag;
 g_cocd_reportProfLocFlag = KEEP_PROFILE_LOCATION_FLAG;
+g_cocd_reportProfLocAllFlag = KEEP_PROFILE_LOCATION_FOR_ALL_FLAG;
 
 
 % default values initialization

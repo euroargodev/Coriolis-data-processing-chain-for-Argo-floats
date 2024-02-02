@@ -21,9 +21,9 @@
 function nc_get_info_from_netcdf_file(varargin)
 
 % top directory of NetCDF files
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\IN\';
+DIR_INPUT_NC_FILES = 'E:\202211-ArgoData\coriolis\';
 
-% default list of floats to process
+% list of floats to process (if empty, all encountered files will be checked)
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_old_bgc_all.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_1.5.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_17.txt';
@@ -33,6 +33,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexO
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_34.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_41.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_9.txt';
+FLOAT_LIST_FILE_NAME = '';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -41,36 +42,35 @@ DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 init_default_values;
 
 
+floatList = [];
 if (nargin == 0)
-   floatListFileName = FLOAT_LIST_FILE_NAME;
-   
-   % floats to process come from floatListFileName
-   if ~(exist(floatListFileName, 'file') == 2)
-      fprintf('ERROR: File not found: %s\n', floatListFileName);
-      return
+   if (~isempty(FLOAT_LIST_FILE_NAME))
+      floatListFileName = FLOAT_LIST_FILE_NAME;
+
+      % floats to process come from floatListFileName
+      if ~(exist(floatListFileName, 'file') == 2)
+         fprintf('ERROR: File not found: %s\n', floatListFileName);
+         return
+      end
+
+      fprintf('Floats from list: %s\n', floatListFileName);
+      floatList = load(floatListFileName);
    end
-   
-   fprintf('Floats from list: %s\n', floatListFileName);
-   floatList = load(floatListFileName);
 else
    % floats to process come from input parameters
    floatList = cell2mat(varargin);
 end
 
-% create and start log file recording
-if (nargin == 0)
-   [pathstr, name, ext] = fileparts(floatListFileName);
-   name = ['_' name];
-else
-   name = sprintf('_%d', floatList);
-end
+% store the start time of the run
+currentTime = datestr(now, 'yyyymmddTHHMMSSZ');
 
-logFile = [DIR_LOG_CSV_FILE '/' 'nc_get_info_from_netcdf_file' name '_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
+% create and start log file recording
+logFile = [DIR_LOG_CSV_FILE '/' 'nc_get_info_from_netcdf_file_' currentTime '.log'];
 diary(logFile);
 tic;
 
 % create the CSV output file
-outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_get_info_from_netcdf_file'  name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
+outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_get_info_from_netcdf_file_' currentTime '.csv'];
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
    return
@@ -80,25 +80,46 @@ fprintf(fidOut, '%s\n', header);
 
 
 % process the floats
-nbFloats = length(floatList);
-for idFloat = 1:nbFloats
-   
-   floatNum = floatList(idFloat);
-   fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
-      
-   % process mono-profile files of the current float
-   monoProfDirName = [DIR_INPUT_NC_FILES sprintf('/%d/profiles/', floatNum)];
-   monoProfFileName = [monoProfDirName sprintf('*%d_*.nc', floatNum)];
-   monoProfFiles = dir(monoProfFileName);
+floatNum = 1;
+floatDir = dir(DIR_INPUT_NC_FILES);
+for idDir = 1:length(floatDir)
 
-   for idFile = 1:length(monoProfFiles)
-      
-      fileName = monoProfFiles(idFile).name;
-      profFileName = [monoProfDirName fileName];
-      
-      fprintf('File: %s\n', fileName);
-      
-      get_nc_info(profFileName, fileName, fidOut);
+   floatDirName = floatDir(idDir).name;
+   floatDirPathName = [DIR_INPUT_NC_FILES '/' floatDirName];
+   if ((exist(floatDirPathName, 'dir') == 7) && ~strcmp(floatDirName, '.') && ~strcmp(floatDirName, '..'))
+
+      [floatWmo, status] = str2num(floatDirName);
+      if (status == 1)
+
+         if ((isempty(floatList)) || (~isempty(floatList) && ismember(floatWmo, floatList)))
+
+            fprintf('%03d/%03d %d\n', floatNum, length(floatDir)-2, floatWmo);
+
+            % process mono-profile files of the current float
+            monoProfDirName = [DIR_INPUT_NC_FILES sprintf('/%d/profiles/', floatWmo)];
+            monoProfFileName = [monoProfDirName sprintf('*%d_*.nc', floatWmo)];
+            monoProfFiles = dir(monoProfFileName);
+
+            for idFile = 1:length(monoProfFiles)
+
+               fileName = monoProfFiles(idFile).name;
+               profFileName = [monoProfDirName fileName];
+
+               %                fprintf('File: %s\n', fileName);
+
+               %                get_nc_info(profFileName, fileName, fidOut);
+
+               fInfo = ncinfo(profFileName);
+               variables = fInfo.Variables;
+               if (any(cellfun(@(x) strcmp(x, 'CNDC'), {variables.Name})))
+                  fprintf(fidOut, '%d\n', floatWmo);
+                  fprintf('   CNDC\n');
+                  break
+               end
+            end
+            floatNum = floatNum + 1;
+         end
+      end
    end
 end
    

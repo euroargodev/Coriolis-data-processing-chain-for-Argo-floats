@@ -562,8 +562,9 @@ end
 % sort locations
 if (updated)
    idLoc = find([o_tabTrajNMeas(a_storeId).tabMeas.measCode] == g_MC_Surface);
-   dateList = [o_tabTrajNMeas(a_storeId).tabMeas(idLoc).juldAdj];
-   if (isempty(dateList))
+   if (all(~cellfun(@isempty, {o_tabTrajNMeas(a_storeId).tabMeas(idLoc).juldAdj})))
+      dateList = [o_tabTrajNMeas(a_storeId).tabMeas(idLoc).juldAdj];
+   else
       dateList = [o_tabTrajNMeas(a_storeId).tabMeas(idLoc).juld];
    end
    [~, sortId] = sort(dateList);

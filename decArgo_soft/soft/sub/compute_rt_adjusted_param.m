@@ -584,6 +584,9 @@ global g_decArgo_paramProfAdjId;
 % TRAJ 3.2 file generation flag
 global g_decArgo_generateNcTraj32;
 
+% json meta-data
+global g_decArgo_jsonMetaData;
+
 
 % from "Argo Quality Control Manual for CTD and Trajectory Data, Version 3.4, 02
 % February 2021"
@@ -592,6 +595,13 @@ CPCOR_SBE = -9.57e-8;
 % CPCOR_NEW_SBE_61 = -12.5e-8; % for Deep Apex and Deep SOLO => unused
 CPCOR_NEW_SBE_41CP = -13.5e-8; % for Deep Arvor and Deep Ninja
 
+% a specific CPCOR value may exist
+if (isfield(g_decArgo_jsonMetaData, 'CP_COR') && ~isempty(g_decArgo_jsonMetaData.CP_COR))
+   cpCorNewSbe41cp = str2double(g_decArgo_jsonMetaData.CP_COR);
+else
+   cpCorNewSbe41cp = CPCOR_NEW_SBE_41CP;
+end
+
 % involved parameter information
 paramPres = get_netcdf_param_attributes('PRES');
 paramTemp = get_netcdf_param_attributes('TEMP');
@@ -599,7 +609,7 @@ paramPsal = get_netcdf_param_attributes('PSAL');
 
 % basic adjustment information for NetCDF files
 equation = 'new conductivity = original conductivity * (1 + delta*TEMP + CPcor_SBE*PRES) / (1 + delta*TEMP_ADJUSTED + CPcor_new*PRES_ADJUSTED)';
-coefficient = sprintf('CPcor_new = %g, CPcor_SBE = %g, delta = %g', CPCOR_NEW_SBE_41CP, CPCOR_SBE, DELTA);
+coefficient = sprintf('CPcor_new = %g, CPcor_SBE = %g, delta = %g', cpCorNewSbe41cp, CPCOR_SBE, DELTA);
 comment = 'New conductivity computed by using a different CPcor value from that provided by Sea-Bird.';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -650,7 +660,7 @@ for idProf = 1:length(o_tabProfiles)
          
          % adjust conductivity
          cndcAdjValues = cndcValues.*(1 + DELTA*tempValues + CPCOR_SBE*presValues)./ ...
-            (1 + DELTA*tempAdjValues + CPCOR_NEW_SBE_41CP*presAdjValues);
+            (1 + DELTA*tempAdjValues + cpCorNewSbe41cp*presAdjValues);
          
          % compute adjusted salinity
          psalAjValues = gsw_SP_from_C(cndcAdjValues, tempAdjValues, presAdjValues);
@@ -672,20 +682,20 @@ for idProf = 1:length(o_tabProfiles)
          % store adjusted data
          profile.paramDataMode(idPsal) = 'A';
          profile.dataAdj(idNoDefPts, idPsal) = psalAjValues;
-         
+
          idNoDef = find(profile.dataAdj(:, idPsal) ~= paramPsal.fillValue);
          profile.dataAdjQc(idNoDef, idPsal) = g_decArgo_qcNoQc;
-         
+
          % store error on adjusted data
          idNoDef = find(profile.data(:, idPres) ~= paramPres.fillValue);
          profile.dataAdjError(idNoDef, idPres) = (2.5/6000) * profile.data(idNoDef, idPres) + 2;
-         
+
          idNoDef = find(profile.data(:, idTemp) ~= paramTemp.fillValue);
          profile.dataAdjError(idNoDef, idTemp) = 0.002;
-         
+
          idNoDef = find(profile.dataAdj(:, idPsal) ~= paramPsal.fillValue);
          profile.dataAdjError(idNoDef, idPsal) = 0.004;
-         
+
          profile.rtParamAdjIdList = [profile.rtParamAdjIdList g_decArgo_paramProfAdjId];
          o_tabProfiles(idProf) = profile;
          
@@ -758,7 +768,7 @@ if (g_decArgo_generateNcTraj32 ~= 0)
                
                % adjust conductivity
                cndcAdjValues = cndcValues.*(1 + DELTA*tempValues + CPCOR_SBE*presValues)./ ...
-                  (1 + DELTA*tempAdjValues + CPCOR_NEW_SBE_41CP*presAdjValues);
+                  (1 + DELTA*tempAdjValues + cpCorNewSbe41cp*presAdjValues);
                
                % compute adjusted salinity
                psalAjValues = gsw_SP_from_C(cndcAdjValues, tempAdjValues, presAdjValues);
@@ -780,20 +790,24 @@ if (g_decArgo_generateNcTraj32 ~= 0)
                % store adjusted data
                tabMeas.paramDataMode(idPsal) = 'A';
                tabMeas.paramDataAdj(idNoDefPts, idPsal) = psalAjValues;
-               
+
                idNoDef = find(tabMeas.paramDataAdj(:, idPsal) ~= paramPsal.fillValue);
                tabMeas.paramDataAdjQc(idNoDef, idPsal) = g_decArgo_qcNoQc;
-               
+
                % store error on adjusted data
-               idNoDef = find(tabMeas.paramData(:, idPres) ~= paramPres.fillValue);
-               tabMeas.paramDataAdjError(idNoDef, idPres) = (2.5/6000) * tabMeas.paramData(idNoDef, idPres) + 2;
-               
-               idNoDef = find(tabMeas.paramData(:, idTemp) ~= paramTemp.fillValue);
-               tabMeas.paramDataAdjError(idNoDef, idTemp) = 0.002;
-               
+               if (tabMeas.paramDataMode(idPres) == 'A')
+                  idNoDef = find(tabMeas.paramData(:, idPres) ~= paramPres.fillValue);
+                  tabMeas.paramDataAdjError(idNoDef, idPres) = (2.5/6000) * tabMeas.paramData(idNoDef, idPres) + 2;
+               end
+
+               if (tabMeas.paramDataMode(idTemp) == 'A')
+                  idNoDef = find(tabMeas.paramData(:, idTemp) ~= paramTemp.fillValue);
+                  tabMeas.paramDataAdjError(idNoDef, idTemp) = 0.002;
+               end
+
                idNoDef = find(tabMeas.paramDataAdj(:, idPsal) ~= paramPsal.fillValue);
                tabMeas.paramDataAdjError(idNoDef, idPsal) = 0.004;
-               
+
                o_tabTrajNMeas(idNMeas).tabMeas(idMeas) = tabMeas;
                adjFlag = 1;
                
@@ -902,6 +916,7 @@ for idPar = 1:length(g_decArgo_rtOffsetInfo.param)
    tabCoef = g_decArgo_rtOffsetInfo.coefficient{idPar};
    tabComment = g_decArgo_rtOffsetInfo.comment{idPar};
    tabDate = g_decArgo_rtOffsetInfo.date{idPar};
+   tabDateApply = g_decArgo_rtOffsetInfo.dateApply{idPar};
    
    for idAdj = 1:length(tabDate)
       
@@ -910,15 +925,19 @@ for idPar = 1:length(g_decArgo_rtOffsetInfo.param)
       equationRtAdj = tabEquation{idAdj};
       coefRtAdj = tabCoef{idAdj};
       commentRtAdj = tabComment{idAdj};
-      dateRtAdj = tabDate(idAdj);
-      
+      dateAdj = tabDate(idAdj);
+      dateAdjApply = tabDateApply(idAdj);
+      if (isnan(dateAdjApply))
+         dateAdjApply = dateAdj;
+      end
+
       % basic adjustment information for NetCDF files
       equation = equationRtAdj;
       coefficient = coefRtAdj;
       comment = commentRtAdj;
-      date = datestr(dateRtAdj+g_decArgo_janFirst1950InMatlab, 'yyyymmddHHMMSS');
+      date = datestr(dateAdj+g_decArgo_janFirst1950InMatlab, 'yyyymmddHHMMSS');
       
-      if (any((profDateList + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= dateRtAdj))
+      if (any((profDateList + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= dateAdjApply))
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % adjust profile data
@@ -928,7 +947,7 @@ for idPar = 1:length(g_decArgo_rtOffsetInfo.param)
             profile = o_tabProfiles(idProf);
             if (any(strcmp({profile.paramList.name}, paramName)) && ...
                   (profile.date ~= g_decArgo_dateDef) && ...
-                  ((profile.date + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= dateRtAdj))
+                  ((profile.date + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= dateAdjApply))
                
                [idParam, firstCol, lastCol] = get_param_data_index(profile, paramName);
                
@@ -985,7 +1004,7 @@ for idPar = 1:length(g_decArgo_rtOffsetInfo.param)
          if (g_decArgo_generateNcTraj32 ~= 0)
             
             idProfToAdjust = find(([o_tabProfiles.date] ~= g_decArgo_dateDef) & ...
-               (([o_tabProfiles.date] + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= dateRtAdj));
+               (([o_tabProfiles.date] + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= dateAdjApply));
             firstCyToAdjust = min([o_tabProfiles(idProfToAdjust).outputCycleNumber]);
             
             idTrajToAdjust = find([o_tabTrajNMeas.outputCycleNumber] >= firstCyToAdjust);
@@ -1138,6 +1157,7 @@ doDrift = '';
 doInclineT = '';
 doCorPres = '';
 doDate = '';
+doDateApply = '';
 doAdjError = '';
 doAdjErrorStr = '';
 doAdjErrMethod = '';
@@ -1148,8 +1168,13 @@ if (~isempty(g_decArgo_rtOffsetInfo))
          doSlope = g_decArgo_rtOffsetInfo.slope{idF};
          doOffset = g_decArgo_rtOffsetInfo.value{idF};
          doDate = g_decArgo_rtOffsetInfo.date{idF};
+         doDateApply = g_decArgo_rtOffsetInfo.dateApply{idF};
+         if (isnan(doDateApply))
+            doDateApply = doDate;
+         end
          % not mandatory fields
          if (isfield(g_decArgo_rtOffsetInfo, 'adjError'))
+
             doAdjError = g_decArgo_rtOffsetInfo.adjError{idF};
             doAdjErrorStr = g_decArgo_rtOffsetInfo.adjErrorStr{idF}{:};
             doAdjErrMethod = g_decArgo_rtOffsetInfo.adjErrorMethod{idF}{:};
@@ -1177,7 +1202,7 @@ if (~isempty(doSlope))
    profDateList = [o_tabProfiles.date];
    profDateList(profDateList == g_decArgo_dateDef) = [];
    
-   if (any((profDateList + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= doDate))
+   if (any((profDateList + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= doDateApply))
       
       % some cases need the PPOX_ERROR to increase with time
       startDateToIncreasePpoxErrorWithTime = '';
@@ -1261,7 +1286,7 @@ if (~isempty(doSlope))
          profile = o_tabProfiles(idProf);
          if (any(strcmp({profile.paramList.name}, 'DOXY')) && ...
                (profile.date ~= g_decArgo_dateDef) && ...
-               ((profile.date + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= doDate))
+               ((profile.date + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= doDateApply))
             
             % retrieve associated profiles (needed for 'real' BGC floats since
             % PTS are in separate profiles)
@@ -1300,7 +1325,7 @@ if (~isempty(doSlope))
       if (g_decArgo_generateNcTraj32 ~= 0)
          
          idProfToAdjust = find(([o_tabProfiles.date] ~= g_decArgo_dateDef) & ...
-            (([o_tabProfiles.date] + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= doDate));
+            (([o_tabProfiles.date] + g_decArgo_nbHourForProfDateCompInRtOffsetAdj/24) >= doDateApply));
          firstCyToAdjust = min([o_tabProfiles(idProfToAdjust).outputCycleNumber]);
          
          idTrajToAdjust = find([o_tabTrajNMeas.outputCycleNumber] >= firstCyToAdjust);

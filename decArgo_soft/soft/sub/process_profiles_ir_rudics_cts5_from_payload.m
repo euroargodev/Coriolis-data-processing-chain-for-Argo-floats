@@ -588,7 +588,7 @@ for idP = 1:length(payloadProfiles)
                case {g_decArgo_treatRaw, g_decArgo_treatAverage}
                   payloadProfile.paramNameDecArgo = {{'JULD'} {'PARAM_1'} ...
                      {'PRES'} {'PARAM_2'} {'PARAM_3'} ...
-                     {'IMAGE_NUMBER_PARTICLES_LPM'} {'TEMP_PARTICLES'} ...
+                     {'NB_IMAGE_PARTICLES'} {'TEMP_PARTICLES'} ...
                      {'NB_SIZE_SPECTRA_PARTICLES'} {'GREY_SIZE_SPECTRA_PARTICLES'}};
                   
                   payloadProfile.paramNumberWithSubLevels = [7 8];
@@ -610,7 +610,7 @@ for idP = 1:length(payloadProfiles)
          else
             payloadProfile.paramNameDecArgo = {{'JULD'} ...
                {'PARAM_1'} {'PARAM_2'} {'PARAM_3'} ...
-               {'IMAGE_NUMBER_PARTICLES_LPM'} {'TEMP_PARTICLES'} ...
+               {'NB_IMAGE_PARTICLES'} {'TEMP_PARTICLES'} ...
                {'NB_SIZE_SPECTRA_PARTICLES'} {'GREY_SIZE_SPECTRA_PARTICLES'}};
          end         
    end
@@ -804,8 +804,8 @@ for idP = 1:length(payloadProfiles)
          end
          % multiply the number of images analyzed and averaged by the
          % number of levels averaged (i.e. 20)
-         if (any(strcmp({profStruct.paramList.name}, 'IMAGE_NUMBER_PARTICLES_LPM')))
-            idParam  = find(strcmp({profStruct.paramList.name}, 'IMAGE_NUMBER_PARTICLES_LPM'));
+         if (any(strcmp({profStruct.paramList.name}, 'NB_IMAGE_PARTICLES')))
+            idParam  = find(strcmp({profStruct.paramList.name}, 'NB_IMAGE_PARTICLES'));
             if (idParam < min(profStruct.paramNumberWithSubLevels))
                profStruct.data(:, idParam) = profStruct.data(:, idParam) * 20;
             end

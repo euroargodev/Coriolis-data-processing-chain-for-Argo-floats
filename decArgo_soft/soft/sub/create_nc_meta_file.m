@@ -41,6 +41,8 @@ if (g_decArgo_floatTransType == 1)
    % Argos floats
    
    if (g_decArgo_generateNcMeta == 2)
+
+      % the NetCDF META-DATA is created if it doesn't exist, it is never updated
       
       % check if the NetCDF META-DATA file already exists
       floatNumStr = num2str(g_decArgo_floatNum);
@@ -65,8 +67,9 @@ elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    
    if ((g_decArgo_generateNcMeta == 2) && (g_decArgo_generateNcFlag == 0))
       
-      % even if no buffer has been decoded the file should be created if it
+      % no buffer has been decoded => the file should be created only if it
       % doesn't exist
+
       % check if the NetCDF META-DATA file already exists
       floatNumStr = num2str(g_decArgo_floatNum);
       ncDirName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/'];

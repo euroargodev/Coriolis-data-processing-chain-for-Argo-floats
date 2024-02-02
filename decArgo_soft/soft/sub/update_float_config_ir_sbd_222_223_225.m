@@ -125,6 +125,29 @@ elseif (~isempty(floatParam2))
    updateDate = floatParam2(end-1);
 end
 
+if (floatInternalCycleNumber > 0)
+
+   staticConfigNames = g_decArgo_floatConfig.STATIC.NAMES;
+   staticConfigValues = g_decArgo_floatConfig.STATIC.VALUES;
+
+   confName = 'CONFIG_MC08_';
+   idPos = find(strncmp(confName, staticConfigNames, length(confName)) == 1, 1);
+   if (~isempty(idPos))
+      if (isempty(floatParam1))
+
+         % new MC08 has not been received, set MC08 to initial values
+         if (~isempty(idPos) && ~isnan(str2double(staticConfigValues{idPos})))
+            idPosMc08 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
+            newConfig(idPosMc08) = str2double(staticConfigValues{idPos});
+         end
+      end
+
+      % remove temporary static parameters
+      g_decArgo_floatConfig.STATIC.NAMES(idPos) = [];
+      g_decArgo_floatConfig.STATIC.VALUES(idPos) = [];
+   end
+end
+
 if (~isempty(floatParam1) || ~isempty(floatParam2) || (g_decArgo_doneOnceFlag ~= 1))
    
    % update MC002, MC010 and MC011
@@ -199,35 +222,6 @@ if (~isempty(floatParam1) || ~isempty(floatParam2) || (g_decArgo_doneOnceFlag ~=
       newConfig(idPosMc012) = newConfig(idPosMc14);
    end
    
-   if (isempty(floatParam1) && isempty(floatParam2))
-      if (g_decArgo_doneOnceFlag == 0)
-         
-         staticConfigNames = g_decArgo_floatConfig.STATIC.NAMES;
-         staticConfigValues = g_decArgo_floatConfig.STATIC.VALUES;
-         
-         % set MC08 to initial values
-         idDel = [];
-         confName = 'CONFIG_MC08_';
-         idPos = find(strncmp(confName, staticConfigNames, length(confName)) == 1, 1);
-         if (~isempty(idPos) && ~isnan(str2double(staticConfigValues{idPos})))
-            idPosMc08 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
-            newConfig(idPosMc08) = str2double(staticConfigValues{idPos});
-            idDel = [idDel idPos];
-         end
-         
-         % remove temporary static parameters
-         g_decArgo_floatConfig.STATIC.NAMES(idDel) = [];
-         g_decArgo_floatConfig.STATIC.VALUES(idDel) = [];
-
-         % check if the first MC01 cycles are done
-         if (floatInternalCycleNumber < nbCyclesFirstMission)
-            g_decArgo_doneOnceFlag = 2; % update after MC01 cycles should be considered once again
-         else
-            g_decArgo_doneOnceFlag = 1; % no need to check again until alternatePeriod or pressureIncrement are modified
-         end
-      end
-   end
-
    % check if the first MC01 cycles are done
    if (g_decArgo_doneOnceFlag == 2)
       if (floatInternalCycleNumber >= nbCyclesFirstMission)
@@ -300,11 +294,11 @@ if (~isempty(floatParam1) || ~isempty(floatParam2) || (g_decArgo_doneOnceFlag ~=
    idPosMc15 = find(strncmp(confName, configNames, length(confName)) == 1, 1);
    secondProfRepRate = newConfig(idPosMc15);
    if (~isnan(secondProfRepRate) && (secondProfRepRate ~= 1))
-      
+
       % check float internal cycle number VS MC15
       % we must check floatInternalCycleNumber+1 because the configuration is
       % for the next cycle
-      if ((mod(floatInternalCycleNumber+1, secondProfRepRate) == 0) || (floatInternalCycleNumber == 0)) % a_cyNum == 0 added to have the same configuration for cycle #0 and #1
+      if ((mod(floatInternalCycleNumber+1, secondProfRepRate) == 0))
          % profile pressure is MC16
          confName = 'CONFIG_MC16_';
          idPosMc16 = find(strncmp(confName, configNames, length(confName)) == 1, 1);

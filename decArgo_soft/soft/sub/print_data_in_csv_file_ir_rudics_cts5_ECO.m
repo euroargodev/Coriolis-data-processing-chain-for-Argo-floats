@@ -57,7 +57,7 @@ if (ismember('ECO3', g_decArgo_sensorMountedOnFloat))
 
       treat = dataStruct.treat;
 
-      if (a_decoderId == 131)
+      if (ismember(a_decoderId, [131, 132]))
          switch (treat)
             case {'(RW)', '(AM)', '(DW)'}
                fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; %s; %s; %s; %s; -; Float time; Adj. float time; PRES (dbar); FLUORESCENCE_CHLA (count); BETA_BACKSCATTERING700 (count); FLUORESCENCE_CHLA435 (count)\n', ...

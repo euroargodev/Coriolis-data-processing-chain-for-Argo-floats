@@ -31,7 +31,7 @@ floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_a
 floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
 % floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_all.txt';
 % floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_all.txt';
-floatListFileName = '\Users\jprannou\_RNU\DecArgo_soft\lists\_arvor_deep_all.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\lists_20230316\list_decId_2xx_all.txt';
 % floatListFileName = '\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_C_all.txt';
 % floatListFileName = '\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
 % floatListFileName = '\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_all_decId_2xx.txt';
@@ -39,7 +39,7 @@ floatListFileName = '\Users\jprannou\_RNU\DecArgo_soft\lists\_arvor_deep_all.txt
 inputDirName = 'C:\Users\jprannou\_DATA\201905-ArgoData\coriolis\';
 inputDirName = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\IN\';
 inputDirName = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-inputDirName = 'C:\Users\jprannou\Contacts\Desktop\TEST_NR\TEST_NR_APRES\Nke_2xx\';
+inputDirName = 'E:\work_traj_32\nc_output_decArgo_traj_32\';
 
 fprintf('Floats from list: %s\n', floatListFileName);
 floatList = load(floatListFileName);

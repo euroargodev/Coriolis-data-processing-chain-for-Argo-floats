@@ -52,25 +52,26 @@ switch (a_decoderId)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
    case {221} % Arvor-Deep-Ice Iridium 5.67
-      
+
       update_float_config_ir_sbd_221(a_floatParam, a_cycleNum);
-      
+
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      
+
    case {222, 223, 225}
       % Arvor-ARN-Ice Iridium 5.47
       % Arvor-ARN-DO-Ice Iridium 5.48
       % Provor-ARN-DO-Ice Iridium 5.76
 
       update_float_config_ir_sbd_222_223_225(a_floatParam, a_cycleNum);
-      
+
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      
-   case {224}
+
+   case {224, 226}
       % Arvor-ARN-Ice RBR Iridium 5.49
-      
-      update_float_config_ir_sbd_224(a_floatParam, a_cycleNum);
-      
+      % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
+
+      update_float_config_ir_sbd_224_226(a_floatParam, a_cycleNum, a_decoderId);
+
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet to update configuration for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

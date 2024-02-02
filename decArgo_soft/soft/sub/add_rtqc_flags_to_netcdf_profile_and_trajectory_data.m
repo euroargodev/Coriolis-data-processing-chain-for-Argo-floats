@@ -46,6 +46,7 @@ global g_decArgo_rtqcTest23;
 global g_decArgo_rtqcTest24;
 global g_decArgo_rtqcTest25;
 global g_decArgo_rtqcTest26;
+global g_decArgo_rtqcTest56;
 global g_decArgo_rtqcTest57;
 global g_decArgo_rtqcTest59;
 global g_decArgo_rtqcTest62;
@@ -57,9 +58,10 @@ global g_decArgo_rtqcGreyList;
 global g_decArgo_calibInfo;
 
 % configuration values
-global g_decArgo_generateNcTraj;
-global g_decArgo_generateNcTraj32;
 global g_decArgo_dirOutputNetcdfFile;
+global g_decArgo_generateNcTraj31;
+global g_decArgo_generateNcTraj32;
+global g_decArgo_dirOutputTraj31NetcdfFile;
 global g_decArgo_dirOutputTraj32NetcdfFile;
 
 % temporary trajectory data
@@ -98,6 +100,7 @@ testToPerformList = [ ...
    {'TEST024_RBR_FLOAT'} {g_decArgo_rtqcTest24} ...
    {'TEST025_MEDD'} {g_decArgo_rtqcTest25} ...
    {'TEST026_TEMP_CNDC'} {g_decArgo_rtqcTest26} ...
+   {'TEST056_PH'} {g_decArgo_rtqcTest56} ...
    {'TEST057_DOXY'} {g_decArgo_rtqcTest57} ...
    {'TEST059_NITRATE'} {g_decArgo_rtqcTest59} ...
    {'TEST062_BBP'} {g_decArgo_rtqcTest62} ...
@@ -114,8 +117,7 @@ testMetaData = [ ...
    {'TEST021_METADA_DATA_FILE'} {''} ...
    {'TEST024_METADA_DATA_FILE'} {''} ...
    {'TEST057_METADA_DATA_FILE'} {''} ...
-   {'TEST062_DARK_BBP700_O'} {''} ...
-   {'TEST062_DARK_BBP352_O'} {''} ...
+   {'TEST062_METADA_DATA_FILE'} {''} ...
    {'TEST063_DARK_CHLA'} {''} ...
    {'TEST063_SCALE_CHLA'} {''} ...
    ];
@@ -202,43 +204,15 @@ end
 
 if (test_to_perform('TEST062_BBP', testToPerformList) == 1)
    
-   % retrieve DARK_BBP700_O and DARK_BBP352_O from json meta data file
-   
-   % calibration coefficients
-   darkCountBackscatter700_O = '';
-   darkCountBackscatter532_O = '';
-   if (~isempty(g_decArgo_calibInfo))
-      if (isfield(g_decArgo_calibInfo, 'ECO2'))
-         if (isfield(g_decArgo_calibInfo.ECO2, 'DarkCountBackscatter700_O'))
-            darkCountBackscatter700_O = double(g_decArgo_calibInfo.ECO2.DarkCountBackscatter700_O);
-         end
-         if (isfield(g_decArgo_calibInfo.ECO2, 'DarkCountBackscatter532_O'))
-            darkCountBackscatter532_O = double(g_decArgo_calibInfo.ECO2.DarkCountBackscatter532_O);
-         end
-      elseif (isfield(g_decArgo_calibInfo, 'ECO3'))
-         if (isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter700_O'))
-            darkCountBackscatter700_O = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter700_O);
-         end
-         if (isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter532_O'))
-            darkCountBackscatter532_O = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter532_O);
-         end
-      elseif (isfield(g_decArgo_calibInfo, 'FLBB'))
-         if (isfield(g_decArgo_calibInfo.FLBB, 'DarkCountBackscatter700_O'))
-            darkCountBackscatter700_O = double(g_decArgo_calibInfo.FLBB.DarkCountBackscatter700_O);
-         end
-      end
-   end
-   
-   if (~isempty(darkCountBackscatter700_O))
-      idVal = find(strcmp('TEST062_DARK_BBP700_O', testMetaData) == 1);
+   % add meta file path name
+   ncMetaFileName = sprintf('%d_meta.nc', floatNum);
+   ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
+   if ~(exist(ncMetaFilePathName, 'file') == 2)
+      fprintf('RTQC_WARNING: TEST062: Float #%d: No meta file to perform parking hook test in test#62\n', floatNum);
+   else
+      idVal = find(strcmp('TEST062_METADA_DATA_FILE', testMetaData) == 1);
       if (~isempty(idVal))
-         testMetaData{idVal+1} = darkCountBackscatter700_O;
-      end
-   end
-   if (~isempty(darkCountBackscatter532_O))
-      idVal = find(strcmp('TEST062_DARK_BBP532_O', testMetaData) == 1);
-      if (~isempty(idVal))
-         testMetaData{idVal+1} = darkCountBackscatter532_O;
+         testMetaData{idVal+1} = ncMetaFilePathName;
       end
    end
 end
@@ -310,25 +284,29 @@ end
 g_rtqc_trajData = [];
 
 % retrieve the traj c file path name
+trajFilePathName = '';
 trajFileName = sprintf('%d_Rtraj.nc', floatNum);
-trajFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' trajFileName];
-if ~(exist(trajFilePathName, 'file') == 2)
+if (g_decArgo_generateNcTraj32 ~= 0)
    trajFilePathName = [g_decArgo_dirOutputTraj32NetcdfFile '/' floatNumStr '/' trajFileName];
+elseif (g_decArgo_generateNcTraj31 ~= 0)
+   trajFilePathName = [g_decArgo_dirOutputTraj31NetcdfFile '/' floatNumStr '/' trajFileName];
 end
-if (exist(trajFilePathName, 'file') == 2)
-   % define the tests to perform on trajectory data
-   testToPerformList2 = [ ...
-      {'TEST002_IMPOSSIBLE_DATE'} {1} ...
-      {'TEST003_IMPOSSIBLE_LOCATION'} {1} ...
-      {'TEST004_POSITION_ON_LAND'} {1} ...
-      {'TEST020_QUESTIONABLE_ARGOS_POSITION'} {1} ...
-      ];
-   
-   % perform RTQC on trajectory data (to fill JULD_QC, JULD_ADJUSTED_QC
-   % and POSITION_QC)
-   add_rtqc_to_trajectory_file(floatNum, ...
-      trajFilePathName, [], ...
-      testToPerformList2, testMetaData, 1, 0, 1);
+if (~isempty(trajFilePathName))
+   if (exist(trajFilePathName, 'file') == 2)
+      % define the tests to perform on trajectory data
+      testToPerformList2 = [ ...
+         {'TEST002_IMPOSSIBLE_DATE'} {1} ...
+         {'TEST003_IMPOSSIBLE_LOCATION'} {1} ...
+         {'TEST004_POSITION_ON_LAND'} {1} ...
+         {'TEST020_QUESTIONABLE_ARGOS_POSITION'} {1} ...
+         ];
+
+      % perform RTQC on trajectory data (to fill JULD_QC, JULD_ADJUSTED_QC
+      % and POSITION_QC)
+      add_rtqc_to_trajectory_file(floatNum, ...
+         trajFilePathName, [], ...
+         testToPerformList2, testMetaData, 1, 0, 1);
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -391,10 +369,10 @@ for idFile = 1:length(monoProfList)
    
    monoProfInputFilePathName = [monoProfPath '/' monoProfList{idFile}];
    monoProfOutputFilePathName = '';
-   
+
    multiProfInputFilePathName = ncMultiProfFilePathName;
    multiProfOutputFilePathName = '';
-   
+
    % apply RTQC
    add_rtqc_to_profile_file(floatNum, ...
       monoProfInputFilePathName, monoProfOutputFilePathName, ...
@@ -406,14 +384,14 @@ end
 % RTQC ON TRAJECTORY FILE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if (g_decArgo_generateNcTraj ~= 0)
-   trajFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' trajFileName];
-   
+if (g_decArgo_generateNcTraj31 ~= 0)
+   trajFilePathName = [g_decArgo_dirOutputTraj31NetcdfFile '/' floatNumStr '/' trajFileName];
+
    if (exist(trajFilePathName, 'file') == 2)
-      
+
       [~, fileName, fileExt] = fileparts(trajFilePathName);
       fprintf('Applying RTQC to file (V3.1) %s\n', [fileName fileExt]);
-      
+
       % perform RTQC on trajectory data
       add_rtqc_to_trajectory_file(floatNum, ...
          trajFilePathName, '', ...
@@ -425,10 +403,10 @@ if (g_decArgo_generateNcTraj32 ~= 0)
    trajFilePathName = [g_decArgo_dirOutputTraj32NetcdfFile '/' floatNumStr '/' trajFileName];
    
    if (exist(trajFilePathName, 'file') == 2)
-      
+
       [~, fileName, fileExt] = fileparts(trajFilePathName);
       fprintf('Applying RTQC to file (V3.2) %s\n', [fileName fileExt]);
-      
+
       % perform RTQC on trajectory data
       add_rtqc_to_trajectory_file(floatNum, ...
          trajFilePathName, '', ...

@@ -3,7 +3,7 @@
 % Only Iridium locations with the min CEP radius are used.
 %
 % SYNTAX :
-%  [o_locDate, o_locLon, o_locLat, o_locQc, o_lastCycleFlag] = ...
+%  [o_locDate, o_locLon, o_locLat, o_locQc] = ...
 %    compute_profile_location2_from_iridium_locations_ir_sbd(a_iridiumMailData, a_cycleNumber)
 %
 % INPUT PARAMETERS :
@@ -15,8 +15,6 @@
 %   o_locLon        : profile location longitude
 %   o_locLat        : profile location latitude
 %   o_locQc         : profile location Qc
-%   o_lastCycleFlag : 1 if the concerned cycle is the last received one, 0
-%                     otherwise
 %
 % EXAMPLES :
 %
@@ -26,7 +24,7 @@
 % RELEASES :
 %   03/14/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_locDate, o_locLon, o_locLat, o_locQc, o_lastCycleFlag] = ...
+function [o_locDate, o_locLon, o_locLat, o_locQc] = ...
    compute_profile_location2_from_iridium_locations_ir_sbd(a_iridiumMailData, a_cycleNumber)
 
 % QC flag values (char)
@@ -37,7 +35,6 @@ o_locDate = [];
 o_locLon = [];
 o_locLat = [];
 o_locQc = [];
-o_lastCycleFlag = [];
 
 
 % use the Iridium fixes associated to the current cycle with the minimum CEP radius
@@ -68,11 +65,6 @@ if (~isempty(idForCy))
          o_locLon = sum(lonList.*weight)/sum(weight);
          o_locLat = sum(latList.*weight)/sum(weight);
          o_locQc = g_decArgo_qcStrProbablyGood;
-
-         o_lastCycleFlag = 0;
-         if (a_cycleNumber == max([a_iridiumMailData.cycleNumber]))
-            o_lastCycleFlag = 1;
-         end
       end
    end
 end

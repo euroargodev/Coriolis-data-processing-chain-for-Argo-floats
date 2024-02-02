@@ -113,7 +113,7 @@ end
 % Iridium locations
 if (o_profile.locationDate == g_decArgo_dateDef)
 
-   [locDate, locLon, locLat, locQc, ~] = ...
+   [locDate, locLon, locLat, locQc] = ...
       compute_profile_location_from_iridium_locations_ir_sbd(a_iridiumData, o_profile.cycleNumber);
    if (~isempty(locDate))
       % assign the averaged Iridium location to the profile
@@ -128,7 +128,7 @@ if (o_profile.locationDate == g_decArgo_dateDef)
 
    else
 
-      [locDate, locLon, locLat, locQc, ~] = ...
+      [locDate, locLon, locLat, locQc] = ...
          compute_profile_location2_from_iridium_locations_ir_sbd(a_iridiumData, o_profile.cycleNumber);
       if (~isempty(locDate))
          % assign the averaged Iridium location to the profile
@@ -150,7 +150,7 @@ if (o_profile.date == g_decArgo_dateDef)
       o_profile.cycleNumber);
 end
 if (o_profile.locationDate == g_decArgo_dateDef)
-   fprintf('WARNING: Float #%d Cycle #%d: Unable to find the loction of the profile\n', ...
+   fprintf('WARNING: Float #%d Cycle #%d: Unable to find the location of the profile\n', ...
       g_decArgo_floatNum, ...
       o_profile.cycleNumber);
 end

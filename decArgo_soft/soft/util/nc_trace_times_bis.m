@@ -34,7 +34,7 @@ global g_NTT_CT_MODE_CYCLE_NUM;
 global g_NTT_CT_UPDATE_DATA_SET;
 
 % top directory of NetCDF files to plot
-% g_NTT_NC_DIR = 'E:\201905-ArgoData\coriolis\';
+g_NTT_NC_DIR = 'D:\202211-ArgoData\coriolis\';
 g_NTT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % directory to store pdf output
@@ -42,7 +42,22 @@ g_NTT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % default list of floats to plot
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_222_223_225.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\lists_20221013\list_decId_222_4.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\Profils_alternés\prv_203.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\Profils_alternés\prv_215.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\Profils_alternés\prv_204.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\Profils_alternés\prv_205.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\Profils_alternés\prv_210.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\Profils_alternés\prv_211.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\Profils_alternés\prv_212.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\Profils_alternés\prv_213.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\Profils_alternés\prv_214.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\Profils_alternés\prv_217.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\Profils_alternés\prv_222.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\Profils_alternés\prv_223.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\Profils_alternés\prv_224.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\Profils_alternés\prv_225.txt';
 
 % display help information on available commands
 display_help;
@@ -432,6 +447,9 @@ if ((a_idFloat ~= g_NTT_ID_FLOAT) || (a_reload == 1))
          {'PRES_ADJUSTED'} ...
          {'DATA_MODE'} ...
          {'CYCLE_NUMBER_INDEX'} ...
+         {'TRAJECTORY_PARAMETERS'} ...
+         {'TRAJECTORY_PARAMETER_DATA_MODE'} ...
+         {'JULD_DATA_MODE'} ...
          ];
       [trajData] = get_data_from_nc_file(trajFileName, wantedVars);
 
@@ -475,7 +493,30 @@ if ((a_idFloat ~= g_NTT_ID_FLOAT) || (a_reload == 1))
       idVal = find(strcmp('CYCLE_NUMBER_INDEX', trajData(1:2:end)) == 1, 1);
       cycleNumberIndexTraj = trajData{2*idVal};
 
-      if (g_NTT_ADJ == 2)
+      idVal = find(strcmp('TRAJECTORY_PARAMETER_DATA_MODE', trajData(1:2:end)) == 1, 1);
+      paramDataMode = trajData{2*idVal};
+
+      if (~isempty(paramDataMode))
+
+         % TRAJ 3.2
+
+         idVal = find(strcmp('TRAJECTORY_PARAMETERS', trajData(1:2:end)) == 1, 1);
+         trajParam = trajData{2*idVal};
+
+         presParamId = '';
+         [~, nParam] = size(trajParam);
+         for idParam = 1:nParam
+            paramName = deblank(trajParam(:, idParam)');
+            if (strcmp(paramName, 'PRES'))
+               presParamId = idParam;
+               break
+            end
+         end
+         presDataMode = paramDataMode(presParamId, :);
+
+         idVal = find(strcmp('JULD_DATA_MODE', trajData(1:2:end)) == 1, 1);
+         juldDataMode = trajData{2*idVal};
+
          idVal = find(strcmp('JULD_ADJUSTED', trajData(1:2:end)) == 1, 1);
          juldAdj = trajData{2*idVal};
 
@@ -488,25 +529,51 @@ if ((a_idFloat ~= g_NTT_ID_FLOAT) || (a_reload == 1))
          idVal = find(strcmp('PRES', trajData(1:2:end)) == 1, 1);
          trajPresNotAdj = trajData{2*idVal};
 
-         juld = juldAdj;
-         trajPres = trajPresAdj;
-         idNotAdj = find(dataMode == 'R');
-         cycleNumNotAdj = unique(cycleNumberIndexTraj(idNotAdj));
-         idNotAdj = find(ismember(cycleNumberTraj, cycleNumNotAdj));
-         juld(idNotAdj) = juldNotAdj(idNotAdj);
-         trajPres(idNotAdj) = trajPresNotAdj(idNotAdj);
-      elseif (g_NTT_ADJ == 1)
-         idVal = find(strcmp('JULD_ADJUSTED', trajData(1:2:end)) == 1, 1);
-         juld = trajData{2*idVal};
+         juld = juldNotAdj;
+         idAdj = find(juldDataMode == 'A');
+         juld(idAdj) = juldAdj(idAdj);
 
-         idVal = find(strcmp('PRES_ADJUSTED', trajData(1:2:end)) == 1, 1);
-         trajPres = trajData{2*idVal};
+         trajPres = trajPresNotAdj;
+         idAdj = find(presDataMode == 'A');
+         trajPres(idAdj) = trajPresAdj(idAdj);
+         
       else
-         idVal = find(strcmp('JULD', trajData(1:2:end)) == 1, 1);
-         juld = trajData{2*idVal};
 
-         idVal = find(strcmp('PRES', trajData(1:2:end)) == 1, 1);
-         trajPres = trajData{2*idVal};
+         % TRAJ 3.1
+         
+         if (g_NTT_ADJ == 2)
+            idVal = find(strcmp('JULD_ADJUSTED', trajData(1:2:end)) == 1, 1);
+            juldAdj = trajData{2*idVal};
+
+            idVal = find(strcmp('PRES_ADJUSTED', trajData(1:2:end)) == 1, 1);
+            trajPresAdj = trajData{2*idVal};
+
+            idVal = find(strcmp('JULD', trajData(1:2:end)) == 1, 1);
+            juldNotAdj = trajData{2*idVal};
+
+            idVal = find(strcmp('PRES', trajData(1:2:end)) == 1, 1);
+            trajPresNotAdj = trajData{2*idVal};
+
+            juld = juldAdj;
+            trajPres = trajPresAdj;
+            idNotAdj = find(dataMode == 'R');
+            cycleNumNotAdj = unique(cycleNumberIndexTraj(idNotAdj));
+            idNotAdj = find(ismember(cycleNumberTraj, cycleNumNotAdj));
+            juld(idNotAdj) = juldNotAdj(idNotAdj);
+            trajPres(idNotAdj) = trajPresNotAdj(idNotAdj);
+         elseif (g_NTT_ADJ == 1)
+            idVal = find(strcmp('JULD_ADJUSTED', trajData(1:2:end)) == 1, 1);
+            juld = trajData{2*idVal};
+
+            idVal = find(strcmp('PRES_ADJUSTED', trajData(1:2:end)) == 1, 1);
+            trajPres = trajData{2*idVal};
+         else
+            idVal = find(strcmp('JULD', trajData(1:2:end)) == 1, 1);
+            juld = trajData{2*idVal};
+
+            idVal = find(strcmp('PRES', trajData(1:2:end)) == 1, 1);
+            trajPres = trajData{2*idVal};
+         end
       end
 
       [g_NTT_CT_MODE_VAL, g_NTT_CT_MODE_NB, g_NTT_CT_CYCLE_MODE, g_NTT_CT_MODE_CYCLE] = ...

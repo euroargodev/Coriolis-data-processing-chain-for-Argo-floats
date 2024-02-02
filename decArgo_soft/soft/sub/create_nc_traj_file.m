@@ -29,14 +29,14 @@ function create_nc_traj_file( ...
 global g_decArgo_floatTransType;
 
 % configuration values
-global g_decArgo_generateNcTraj;
+global g_decArgo_generateNcTraj31;
 global g_decArgo_generateNcTraj32;
 
 % current float WMO number
 global g_decArgo_floatNum;
 
 % configuration values
-global g_decArgo_dirOutputNetcdfFile;
+global g_decArgo_dirOutputTraj31NetcdfFile;
 global g_decArgo_dirOutputTraj32NetcdfFile;
 
 % Argos existing files
@@ -58,15 +58,15 @@ end
 if (g_decArgo_floatTransType == 1)
    
    % Argos floats
-   
-   generateNcTraj = 1;
-   if (g_decArgo_generateNcTraj == 0)
-      generateNcTraj = 0;
-   elseif (g_decArgo_generateNcTraj == 2)
+
+   generateNcTraj31 = 1;
+   if (g_decArgo_generateNcTraj31 ~= 2)
+      generateNcTraj31 = g_decArgo_generateNcTraj31;
+   else
       
       % check if the NetCDF TRAJECTORY file already exists
       floatNumStr = num2str(g_decArgo_floatNum);
-      ncDirName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/'];
+      ncDirName = [g_decArgo_dirOutputTraj31NetcdfFile '/' floatNumStr '/'];
       ncFileName = [floatNumStr '_Rtraj.nc'];
       ncPathFileName = [ncDirName ncFileName];
       
@@ -108,21 +108,21 @@ if (g_decArgo_floatTransType == 1)
                
                idF = find(g_decArgo_existingArgosFileSystemDate >= ncFileUpdateDate, 1);
                if (isempty(idF))
-                  generateNcTraj = 0;
+                  generateNcTraj31 = 0;
                end
             end
          end
       end
    end
-   if (generateNcTraj == 1)
+   if (generateNcTraj31 == 1)
       create_nc_traj_file_3_1(a_decoderId, ...
          a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson);
    end
-   
+
    generateNcTraj32 = 1;
-   if (g_decArgo_generateNcTraj32 == 0)
-      generateNcTraj32 = 0;
-   elseif (g_decArgo_generateNcTraj32 == 2)
+   if (g_decArgo_generateNcTraj32 ~= 2)
+      generateNcTraj32 = g_decArgo_generateNcTraj32;
+   else
       
       % check if the NetCDF TRAJECTORY file already exists
       floatNumStr = num2str(g_decArgo_floatNum);
@@ -176,7 +176,7 @@ if (g_decArgo_floatTransType == 1)
    end
    if (generateNcTraj32 == 1)
       create_nc_traj_file_3_2(a_decoderId, ...
-         a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson, generateNcTraj);
+         a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson, generateNcTraj31);
    end
    
 elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
@@ -185,33 +185,35 @@ elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    % Iridium SBD floats
    % Iridium SBD ProvBioII floats
    
-   generateNcTraj = 1;
-   if (g_decArgo_generateNcTraj == 0)
-      generateNcTraj = 0;
-   elseif ((g_decArgo_generateNcTraj == 2) && (g_decArgo_generateNcFlag == 0))
+   generateNcTraj31 = 1;
+   if (g_decArgo_generateNcTraj31 ~= 2)
+      generateNcTraj31 = g_decArgo_generateNcTraj31;
+   elseif ((g_decArgo_generateNcTraj31 == 2) && (g_decArgo_generateNcFlag == 0))
+
       % no buffer has been decoded => the file should be created only if it
       % doesn't exist
       
       % check if the NetCDF TRAJECTORY file already exists
       floatNumStr = num2str(g_decArgo_floatNum);
-      ncDirName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/'];
+      ncDirName = [g_decArgo_dirOutputTraj31NetcdfFile '/' floatNumStr '/'];
       ncFileName = [floatNumStr '_Rtraj.nc'];
       ncPathFileName = [ncDirName ncFileName];
       
       if (exist(ncPathFileName, 'file') == 2)
          % the file is not updated if it already exists
-         generateNcTraj = 0;
+         generateNcTraj31 = 0;
       end
    end
-   if (generateNcTraj == 1)
+   if (generateNcTraj31 == 1)
       create_nc_traj_file_3_1(a_decoderId, ...
          a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson);
    end
-   
+
    generateNcTraj32 = 1;
-   if (g_decArgo_generateNcTraj32 == 0)
-      generateNcTraj32 = 0;
+   if (g_decArgo_generateNcTraj32 ~= 2)
+      generateNcTraj32 = g_decArgo_generateNcTraj32;
    elseif ((g_decArgo_generateNcTraj32 == 2) && (g_decArgo_generateNcFlag == 0))
+
       % no buffer has been decoded => the file should be created only if it
       % doesn't exist
       
@@ -228,7 +230,7 @@ elseif (ismember(g_decArgo_floatTransType, [2 3 4]))
    end
    if (generateNcTraj32 == 1)
       create_nc_traj_file_3_2(a_decoderId, ...
-         a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson, generateNcTraj);
+         a_tabTrajNMeas, a_tabTrajNCycle, a_metaDataFromJson, generateNcTraj31);
    end
 end
 

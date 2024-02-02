@@ -43,13 +43,13 @@ init_default_values;
 
 if (nargin == 0)
    floatListFileName = FLOAT_LIST_FILE_NAME;
-   
+
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
       return
    end
-   
+
    fprintf('Floats from list: %s\n', floatListFileName);
    floatList = load(floatListFileName);
 else
@@ -72,37 +72,37 @@ tic;
 % process the floats
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
-   
+
    floatNum = floatList(idFloat);
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
-   
+
    ncFileDir = [DIR_INPUT_NC_FILES '/' num2str(floatNum) '/'];
-   
+
    if (exist(ncFileDir, 'dir') == 7)
-      
+
       % convert trajectory file
       ncFiles = dir([ncFileDir sprintf('%d_*traj.nc', floatNum)]);
       for idFile = 1:length(ncFiles)
-         
+
          ncFileName = ncFiles(idFile).name;
          ncFilePathName = [ncFileDir '/' ncFileName];
-         
+
          outputFileName = [ncFileName(1:end-3) '.csv'];
          outputFilePathName = [ncFileDir outputFileName];
          nc_traj_adj_2_csv_file(ncFilePathName, outputFilePathName, 0);
       end
-      
+
       ncAuxFileDir = [DIR_INPUT_NC_FILES '/' num2str(floatNum) '/auxiliary/'];
-      
+
       if (exist(ncAuxFileDir, 'dir') == 7)
-         
+
          % convert auxiliary trajectory file
          ncFiles = dir([ncAuxFileDir sprintf('%d_*traj_aux.nc', floatNum)]);
          if (~isempty(ncFiles))
             trajFileName = ncFiles(1).name;
             trajFilePathName = [ncAuxFileDir trajFileName];
-            
+
             outputFileName = [trajFileName(1:end-3) '.csv'];
             outputFilePathName = [ncAuxFileDir outputFileName];
             nc_traj_adj_2_csv_file(trajFilePathName, outputFilePathName, 1);
@@ -155,46 +155,46 @@ if ~(exist(a_inputPathFileName, 'file') == 2)
 end
 
 if (~a_auxfileFlag)
-   
+
    % open NetCDF file
    fCdf = netcdf.open(a_inputPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_inputPathFileName);
       return
    end
-   
+
    formatVersion = str2double(netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'FORMAT_VERSION'))');
-   
+
    netcdf.close(fCdf);
-   
+
    if (formatVersion == 3.1)
-      
+
       % convert TRAJ 3.1 file
       if (~FIX_WITH_ERROR_ELLIPSE)
          nc_traj_adj_2_csv_file_3_1(a_inputPathFileName, a_outputPathFileName, a_auxfileFlag);
       else
          nc_traj_adj_2_csv_file_3_1_with_err_ellipse(a_inputPathFileName, a_outputPathFileName, a_auxfileFlag);
       end
-      
+
    elseif (formatVersion == 3.2)
-      
+
       % convert TRAJ 3.2 file
       if (~FIX_WITH_ERROR_ELLIPSE)
          nc_traj_adj_2_csv_file_3_2(a_inputPathFileName, a_outputPathFileName);
       else
          nc_traj_adj_2_csv_file_3_2_with_err_ellipse(a_inputPathFileName, a_outputPathFileName);
       end
-      
+
    else
       fprintf('File format version is %g (3.1 or 3.2 expected) => exit\n', ...
-         formatVersion, a_inputPathFileName);
+         formatVersion);
       return
    end
 else
-   
+
    % convert TRAJ_AUX file
    nc_traj_adj_2_csv_file_3_1(a_inputPathFileName, a_outputPathFileName, a_auxfileFlag);
-   
+
 end
 
 return
@@ -283,11 +283,11 @@ for idParam = 1:length(nMeasData.paramNameList)
    paramName  = nMeasData.paramNameList{idParam};
    paramDataNbDim = nMeasData.paramDataNbDim(idParam);
    paramQcName  = nMeasData.paramQcNameList{idParam};
-   
+
    if (paramDataNbDim == 1)
       paramNames = [paramNames sprintf('; %s', paramName)];
       paramQcNames = [paramQcNames sprintf('; %s', paramQcName)];
-      
+
       paramFormat = nMeasData.paramDataFormat{idParam};
       paramFormats = [paramFormats '; ' paramFormat];
       paramQcFormats = [paramQcFormats '; %c'];
@@ -295,7 +295,7 @@ for idParam = 1:length(nMeasData.paramNameList)
       for id = 1:paramDataNbDim
          paramNames = [paramNames sprintf('; %s#%d', paramName, id)];
          paramQcNames = [paramQcNames sprintf('; %s#%d', paramQcName, id)];
-         
+
          paramFormat = nMeasData.paramDataFormat{idParam};
          paramFormats = [paramFormats '; ' paramFormat];
       end
@@ -312,11 +312,11 @@ for idParam = 1:length(nMeasData.adjParamNameList)
    adjParamName  = nMeasData.adjParamNameList{idParam};
    adjParamDataNbDim = nMeasData.adjParamDataNbDim(idParam);
    adjParamQcName  = nMeasData.adjParamQcNameList{idParam};
-   
+
    if (adjParamDataNbDim == 1)
       adjParamNames = [adjParamNames sprintf('; %s', adjParamName)];
       adjParamQcNames = [adjParamQcNames sprintf('; %s', adjParamQcName)];
-      
+
       adjParamFormat = nMeasData.adjParamDataFormat{idParam};
       adjParamFormats = [adjParamFormats '; ' adjParamFormat];
       adjParamQcFormats = [adjParamQcFormats '; %c'];
@@ -324,7 +324,7 @@ for idParam = 1:length(nMeasData.adjParamNameList)
       for id = 1:adjParamDataNbDim
          adjParamNames = [adjParamNames sprintf('; %s#%d', adjParamName, id)];
          adjParamQcNames = [adjParamQcNames sprintf('; %s#%d', adjParamQcName, id)];
-         
+
          adjParamFormat = nMeasData.adjParamDataFormat{idParam};
          adjParamFormats = [adjParamFormats '; ' adjParamFormat];
          adjParamQcFormats = [adjParamQcFormats '; %c'];
@@ -347,12 +347,12 @@ else
    cycles(find(cycles == 99999)) = [];
 end
 for cycleNumber = -1:max(cycles)
-   
+
    if (~isempty(nCycleData))
-      
+
       % print N_CYCLE data
       idCy = find(nCycleData.cycleNumberIndex == cycleNumber);
-      
+
       if (~isempty(idCy))
          if (isfield(nCycleData, 'juldDescentStart'))
             fprintf(fidOut, '%s; CYCLE; %d; JULD_DESCENT_START; %s; %c\n', ...
@@ -456,16 +456,16 @@ for cycleNumber = -1:max(cycles)
          end
       end
    end
-   
+
    % print N_MEASUREMENT data
    idMeas = find(nMeasData.cycleNumber == cycleNumber);
-   
+
    for idM = 1:length(idMeas)
-      
+
       if (nMeasData.measCode(idMeas(idM)) == 99999)
          continue
       end
-      
+
       if (~isempty(nMeasData.paramData))
          paramData = nMeasData.paramData(idMeas(idM), :);
          paramQcData = nMeasData.paramQcData(idMeas(idM), :);
@@ -473,7 +473,7 @@ for cycleNumber = -1:max(cycles)
          paramQcData = num2str(paramQcData')';
          paramQcData(find(paramQcData == g_decArgo_qcStrUnused2)) = g_decArgo_qcStrDef;
       end
-      
+
       if (~isempty(nMeasData.adjParamData))
          paramDataAdj = nMeasData.adjParamData(idMeas(idM), :);
          paramQcDataAdj = nMeasData.adjParamQcData(idMeas(idM), :);
@@ -481,7 +481,7 @@ for cycleNumber = -1:max(cycles)
          paramQcDataAdj = num2str(paramQcDataAdj')';
          paramQcDataAdj(find(paramQcDataAdj == g_decArgo_qcStrUnused2)) = g_decArgo_qcStrDef;
       end
-      
+
       if (~a_auxfileFlag)
          if (~isempty(nMeasData.paramData))
             if (~isempty(nMeasData.adjParamData))
@@ -672,7 +672,7 @@ for cycleNumber = -1:max(cycles)
          end
       end
    end
-   
+
    if (~isempty(idMeas))
       fprintf(fidOut, '%s\n', ...
          nMeasData.platformNumber);
@@ -797,11 +797,11 @@ for idParam = 1:length(nMeasData.paramNameList)
    paramName  = nMeasData.paramNameList{idParam};
    paramDataNbDim = nMeasData.paramDataNbDim(idParam);
    paramQcName  = nMeasData.paramQcNameList{idParam};
-   
+
    if (paramDataNbDim == 1)
       paramNames = [paramNames sprintf('; %s', paramName)];
       paramQcNames = [paramQcNames sprintf('; %s', paramQcName)];
-      
+
       paramFormat = nMeasData.paramDataFormat{idParam};
       paramFormats = [paramFormats '; ' paramFormat];
       paramQcFormats = [paramQcFormats '; %c'];
@@ -809,7 +809,7 @@ for idParam = 1:length(nMeasData.paramNameList)
       for id = 1:paramDataNbDim
          paramNames = [paramNames sprintf('; %s#%d', paramName, id)];
          paramQcNames = [paramQcNames sprintf('; %s#%d', paramQcName, id)];
-         
+
          paramFormat = nMeasData.paramDataFormat{idParam};
          paramFormats = [paramFormats '; ' paramFormat];
       end
@@ -826,11 +826,11 @@ for idParam = 1:length(nMeasData.adjParamNameList)
    adjParamName  = nMeasData.adjParamNameList{idParam};
    adjParamDataNbDim = nMeasData.adjParamDataNbDim(idParam);
    adjParamQcName  = nMeasData.adjParamQcNameList{idParam};
-   
+
    if (adjParamDataNbDim == 1)
       adjParamNames = [adjParamNames sprintf('; %s', adjParamName)];
       adjParamQcNames = [adjParamQcNames sprintf('; %s', adjParamQcName)];
-      
+
       adjParamFormat = nMeasData.adjParamDataFormat{idParam};
       adjParamFormats = [adjParamFormats '; ' adjParamFormat];
       adjParamQcFormats = [adjParamQcFormats '; %c'];
@@ -838,7 +838,7 @@ for idParam = 1:length(nMeasData.adjParamNameList)
       for id = 1:adjParamDataNbDim
          adjParamNames = [adjParamNames sprintf('; %s#%d', adjParamName, id)];
          adjParamQcNames = [adjParamQcNames sprintf('; %s#%d', adjParamQcName, id)];
-         
+
          adjParamFormat = nMeasData.adjParamDataFormat{idParam};
          adjParamFormats = [adjParamFormats '; ' adjParamFormat];
          adjParamQcFormats = [adjParamQcFormats '; %c'];
@@ -861,12 +861,12 @@ else
    cycles(find(cycles == 99999)) = [];
 end
 for cycleNumber = -1:max(cycles)
-   
+
    if (~isempty(nCycleData))
-      
+
       % print N_CYCLE data
       idCy = find(nCycleData.cycleNumberIndex == cycleNumber);
-      
+
       if (~isempty(idCy))
          if (isfield(nCycleData, 'juldDescentStart'))
             fprintf(fidOut, '%s; CYCLE; %d; JULD_DESCENT_START; %s; %c\n', ...
@@ -970,16 +970,16 @@ for cycleNumber = -1:max(cycles)
          end
       end
    end
-   
+
    % print N_MEASUREMENT data
    idMeas = find(nMeasData.cycleNumber == cycleNumber);
-   
+
    for idM = 1:length(idMeas)
-      
+
       if (nMeasData.measCode(idMeas(idM)) == 99999)
          continue
       end
-      
+
       if (~isempty(nMeasData.paramData))
          paramData = nMeasData.paramData(idMeas(idM), :);
          paramQcData = nMeasData.paramQcData(idMeas(idM), :);
@@ -987,7 +987,7 @@ for cycleNumber = -1:max(cycles)
          paramQcData = num2str(paramQcData')';
          paramQcData(find(paramQcData == g_decArgo_qcStrUnused2)) = g_decArgo_qcStrDef;
       end
-      
+
       if (~isempty(nMeasData.adjParamData))
          paramDataAdj = nMeasData.adjParamData(idMeas(idM), :);
          paramQcDataAdj = nMeasData.adjParamQcData(idMeas(idM), :);
@@ -995,7 +995,7 @@ for cycleNumber = -1:max(cycles)
          paramQcDataAdj = num2str(paramQcDataAdj')';
          paramQcDataAdj(find(paramQcDataAdj == g_decArgo_qcStrUnused2)) = g_decArgo_qcStrDef;
       end
-      
+
       if (~a_auxfileFlag)
          if (~isempty(nMeasData.paramData))
             if (~isempty(nMeasData.adjParamData))
@@ -1204,7 +1204,7 @@ for cycleNumber = -1:max(cycles)
          end
       end
    end
-   
+
    if (~isempty(idMeas))
       fprintf(fidOut, '%s\n', ...
          nMeasData.platformNumber);
@@ -1306,13 +1306,13 @@ for idParam = 1:length(nMeasData.paramNameList)
    paramQcName  = nMeasData.paramQcNameList{idParam};
    paramQcNum  = nMeasData.paramQcNum{idParam};
    paramDataModeNum  = nMeasData.paramDataModeNum{idParam};
-   
+
    if (paramDataNbDim == 1)
       paramNames = [paramNames sprintf('; %s', paramName)];
       paramNums = [paramNums sprintf('; %s', paramNum)];
       paramQcNums = [paramQcNums sprintf('; %s', paramQcNum)];
       paramDataModeNums = [paramDataModeNums sprintf('; %s', paramDataModeNum)];
-      
+
       paramFormat = nMeasData.paramDataFormat{idParam};
       paramFormats = [paramFormats '; ' paramFormat];
       paramQcFormats = [paramQcFormats '; %c'];
@@ -1321,7 +1321,7 @@ for idParam = 1:length(nMeasData.paramNameList)
       for id = 1:paramDataNbDim
          paramNames = [paramNames sprintf('; %s#%d', paramName, id)];
          paramNums = [paramNums sprintf('; %s', paramNum)];
-         
+
          paramFormat = nMeasData.paramDataFormat{idParam};
          paramFormats = [paramFormats '; ' paramFormat];
       end
@@ -1345,12 +1345,12 @@ for idParam = 1:length(nMeasData.adjParamNameList)
    adjParamDataNbDim = nMeasData.adjParamDataNbDim(idParam);
    adjParamQcName  = nMeasData.adjParamQcNameList{idParam};
    adjParamQcNum  = nMeasData.adjParamQcNum{idParam};
-   
+
    if (adjParamDataNbDim == 1)
       adjParamNames = [adjParamNames sprintf('; %s', adjParamName)];
       adjParamNums = [adjParamNums sprintf('; %s', adjParamNum)];
       adjParamQcNums = [adjParamQcNums sprintf('; %s', adjParamQcNum)];
-      
+
       adjParamFormat = nMeasData.adjParamDataFormat{idParam};
       adjParamFormats = [adjParamFormats '; ' adjParamFormat];
       adjParamQcFormats = [adjParamQcFormats '; %c'];
@@ -1358,7 +1358,7 @@ for idParam = 1:length(nMeasData.adjParamNameList)
       for id = 1:adjParamDataNbDim
          adjParamNames = [adjParamNames sprintf('; %s#%d', adjParamName, id)];
          adjParamNums = [adjParamNums sprintf('; %s', adjParamNum)];
-         
+
          adjParamFormat = nMeasData.adjParamDataFormat{idParam};
          adjParamFormats = [adjParamFormats '; ' adjParamFormat];
       end
@@ -1373,16 +1373,16 @@ adjErrorParamFormats = [];
 for idParam = 1:length(nMeasData.adjErrorParamNameList)
    adjErrorParamName  = nMeasData.adjErrorParamNameList{idParam};
    adjErrorParamDataNbDim = nMeasData.adjErrorParamDataNbDim(idParam);
-   
+
    if (adjErrorParamDataNbDim == 1)
       adjErrorParamNames = [adjErrorParamNames sprintf('; %s', adjErrorParamName)];
-      
+
       adjErrorParamFormat = nMeasData.adjErrorParamDataFormat{idParam};
       adjErrorParamFormats = [adjErrorParamFormats '; ' adjErrorParamFormat];
    else
       for id = 1:adjErrorParamDataNbDim
          adjErrorParamNames = [adjErrorParamNames sprintf('; %s#%d', adjErrorParamName, id)];
-         
+
          adjErrorParamFormat = nMeasData.adjErrorParamDataFormat{idParam};
          adjErrorParamFormats = [adjErrorParamFormats '; ' adjErrorParamFormat];
       end
@@ -1406,12 +1406,12 @@ else
    cycles(find(cycles == 99999)) = [];
 end
 for cycleNumber = -1:max(cycles)
-   
+
    if (~isempty(nCycleData))
-      
+
       % print N_CYCLE data
       idCy = find(nCycleData.cycleNumberIndex == cycleNumber);
-      
+
       if (~isempty(idCy))
          if (isfield(nCycleData, 'juldDescentStart'))
             fprintf(fidOut, '%s; CYCLE; %d; JULD_DESCENT_START; %s; %c\n', ...
@@ -1515,16 +1515,16 @@ for cycleNumber = -1:max(cycles)
          end
       end
    end
-   
+
    % print N_MEASUREMENT data
    idMeas = find(nMeasData.cycleNumber == cycleNumber);
-   
+
    for idM = 1:length(idMeas)
-      
+
       if (nMeasData.measCode(idMeas(idM)) == 99999)
          continue
       end
-      
+
       if (~isempty(nMeasData.paramData))
          paramData = nMeasData.paramData(idMeas(idM), :);
          paramQcData = nMeasData.paramQcData(idMeas(idM), :);
@@ -1532,11 +1532,11 @@ for cycleNumber = -1:max(cycles)
          paramQcData = num2str(paramQcData')';
          paramQcData(find(paramQcData == g_decArgo_qcStrUnused2)) = g_decArgo_qcStrDef;
       end
-      
+
       if (~isempty(nMeasData.paramDataMode))
          paramDataMode = nMeasData.paramDataMode(:, idMeas(idM));
       end
-      
+
       if (~isempty(nMeasData.adjParamData))
          paramDataAdj = nMeasData.adjParamData(idMeas(idM), :);
          paramQcDataAdj = nMeasData.adjParamQcData(idMeas(idM), :);
@@ -1544,11 +1544,11 @@ for cycleNumber = -1:max(cycles)
          paramQcDataAdj = num2str(paramQcDataAdj')';
          paramQcDataAdj(find(paramQcDataAdj == g_decArgo_qcStrUnused2)) = g_decArgo_qcStrDef;
       end
-      
+
       if (~isempty(nMeasData.adjErrorParamData))
          paramDataAdjError = nMeasData.adjErrorParamData(idMeas(idM), :);
       end
-      
+
       if (~isempty(nMeasData.paramData))
          if (~isempty(nMeasData.adjParamData))
             if (isempty(nMeasData.juldAdj))
@@ -1664,7 +1664,7 @@ for cycleNumber = -1:max(cycles)
          end
       end
    end
-   
+
    if (~isempty(idMeas))
       fprintf(fidOut, '%s\n', ...
          nMeasData.platformNumber);
@@ -1672,7 +1672,7 @@ for cycleNumber = -1:max(cycles)
 end
 
 % print CALIBRATION data
-if (1)
+if (0)
    % print PARAM CALIBRATION data
    idVal = find(strcmp(paramCalibData, 'SCIENTIFIC_CALIB_PARAMETER') == 1, 1);
    calibParam = paramCalibData{idVal+1};
@@ -1684,9 +1684,9 @@ if (1)
    calibComment = paramCalibData{idVal+1};
    idVal = find(strcmp(paramCalibData, 'SCIENTIFIC_CALIB_DATE') == 1, 1);
    calibDae = paramCalibData{idVal+1};
-   
+
    [~, nParam, nCalib] = size(calibParam);
-   
+
    for idC = 1:nCalib
       fprintf(fidOut, ' %s; PARAM_CALIBRATION; %d; SCIENTIFIC_CALIB_PARAMETER', ...
          nMeasData.platformNumber, idC);
@@ -1724,7 +1724,7 @@ if (1)
       end
       fprintf(fidOut, '\n');
    end
-   
+
    % print JULD CALIBRATION data
    idVal = find(strcmp(juldCalibData, 'JULD_CALIB_EQUATION') == 1, 1);
    calibEquation = juldCalibData{idVal+1};
@@ -1734,9 +1734,9 @@ if (1)
    calibComment = juldCalibData{idVal+1};
    idVal = find(strcmp(juldCalibData, 'JULD_CALIB_DATE') == 1, 1);
    calibDae = juldCalibData{idVal+1};
-   
+
    [~, nCalib] = size(calibEquation);
-   
+
    for idC = 1:nCalib
       fprintf(fidOut, ' %s; JULD_CALIBRATION; %d; JULD_CALIB_EQUATION; %s\n', ...
          nMeasData.platformNumber, idC, strtrim(calibEquation(:, idC)'));
@@ -1747,14 +1747,14 @@ if (1)
       fprintf(fidOut, ' %s; JULD_CALIBRATION; %d; JULD_CALIB_DATE; %s\n', ...
          nMeasData.platformNumber, idC, strtrim(calibDae(:, idC)'));
    end
-   
+
    % print HISTORY data
    nHistory = 0;
    idVal = find(strcmp(historyData, 'HISTORY_INSTITUTION') == 1, 1);
    if (~isempty(idVal))
       [~, nHistory] = size(historyData{idVal+1});
    end
-   
+
    for idH = 1:nHistory
       for id = 1:2:length(historyData)
          histoName = historyData{id};
@@ -1844,13 +1844,13 @@ for idParam = 1:length(nMeasData.paramNameList)
    paramQcName  = nMeasData.paramQcNameList{idParam};
    paramQcNum  = nMeasData.paramQcNum{idParam};
    paramDataModeNum  = nMeasData.paramDataModeNum{idParam};
-   
+
    if (paramDataNbDim == 1)
       paramNames = [paramNames sprintf('; %s', paramName)];
       paramNums = [paramNums sprintf('; %s', paramNum)];
       paramQcNums = [paramQcNums sprintf('; %s', paramQcNum)];
       paramDataModeNums = [paramDataModeNums sprintf('; %s', paramDataModeNum)];
-      
+
       paramFormat = nMeasData.paramDataFormat{idParam};
       paramFormats = [paramFormats '; ' paramFormat];
       paramQcFormats = [paramQcFormats '; %c'];
@@ -1859,7 +1859,7 @@ for idParam = 1:length(nMeasData.paramNameList)
       for id = 1:paramDataNbDim
          paramNames = [paramNames sprintf('; %s#%d', paramName, id)];
          paramNums = [paramNums sprintf('; %s', paramNum)];
-         
+
          paramFormat = nMeasData.paramDataFormat{idParam};
          paramFormats = [paramFormats '; ' paramFormat];
       end
@@ -1883,12 +1883,12 @@ for idParam = 1:length(nMeasData.adjParamNameList)
    adjParamDataNbDim = nMeasData.adjParamDataNbDim(idParam);
    adjParamQcName  = nMeasData.adjParamQcNameList{idParam};
    adjParamQcNum  = nMeasData.adjParamQcNum{idParam};
-   
+
    if (adjParamDataNbDim == 1)
       adjParamNames = [adjParamNames sprintf('; %s', adjParamName)];
       adjParamNums = [adjParamNums sprintf('; %s', adjParamNum)];
       adjParamQcNums = [adjParamQcNums sprintf('; %s', adjParamQcNum)];
-      
+
       adjParamFormat = nMeasData.adjParamDataFormat{idParam};
       adjParamFormats = [adjParamFormats '; ' adjParamFormat];
       adjParamQcFormats = [adjParamQcFormats '; %c'];
@@ -1896,7 +1896,7 @@ for idParam = 1:length(nMeasData.adjParamNameList)
       for id = 1:adjParamDataNbDim
          adjParamNames = [adjParamNames sprintf('; %s#%d', adjParamName, id)];
          adjParamNums = [adjParamNums sprintf('; %s', adjParamNum)];
-         
+
          adjParamFormat = nMeasData.adjParamDataFormat{idParam};
          adjParamFormats = [adjParamFormats '; ' adjParamFormat];
       end
@@ -1911,16 +1911,16 @@ adjErrorParamFormats = [];
 for idParam = 1:length(nMeasData.adjErrorParamNameList)
    adjErrorParamName  = nMeasData.adjErrorParamNameList{idParam};
    adjErrorParamDataNbDim = nMeasData.adjErrorParamDataNbDim(idParam);
-   
+
    if (adjErrorParamDataNbDim == 1)
       adjErrorParamNames = [adjErrorParamNames sprintf('; %s', adjErrorParamName)];
-      
+
       adjErrorParamFormat = nMeasData.adjErrorParamDataFormat{idParam};
       adjErrorParamFormats = [adjErrorParamFormats '; ' adjErrorParamFormat];
    else
       for id = 1:adjErrorParamDataNbDim
          adjErrorParamNames = [adjErrorParamNames sprintf('; %s#%d', adjErrorParamName, id)];
-         
+
          adjErrorParamFormat = nMeasData.adjErrorParamDataFormat{idParam};
          adjErrorParamFormats = [adjErrorParamFormats '; ' adjErrorParamFormat];
       end
@@ -1944,12 +1944,12 @@ else
    cycles(find(cycles == 99999)) = [];
 end
 for cycleNumber = -1:max(cycles)
-   
+
    if (~isempty(nCycleData))
-      
+
       % print N_CYCLE data
       idCy = find(nCycleData.cycleNumberIndex == cycleNumber);
-      
+
       if (~isempty(idCy))
          if (isfield(nCycleData, 'juldDescentStart'))
             fprintf(fidOut, '%s; CYCLE; %d; JULD_DESCENT_START; %s; %c\n', ...
@@ -2053,16 +2053,16 @@ for cycleNumber = -1:max(cycles)
          end
       end
    end
-   
+
    % print N_MEASUREMENT data
    idMeas = find(nMeasData.cycleNumber == cycleNumber);
-   
+
    for idM = 1:length(idMeas)
-      
+
       if (nMeasData.measCode(idMeas(idM)) == 99999)
          continue
       end
-      
+
       if (~isempty(nMeasData.paramData))
          paramData = nMeasData.paramData(idMeas(idM), :);
          paramQcData = nMeasData.paramQcData(idMeas(idM), :);
@@ -2070,11 +2070,11 @@ for cycleNumber = -1:max(cycles)
          paramQcData = num2str(paramQcData')';
          paramQcData(find(paramQcData == g_decArgo_qcStrUnused2)) = g_decArgo_qcStrDef;
       end
-      
+
       if (~isempty(nMeasData.paramDataMode))
          paramDataMode = nMeasData.paramDataMode(:, idMeas(idM));
       end
-      
+
       if (~isempty(nMeasData.adjParamData))
          paramDataAdj = nMeasData.adjParamData(idMeas(idM), :);
          paramQcDataAdj = nMeasData.adjParamQcData(idMeas(idM), :);
@@ -2082,11 +2082,11 @@ for cycleNumber = -1:max(cycles)
          paramQcDataAdj = num2str(paramQcDataAdj')';
          paramQcDataAdj(find(paramQcDataAdj == g_decArgo_qcStrUnused2)) = g_decArgo_qcStrDef;
       end
-      
+
       if (~isempty(nMeasData.adjErrorParamData))
          paramDataAdjError = nMeasData.adjErrorParamData(idMeas(idM), :);
       end
-      
+
       if (~isempty(nMeasData.paramData))
          if (~isempty(nMeasData.adjParamData))
             if (isempty(nMeasData.juldAdj))
@@ -2220,7 +2220,7 @@ for cycleNumber = -1:max(cycles)
          end
       end
    end
-   
+
    if (~isempty(idMeas))
       fprintf(fidOut, '%s\n', ...
          nMeasData.platformNumber);
@@ -2239,9 +2239,9 @@ if (1)
    calibComment = paramCalibData{idVal+1};
    idVal = find(strcmp(paramCalibData, 'SCIENTIFIC_CALIB_DATE') == 1, 1);
    calibDae = paramCalibData{idVal+1};
-   
+
    [~, nParam, nCalib] = size(calibParam);
-   
+
    for idC = 1:nCalib
       fprintf(fidOut, ' %s; PARAM_CALIBRATION; %d; SCIENTIFIC_CALIB_PARAMETER', ...
          nMeasData.platformNumber, idC);
@@ -2279,7 +2279,7 @@ if (1)
       end
       fprintf(fidOut, '\n');
    end
-   
+
    % print JULD CALIBRATION data
    idVal = find(strcmp(juldCalibData, 'JULD_CALIB_EQUATION') == 1, 1);
    calibEquation = juldCalibData{idVal+1};
@@ -2289,9 +2289,9 @@ if (1)
    calibComment = juldCalibData{idVal+1};
    idVal = find(strcmp(juldCalibData, 'JULD_CALIB_DATE') == 1, 1);
    calibDae = juldCalibData{idVal+1};
-   
+
    [~, nCalib] = size(calibEquation);
-   
+
    for idC = 1:nCalib
       fprintf(fidOut, ' %s; JULD_CALIBRATION; %d; JULD_CALIB_EQUATION; %s\n', ...
          nMeasData.platformNumber, idC, strtrim(calibEquation(:, idC)'));
@@ -2309,7 +2309,7 @@ if (1)
    if (~isempty(idVal))
       [~, nHistory] = size(historyData{idVal+1});
    end
-   
+
    for idH = 1:nHistory
       for id = 1:2:length(historyData)
          histoName = historyData{id};

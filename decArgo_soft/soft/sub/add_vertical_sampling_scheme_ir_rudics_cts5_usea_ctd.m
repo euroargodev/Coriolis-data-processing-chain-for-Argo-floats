@@ -33,6 +33,7 @@ global g_decArgo_patternNumFloat;
 
 % add the vertical sampling scheme for each profile
 for idP = 1:length(a_tabProfiles)
+
    prof = a_tabProfiles(idP);
 
    [configNames, configValues] = get_float_config_ir_rudics_sbd2(prof.cycleNumber, prof.profileNumber);
@@ -63,8 +64,12 @@ for idP = 1:length(a_tabProfiles)
                prof.payloadSensorNumber, 46+id-1), configNames, configValues);
          end
 
-         idStart = find(threshold < profPres);
-         idStart = idStart(end) + 1;
+         idStart = find(threshold < profPres, 1, 'last');
+         if (~isempty(idStart))
+            idStart = idStart + 1;
+         else
+            idStart = 1;
+         end
          threshold(idStart) = profPres;
 
          flagAvgSecondary = 0;
@@ -332,8 +337,12 @@ for idP = 1:length(a_tabProfiles)
                prof.payloadSensorNumber, 46+id-1), configNames, configValues);
          end
 
-         idEnd = find(threshold < parkPres);
-         idEnd = idEnd(end) + 1;
+         idEnd = find(threshold < parkPres, 1, 'last');
+         if (~isempty(idEnd))
+            idEnd = idEnd + 1;
+         else
+            idEnd = 1;
+         end
          threshold(idEnd) = parkPres;
 
          flagAvg = 0;

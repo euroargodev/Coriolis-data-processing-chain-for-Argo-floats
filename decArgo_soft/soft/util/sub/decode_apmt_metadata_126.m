@@ -106,7 +106,53 @@ metaDataStruct = init_metadata_info_struct;
 % fill the metadata info structure
 [metaDataStruct, ~] = read_child(a_metaDataStruct.Children, metaDataStruct, '');
 
+% removed empty fields in metadata info structure
+metaDataStruct = remove_empty_fields(metaDataStruct);
+
 o_metaData = metaDataStruct;
+
+return
+
+% ------------------------------------------------------------------------------
+% Recursively remove the unused fields of the input structure
+%
+% SYNTAX :
+%  [o_metaDataStruct] = remove_empty_fields(a_metaDataStruct)
+%
+% INPUT PARAMETERS :
+%   a_metaDataStruct : input structure
+%
+% OUTPUT PARAMETERS :
+%   o_metaDataStruct : output structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/13/2023 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_metaDataStruct] = remove_empty_fields(a_metaDataStruct)
+
+% output parameters initialization
+o_metaDataStruct = a_metaDataStruct;
+
+fieldNames = fields(a_metaDataStruct);
+for idF = 1:length(fieldNames)
+   if (~isstruct(a_metaDataStruct.(fieldNames{idF})))
+      if (isempty(a_metaDataStruct.(fieldNames{idF})))
+         o_metaDataStruct = rmfield(o_metaDataStruct, fieldNames{idF});
+      end
+   else
+      metaDataStruct = remove_empty_fields(o_metaDataStruct.(fieldNames{idF}));
+      if (isempty(fields(metaDataStruct)))
+         o_metaDataStruct = rmfield(o_metaDataStruct, fieldNames{idF});
+      else
+         o_metaDataStruct.(fieldNames{idF}) = metaDataStruct;
+      end
+   end
+end
 
 return
 

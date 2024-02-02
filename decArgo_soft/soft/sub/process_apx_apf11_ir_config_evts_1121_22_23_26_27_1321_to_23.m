@@ -53,7 +53,7 @@ for idEv = 1:length(events)
       configRec = [];
    else
       if (~isempty(configRec))
-         
+
          line = evt.message;
          info = textscan(line, '%s', 'delimiter', ' ');
          info = info{:};
@@ -88,46 +88,52 @@ for idEv = 1:length(events)
    else
       if (~isempty(configRec))
          line = evt.message;
-         
+
          if ((line(1) == '<') && (line(end) == '>'))
-            
+
             phase = line(2:end-1);
             if (~isfield(configStruct, phase))
                configStruct.(phase) = [];
             end
-            
+
          elseif (strncmpi(line, 'SAMPLE', length('SAMPLE')))
-            
+
             sampType = 'SAMPLE';
             if (~isfield(configStruct.(phase), sampType))
                configStruct.(phase).(sampType) = [];
             end
-            
+
             % default values
-            start = 2000;
+            start = 2500;
             stop = 0;
             interval = 0;
+            units = 1; % 1: DBAR, 2:SEC
             count = 1;
-            
+
             info = textscan(line, '%s');
             info = info{:};
-            
+
             if (~strcmpi(info{1}, 'SAMPLE'))
                fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum);
                return
             end
-            
+
             idF = find(strcmp('DBAR', info), 1);
             if (~isempty(idF))
                info(idF) = [];
             end
-            
+            idF = find(strcmp('SEC', info), 1);
+            if (~isempty(idF))
+               units = 2;
+               info(idF) = [];
+            end
+
             sensor = info{2};
             if (~isfield(configStruct.(phase).(sampType), sensor))
                configStruct.(phase).(sampType).(sensor) = [];
             end
-            
+
             if (length(info) >= 3)
                start = str2num(info{3});
             end
@@ -140,32 +146,32 @@ for idEv = 1:length(events)
             if (length(info) >= 6)
                count = str2num(info{6});
             end
-            
+
             configStruct.(phase).(sampType).(sensor) = [configStruct.(phase).(sampType).(sensor); ...
-               start stop interval count];
-            
+               start stop interval units count];
+
          elseif (strncmpi(line, 'PROFILE', length('PROFILE')))
-            
+
             sampType = 'PROFILE';
             if (~isfield(configStruct.(phase), sampType))
                configStruct.(phase).(sampType) = [];
             end
-            
+
             % default values
             start = 2000;
             stop = 0;
             bin_size = 2;
             rate = 1;
-            
+
             info = textscan(line, '%s');
             info = info{:};
-            
+
             if (~strcmpi(info{1}, 'PROFILE'))
                fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum);
                return
             end
-            
+
             sensor = info{2};
             if (strcmp(sensor, 'PTSH'))
                sensor = 'PH';
@@ -175,7 +181,7 @@ for idEv = 1:length(events)
             if (~isfield(configStruct.(phase).(sampType), sensor))
                configStruct.(phase).(sampType).(sensor) = [];
             end
-            
+
             if (length(info) >= 3)
                start = str2num(info{3});
             end
@@ -188,37 +194,37 @@ for idEv = 1:length(events)
             if (length(info) >= 6)
                rate = str2num(info{6});
             end
-            
+
             configStruct.(phase).(sampType).(sensor) = [configStruct.(phase).(sampType).(sensor); ...
                start stop bin_size rate];
-            
+
          elseif (strncmpi(line, 'MEASURE', length('MEASURE')))
-            
+
             sampType = 'MEASURE';
             if (~isfield(configStruct.(phase), sampType))
                configStruct.(phase).(sampType) = [];
             end
-            
+
             % default values
             start = -1;
             stop = -1;
             interval = -1;
             count = -1;
-            
+
             info = textscan(line, '%s');
             info = info{:};
-            
+
             if (~strcmpi(info{1}, 'MEASURE'))
                fprintf('ERROR: Float #%d Cycle #%d: Inconsistent sample data\n\n', ...
                   g_decArgo_floatNum, g_decArgo_cycleNum);
                return
             end
-                        
+
             sensor = info{2};
             if (~isfield(configStruct.(phase).(sampType), sensor))
                configStruct.(phase).(sampType).(sensor) = [];
             end
-            
+
             configStruct.(phase).(sampType).(sensor) = [configStruct.(phase).(sampType).(sensor); ...
                start stop interval count];
 

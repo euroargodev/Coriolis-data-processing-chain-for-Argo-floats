@@ -842,8 +842,8 @@ if (a_deepCycle == 1)
    if (~isempty(tabTech2))
       
       % last pumped CTD measurement
-      pres = sensor_2_value_for_pressure_202_210_to_214_217_222_to_225(tabTech2(15+ID_OFFSET));
-      temp = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_225(tabTech2(16+ID_OFFSET));
+      pres = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(tabTech2(15+ID_OFFSET));
+      temp = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(tabTech2(16+ID_OFFSET));
       psal = tabTech2(17+ID_OFFSET)/1000;
       if (any([pres temp psal] ~= 0))
          measStruct = get_traj_one_meas_init_struct();

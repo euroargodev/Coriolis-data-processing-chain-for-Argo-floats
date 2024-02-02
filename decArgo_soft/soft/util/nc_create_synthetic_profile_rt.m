@@ -27,18 +27,20 @@
 %         floatWmo      : WMO number of concerned float
 %         outputDirName : output directory name
 %   optional parameters:
-%      outputLogDirName        : LOG file directory name
-%      outputCsvDirName        : CSV file directory name
-%      xmlReportDirName        : XML file directory name
-%      xmlReportFileName       : XML file name
-%      monoProfRefFileName     : S mono-profile reference file path name
-%      multiProfRefFileName    : S multi-profile reference file path name
-%      tmpDirName              : base name of the temporary directory
-%      bgcFloatFlag            : should be set to '1' for a BGC float and '0'
-%                                for a 'core' one (default value is '1'). It
-%                                prevents generating S-PROF_ERROR and
-%                                S-PROF_WARNING messages when no B-PROF file
-%                                exists for a cycle.
+%      outputLogDirName     : LOG file directory name
+%      outputCsvDirName     : CSV file directory name
+%      xmlReportDirName     : XML file directory name
+%      xmlReportFileName    : XML file name
+%      monoProfRefFileName  : S mono-profile reference file path name
+%      multiProfRefFileName : S multi-profile reference file path name
+%      tmpDirName           : base name of the temporary directory
+%      bgcFloatFlag         : should be set to '1' for a BGC float and '0'
+%                             for a 'core' one (default value is '1'). It
+%                             prevents generating S-PROF_ERROR and
+%                             S-PROF_WARNING messages when no B-PROF file
+%                             exists for a cycle.
+%      addPresCore          : should be set to '1' if the PRES_CORE parameter
+%                             should be added into the S-PROF file, '0' otherwise
 %
 % OUTPUT PARAMETERS :
 %
@@ -80,6 +82,11 @@
 %   09/13/2022 - RNU - V 1.15: report ERROR message and don't generate S-PROF
 %                              file if PRES profiles are not consistent between
 %                              core and B files
+%   10/13/2023 - RNU - V 1.16: a PRES_CORE parameter can be added to the output
+%                              S-PROF files (by using the 'addPresCore' input
+%                              parameter).
+%   12/04/2023 - RNU - V 1.17: includes version 01.12.2023 of ARGO_simplified_profile
+%   01/19/2024 - RNU - V 1.18: includes version 11.01.2024 of ARGO_simplified_profile
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile_rt(varargin)
 
@@ -148,7 +155,7 @@ g_cocs_reportData.outputSMultiProfFile = [];
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.15 (version 09.06.2022 for ARGO_simplified_profile)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.18 (version 11.01.2024 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;
@@ -163,6 +170,9 @@ g_cocs_floatWmoStr = '-';
 global g_cocs_cycleNumStr;
 g_cocs_cycleNumStr = '-';
 
+% to add PRES_CORE variable in the generated S-PROF file
+global g_cocs_addPresCoreFlag;
+g_cocs_addPresCoreFlag = 0;
 
 % startTime
 ticStartTime = tic;
@@ -410,7 +420,7 @@ global g_cocs_outputXmlReportDirName;
 global g_cocs_outputXmlReportFileName;
 global g_cocs_tmpDirName;
 global g_cocs_bgcFloatFlag;
-
+global g_cocs_addPresCoreFlag;
 
 g_cocs_floatWmo = '';
 g_cocs_floatCProfFileName = '';
@@ -419,6 +429,7 @@ g_cocs_floatMetaFileName = '';
 g_cocs_createMultiProfFlag = '';
 g_cocs_outputDirName = '';
 g_cocs_bgcFloatFlag = '';
+addPresCore = '';
 
 % ignore empty input parameters
 idDel = [];
@@ -467,6 +478,8 @@ if (~isempty(a_varargin))
             g_cocs_createOnlyMultiProfFlag = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'floatWmo'))
             g_cocs_floatWmo = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'addPresCore'))
+            addPresCore = a_varargin{id+1};
          else
             o_logLines{end+1} = sprintf('WARNING: unexpected input argument (''%s'') - ignored\n', a_varargin{id});
          end
@@ -642,6 +655,16 @@ else
    end
 end
 
+if (~isempty(addPresCore))
+   if ((addPresCore ~= '0') && (addPresCore ~= '1'))
+      o_logLines{end+1} = sprintf('ERROR: Inconsistent ''addPresCore'' value (%s) (expected ''0'' or ''1'')\n', addPresCore);
+      o_inputError = 1;
+      return
+   else
+      g_cocs_addPresCoreFlag = str2double(addPresCore);
+   end
+end
+
 o_logLines{end+1} = sprintf('INPUT PARAMETERS\n');
 o_logLines{end+1} = sprintf('createOnlyMultiProfFlag : %s\n', g_cocs_createOnlyMultiProfFlag);
 if (g_cocs_createOnlyMultiProfFlag == '0')
@@ -661,6 +684,7 @@ o_logLines{end+1} = sprintf('monoProfRefFileName     : %s\n', g_cocs_monoProfRef
 o_logLines{end+1} = sprintf('multiProfRefFileName    : %s\n', g_cocs_multiProfRefFile);
 o_logLines{end+1} = sprintf('tmpDirName              : %s\n', g_cocs_tmpDirName);
 o_logLines{end+1} = sprintf('bgcFloatFlag            : %s\n', g_cocs_bgcFloatFlag);
+o_logLines{end+1} = sprintf('addPresCore             : %d\n', g_cocs_addPresCoreFlag);
 o_logLines{end+1} = sprintf('\n');
 
 return

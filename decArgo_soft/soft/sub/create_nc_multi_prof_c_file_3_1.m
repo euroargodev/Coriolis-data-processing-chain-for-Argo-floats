@@ -290,6 +290,7 @@ if (nbProfParam > 0)
    netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
    netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectoryProfile');
    netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
+   netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
 
    % create misc variables
    dataTypeVarId = netcdf.defVar(fCdf, 'DATA_TYPE', 'NC_CHAR', string16DimId);
@@ -1157,7 +1158,7 @@ if (nbProfParam > 0)
    end
 
    netcdf.reDef(fCdf);
-
+   
    nCalibDimId = netcdf.defDim(fCdf, 'N_CALIB', nbCalib);
 
    % calibration information

@@ -129,7 +129,7 @@ end
 if (floatParam(43) ~= 1)
 
    % check cycle number VS PT16
-   if (mod(floatInternalCycleNumber + 1, floatParam(43)) == 0)
+   if (mod(floatInternalCycleNumber, floatParam(43)) == 0)
       % profile pressure is PT17
       idPos = find(strcmp(configNames, 'CONFIG_PM09') == 1, 1);
       if (~isempty(idPos))

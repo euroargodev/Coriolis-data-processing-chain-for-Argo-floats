@@ -112,10 +112,10 @@ end
 
 % create parameters
 paramJuld = get_netcdf_param_attributes('JULD');
-paramImNumPart = get_netcdf_param_attributes('IMAGE_NUMBER_PARTICLES_LPM');
+paramNbImPart = get_netcdf_param_attributes('NB_IMAGE_PARTICLES');
 paramPres = get_netcdf_param_attributes('PRES');
 paramTempPart = get_netcdf_param_attributes('TEMP_PARTICLES');
-paramNbSizeSpecPart = get_netcdf_param_attributes('NB_SIZE_SPECTRA_PARTICLES');
+paramNbSizeSpecPartPerIm = get_netcdf_param_attributes('NB_SIZE_SPECTRA_PARTICLES_PER_IMAGE');
 paramGreySizeSpecPart = get_netcdf_param_attributes('GREY_SIZE_SPECTRA_PARTICLES');
 
 % create final profile(s)
@@ -149,14 +149,14 @@ for idDir = 1:length(uDir)
             else
                finalData = [finalData; ...
                   data(:, 1), ...
-                  ones(size(data, 1), 1)*paramImNumPart.fillValue, ...
+                  ones(size(data, 1), 1)*double(paramNbImPart.fillValue), ...
                   data(:, 2:end)];
             end
       end
    end
    
    paramList = [ ...
-      paramPres paramImNumPart paramTempPart paramNbSizeSpecPart paramGreySizeSpecPart ...
+      paramPres paramNbImPart paramTempPart paramNbSizeSpecPartPerIm paramGreySizeSpecPart ...
       ];
       
    newProfile = a_tabProfiles(idProfForDir(1));

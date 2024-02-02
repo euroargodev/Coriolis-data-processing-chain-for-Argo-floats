@@ -2,7 +2,7 @@
 % Create NetCDF MONO-PROFILE b files.
 %
 % SYNTAX :
-%  [o_bParamFlag] = create_nc_mono_prof_b_files_3_1( ...
+%  [o_bFileInfo] = create_nc_mono_prof_b_files_3_1( ...
 %    a_decoderId, a_tabProfiles, a_metaDataFromJson)
 %
 % INPUT PARAMETERS :
@@ -10,10 +10,10 @@
 %   a_tabProfiles      : decoded profiles
 %   a_metaDataFromJson : additional information retrieved from JSON meta-data
 %                        file
-%   a_bFileToCreate    : information on C-PROF files that should be generated
+%   a_bFileToCreate    : information on B-PROF files that should be generated
 %
 % OUTPUT PARAMETERS :
-%   o_bParamFlag : B parameters flag
+%   o_bFileInfo : information on generated B-PROF files
 %
 % EXAMPLES :
 %
@@ -23,11 +23,11 @@
 % RELEASES :
 %   06/16/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_bParamFlag] = create_nc_mono_prof_b_files_3_1( ...
+function [o_bFileInfo] = create_nc_mono_prof_b_files_3_1( ...
    a_decoderId, a_tabProfiles, a_metaDataFromJson, a_bFileToCreate)
 
 % output parameters initialization
-o_bParamFlag = 1;
+o_bFileInfo = [];
 
 % Argos (1), Iridium RUDICS (2) or Iridium SBD (3) float
 global g_decArgo_floatTransType;
@@ -102,7 +102,6 @@ for idProf = 1:length(a_tabProfiles)
    end
 end
 if (bFileNeeded == 0)
-   o_bParamFlag = 0;
    return
 end
 
@@ -176,6 +175,7 @@ for idProf = 1:length(tabProfiles)
       [profile.outputCycleNumber direction profile.primarySamplingProfileFlag 0]];
 end
 
+generatedProfList = [];
 for idProf = 1:length(tabProfiles)
    if (profInfo(idProf, 4) == 0)
       profile = tabProfiles(idProf);
@@ -367,7 +367,7 @@ for idProf = 1:length(tabProfiles)
                end
             end
          end
-
+         
          % some files should be generated from input parameter list
          if (generate == 0)
             if (~isempty(a_bFileToCreate))
@@ -384,102 +384,121 @@ for idProf = 1:length(tabProfiles)
                % retrieve profile location of the nc file
                [ncJuldLoc, ncLat, ncLon, ncPosQc, ncPosSystem] = get_nc_profile_location(ncPathFileName);
 
-               for idP = 1:nbProfToStore
+               if (length(ncJuldLoc) == nbProfToStore + profShiftIfNoPrimary)
 
-                  % get nc profile location
-                  profPos = idP+profShiftIfNoPrimary;
-                  juldLoc = ncJuldLoc(profPos);
-                  latitude = ncLat(profPos);
-                  longitude = ncLon(profPos);
-                  positionQc = ncPosQc(profPos);
-                  positioningSystem = ncPosSystem{profPos};
+                  for idP = 1:nbProfToStore
 
-                  ncProfLocStr = sprintf('%s %.3f %.3f %s', ...
-                     julian_2_gregorian_dec_argo(juldLoc), ...
-                     latitude, longitude, positioningSystem);
+                     % get nc profile location
+                     profPos = idP+profShiftIfNoPrimary;
+                     if (profPos <= length(ncJuldLoc))
+                        juldLoc = ncJuldLoc(profPos);
+                        latitude = ncLat(profPos);
+                        longitude = ncLon(profPos);
+                        positionQc = ncPosQc(profPos);
+                        positioningSystem = ncPosSystem{profPos};
 
-                  % compare profile location
-                  prof = tabProfiles(idProfInFile(idP));
-                  profLocStr = sprintf('%s %.3f %.3f %s', ...
-                     julian_2_gregorian_dec_argo(prof.locationDate), ...
-                     prof.locationLat, prof.locationLon, prof.posSystem);
+                        ncProfLocStr = sprintf('%s %.3f %.3f %s', ...
+                           julian_2_gregorian_dec_argo(juldLoc), ...
+                           latitude, longitude, positioningSystem);
 
-                  if ((((positionQc == '8') && (prof.locationQc ~= '8')) || ...
-                        ((positionQc ~= '8') && (prof.locationQc == '8'))) || ...
-                        ~strcmp(profLocStr, ncProfLocStr))
-                     generate = 1;
-                     break
+                        % compare profile location
+                        prof = tabProfiles(idProfInFile(idP));
+                        profLocStr = sprintf('%s %.3f %.3f %s', ...
+                           julian_2_gregorian_dec_argo(prof.locationDate), ...
+                           prof.locationLat, prof.locationLon, prof.posSystem);
+
+                        if ((((positionQc == '9') && (prof.locationQc ~= ' ')) || ...
+                              ((positionQc == '8') && (prof.locationQc ~= '8')) || ...
+                              ((positionQc ~= '8') && (prof.locationQc == '8'))))
+                           generate = 1;
+                           break
+                        elseif ((positionQc ~= '9') && (prof.locationQc ~= ' ') && ...
+                              ~strcmp(profLocStr, ncProfLocStr))
+                           generate = 1;
+                           break
+                        end
+                     end
                   end
+               else
+                  generate = 1;
                end
             end
          end
          
-         % the data of one cycle can be in consecutive rsync log files
+         % 1 - the data of one cycle can be in consecutive rsync log files
          % to check if the file need to be created we should then compare profile
          % levels
+         % 2 - a new RT adjustment has been set we should compared profile
+         % levels of adjusted data
          if (generate == 0)
-            if ((g_decArgo_floatTransType == 2) || (g_decArgo_floatTransType == 3) || (g_decArgo_floatTransType == 4))
-               if ((g_decArgo_generateNcMonoProf == 2) && (g_decArgo_realtimeFlag == 1))
-                  if (exist(ncPathFileName, 'file') == 2)
+            if ((g_decArgo_generateNcMonoProf == 2) && (g_decArgo_realtimeFlag == 1))
+               if (exist(ncPathFileName, 'file') == 2)
 
-                     % retrieve profile levels of the nc file
-                     ncProfLev = get_nc_profile_level(ncPathFileName);
+                  % retrieve profile levels of the nc file
+                  ncProfLev = get_nc_profile_level(ncPathFileName);
 
-                     % compare profile levels
-                     differ = 0;
+                  % compare profile levels
+                  differ = 0;
 
-                     for idP = 1:nbProfToStore
-                        prof = tabProfiles(idProfInFile(idP));
+                  for idP = 1:nbProfToStore
+                     prof = tabProfiles(idProfInFile(idP));
+                     profPos = idP-1+profShiftIfNoPrimary;
+
+                     % profile parameter data
+                     parameterList = prof.paramList;
+                     for idLoop = 1:2
                         nLevelsParam = 0;
                         idNoDefAll = [];
-
-                        profPos = idP-1+profShiftIfNoPrimary;
-
-                        % profile parameter data
-                        parameterList = prof.paramList;
                         for idParam = 1:length(parameterList)
                            if (((parameterList(idParam).paramType ~= 'c') && (parameterList(idParam).paramType ~= 'j')) || ...
                                  strcmp(parameterList(idParam).name, 'PRES'))
-                              profParam = parameterList(idParam);
-                              profParamName = profParam.name;
-                              paramInfo = get_netcdf_param_attributes(profParamName);
-                              % prof.data is empty in 'default' primary profiles
-                              if (~isempty(prof.data))
-                                 % parameter data
-                                 if (isempty(prof.paramNumberWithSubLevels))
-                                    % none of the profile parameters has sublevels
-                                    paramData = prof.data(:, idParam);
-                                    idNoDef = find(paramData ~= paramInfo.fillValue);
-                                    idNoDefAll = [idNoDefAll idNoDef'];
+                              if ~(strcmp(parameterList(idParam).name, 'PRES') && (idLoop == 2)) % PRES_ADJUSTED is not in B-PROF
+                                 profParam = parameterList(idParam);
+                                 profParamName = profParam.name;
+                                 paramInfo = get_netcdf_param_attributes(profParamName);
+                                 if (idLoop == 1)
+                                    profData = prof.data;
                                  else
-                                    % some profile parameters have sublevels
-                                    % retrieve the column(s) associated with the parameter data
-                                    idF = find(prof.paramNumberWithSubLevels < idParam);
-                                    if (isempty(idF))
-                                       firstCol = idParam;
-                                    else
-                                       firstCol = idParam + sum(prof.paramNumberOfSubLevels(idF)) - length(idF);
-                                    end
-
-                                    idF = find(prof.paramNumberWithSubLevels == idParam);
-                                    if (isempty(idF))
-                                       lastCol = firstCol;
-                                    else
-                                       lastCol = firstCol + prof.paramNumberOfSubLevels(idF) - 1;
-                                    end
-
-                                    paramData = prof.data(:, firstCol:lastCol);
-                                    if (size(paramData, 2) == 1)
+                                    profData = prof.dataAdj;
+                                 end
+                                 % prof.data is empty in 'default' primary profiles
+                                 if (~isempty(profData))
+                                    % parameter data
+                                    if (isempty(prof.paramNumberWithSubLevels))
+                                       % none of the profile parameters has sublevels
+                                       paramData = profData(:, idParam);
                                        idNoDef = find(paramData ~= paramInfo.fillValue);
                                        idNoDefAll = [idNoDefAll idNoDef'];
                                     else
-                                       idNoDef = [];
-                                       for id = 1:size(paramData, 1)
-                                          if (any(paramData(id, :) ~= paramInfo.fillValue))
-                                             idNoDef = [idNoDef id];
-                                          end
+                                       % some profile parameters have sublevels
+                                       % retrieve the column(s) associated with the parameter data
+                                       idF = find(prof.paramNumberWithSubLevels < idParam);
+                                       if (isempty(idF))
+                                          firstCol = idParam;
+                                       else
+                                          firstCol = idParam + sum(prof.paramNumberOfSubLevels(idF)) - length(idF);
                                        end
-                                       idNoDefAll = [idNoDefAll idNoDef];
+
+                                       idF = find(prof.paramNumberWithSubLevels == idParam);
+                                       if (isempty(idF))
+                                          lastCol = firstCol;
+                                       else
+                                          lastCol = firstCol + prof.paramNumberOfSubLevels(idF) - 1;
+                                       end
+
+                                       paramData = profData(:, firstCol:lastCol);
+                                       if (size(paramData, 2) == 1)
+                                          idNoDef = find(paramData ~= paramInfo.fillValue);
+                                          idNoDefAll = [idNoDefAll idNoDef'];
+                                       else
+                                          idNoDef = [];
+                                          for id = 1:size(paramData, 1)
+                                             if (any(paramData(id, :) ~= paramInfo.fillValue))
+                                                idNoDef = [idNoDef id];
+                                             end
+                                          end
+                                          idNoDefAll = [idNoDefAll idNoDef];
+                                       end
                                     end
                                  end
                               end
@@ -488,41 +507,49 @@ for idProf = 1:length(tabProfiles)
                         if (~isempty(idNoDefAll))
                            nLevelsParam = max(idNoDefAll) - min(idNoDefAll) + 1;
                         end
-                        if (nLevelsParam ~= ncProfLev(profPos+1))
+                        if (idLoop == 1)
+                           ncProfLevRef = ncProfLev(1, profPos+1);
+                        else
+                           ncProfLevRef = ncProfLev(2, profPos+1);
+                        end
+                        if (nLevelsParam ~= ncProfLevRef)
                            differ = 1;
                            break
                         end
                      end
                      if (differ == 1)
-                        generate = 1;
+                        break
                      end
+                  end
+                  if (differ == 1)
+                     generate = 1;
+                  end
 
-                     if (generate == 0)
-                        if ((a_decoderId > 2000) && (a_decoderId < 3000))
+                  if (generate == 0)
+                     if ((a_decoderId > 2000) && (a_decoderId < 3000))
 
-                           % NOVA/DOVA float
-                           % the clock offset is not defined for the last cycle
-                           % (needed information for cycle N is transmitted during
-                           % cycle N+1) => profile JULD (and JULD_LOCATION since
-                           % it is in float time) can be adjusted during the
-                           % following cycles
-                           % => the file should be updated if it was the last one
-                           % of the previous run and we received a new one
+                        % NOVA/DOVA float
+                        % the clock offset is not defined for the last cycle
+                        % (needed information for cycle N is transmitted during
+                        % cycle N+1) => profile JULD (and JULD_LOCATION since
+                        % it is in float time) can be adjusted during the
+                        % following cycles
+                        % => the file should be updated if it was the last one
+                        % of the previous run and we received a new one
 
-                           fileCycleNum = [];
-                           floatFiles = [dir([outputDirName '/' sprintf('BR%d_*.nc', g_decArgo_floatNum)]); ...
-                              dir([outputDirName '/' sprintf('BD%d_*.nc', g_decArgo_floatNum)])];
-                           for idFile = 1:length(floatFiles)
-                              floatFileName = floatFiles(idFile).name;
-                              idFUs = strfind(floatFileName, '_');
-                              fileCycleNum = [fileCycleNum str2num(floatFileName(idFUs+1:idFUs+3))];
-                           end
+                        fileCycleNum = [];
+                        floatFiles = [dir([outputDirName '/' sprintf('BR%d_*.nc', g_decArgo_floatNum)]); ...
+                           dir([outputDirName '/' sprintf('BD%d_*.nc', g_decArgo_floatNum)])];
+                        for idFile = 1:length(floatFiles)
+                           floatFileName = floatFiles(idFile).name;
+                           idFUs = strfind(floatFileName, '_');
+                           fileCycleNum = [fileCycleNum str2num(floatFileName(idFUs+1:idFUs+3))];
+                        end
 
-                           if (~isempty(fileCycleNum))
-                              if ((outputCycleNumber == max(fileCycleNum)) && ...
-                                    (any(profInfo(:, 1) == outputCycleNumber+1)))
-                                 generate = 1;
-                              end
+                        if (~isempty(fileCycleNum))
+                           if ((outputCycleNumber == max(fileCycleNum)) && ...
+                                 (any(profInfo(:, 1) == outputCycleNumber+1)))
+                              generate = 1;
                            end
                         end
                      end
@@ -530,10 +557,71 @@ for idProf = 1:length(tabProfiles)
                end
             end
          end
+
+         % the RT adjustment coefficients have been modified
+         if (generate == 0)
+            if ((g_decArgo_generateNcMonoProf == 2) && (g_decArgo_realtimeFlag == 1))
+               if (exist(ncPathFileName, 'file') == 2)
+
+                  % retrieve RT adjustment information
+                  sciCalibInfo = get_nc_profile_sci_calib_info(ncPathFileName);
+
+                  % compare RT adjustment coefficients
+                  differ = 0;
+                  for idP = 1:nbProfToStore
+
+                     prof = tabProfiles(idProfInFile(idP));
+
+                     % check misc adjustment information (from data base)
+                     if (~isempty(prof.rtParamAdjIdList))
+                        for idProfAdj = prof.rtParamAdjIdList
+
+                           % retrieve information on PARAM adjustment
+                           idF = find([g_decArgo_paramProfAdjInfo{:, 1}] == idProfAdj);
+                           paramAdjInfo = g_decArgo_paramProfAdjInfo(idF, :);
+                           paramName = paramAdjInfo{4};
+                           % we cannot apply the same rule to CHLA parameter
+                           % because it is adjusted during the RTQC process,
+                           % thus the adjustment coefficients are not available
+                           % yet
+                           if (~strcmp(paramName, 'CHLA'))
+                              paramInfo = get_netcdf_param_attributes(paramName);
+                              if ((paramInfo.paramType ~= 'c') && (paramInfo.paramType ~= 'j'))
+                                 paramCoefficient = paramAdjInfo{6};
+
+                                 paramAdjList = find(strcmp(paramName, sciCalibInfo(:, 4)));
+                                 found = 0;
+                                 for idAdj = 1:length(paramAdjList)
+                                    if (strcmp(paramCoefficient, sciCalibInfo(paramAdjList(idAdj), 6)))
+                                       found = 1;
+                                       break
+                                    end
+                                 end
+                                 if (~found)
+                                    differ = 1;
+                                    break
+                                 end
+                              end
+                           end
+                        end
+                        if (differ == 1)
+                           break
+                        end
+                     end
+                  end
+                  if (differ == 1)
+                     generate = 1;
+                  end
+               end
+            end
+         end
+
          if (generate == 0)
             continue
          end
 
+         generatedProfList = [generatedProfList; outputCycleNumber direction];
+         
          % information to retrieve from a possible existing mono-profile file
          ncCreationDate = '';
          histoInstitution = '';
@@ -675,6 +763,7 @@ for idProf = 1:length(tabProfiles)
          netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
          netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectoryProfile');
          netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
+         netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
 
          % create misc variables
          dataTypeVarId = netcdf.defVar(fCdf, 'DATA_TYPE', 'NC_CHAR', string32DimId);
@@ -1848,6 +1937,8 @@ for idProf = 1:length(tabProfiles)
       end
    end
 end
+
+o_bFileInfo = generatedProfList;
 
 fprintf('... NetCDF MONO-PROFILE b files created\n');
 

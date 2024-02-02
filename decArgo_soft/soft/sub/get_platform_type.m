@@ -37,7 +37,7 @@ switch (a_decoderId)
       % ARVOR Argos
       o_platformType = 'ARVOR';
       
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 301}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 301}
       % PROVOR CTS4
       o_platformType = 'PROVOR_III';
       
@@ -49,7 +49,7 @@ switch (a_decoderId)
       % PROVOR APMT-USEA (CTS5)
       o_platformType = 'PROVOR_V';
 
-   case {129, 130, 131}
+   case {129, 130, 131, 132, 133}
       % PROVOR APMT-USEA JUMBO (CTS5)
       o_platformType = 'PROVOR_V_JUMBO';
       
@@ -57,7 +57,7 @@ switch (a_decoderId)
       % DEEP ARVOR
       o_platformType = 'ARVOR_D';
       
-   case {205, 204, 209, 210, 211, 212, 222, 224}
+   case {205, 204, 209, 210, 211, 212, 222, 224, 226}
       % ARVOR Iridium
       o_platformType = 'ARVOR';
       
@@ -84,7 +84,7 @@ switch (a_decoderId)
       
    case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, ...
          1314, ...
-         1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, ...
+         1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, ...
          1321, 1322, 1323}
       % Apex Iridium
       o_platformType = 'APEX';

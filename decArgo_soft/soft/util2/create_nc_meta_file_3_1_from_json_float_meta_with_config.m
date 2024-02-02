@@ -159,6 +159,17 @@ for idFloat = 1:length(floatList)
    configNames(idDel) = [];
    configValues(idDel, :) = [];
 
+   % GPS timeout in ICE and no Ice have the same label
+   % when no data has been received, remove GPS timeout in Ice
+   if (ismember(floatDecId,  [212, 214, 217, 222, 223, 224, 225, 226]))
+      idTc19 = find(cellfun(@(x) strcmp(x, 'CONFIG_TC19_GPSTimeout'), configNames));
+      idIc10 = find(cellfun(@(x) strcmp(x, 'CONFIG_IC10_GPSTimeout'), configNames));
+      if (~isempty(idTc19) && ~isempty(idIc10))
+         configNames(idIc10) = [];
+         configValues(idIc10, :) = [];
+      end
+   end
+
    % convert float config labels into NetCDF ones
    idDel = [];
    for idL = 1:length(configNames)
@@ -342,6 +353,7 @@ for idFloat = 1:length(floatList)
    netcdf.putAtt(fCdf, globalVarId, 'references', 'http://www.argodatamgt.org/Documentation');
    netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '3.1');
    netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
+   netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
 
    % general information on the meta-data file
    dataTypeVarId = netcdf.defVar(fCdf, 'DATA_TYPE', 'NC_CHAR', string16DimId);
@@ -897,6 +909,7 @@ for idFloat = 1:length(floatList)
    if (~isempty(missionConfigValue))
       missionConfigValue(isnan(missionConfigValue)) = double(99999);
    else
+      a=1
    end
    netcdf.putVar(fCdf, configParameterValueVarId, [0 0], size(missionConfigValue), missionConfigValue);
 
