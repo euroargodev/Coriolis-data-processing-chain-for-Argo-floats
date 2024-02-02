@@ -30,6 +30,9 @@ o_decodedData = [];
 % current float WMO number
 global g_decArgo_floatNum;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 % default values
 global g_decArgo_janFirst1950InMatlab;
 global g_decArgo_dateDef;
@@ -232,7 +235,7 @@ switch (packType)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {8, 9, 10, 11, 12}
       % CTDO packets
-            
+
       % first item bit number
       firstBit = 1;
       % item bit lengths
@@ -301,6 +304,11 @@ switch (packType)
       
       decodedData.decData = {dataCTDO};
       decodedData.cyNumRaw = cycleNum;
+
+      if (~ismember('OPTODE', g_decArgo_sensorMountedOnFloat))
+         fprintf('ERROR: Float #%d, Cycle #%d: CTDO packet have been received while ''OPTODE'' is not supposed to be mounted on the float - check float_sensor_list\n', ...
+            g_decArgo_floatNum, cycleNum);
+      end
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case 5

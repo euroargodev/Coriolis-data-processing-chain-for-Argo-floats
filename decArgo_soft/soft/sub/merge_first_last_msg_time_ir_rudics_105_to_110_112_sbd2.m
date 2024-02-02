@@ -168,7 +168,7 @@ cycleProfList = unique([cycleNumList' profNumList'], 'rows');
 for idCyPr = 1:size(cycleProfList, 1)
    cycleNum = cycleProfList(idCyPr, 1);
    profNum = cycleProfList(idCyPr, 2);
-   
+
    idData = find( ...
       (cycleNumList == cycleNum) & ...
       (profNumList == profNum));

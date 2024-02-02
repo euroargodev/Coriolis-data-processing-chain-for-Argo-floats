@@ -20,15 +20,19 @@
 function select_float_list
 
 % float reference file list
-FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
 % FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\apex_float_info_20201006.txt';
 % FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\nova_float_info_20201006.txt';
 % FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp16.txt';
 
 % float file list to select
-FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_nke_prv_ir.txt';
-FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_apx_argos.txt';
-FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp11.txt';
+FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_arvor_ice_1.txt';
+FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_arvor_ice_2.txt';
+FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_arvor_ice_with_anomaly.txt';
+FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_arvor_deep_ice.txt';
+FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_arvor_deep_ice_with_anomaly.txt';
+FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_provor_ice.txt';
+
 
 % directory to store the CSV file
 DIR_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';

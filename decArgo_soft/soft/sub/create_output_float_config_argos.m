@@ -33,6 +33,9 @@ global g_decArgo_floatConfig;
 % current float WMO number
 global g_decArgo_floatNum;
 
+% lists of managed decoders
+global g_decArgo_decoderIdListApexApf11Argos;
+
 
 % current configuration
 finalConfigNum = [];
@@ -67,7 +70,7 @@ if (~isempty(a_decArgoConfParamNames))
          finalConfigName{idConfParam} = a_ncConfParamNames{idF};
       else
          % Apex APF11 floats
-         if (ismember(a_decoderId, [1021 1022]))
+         if (ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Argos))
             if (strcmp(finalConfigName{idConfParam}(1:idFUs(2)-1), 'CONFIG_SAMPLE'))
                switch (finalConfigName{idConfParam}(idFUs(end)+1:end))
                   case 'NumberOfZones'
@@ -120,6 +123,7 @@ if (~isempty(a_decArgoConfParamNames))
          else
             % some of the managed parameters are not saved in the meta.nc file
             idDel = [idDel; idConfParam];
+            notNcConfigNameList = [];
             switch (a_decoderId)
                case {30, 32}
                   notNcConfigNameList = [...
@@ -136,14 +140,22 @@ if (~isempty(a_decArgoConfParamNames))
                      {'CONFIG_TC17_'} ...
                      {'CONFIG_TC18_'} ...
                      ];
-                  configName = finalConfigName{idConfParam};
-                  idFUs = strfind(configName, '_');
-                  configName = configName(1:idFUs(2));
-                  if (any(strcmp(configName, notNcConfigNameList)))
-                     continue
-                  end
+                  % for decId 31 as this function is not used => the PT20 is
+                  % deleyed in "create_nc_meta_file_3_1.m"
+                  %                case {31}
+                  %                   notNcConfigNameList = [...
+                  %                      {'CONFIG_PT20_'} ...
+                  %                      ];
             end
-            
+            if (~isempty(notNcConfigNameList))
+               configName = finalConfigName{idConfParam};
+               idFUs = strfind(configName, '_');
+               configName = configName(1:idFUs(2));
+               if (any(strcmp(configName, notNcConfigNameList)))
+                  continue
+               end
+            end
+
             fprintf('DEC_INFO: Float #%d: Cannot convert configuration param name :''%s'' into NetCDF one\n', ...
                g_decArgo_floatNum, ...
                finalConfigName{idConfParam});

@@ -94,7 +94,7 @@ else
       switch (a_dacFormatId)
          case {'5.9', '5.91', '5.92', '5.94', '6.01', '6.11', '6.13', ...
                '7.01', '7.02', '7.03', '7.04', '7.05', ...
-               '7.11', '7.14', '7.15', '7.16'}
+               '7.11', '7.14', '7.15', '7.16', '7.17', '7.18'}
             if (mod(length(data), 6) == 0)
                o_opticalWavelengthUv = data(2:6:end);
                o_eNitrate = data(3:6:end);
@@ -104,7 +104,7 @@ else
                o_creationDate = [];
                fprintf('ERROR: Calibration information is missing in file: %s\n', a_sunaCalibFileName);
             end
-         case {'5.93', '6.12'}
+         case {'5.93', '6.12', '6.15'}
             if (mod(length(data), 6) == 0)
                o_opticalWavelengthUv = data(2:6:end);
                o_eSwaNitrate = data(3:6:end);

@@ -321,6 +321,7 @@ netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '3.4');
 netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.2 CF-1.6');
 netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectory');
 netcdf.putAtt(fCdf, globalVarId, 'decoder_version', sprintf('CODA_%s', g_decArgo_decoderVersion));
+netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
 
 resGlobalComment = get_global_comment_on_resolution(a_decoderId);
 if (~isempty(resGlobalComment))
@@ -2128,17 +2129,19 @@ if (~isempty(g_decArgo_paramTrajAdjInfo))
       date = g_decArgo_paramTrajAdjInfo{idCalib, 8};
       
       idParam = find(strcmp(measUniqueParamName, param));
-      netcdf.putVar(fCdf, scientificCalibEquationVarId, ...
-         fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(equation)]), equation');
-      netcdf.putVar(fCdf, scientificCalibCoefficientVarId, ...
-         fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(coefficient)]), coefficient');
-      if (~isempty(comment))
-         netcdf.putVar(fCdf, scientificCalibCommentVarId, ...
-            fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(comment)]), comment');
-      end
-      if (~isempty(date))
-         netcdf.putVar(fCdf, scientificCalibDateVarId, ...
-            fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(date)]), date');
+      if (~isempty(idParam))
+         netcdf.putVar(fCdf, scientificCalibEquationVarId, ...
+            fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(equation)]), equation');
+         netcdf.putVar(fCdf, scientificCalibCoefficientVarId, ...
+            fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(coefficient)]), coefficient');
+         if (~isempty(comment))
+            netcdf.putVar(fCdf, scientificCalibCommentVarId, ...
+               fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(comment)]), comment');
+         end
+         if (~isempty(date))
+            netcdf.putVar(fCdf, scientificCalibDateVarId, ...
+               fliplr([idCalib-1 idParam-1  0]), fliplr([1 1 length(date)]), date');
+         end
       end
    end
 end

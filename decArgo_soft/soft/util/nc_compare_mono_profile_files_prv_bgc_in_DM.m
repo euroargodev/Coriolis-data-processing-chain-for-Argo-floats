@@ -1136,6 +1136,9 @@ o_paramList = [];
 % default values
 global g_dateDef;
 
+% list of parameters that have an extra dimension (N_VALUESx)
+global g_decArgo_paramWithExtraDimList;
+
 
 % read the file and retrieve wanted information
 if (exist(a_profFilePathName, 'file') == 2)
@@ -1290,7 +1293,7 @@ if (exist(a_profFilePathName, 'file') == 2)
                paramFillVal = netcdf.getAtt(fCdfB, netcdf.inqVarID(fCdfB, paramStr), '_FillValue');
             end
             
-            if (~strcmp(paramStr, 'UV_INTENSITY_NITRATE'))
+            if (~ismember(paramStr, g_decArgo_paramWithExtraDimList))
                formatList = [formatList ' ' paramFormat];
                fillValueList = [fillValueList paramFillVal];
                dataParam = [dataParam paramData(:, idProf)];

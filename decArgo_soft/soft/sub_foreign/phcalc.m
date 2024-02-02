@@ -1,13 +1,14 @@
-function [phfree,phtot]= phcalc(Vrs, Press, Temp, Salt, k0, k2, Pcoefs)
+function [phfree,phtot]= phcalc(Vrs, Press, Temp, Salt, k0, k2, Pcoefs, k2Pcoefs)
 %
 % INPUTS:
-%   Vrs     = Voltage bewteen reference electrode and ISFET source
-%   Press   = Pressures in decibars
-%   Temp    = Temperature in degrees C
-%   Salt    = Salinity (usually CTD salinity on the PSS)
-%   k0      = Sensor reference potential (intercept at Temp = 0C) 
-%   k2      = linear temperature coefficient (slope)
-%   Pcoefs  = sensor dependent pressure coefficients
+%   Vrs      = Voltage bewteen reference electrode and ISFET source
+%   Press    = Pressures in decibars
+%   Temp     = Temperature in degrees C
+%   Salt     = Salinity (usually CTD salinity on the PSS)
+%   k0       = Sensor reference potential (intercept at Temp = 0C) 
+%   k2       = linear temperature coefficient (slope)
+%   Pcoefs   = sensor dependent pressure coefficients
+%   k2Pcoefs = K2 coefficient dependent pressure coefficients
 
 % ************************************************************************
 %  SET SOME CONSTANTS
@@ -82,7 +83,14 @@ log10gammaHCLtP = log10gammaHCl + deltaVHCl.*(Press./10)./(R.*Tk.*ln10)./2./10;
 %  Sensor reference potential
 
 % ************************************************************************
-k0T = k0 + k2 * Temp; % Temp  in deg C
+% k0T = k0 + k2 * Temp; % Temp  in deg C
+if (~isempty(k2))
+   k2corr =  k2;
+else
+   k2pc   = flipud(k2Pcoefs);
+   k2corr = polyval(k2pc,Press);
+end
+k0T    = k0 + k2corr .* Temp ; % Temp  in deg C
 
 % CALCULATE PRESSURE CORRECTION (POLYNOMIAL FUNCTION OF PRESSURE)
 % ALL SENSORS HAVE A PRESSURE RESPONSE WHICH IS DETERMINED IN THE LAB

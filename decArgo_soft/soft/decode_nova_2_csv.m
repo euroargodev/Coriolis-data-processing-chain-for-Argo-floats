@@ -40,7 +40,8 @@ global g_decArgo_floatListFileName;
 global g_decArgo_dirOutputLogFile;
 global g_decArgo_dirOutputCsvFile;
 
-global g_decArgo_generateNcTraj;
+global g_decArgo_generateNcTraj31;
+global g_decArgo_generateNcTraj32;
 global g_decArgo_generateNcMultiProf;
 global g_decArgo_generateNcMonoProf;
 global g_decArgo_generateNcTech;
@@ -83,7 +84,8 @@ if (fidOut == -1)
    return
 end
 g_decArgo_outputCsvFileId = fidOut;
-g_decArgo_generateNcTraj = 0;
+g_decArgo_generateNcTraj31 = 0;
+g_decArgo_generateNcTraj32 = 0;
 g_decArgo_generateNcMultiProf = 0;
 g_decArgo_generateNcMonoProf = 0;
 g_decArgo_generateNcTech = 0;

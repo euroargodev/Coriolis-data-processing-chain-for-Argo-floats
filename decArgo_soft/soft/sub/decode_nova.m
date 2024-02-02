@@ -57,7 +57,7 @@ global g_decArgo_reportStruct;
 global g_decArgo_floatInformationFileName;
 global g_decArgo_dirInputJsonTechLabelFile;
 global g_decArgo_dirInputJsonConfLabelFile;
-global g_decArgo_generateNcTraj;
+global g_decArgo_generateNcTraj31;
 global g_decArgo_generateNcTraj32;
 global g_decArgo_generateNcMultiProf;
 global g_decArgo_generateNcMonoProf;
@@ -321,7 +321,7 @@ for idFloat = 1:nbFloats
       end
       
       % NetCDF TRAJ file
-      if ((g_decArgo_generateNcTraj ~= 0) || (g_decArgo_generateNcTraj32 ~= 0))
+      if ((g_decArgo_generateNcTraj31 ~= 0) || (g_decArgo_generateNcTraj32 ~= 0))
          create_nc_traj_file(floatDecId, ...
             tabTrajNMeas, tabTrajNCycle, additionalMetaData);
       end

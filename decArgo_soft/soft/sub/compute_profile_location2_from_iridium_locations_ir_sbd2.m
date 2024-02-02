@@ -1,11 +1,11 @@
 % ------------------------------------------------------------------------------
 % Compute the profile location of a given cycle from Iridium locations (used
-% only when no GPS fixes are available), as specifieed in the trajectory DAC
+% only when no GPS fixes are available), as specified in the trajectory DAC
 % cookbook.
 % Only Iridium locations with the min CEP radius are used.
 %
 % SYNTAX :
-%  [o_locDate, o_locLon, o_locLat, o_locQc, o_firstMsgTime, o_lastCycleFlag] = ...
+%  [o_locDate, o_locLon, o_locLat, o_locQc, o_firstMsgTime] = ...
 %    compute_profile_location2_from_iridium_locations_ir_sbd2( ...
 %    a_iridiumMailData, a_cycleNumber, a_profileNumber, a_prevCycleFlag)
 %
@@ -21,8 +21,6 @@
 %   o_locLat        : profile location latitude
 %   o_locQc         : profile location Qc
 %   o_firstMsgTime  : first message time
-%   o_lastCycleFlag : 1 if the concerned cycle and profile is the last received
-%                     one
 %
 % EXAMPLES :
 %
@@ -32,7 +30,7 @@
 % RELEASES :
 %   12/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_locDate, o_locLon, o_locLat, o_locQc, o_firstMsgTime, o_lastCycleFlag] = ...
+function [o_locDate, o_locLon, o_locLat, o_locQc, o_firstMsgTime] = ...
    compute_profile_location2_from_iridium_locations_ir_sbd2( ...
    a_iridiumMailData, a_cycleNumber, a_profileNumber, a_prevCycleFlag)
 
@@ -46,8 +44,11 @@ o_locLon = [];
 o_locLat = [];
 o_locQc = [];
 o_firstMsgTime = [];
-o_lastCycleFlag = [];
 
+
+if (isempty(a_iridiumMailData))
+   return
+end
 
 if (a_prevCycleFlag == 0)
    cycleNumber = a_cycleNumber;
@@ -107,14 +108,6 @@ if (~isempty(idForCy))
             o_locQc = g_decArgo_qcStrProbablyGood;
          end
          o_firstMsgTime = min(timeList);
-
-         o_lastCycleFlag = 0;
-         if (cycleNumber == max([a_iridiumMailData.floatCycleNumber]))
-            idFCyNum = find([a_iridiumMailData.floatCycleNumber] == cycleNumber);
-            if (profileNumber == max([a_iridiumMailData(idFCyNum).floatProfileNumber]))
-               o_lastCycleFlag = 1;
-            end
-         end
       end
    end
 end

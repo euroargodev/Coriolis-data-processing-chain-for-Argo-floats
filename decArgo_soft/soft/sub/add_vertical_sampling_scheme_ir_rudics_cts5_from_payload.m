@@ -33,7 +33,7 @@ global g_decArgo_patternNumFloat;
 % add the vertical sampling scheme for each profile
 for idP = 1:length(a_tabProfiles)
    prof = a_tabProfiles(idP);
-   
+
    % specific processing for SUNA split profile
    if (prof.sensorNumber == 6)
       if (any(ismember('PRES', {prof.paramList.name}) & ...

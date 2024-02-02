@@ -79,14 +79,14 @@ nbEventFiles = size(eventFiles, 1);
 % nbEventFiles = 20;
 
 for idFile = 1:nbEventFiles
-   
+
    filePathName = [eventFiles{idFile, 4} eventFiles{idFile, 1}];
-   
+
    if ~(exist(filePathName, 'file') == 2)
       fprintf('DEC_ERROR: File not found: %s\n', filePathName);
       return
    end
-   
+
    % decode file contents
    ok = decode_event_data(filePathName, a_launchDate, a_decoderId);
    if (~ok)
@@ -164,7 +164,7 @@ for idL = 1:size(cyclePatternNumFloat, 1)
          cyclePatternNumFloat(idL, 3) = idFCycle;
          cyclePatternNumFloat(idL, 4) = idFPattern;
       end
-      
+
       if (ptnNum > 1)
          cyclePatternNumFloat(idL, 5) = cyclePatternNumFloat(idL, 4);
       else
@@ -216,12 +216,12 @@ for idL = 1:size(cyclePatternNumFloat, 1)-1
    ptnNum = cyclePatternNumFloat(idL, 2);
    cyNumNext = cyclePatternNumFloat(idL+1, 1);
    ptnNumNext = cyclePatternNumFloat(idL+1, 2);
-   
+
    % we do not manage (yet) missing pattern !
    if (cyNumNext-cyNum > 1)
       fprintf('DEC_WARNING: system file anomaly: events of float cycles %d to %d ignored\n', ...
-         cyNum, cyNumNext-1);
-      g_decArgo_eventDataUnseenCycleNum = [g_decArgo_eventDataUnseenCycleNum cyNum:cyNumNext-1];
+         cyNum+1, cyNumNext-1);
+      g_decArgo_eventDataUnseenCycleNum = [g_decArgo_eventDataUnseenCycleNum cyNum+1:cyNumNext-1];
    else
       cyclePatternNumFloat(idL, 6) = cyclePatternNumFloat(idL+1, 5) - 1;
    end
@@ -229,6 +229,17 @@ end
 % we assume there is no anomaly between the last event #90 and the end of the file
 if (~isnan(cyclePatternNumFloat(end, 5)))
    cyclePatternNumFloat(end, 6) = size(g_decArgo_eventData, 1);
+end
+
+% we use patter number 0 as the end of the previous cycle
+for idL = 1:size(cyclePatternNumFloat, 1)
+   if (all(~isnan(cyclePatternNumFloat(idL, 3:5))) && isnan(cyclePatternNumFloat(idL, 6)))
+      if (idL < size(cyclePatternNumFloat, 1))
+         if (cyclePatternNumFloat(idL+1, 2) == 0)
+            cyclePatternNumFloat(idL, 6) = cyclePatternNumFloat(idL+1, 3) - 1;
+         end
+      end
+   end
 end
 
 for idL = 1:size(cyclePatternNumFloat, 1)
@@ -468,17 +479,17 @@ g_decArgo_clockOffsetForTrajNCy.clockOffsetForTrajNCy = nan(1, size(a_cyclePatte
 for idL = 1:size(a_cyclePatternNumFloat, 1)
    cyNum = a_cyclePatternNumFloat(idL, 1);
    ptnNum = a_cyclePatternNumFloat(idL, 2);
-   
+
    idClockOffset  = find( ...
       (g_decArgo_clockOffset.cycleNum == cyNum) & ...
       (g_decArgo_clockOffset.patternNum == ptnNum));
    if (~isempty(idClockOffset))
-      
+
       idJuldFloat  = find( ...
          ([g_decArgo_eventData{:, 1}] == cyNum) & ...
          ([g_decArgo_eventData{:, 2}] == ptnNum));
       meanJuldFloat = mean([g_decArgo_eventData{idJuldFloat, 6}]);
-      
+
       [g_decArgo_clockOffsetForTrajNCy.cycleNumForTrajNCy(idL)] = cyNum;
       [g_decArgo_clockOffsetForTrajNCy.patternNumForTrajNCy(idL)] = ptnNum;
       [g_decArgo_clockOffsetForTrajNCy.juldFloatForTrajNCy(idL)] = meanJuldFloat;
@@ -489,12 +500,12 @@ end
 for idL = 1:size(a_cyclePatternNumFloat, 1)
    cyNum = a_cyclePatternNumFloat(idL, 1);
    ptnNum = a_cyclePatternNumFloat(idL, 2);
-   
+
    idClockOffset  = find( ...
       (g_decArgo_clockOffset.cycleNum == cyNum) & ...
       (g_decArgo_clockOffset.patternNum == ptnNum));
    if (isempty(idClockOffset))
-      
+
       juldFloatPrev = '';
       clockOffsetPrev = '';
       juldFloatNext = '';
@@ -520,14 +531,14 @@ for idL = 1:size(a_cyclePatternNumFloat, 1)
                break
             end
          end
-         
+
          if (~isempty(juldFloatNext))
-            
+
             idJuldFloat  = find( ...
                ([g_decArgo_eventData{:, 1}] == cyNum) & ...
                ([g_decArgo_eventData{:, 2}] == ptnNum));
             meanJuldFloat = mean([g_decArgo_eventData{idJuldFloat, 6}]);
-            
+
             clockOffset = interp1([juldFloatPrev; juldFloatNext], [clockOffsetPrev; clockOffsetNext], meanJuldFloat);
 
             [g_decArgo_clockOffsetForTrajNCy.cycleNumForTrajNCy(idL)] = cyNum;
@@ -601,8 +612,8 @@ switch (a_decoderId)
       [o_ok] = decode_event_data_121_to_123(a_inputFilePathName, a_launchDate);
    case {124, 125}
       [o_ok] = decode_event_data_124_125(a_inputFilePathName, a_launchDate);
-   case {126, 127, 128, 129, 130, 131}
-      [o_ok] = decode_event_data_126_2_131(a_inputFilePathName, a_launchDate);
+   case {126, 127, 128, 129, 130, 131, 132, 133}
+      [o_ok] = decode_event_data_126_to_133(a_inputFilePathName, a_launchDate);
    otherwise
       fprintf('ERROR: decode_event_data not defined yet for deciId #%d\n', ...
          a_decoderId);
@@ -637,6 +648,9 @@ function [o_ok] = decode_event_data_121_to_123(a_inputFilePathName, a_launchDate
 % output parameters initialization
 o_ok = 0;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 % default values
 global g_decArgo_janFirst2000InJulD;
 
@@ -668,6 +682,9 @@ end
 data = fread(fId);
 fclose(fId);
 
+[~, fileName, fileExt] = fileparts(a_inputFilePathName);
+inputFileName = [fileName fileExt];
+
 % find the position of the last useful byte
 lastByteNum = get_last_byte_number(data, hex2dec('1a'));
 
@@ -684,19 +701,19 @@ cpt = 1;
 stop = 0;
 while (((curBit-1)/8 < lastByteNum) && (~stop))
    if (lastByteNum - (curBit-1)/8 < 5)
-      fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
-         lastByteNum - (curBit-1)/8, a_inputFilePathName);
+      fprintf('ERROR: Float #%d: unexpected end of data (%d last bytes ignored) in file %s\n', ...
+         g_decArgo_floatNum, lastByteNum - (curBit-1)/8, inputFileName);
       break
    else
-      
+
       rawData = get_bits(curBit, [8 32], data);
       curBit = curBit + 40;
-      
+
       timeInfo = typecast(swapbytes(uint32(rawData(2))), 'uint32');
       evtDate = bitand(timeInfo, hex2dec('3FFFFFFF'));
       evtEpoch2000 = evtDate + timeOffset;
       evtJulD = g_decArgo_janFirst2000InJulD + double(evtEpoch2000)/86400;
-      
+
       evtNum = rawData(1) + bitshift(timeInfo, -30)*256;
       idF = find(evtList(:, 1) == evtNum);
       if (length(idF) == 1)
@@ -708,11 +725,11 @@ while (((curBit-1)/8 < lastByteNum) && (~stop))
          [ok, curBit, evtData] = get_event_121_2_123(curBit, data, evtDataType, retrieve);
          if (~ok)
             evtGregD = julian_2_gregorian_dec_argo(evtJulD);
-            fprintf('ERROR: unable to retrieve event #%d (dated %s) in file %s\n', ...
-               evtNum, evtGregD, a_inputFilePathName);
+            fprintf('ERROR: Float #%d: unable to retrieve event #%d (dated %s) in file %s\n', ...
+               g_decArgo_floatNum, evtNum, evtGregD, inputFileName);
             return
          end
-         
+
          % BE CAREFUL: the RTC could be erroneously set
          % see for example float 6902829:
          % 23/07/2017 03:01	SYSTEM	Clock update 2001/01/00 00:00:00
@@ -723,17 +740,17 @@ while (((curBit-1)/8 < lastByteNum) && (~stop))
             if (evtData{:} > a_launchDate - 365)
                if (clockError == 1)
                   fprintf('WARNING: RTC correctly set to %s in file %s - end of event date correction\n', ...
-                     julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+                     julian_2_gregorian_dec_argo(evtData{:}), inputFileName);
                   clockError = 0;
                   stopClockError = 0;
                end
             else
                fprintf('WARNING: RTC erroneously set to %s in file %s - start of event date correction\n', ...
-                  julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+                  julian_2_gregorian_dec_argo(evtData{:}), inputFileName);
                clockError = 1;
             end
          end
-         
+
          if (retrieve)
             evtNew = cell(1, 4);
             if (~isempty(g_decArgo_eventData))
@@ -758,7 +775,7 @@ while (((curBit-1)/8 < lastByteNum) && (~stop))
             evtAll(cpt, :) = evtNew;
             cpt = cpt + 1;
          end
-         
+
          % first version
          %          if (0)
          %             ignoreNextEvt = 0;
@@ -795,8 +812,8 @@ while (((curBit-1)/8 < lastByteNum) && (~stop))
          %             end
          %          end
       else
-         fprintf('WARNING: unexpected event number (%d) in file %s\n', ...
-            evtNum, a_inputFilePathName);
+         fprintf('ERROR: Float #%d: unexpected event number (%d) in file %s\n', ...
+            g_decArgo_floatNum, evtNum, inputFileName);
          stop = 1;
       end
    end
@@ -834,6 +851,9 @@ function [o_ok] = decode_event_data_124_125(a_inputFilePathName, a_launchDate)
 % output parameters initialization
 o_ok = 0;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 % default values
 global g_decArgo_janFirst2000InJulD;
 
@@ -865,6 +885,9 @@ end
 data = fread(fId);
 fclose(fId);
 
+[~, fileName, fileExt] = fileparts(a_inputFilePathName);
+inputFileName = [fileName fileExt];
+
 % find the position of the last useful byte
 lastByteNum = get_last_byte_number(data, hex2dec('1a'));
 
@@ -881,19 +904,19 @@ cpt = 1;
 stop = 0;
 while (((curBit-1)/8 < lastByteNum) && (~stop))
    if (lastByteNum - (curBit-1)/8 < 5)
-      fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
-         lastByteNum - (curBit-1)/8, a_inputFilePathName);
+      fprintf('ERROR: Float #%d: unexpected end of data (%d last bytes ignored) in file %s\n', ...
+         g_decArgo_floatNum, lastByteNum - (curBit-1)/8, inputFileName);
       break
    else
-      
+
       rawData = get_bits(curBit, [8 32], data);
       curBit = curBit + 40;
-      
+
       timeInfo = typecast(swapbytes(uint32(rawData(2))), 'uint32');
       evtDate = bitand(timeInfo, hex2dec('3FFFFFFF'));
       evtEpoch2000 = evtDate + timeOffset;
       evtJulD = g_decArgo_janFirst2000InJulD + double(evtEpoch2000)/86400;
-      
+
       evtNum = rawData(1) + bitshift(timeInfo, -30)*256;
       idF = find(evtList(:, 1) == evtNum);
       if (length(idF) == 1)
@@ -905,11 +928,11 @@ while (((curBit-1)/8 < lastByteNum) && (~stop))
          [ok, curBit, evtData] = get_event_124_125(curBit, data, evtDataType, retrieve);
          if (~ok)
             evtGregD = julian_2_gregorian_dec_argo(evtJulD);
-            fprintf('ERROR: unable to retrieve event #%d (dated %s) in file %s\n', ...
-               evtNum, evtGregD, a_inputFilePathName);
+            fprintf('ERROR: Float #%d: unable to retrieve event #%d (dated %s) in file %s\n', ...
+               g_decArgo_floatNum, evtNum, evtGregD, inputFileName);
             return
          end
-         
+
          % BE CAREFUL: the RTC could be erroneously set
          % see for example float 6902829:
          % 23/07/2017 03:01	SYSTEM	Clock update 2001/01/00 00:00:00
@@ -920,17 +943,17 @@ while (((curBit-1)/8 < lastByteNum) && (~stop))
             if (evtData{:} > a_launchDate - 365)
                if (clockError == 1)
                   fprintf('WARNING: RTC correctly set to %s in file %s - end of event date correction\n', ...
-                     julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+                     julian_2_gregorian_dec_argo(evtData{:}), inputFileName);
                   clockError = 0;
                   stopClockError = 0;
                end
             else
                fprintf('WARNING: RTC erroneously set to %s in file %s - start of event date correction\n', ...
-                  julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+                  julian_2_gregorian_dec_argo(evtData{:}), inputFileName);
                clockError = 1;
             end
          end
-         
+
          if (retrieve)
             evtNew = cell(1, 4);
             if (~isempty(g_decArgo_eventData))
@@ -955,7 +978,7 @@ while (((curBit-1)/8 < lastByteNum) && (~stop))
             evtAll(cpt, :) = evtNew;
             cpt = cpt + 1;
          end
-         
+
          % first version
          %          if (0)
          %             ignoreNextEvt = 0;
@@ -992,8 +1015,8 @@ while (((curBit-1)/8 < lastByteNum) && (~stop))
          %             end
          %          end
       else
-         fprintf('WARNING: unexpected event number (%d) in file %s\n', ...
-            evtNum, a_inputFilePathName);
+         fprintf('ERROR: Float #%d: unexpected event number (%d) in file %s\n', ...
+            g_decArgo_floatNum, evtNum, inputFileName);
          stop = 1;
       end
    end
@@ -1009,7 +1032,7 @@ return
 % Decode and store CTS5 events of a given system file.
 %
 % SYNTAX :
-%  [o_ok] = decode_event_data_126_2_131(a_inputFilePathName, a_launchDate)
+%  [o_ok] = decode_event_data_126_to_133(a_inputFilePathName, a_launchDate)
 %
 % INPUT PARAMETERS :
 %   a_inputFilePathName : system file path name
@@ -1026,7 +1049,7 @@ return
 % RELEASES :
 %   09/02/2020 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ok] = decode_event_data_126_2_131(a_inputFilePathName, a_launchDate)
+function [o_ok] = decode_event_data_126_to_133(a_inputFilePathName, a_launchDate)
 
 % output parameters initialization
 o_ok = 0;
@@ -1065,6 +1088,9 @@ function [o_ok] = decode_event_data_rescue_126_2_130(a_inputFilePathName, a_laun
 % output parameters initialization
 o_ok = 0;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 % default values
 global g_decArgo_janFirst2000InJulD;
 
@@ -1095,6 +1121,9 @@ if (fId == -1)
 end
 data = fread(fId);
 fclose(fId);
+
+[~, fileName, fileExt] = fileparts(a_inputFilePathName);
+inputFileName = [fileName fileExt];
 
 % find the position of the last useful byte
 lastByteNum = get_last_byte_number(data, hex2dec('1a'));
@@ -1138,8 +1167,8 @@ while ((curBitStart-1)/8 < lastByteNum)
    evtJulDPrec = [];
    while ((curBit-1)/8 < lastByteNum)
       if (lastByteNum - (curBit-1)/8 < 5)
-         fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
-            lastByteNum - (curBit-1)/8, a_inputFilePathName);
+         fprintf('ERROR: Float #%d: unexpected end of data (%d last bytes ignored) in file %s\n', ...
+            g_decArgo_floatNum, lastByteNum - (curBit-1)/8, inputFileName);
          break
       else
 
@@ -1162,7 +1191,7 @@ while ((curBitStart-1)/8 < lastByteNum)
                break
             end
          end
-         
+
          evtNum = rawData(1) + bitshift(timeInfo, -30)*256;
          idF = find(evtList(:, 1) == evtNum);
          if (length(idF) == 1)
@@ -1186,7 +1215,7 @@ while ((curBitStart-1)/8 < lastByteNum)
                if (VERBOSE)
                   evtGregD = julian_2_gregorian_dec_argo(evtJulD);
                   fprintf('ERROR: unable to retrieve event #%d (dated %s) in file %s\n', ...
-                     evtNum, evtGregD, a_inputFilePathName);
+                     evtNum, evtGregD, inputFileName);
                end
                ok = 0;
                break
@@ -1202,13 +1231,13 @@ while ((curBitStart-1)/8 < lastByteNum)
                if (evtData{:} > a_launchDate - 365)
                   if (clockError == 1)
                      fprintf('WARNING: RTC correctly set to %s in file %s - end of event date correction\n', ...
-                        julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+                        julian_2_gregorian_dec_argo(evtData{:}), inputFileName);
                      clockError = 0;
                      stopClockError = 0;
                   end
                else
                   fprintf('WARNING: RTC erroneously set to %s in file %s - start of event date correction\n', ...
-                     julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+                     julian_2_gregorian_dec_argo(evtData{:}), inputFileName);
                   clockError = 1;
                end
             end
@@ -1235,8 +1264,8 @@ while ((curBitStart-1)/8 < lastByteNum)
             end
          else
             if (VERBOSE)
-               fprintf('WARNING: unexpected event number (%d) in file %s\n', ...
-                  evtNum, a_inputFilePathName);
+               fprintf('ERROR: unexpected event number (%d) in file %s\n', ...
+                  evtNum, inputFileName);
             end
             ok = 0;
             break
@@ -1277,6 +1306,9 @@ function [o_ok] = decode_event_data_nominal_126_2_130(a_inputFilePathName, a_lau
 % output parameters initialization
 o_ok = 0;
 
+% current float WMO number
+global g_decArgo_floatNum;
+
 % default values
 global g_decArgo_janFirst2000InJulD;
 
@@ -1308,6 +1340,9 @@ end
 data = fread(fId);
 fclose(fId);
 
+[~, fileName, fileExt] = fileparts(a_inputFilePathName);
+inputFileName = [fileName fileExt];
+
 % find the position of the last useful byte
 lastByteNum = get_last_byte_number(data, hex2dec('1a'));
 
@@ -1321,14 +1356,14 @@ evtAll = repmat(cell(1, 4), NB_EVENTS, 1);
 cpt = 1;
 while ((curBit-1)/8 < lastByteNum)
    if (lastByteNum - (curBit-1)/8 < 5)
-      fprintf('ERROR: unexpected end of data (%d last bytes ignored) in file %s\n', ...
-         lastByteNum - (curBit-1)/8, a_inputFilePathName);
+      fprintf('ERROR: Float #%d: unexpected end of data (%d last bytes ignored) in file %s\n', ...
+         g_decArgo_floatNum, lastByteNum - (curBit-1)/8, inputFileName);
       break
    else
-      
+
       rawData = get_bits(curBit, [8 32], data);
       curBit = curBit + 40;
-      
+
       timeInfo = typecast(swapbytes(uint32(rawData(2))), 'uint32');
       evtDate = bitand(timeInfo, hex2dec('3FFFFFFF'));
       evtEpoch2000 = evtDate + timeOffset;
@@ -1345,11 +1380,11 @@ while ((curBit-1)/8 < lastByteNum)
          [ok, curBit, evtData] = get_event_126_2_130(curBit, data, evtDataType, retrieve);
          if (~ok)
             evtGregD = julian_2_gregorian_dec_argo(evtJulD);
-            fprintf('ERROR: unable to retrieve event #%d (dated %s) in file %s\n', ...
-               evtNum, evtGregD, a_inputFilePathName);
+            fprintf('ERROR: Float #%d: unable to retrieve event #%d (dated %s) in file %s\n', ...
+               g_decArgo_floatNum, evtNum, evtGregD, inputFileName);
             return
          end
-         
+
          % BE CAREFUL: the RTC could be erroneously set
          % see for example float 6902829:
          % 23/07/2017 03:01	SYSTEM	Clock update 2001/01/00 00:00:00
@@ -1360,17 +1395,17 @@ while ((curBit-1)/8 < lastByteNum)
             if (evtData{:} > a_launchDate - 365)
                if (clockError == 1)
                   fprintf('WARNING: RTC correctly set to %s in file %s - end of event date correction\n', ...
-                     julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+                     julian_2_gregorian_dec_argo(evtData{:}), inputFileName);
                   clockError = 0;
                   stopClockError = 0;
                end
             else
                fprintf('WARNING: RTC erroneously set to %s in file %s - start of event date correction\n', ...
-                  julian_2_gregorian_dec_argo(evtData{:}), a_inputFilePathName);
+                  julian_2_gregorian_dec_argo(evtData{:}), inputFileName);
                clockError = 1;
             end
          end
-         
+
          if (retrieve)
             evtNew = cell(1, 4);
             if (~isempty(g_decArgo_eventData))
@@ -1396,8 +1431,8 @@ while ((curBit-1)/8 < lastByteNum)
             cpt = cpt + 1;
          end
       else
-         fprintf('WARNING: unexpected event number (%d) in file %s\n', ...
-            evtNum, a_inputFilePathName);
+         fprintf('ERROR: Float #%d: unexpected event number (%d) in file %s\n', ...
+            g_decArgo_floatNum, evtNum, inputFileName);
          return
       end
    end
@@ -1525,7 +1560,7 @@ switch (a_evtDataType)
          evtDataEpoch = typecast(swapbytes(uint32(evtRawData)), 'uint32');
          evtDataJulD = g_decArgo_janFirst2000InJulD + double(evtDataEpoch)/86400;
          evtDataGregD = julian_2_gregorian_dec_argo(evtDataJulD);
-         
+
          % BE CAREFUL: day and year are switched in the first firmware
          % version of CTS5 floats
          evtDay = str2num(evtDataGregD(1:4)) - 2000;
@@ -1563,7 +1598,7 @@ switch (a_evtDataType)
          evtDataEpoch = typecast(swapbytes(uint32(evtRawData(1))), 'uint32');
          evtDataJulD = g_decArgo_janFirst2000InJulD + double(evtDataEpoch)/86400;
          evtDataGregD = julian_2_gregorian_dec_argo(evtDataJulD);
-         
+
          % BE CAREFUL: day and year are switched in the first firmware
          % version
          evtDay = str2num(evtDataGregD(1:4)) - 2000;
@@ -1571,7 +1606,7 @@ switch (a_evtDataType)
          evtYear = str2num(evtDataGregD(9:10)) + 2000;
          evtDataGregD = [sprintf('%04d/%02d/%02d', evtYear, evtMonth, evtDay) ' ' evtDataGregD(12:end)];
          o_evtData{end+1} = gregorian_2_julian_dec_argo(evtDataGregD);
-         
+
          o_evtData{end+1} = typecast(swapbytes(uint16(evtRawData(2))), 'uint16');
       else
          o_curBit = o_curBit + sum(bitPattern);
@@ -1658,14 +1693,14 @@ switch (a_evtDataType)
          evtRawData2 = get_bits(o_curBit, repmat(8, 1, evtRawData(2)), a_data);
          o_curBit = o_curBit + evtRawData(2)*8;
          o_evtData{end+1} = char(evtRawData2-128)';
-         %          evtRawData3 = get_bits(o_curBit, repmat(8, 1, evtRawData(3)), a_data);
-         %          o_curBit = o_curBit + evtRawData(3)*8;
-         evtRawData3 = get_bits(o_curBit, repmat(8, 1, evtRawData(3)-1), a_data);
-         o_curBit = o_curBit + (evtRawData(3)-1)*8;
+         evtRawData3 = get_bits(o_curBit, repmat(8, 1, evtRawData(3)), a_data);
+         o_curBit = o_curBit + evtRawData(3)*8;
+         %          evtRawData3 = get_bits(o_curBit, repmat(8, 1, evtRawData(3)-1), a_data);
+         %          o_curBit = o_curBit + (evtRawData(3)-1)*8;
          o_evtData{end+1} = char(evtRawData3-128)';
          evtRawData4 = get_bits(o_curBit, repmat(8, 1, evtRawData(4)), a_data);
-         %          o_curBit = o_curBit + evtRawData(4)*8;
-         o_curBit = o_curBit + (evtRawData(4)+1)*8;
+         o_curBit = o_curBit + evtRawData(4)*8;
+         %          o_curBit = o_curBit + (evtRawData(4)+1)*8;
          o_evtData{end+1} = char(evtRawData4-128)';
       else
          evtRawData = get_bits(o_curBit, bitPattern, a_data);
@@ -1819,7 +1854,7 @@ switch (a_evtDataType)
          evtDataEpoch = typecast(swapbytes(uint32(evtRawData)), 'uint32');
          evtDataJulD = g_decArgo_janFirst2000InJulD + double(evtDataEpoch)/86400;
          evtDataGregD = julian_2_gregorian_dec_argo(evtDataJulD);
-         
+
          % BE CAREFUL: day and year are switched in the first firmware
          % version of CTS5 floats
          evtDay = str2num(evtDataGregD(1:4)) - 2000;
@@ -1857,7 +1892,7 @@ switch (a_evtDataType)
          evtDataEpoch = typecast(swapbytes(uint32(evtRawData(1))), 'uint32');
          evtDataJulD = g_decArgo_janFirst2000InJulD + double(evtDataEpoch)/86400;
          evtDataGregD = julian_2_gregorian_dec_argo(evtDataJulD);
-         
+
          % BE CAREFUL: day and year are switched in the first firmware
          % version
          evtDay = str2num(evtDataGregD(1:4)) - 2000;
@@ -1865,7 +1900,7 @@ switch (a_evtDataType)
          evtYear = str2num(evtDataGregD(9:10)) + 2000;
          evtDataGregD = [sprintf('%04d/%02d/%02d', evtYear, evtMonth, evtDay) ' ' evtDataGregD(12:end)];
          o_evtData{end+1} = gregorian_2_julian_dec_argo(evtDataGregD);
-         
+
          o_evtData{end+1} = typecast(swapbytes(uint16(evtRawData(2))), 'uint16');
       else
          o_curBit = o_curBit + sum(bitPattern);
@@ -1952,14 +1987,14 @@ switch (a_evtDataType)
          evtRawData2 = get_bits(o_curBit, repmat(8, 1, evtRawData(2)), a_data);
          o_curBit = o_curBit + evtRawData(2)*8;
          o_evtData{end+1} = char(evtRawData2-128)';
-         %          evtRawData3 = get_bits(o_curBit, repmat(8, 1, evtRawData(3)), a_data);
-         %          o_curBit = o_curBit + evtRawData(3)*8;
-         evtRawData3 = get_bits(o_curBit, repmat(8, 1, evtRawData(3)-1), a_data);
-         o_curBit = o_curBit + (evtRawData(3)-1)*8;
+         evtRawData3 = get_bits(o_curBit, repmat(8, 1, evtRawData(3)), a_data);
+         o_curBit = o_curBit + evtRawData(3)*8;
+         %          evtRawData3 = get_bits(o_curBit, repmat(8, 1, evtRawData(3)-1), a_data);
+         %          o_curBit = o_curBit + (evtRawData(3)-1)*8;
          o_evtData{end+1} = char(evtRawData3-128)';
          evtRawData4 = get_bits(o_curBit, repmat(8, 1, evtRawData(4)), a_data);
-         %          o_curBit = o_curBit + evtRawData(4)*8;
-         o_curBit = o_curBit + (evtRawData(4)+1)*8;
+         o_curBit = o_curBit + evtRawData(4)*8;
+         %          o_curBit = o_curBit + (evtRawData(4)+1)*8;
          o_evtData{end+1} = char(evtRawData4-128)';
       else
          evtRawData = get_bits(o_curBit, bitPattern, a_data);
@@ -2128,7 +2163,7 @@ switch (a_evtDataType)
          evtDataEpoch = typecast(swapbytes(uint32(evtRawData)), 'uint32');
          evtDataJulD = g_decArgo_janFirst2000InJulD + double(evtDataEpoch)/86400;
          evtDataGregD = julian_2_gregorian_dec_argo(evtDataJulD);
-         
+
          % BE CAREFUL: day and year are switched in the first firmware
          % version of CTS5 floats
          evtDay = str2num(evtDataGregD(1:4)) - 2000;
@@ -2166,7 +2201,7 @@ switch (a_evtDataType)
          evtDataEpoch = typecast(swapbytes(uint32(evtRawData(1))), 'uint32');
          evtDataJulD = g_decArgo_janFirst2000InJulD + double(evtDataEpoch)/86400;
          evtDataGregD = julian_2_gregorian_dec_argo(evtDataJulD);
-         
+
          % BE CAREFUL: day and year are switched in the first firmware
          % version
          evtDay = str2num(evtDataGregD(1:4)) - 2000;
@@ -2174,7 +2209,7 @@ switch (a_evtDataType)
          evtYear = str2num(evtDataGregD(9:10)) + 2000;
          evtDataGregD = [sprintf('%04d/%02d/%02d', evtYear, evtMonth, evtDay) ' ' evtDataGregD(12:end)];
          o_evtData{end+1} = gregorian_2_julian_dec_argo(evtDataGregD);
-         
+
          o_evtData{end+1} = typecast(swapbytes(uint16(evtRawData(2))), 'uint16');
       else
          o_curBit = o_curBit + sum(bitPattern);
@@ -2259,7 +2294,7 @@ switch (a_evtDataType)
    case 13
       % USSS
       evtRawData = get_bits(o_curBit, bitPattern, a_data);
-      if ((evtRawData(2) == 0) || (evtRawData(3)-1 == 0) || (evtRawData(4) == 0))
+      if ((evtRawData(2) == 0) || (evtRawData(3) == 0) || (evtRawData(4) == 0))
          return
       end
       if (a_retrieve)
@@ -2268,14 +2303,14 @@ switch (a_evtDataType)
          evtRawData2 = get_bits(o_curBit, repmat(8, 1, evtRawData(2)), a_data);
          o_curBit = o_curBit + evtRawData(2)*8;
          o_evtData{end+1} = char(evtRawData2-128)';
-         %          evtRawData3 = get_bits(o_curBit, repmat(8, 1, evtRawData(3)), a_data);
-         %          o_curBit = o_curBit + evtRawData(3)*8;
-         evtRawData3 = get_bits(o_curBit, repmat(8, 1, evtRawData(3)-1), a_data);
-         o_curBit = o_curBit + (evtRawData(3)-1)*8;
+         evtRawData3 = get_bits(o_curBit, repmat(8, 1, evtRawData(3)), a_data);
+         o_curBit = o_curBit + evtRawData(3)*8;
+         %          evtRawData3 = get_bits(o_curBit, repmat(8, 1, evtRawData(3)-1), a_data);
+         %          o_curBit = o_curBit + (evtRawData(3)-1)*8;
          o_evtData{end+1} = char(evtRawData3-128)';
          evtRawData4 = get_bits(o_curBit, repmat(8, 1, evtRawData(4)), a_data);
-         %          o_curBit = o_curBit + evtRawData(4)*8;
-         o_curBit = o_curBit + (evtRawData(4)+1)*8;
+         o_curBit = o_curBit + evtRawData(4)*8;
+         %          o_curBit = o_curBit + (evtRawData(4)+1)*8;
          o_evtData{end+1} = char(evtRawData4-128)';
       else
          o_curBit = o_curBit + sum(bitPattern) + evtRawData(2)*8 + evtRawData(3)*8 + evtRawData(4)*8;

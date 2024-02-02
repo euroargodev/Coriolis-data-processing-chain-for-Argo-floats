@@ -189,7 +189,9 @@ switch (a_decoderId)
       end
       
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {224} % Arvor-ARN-Ice RBR Iridium
+   case {224, 226}
+      % Arvor-ARN-Ice RBR Iridium 5.49
+      % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
       
       g_decArgo_nbDescentPacketsReceived = 0;
       g_decArgo_nbParkPacketsReceived = 0;

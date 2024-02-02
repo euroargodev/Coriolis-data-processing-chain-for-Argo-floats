@@ -21,7 +21,7 @@
 function generate_csv_meta(varargin)
 
 % to switch between Coriolis and JPR configurations
-CORIOLIS_CONFIGURATION_FLAG = 1;
+CORIOLIS_CONFIGURATION_FLAG = 0;
 
 if (CORIOLIS_CONFIGURATION_FLAG)
 
@@ -46,8 +46,7 @@ else
    % JPR CONFIGURATION - START
 
    % meta-data file exported from Coriolis data base
-   dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF9i_6903708_6903711.txt';
-   dataBaseFileName = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\new_argos_meta.txt';
+   dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_newRBR_5.51.txt';
 
    % directory to store the log and csv files
    DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
@@ -350,7 +349,7 @@ o_sensorList = [];
 % get the list of sensors for this float
 switch a_decId
    
-   case {1, 3, 11, 12, 17, 24, 30, 31, 204, 205, 210, 211, 212, 222, 224, 1010}
+   case {1, 3, 11, 12, 17, 24, 30, 31, 204, 205, 210, 211, 212, 222, 224, 226, 1010}
       % CTD floats
       o_sensorList = [{'CTD'}];
       

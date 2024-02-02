@@ -39,6 +39,9 @@ global g_decArgo_realtimeFlag;
 % report information structure
 global g_decArgo_reportStruct;
 
+% first float cycle number to consider
+global g_decArgo_firstCycleNumFloat;
+
 
 % collect cycles and patterns to consider
 cycleList = [];
@@ -76,6 +79,66 @@ end
 cyclePatternList = unique(cyclePatternList, 'rows');
 cycleList = [cycleList; cyclePatternList(:, 1)];
 cycleList = unique(cycleList);
+
+% THE FOLLOWING CODE IS NOT USED: cycle number prediction cannot be done mainly
+% because profile #0 may or may not be a new cycle
+% % predict final cycle numbers (i.e. consider delayed cycles)
+% % 1- create the map of all possible cycles
+% cyclePatternList1 = cyclePatternList;
+% while (any(diff(cyclePatternList1(:, 1)) > 1))
+%    idMis = find(diff(cyclePatternList1(:, 1)) > 1, 1);
+%    startCy = cyclePatternList1(idMis, 1);
+%    stopCy = cyclePatternList1(idMis+1, 1);
+%    maxPattStopCy = max(cyclePatternList1(cyclePatternList1(:, 1) == stopCy, 2));
+%    cyclePatternList02 = nan((stopCy-startCy+1)*maxPattStopCy, 2);
+%    cpt = 1;
+%    for idC = startCy:stopCy
+%       for idP = 0:maxPattStopCy
+%          cyclePatternList02(cpt, 1) = idC;
+%          cyclePatternList02(cpt, 2) = idP;
+%          cpt = cpt + 1;
+%       end
+%    end
+%    cyclePatternList01 = cyclePatternList1(1:idMis, :);
+%    cyclePatternList03 = cyclePatternList1(idMis+1:end, :);
+%    cyclePatternList1 = cat(1, cyclePatternList01, cyclePatternList02);
+%    cyclePatternList1 = cat(1, cyclePatternList1, cyclePatternList03);
+%    cyclePatternListTmp = cyclePatternList1(:, 1)*10 + cyclePatternList1(:, 2);
+%    [~, idSort] = sort(cyclePatternListTmp);
+%    cyclePatternList1 = cyclePatternList1(idSort, :);
+%    cyclePatternList1 = unique(cyclePatternList1, 'rows');
+% end
+% cyclePatternList1 = cat(2, cyclePatternList1, nan(size(cyclePatternList1, 1), 1));
+% % 2- set the final cycle number
+% idFStart = find((cyclePatternList1(:, 1) == g_decArgo_firstCycleNumFloat) & ...
+%    (cyclePatternList1(:, 2) == 0));
+% if (~isempty(idFStart))
+%    cyclePatternList1(idFStart, 3) = 0;
+% else
+%    idFStart = find((cyclePatternList1(:, 1) == g_decArgo_firstCycleNumFloat) & ...
+%       (cyclePatternList1(:, 2) == 1));
+%    cyclePatternList1(idFStart, 3) = 1;
+% end
+% if (~isempty(idFStart))
+%    for idC = idFStart+1:size(cyclePatternList1, 1)
+%       if (cyclePatternList1(idC, 2) == 0)
+%          % if (cyclePatternList1(idC-1, 2) == 0)
+%          %    cyclePatternList1(idC, 3) = cyclePatternList1(idC-1, 3) + 1;
+%          % else
+%          cyclePatternList1(idC, 3) = cyclePatternList1(idC-1, 3);
+%          % end
+%       else
+%          cyclePatternList1(idC, 3) = cyclePatternList1(idC-1, 3) + 1;
+%       end
+%    end
+% end
+% % 3- update the map of received cycles
+% cyclePatternList = cat(2, cyclePatternList, nan(size(cyclePatternList, 1), 1));
+% for idC = 1:size(cyclePatternList, 1)
+%    idF = find((cyclePatternList1(:, 1) == cyclePatternList(idC, 1)) & ...
+%       (cyclePatternList1(:, 2) == cyclePatternList(idC, 2)));
+%    cyclePatternList(idC, 3) = cyclePatternList1(idF, 3);
+% end
 
 o_cycleList = cycleList;
 o_cyclePatternList = cyclePatternList;

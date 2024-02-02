@@ -36,7 +36,7 @@ global g_NTP_NAME_PARAM2;
 % g_NTP_NAME_PARAM1 = 'TURBIDITY';
 % g_NTP_NAME_PARAM1 = 'CHLA';
 % g_NTP_NAME_PARAM1 = 'BPHASE_DOXY';
-g_NTP_NAME_PARAM1 = 'TEMP';
+% g_NTP_NAME_PARAM1 = 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660';
 % g_NTP_NAME_PARAM1 = 'DOWNWELLING_PAR';
 % g_NTP_NAME_PARAM1 = 'FLUORESCENCE_CDOM';
 % g_NTP_NAME_PARAM1 = 'TEMP_DOXY';
@@ -44,19 +44,24 @@ g_NTP_NAME_PARAM1 = 'TEMP';
 % g_NTP_NAME_PARAM1 = 'FREQUENCY_DOXY';
 % g_NTP_NAME_PARAM1 = 'PH_IN_SITU_FREE';
 % g_NTP_NAME_PARAM1 = 'DOXY';
-g_NTP_NAME_PARAM1 = 'CHLA';
+% g_NTP_NAME_PARAM1 = 'CHLA';
+% g_NTP_NAME_PARAM1 = 'BBP700';
+g_NTP_NAME_PARAM1 = 'TEMP';
 
 % g_NTP_NAME_PARAM2 = 'TURBIDITY';
 % g_NTP_NAME_PARAM2 = 'BBP700';
 % g_NTP_NAME_PARAM2 = 'TEMP_DOXY';
-g_NTP_NAME_PARAM2 = 'PSAL';
+% g_NTP_NAME_PARAM2 = 'PSAL';
 % g_NTP_NAME_PARAM2 = 'DOWNWELLING_PAR2';
 % g_NTP_NAME_PARAM2 = 'CDOM';
 % g_NTP_NAME_PARAM2 = 'NITRATE';
 % g_NTP_NAME_PARAM2 = 'DOXY';
 % g_NTP_NAME_PARAM2 = 'PH_IN_SITU_TOTAL';
 % g_NTP_NAME_PARAM2 = 'CHLA';
-g_NTP_NAME_PARAM2 = 'BBP700';
+% g_NTP_NAME_PARAM2 = 'CP660';
+% g_NTP_NAME_PARAM2 = 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660';
+% g_NTP_NAME_PARAM2 = 'BISULFIDE';
+g_NTP_NAME_PARAM2 = 'PSAL';
 
 % top directory of NetCDF files to plot
 g_NTP_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
@@ -64,11 +69,11 @@ g_NTP_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 % g_NTP_NC_DIR = 'E:\202110-ArgoData\coriolis\';
 
 % directory to store pdf output
-g_NTP_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
+g_NTP_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\pdf\';
 
 % default list of floats to plot
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\lists_20221013\list_decId_224.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\lists_20221013\list_decId_224.txt';
 
 % number of cycles to plot
 g_NTP_DEFAULT_NB_CYCLES = 5;

@@ -196,13 +196,13 @@ for idFile = 1:length(ryncLogList)
    if (floatDecId < 1000)
       % NKE floats
       switch (floatDecId)
-         case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115}
+         case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116}
             % CTS4 Iridium RUDICS floats
             floatFiles = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile}, floatLoginName);
          case {121, 122, 123, 124, 125}
             % CTS5-OSEAN Iridium RUDICS floats (rsync to Villefranche global server)
             floatFiles = parse_rsync_log_ir_rudics_cts5(ryncLogList{idFile}, floatLoginName);
-         case {126, 127, 128, 129, 130, 131}
+         case {126, 127, 128, 129, 130, 131, 132, 133}
             % CTS5-USEA Iridium RUDICS floats
             floatFiles = parse_rsync_log_ir_rudics_cts5_usea(ryncLogList{idFile}, floatLoginName);
          otherwise

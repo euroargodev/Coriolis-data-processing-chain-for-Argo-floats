@@ -36,7 +36,8 @@ g_decArgo_inputFloatWmo = [];
 g_decArgo_inputFloatWmoList = [];
 
 % global configuration values
-global g_decArgo_generateNcTraj;
+global g_decArgo_generateNcTraj31;
+global g_decArgo_generateNcTraj32;
 global g_decArgo_generateNcMultiProf;
 global g_decArgo_generateNcMonoProf;
 global g_decArgo_generateNcTech;
@@ -222,7 +223,8 @@ end
 
 % update the NetCDF output file generation flags
 if (g_decArgo_processModeAll == 0)
-   g_decArgo_generateNcTraj = 0;
+   g_decArgo_generateNcTraj31 = 0;
+   g_decArgo_generateNcTraj32 = 0;
    g_decArgo_generateNcMultiProf = 0;
    g_decArgo_generateNcMonoProf = 2;
    g_decArgo_generateNcTech = 0;

@@ -36,7 +36,7 @@ if (a_lon < -180)
    return
 end
 if (a_lon >= 360)
-   fprintf('ERROR: get_gebco_elev_point: input lat >= 360\n');
+   fprintf('ERROR: get_gebco_elev_point: input lon >= 360\n');
    return
 end
 if (a_lat < -90)

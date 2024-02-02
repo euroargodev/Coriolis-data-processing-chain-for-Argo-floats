@@ -62,19 +62,29 @@ else
    % '_%03d_%02d_opus_lgt*.hex'
    % '_%03d_%02d_uvp6_blk*.hex'
    % '_%03d_%02d_uvp6_lpm*.hex'
+   % '_%03d_%02d_uvp6_txo*.hex'
    % '_%03d_%02d_crover*.hex'
    % '_%03d_%02d_sbeph*.hex'
    % '_%03d_%02d_suna*.hex'
    % '_%03d_%02d_ramses*.hex'
+   % '_%03d_%02d_ramses2*.hex'
    % '_%03d_%02d_mpe*.hex'
    % '_%03d_%02d_hydro_c*.hex'
    % '_%03d_%02d_hydro_m*.hex'
+   % '_%03d_%02d_imu*.hex'
+   % '_%03d_%02d_wave*.hex'
 
-   for idType = [1 4 6:20]
+   for idType = [1 4 6:24]
       idFL = find([g_decArgo_fileTypeListCts5{:, 1}] == idType);
       pattern = g_decArgo_fileTypeListCts5{idFL, 5};
       inputFiles = dir([g_decArgo_archiveDirectory '/' a_filePrefix sprintf(pattern, a_cyNum, a_ptnNum)]);
       for iF = 1:length(inputFiles)
+         % 'ramses2' are collected with 'ramses'
+         if (idType == 17)
+            if (any(strfind(inputFiles(iF).name, 'ramses2')))
+               continue
+            end
+         end
          o_receivedFileList{end+1} = inputFiles(iF).name;
       end
    end

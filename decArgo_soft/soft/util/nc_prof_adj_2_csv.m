@@ -21,12 +21,8 @@ function nc_prof_adj_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_test\coriolis\';
 % DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rt\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_DM_REPORT\DIR_INPUT_NEW_NC_FILES\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_DM_REPORT\DIR_INPUT_OLD_NC_FILES\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_DM_REPORT\OUT\';
-% DIR_INPUT_NC_FILES = 'D:\202209-ArgoData\coriolis\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_DM_REPORT\DIR_INPUT_OLD_NC_FILES\';
 
 % default list of floats to convert
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
@@ -195,6 +191,9 @@ function nc_prof_adj_2_csv_file(a_inputPathFileName, a_outputPathFileName, ...
 global g_decArgo_qcStrDef;
 global g_decArgo_qcStrUnused2;
 
+% list of parameters that have an extra dimension (N_VALUESx)
+global g_decArgo_paramWithExtraDimList;
+
 
 % input and output file names
 [inputPath, inputName, inputExt] = fileparts(a_inputPathFileName);
@@ -202,22 +201,6 @@ global g_decArgo_qcStrUnused2;
 inputFileName = [inputName inputExt];
 ourputFileName = [outputName outputExt];
 fprintf('Converting: %s to %s\n', inputFileName, ourputFileName);
-
-% list of parameters that have an extra dimension (N_VALUESx)
-paramWithExtraDimList = [ ...
-   {'UV_INTENSITY_NITRATE'} ...
-   {'UV_INTENSITY_FULL_NITRATE'} ...
-   {'UV_INTENSITY_BINNED_NITRATE'} ...
-   {'NB_SIZE_SPECTRA_PARTICLES'} ...
-   {'GREY_SIZE_SPECTRA_PARTICLES'} ...
-   {'BLACK_NB_SIZE_SPECTRA_PARTICLES'} ...
-   {'RAW_DOWNWELLING_IRRADIANCE'} ...
-   {'RAW_UPWELLING_RADIANCE'} ...
-   {'INDEX_CATEGORY'} ...
-   {'NUMBER_OBJECTS_CATEGORY'} ...
-   {'OBJECT_MEAN_SIZE_CATEGORY'} ...
-   {'OBJECT_MEAN_GREY_LEVEL_CATEGORY'} ...
-   ];
 
 % open NetCDF file
 fCdf = netcdf.open(a_inputPathFileName, 'NC_NOWRITE');
@@ -279,6 +262,7 @@ globAttList = [ ...
    {'user_manual_version'} ...
    {'Conventions'} ...
    {'featureType'} ...
+   {'id'} ...
    ];
 if (a_comparisonFlag == 1)
    globAttList = [ ...
@@ -289,6 +273,7 @@ if (a_comparisonFlag == 1)
       {'user_manual_version'} ...
       {'Conventions'} ...
       {'featureType'} ...
+      {'id'} ...
       ];
 end
 fprintf(fidOut, ' WMO; ----------; ----------; GLOBAL_ATT\n');
@@ -635,7 +620,7 @@ for idP = 1:nProf
       idF = find(strcmp(paramList, paramName) == 1, 1);
       if (~isempty(idF))
          dataTmp = paramData{idF};
-         if (~ismember(parameterName, paramWithExtraDimList))
+         if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
             fprintf(fidOut, '; %s', ...
                paramName);
          else
@@ -661,7 +646,7 @@ for idP = 1:nProf
                idF = find(strcmp(paramList, paramName) == 1, 1);
                if (~isempty(idF))
                   dataTmp = paramData{idF};
-                  if (~ismember(parameterName, paramWithExtraDimList))
+                  if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
                      fprintf(fidOut, '; %s', ...
                         paramName);
                   else
@@ -704,7 +689,7 @@ for idP = 1:nProf
             fprintf(fidOut, '%c; ', ...
                profileParamQcTmp(idP));
             dataTmp = paramData{idF};
-            if (ismember(parameterName, paramWithExtraDimList))
+            if (ismember(parameterName, g_decArgo_paramWithExtraDimList))
                for id1 = 2:size(dataTmp, 1)
                   fprintf(fidOut, '; ');
                end
@@ -747,7 +732,7 @@ for idP = 1:nProf
       idF = find(strcmp(paramList, paramName) == 1, 1);
       if (~isempty(idF))
          dataTmp = paramData{idF};
-         if (~ismember(parameterName, paramWithExtraDimList))
+         if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
             data = [data double(dataTmp(:, idP))];
             dataFillValue = [dataFillValue paramFillValue{idF}];
             format = [format '; ' paramFormat{idF}];
@@ -790,7 +775,7 @@ for idP = 1:nProf
                idF = find(strcmp(paramList, paramName) == 1, 1);
                if (~isempty(idF))
                   dataTmp = paramData{idF};
-                  if (~ismember(parameterName, paramWithExtraDimList))
+                  if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
                      data = [data double(dataTmp(:, idP))];
                      dataFillValue = [dataFillValue paramFillValue{idF}];
                      format = [format '; ' paramFormat{idF}];
@@ -1134,6 +1119,9 @@ function nc_prof_adj_2_csv_file_s(a_inputPathFileName, a_outputPathFileName, ...
 global g_decArgo_qcStrDef;
 global g_decArgo_qcStrUnused2;
 
+% list of parameters that have an extra dimension (N_VALUESx)
+global g_decArgo_paramWithExtraDimList;
+
 
 % input and output file names
 [inputPath, inputName, inputExt] = fileparts(a_inputPathFileName);
@@ -1141,16 +1129,6 @@ global g_decArgo_qcStrUnused2;
 inputFileName = [inputName inputExt];
 ourputFileName = [outputName outputExt];
 fprintf('Converting: %s to %s\n', inputFileName, ourputFileName);
-
-% list of parameters that have an extra dimension (N_VALUESx)
-paramWithExtraDimList = [ ...
-   {'UV_INTENSITY_NITRATE'} ...
-   {'UV_INTENSITY_FULL_NITRATE'} ...
-   {'UV_INTENSITY_BINNED_NITRATE'} ...
-   {'NB_SIZE_SPECTRA_PARTICLES'} ...
-   {'GREY_SIZE_SPECTRA_PARTICLES'} ...
-   {'BLACK_NB_SIZE_SPECTRA_PARTICLES'} ...
-   ];
 
 % open NetCDF file
 fCdf = netcdf.open(a_inputPathFileName, 'NC_NOWRITE');
@@ -1212,6 +1190,7 @@ globAttList = [ ...
    {'user_manual_version'} ...
    {'Conventions'} ...
    {'featureType'} ...
+   {'id'} ...
    ];
 if (a_comparisonFlag == 1)
    globAttList = [ ...
@@ -1221,7 +1200,7 @@ if (a_comparisonFlag == 1)
       {'references'} ...
       {'user_manual_version'} ...
       {'Conventions'} ...
-      {'featureType'} ...
+      {'id'} ...
       ];
 end
 fprintf(fidOut, ' WMO; ----------; ----------; GLOBAL_ATT\n');
@@ -1402,6 +1381,9 @@ for id3 = 1:size(stationParameters, 3)
    for id2 = 1:size(stationParameters, 2)
       paramName = strtrim(stationParameters(:, id2, id3)');
       if (~isempty(paramName))
+         if (~strcmp(paramName, 'PRES'))
+            paramList = [paramList {[paramName '_dPRES']}];
+         end
          paramList = [paramList {paramName}];
          paramInfo = get_netcdf_param_attributes(paramName);
          if (paramInfo.adjAllowed == 1)
@@ -1418,47 +1400,66 @@ paramFormat = [];
 paramFillValue = [];
 profileParamQc = [];
 for idParam = 1:length(paramList)
-   if (var_is_present_dec_argo(fCdf, paramList{idParam}))
-
-      if ((strncmp(paramList{idParam}, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
-            (strncmp(paramList{idParam}, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), 'double');
-      else
+   paramName = paramList{idParam};
+   if ((length(paramName) > 5) && strcmp(paramName(end-5:end), '_dPRES'))
+      if (var_is_present_dec_argo(fCdf, paramList{idParam}))
          varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}));
-      end
-      paramData = [paramData {varValue}];
-      varFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), 'C_format');
-      if ((strncmp(paramList{idParam}, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
-            (strncmp(paramList{idParam}, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
-         varFormat = '%u';
+         paramData = [paramData {varValue}];
+         paramFormat = [paramFormat {'%g'}];
+         varFillValue = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), '_FillValue');
+         paramFillValue = [paramFillValue {varFillValue}];
+         paramDataQc = [paramDataQc {repmat(' ', size(varValue))}];
       else
-         varFormat = '%g';
-      end
-      paramFormat = [paramFormat {varFormat}];
-      varFillValue = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), '_FillValue');
-      paramFillValue = [paramFillValue {varFillValue}];
-
-      varQcValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, [paramList{idParam} '_QC']));
-      paramDataQc = [paramDataQc {varQcValue}];
-   else
-      fprintf('WARNING: Variable %s is missing in file %s\n', ...
-         paramList{idParam}, inputFileName);
-
-      paramData = [paramData ''];
-      paramFormat = [paramFormat ''];
-      paramFillValue = [paramFillValue ''];
-      paramDataQc = [paramDataQc ''];
-   end
-   profileParamVarName = ['PROFILE_' paramList{idParam} '_QC'];
-   if (var_is_present_dec_argo(fCdf, profileParamVarName))
-      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, profileParamVarName));
-      profileParamQc = [profileParamQc {varValue}];
-   else
-      if (isempty(strfind(paramList{idParam}, '_ADJUSTED')))
-         fprintf('WARNING: Variable %s is missing in file %s\n', ...
-            profileParamVarName, inputFileName);
+         paramData = [paramData {''}];
+         paramFormat = [paramFormat {''}];
+         paramFillValue = [paramFillValue {''}];
+         paramDataQc = [paramDataQc {''}];
       end
       profileParamQc = [profileParamQc {''}];
+   else
+      if (var_is_present_dec_argo(fCdf, paramList{idParam}))
+
+         if ((strncmp(paramList{idParam}, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
+               (strncmp(paramList{idParam}, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
+            varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), 'double');
+         else
+            varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}));
+         end
+         paramData = [paramData {varValue}];
+         varFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), 'C_format');
+         if ((strncmp(paramList{idParam}, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
+               (strncmp(paramList{idParam}, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
+            varFormat = '%u';
+         else
+            varFormat = '%g';
+         end
+         paramFormat = [paramFormat {varFormat}];
+         varFillValue = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), '_FillValue');
+         paramFillValue = [paramFillValue {varFillValue}];
+
+         varQcValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, [paramList{idParam} '_QC']));
+         paramDataQc = [paramDataQc {varQcValue}];
+      else
+         fprintf('WARNING: Variable %s is missing in file %s\n', ...
+            paramList{idParam}, inputFileName);
+
+         paramData = [paramData {''}];
+         paramFormat = [paramFormat {''}];
+         paramFillValue = [paramFillValue {''}];
+         paramDataQc = [paramDataQc {''}];
+         profileParamQc = [profileParamQc {''}];
+      end
+      profileParamVarName = ['PROFILE_' paramList{idParam} '_QC'];
+      if (var_is_present_dec_argo(fCdf, profileParamVarName))
+         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, profileParamVarName));
+         profileParamQc = [profileParamQc {varValue}];
+      else
+         if (isempty(strfind(paramList{idParam}, '_ADJUSTED')))
+            fprintf('WARNING: Variable %s is missing in file %s\n', ...
+               profileParamVarName, inputFileName);
+         end
+         profileParamQc = [profileParamQc {''}];
+      end
    end
 end
 
@@ -1514,7 +1515,7 @@ for idP = 1:nProf
       idF = find(strcmp(paramList, paramName) == 1, 1);
       if (~isempty(idF))
          dataTmp = paramData{idF};
-         if (~ismember(parameterName, paramWithExtraDimList))
+         if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
             fprintf(fidOut, '; %s', ...
                paramName);
          else
@@ -1529,27 +1530,43 @@ for idP = 1:nProf
             paramName, inputFileName);
       end
 
+      % PARAM_dPRES
+      if (~strcmp(paramName, 'PRES'))
+         paramName = [paramName '_dPRES'];
+         idF = find(strcmp(paramList, paramName) == 1, 1);
+         if (~isempty(idF))
+            fprintf(fidOut, '; %s', ...
+               paramName);
+            fprintf(fidOut, '; QC');
+         else
+            fprintf('ERROR: Variable %s is missing in file %s\n', ...
+               paramName, inputFileName);
+         end
+      end
+
       % PARAM_ADJUSTED
-      paramInfo = get_netcdf_param_attributes(paramName);
-      if (~isempty(paramInfo))
-         if (paramInfo.adjAllowed == 1)
-            paramName = [paramName '_ADJUSTED'];
-            idF = find(strcmp(paramList, paramName) == 1, 1);
-            if (~isempty(idF))
-               dataTmp = paramData{idF};
-               if (~ismember(parameterName, paramWithExtraDimList))
-                  fprintf(fidOut, '; %s', ...
-                     paramName);
-               else
-                  for id1 = 1:size(dataTmp, 1)
+      if ~((length(paramName) > 5) && strcmp(paramName(end-5:end), '_dPRES'))
+         paramInfo = get_netcdf_param_attributes(paramName);
+         if (~isempty(paramInfo))
+            if (paramInfo.adjAllowed == 1)
+               paramName = [paramName '_ADJUSTED'];
+               idF = find(strcmp(paramList, paramName) == 1, 1);
+               if (~isempty(idF))
+                  dataTmp = paramData{idF};
+                  if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
                      fprintf(fidOut, '; %s', ...
-                        sprintf('%s_%d', paramName, id1));
+                        paramName);
+                  else
+                     for id1 = 1:size(dataTmp, 1)
+                        fprintf(fidOut, '; %s', ...
+                           sprintf('%s_%d', paramName, id1));
+                     end
                   end
+                  fprintf(fidOut, '; QC');
+               else
+                  fprintf('ERROR: Variable %s is missing in file %s\n', ...
+                     paramName, inputFileName);
                end
-               fprintf(fidOut, '; QC');
-            else
-               fprintf('ERROR: Variable %s is missing in file %s\n', ...
-                  paramName, inputFileName);
             end
          end
       end
@@ -1574,7 +1591,7 @@ for idP = 1:nProf
             fprintf(fidOut, '%c; ', ...
                profileParamQcTmp(idP));
             dataTmp = paramData{idF};
-            if (ismember(parameterName, paramWithExtraDimList))
+            if (ismember(parameterName, g_decArgo_paramWithExtraDimList))
                for id1 = 2:size(dataTmp, 1)
                   fprintf(fidOut, '; ');
                end
@@ -1588,11 +1605,25 @@ for idP = 1:nProf
             paramName, inputFileName);
       end
 
-      % PARAM_ADJUSTED
-      paramInfo = get_netcdf_param_attributes(paramName);
-      if (~isempty(paramInfo))
-         if (paramInfo.adjAllowed == 1)
+      % PARAM_dPRES
+      if (~strcmp(paramName, 'PRES'))
+         paramName = [paramName '_dPRES'];
+         idF = find(strcmp(paramList, paramName) == 1, 1);
+         if (~isempty(idF))
             fprintf(fidOut, '; ; ');
+         else
+            fprintf('ERROR: Variable %s is missing in file %s\n', ...
+               paramName, inputFileName);
+         end
+      end
+
+      % PARAM_ADJUSTED
+      if ~((length(paramName) > 5) && strcmp(paramName(end-5:end), '_dPRES'))
+         paramInfo = get_netcdf_param_attributes(paramName);
+         if (~isempty(paramInfo))
+            if (paramInfo.adjAllowed == 1)
+               fprintf(fidOut, '; ; ');
+            end
          end
       end
    end
@@ -1614,7 +1645,7 @@ for idP = 1:nProf
       idF = find(strcmp(paramList, paramName) == 1, 1);
       if (~isempty(idF))
          dataTmp = paramData{idF};
-         if (~ismember(parameterName, paramWithExtraDimList))
+         if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
             data = [data double(dataTmp(:, idP))];
             dataFillValue = [dataFillValue paramFillValue{idF}];
             format = [format '; ' paramFormat{idF}];
@@ -1648,46 +1679,73 @@ for idP = 1:nProf
             paramName, inputFileName);
       end
 
+      % PARAM_dPRES
+      if (~strcmp(paramName, 'PRES'))
+         paramName = [paramName '_dPRES'];
+         idF = find(strcmp(paramList, paramName) == 1, 1);
+         if (~isempty(idF))
+            dataTmp = paramData{idF};
+            data = [data double(dataTmp(:, idP))];
+            dataFillValue = [dataFillValue paramFillValue{idF}];
+            format = [format '; ' paramFormat{idF}];
+            dataQcTmp = paramDataQc{idF};
+            if (~isempty(dataQcTmp))
+               dataQcTmp = dataQcTmp(:, idP);
+               dataQcTmp(find(dataQcTmp == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
+               dataQcTmp = str2num(dataQcTmp);
+               dataQcTmp(find(dataQcTmp == str2num(g_decArgo_qcStrUnused2))) = -1;
+               data = [data double(dataQcTmp)];
+               dataFillValue = [dataFillValue -1];
+               format = [format '; ' '%d'];
+            end
+         else
+            fprintf('ERROR: Variable %s is missing in file %s\n', ...
+               paramName, inputFileName);
+         end
+      end
+
       % PARAM_ADJUSTED
-      paramInfo = get_netcdf_param_attributes(paramName);
-      if (~isempty(paramInfo))
-         if (paramInfo.adjAllowed == 1)
-            paramName = [paramName '_ADJUSTED'];
-            idF = find(strcmp(paramList, paramName) == 1, 1);
-            if (~isempty(idF))
-               dataTmp = paramData{idF};
-               if (~ismember(parameterName, paramWithExtraDimList))
-                  data = [data double(dataTmp(:, idP))];
-                  dataFillValue = [dataFillValue paramFillValue{idF}];
-                  format = [format '; ' paramFormat{idF}];
-               else
-                  if (ndims(dataTmp) == 2) % when N_PROF = 1
-                     for id1 = 1:size(dataTmp, 1)
-                        data = [data double(dataTmp(id1, :)')];
-                        dataFillValue = [dataFillValue paramFillValue{idF}];
-                        format = [format '; ' paramFormat{idF}];
-                     end
+      if ~((length(paramName) > 5) && strcmp(paramName(end-5:end), '_dPRES'))
+         paramInfo = get_netcdf_param_attributes(paramName);
+         if (~isempty(paramInfo))
+            if (paramInfo.adjAllowed == 1)
+               paramName = [paramName '_ADJUSTED'];
+               idF = find(strcmp(paramList, paramName) == 1, 1);
+               if (~isempty(idF))
+                  dataTmp = paramData{idF};
+                  if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
+                     data = [data double(dataTmp(:, idP))];
+                     dataFillValue = [dataFillValue paramFillValue{idF}];
+                     format = [format '; ' paramFormat{idF}];
                   else
-                     for id1 = 1:size(dataTmp, 1)
-                        data = [data double(dataTmp(id1, :, idP)')];
-                        dataFillValue = [dataFillValue paramFillValue{idF}];
-                        format = [format '; ' paramFormat{idF}];
+                     if (ndims(dataTmp) == 2) % when N_PROF = 1
+                        for id1 = 1:size(dataTmp, 1)
+                           data = [data double(dataTmp(id1, :)')];
+                           dataFillValue = [dataFillValue paramFillValue{idF}];
+                           format = [format '; ' paramFormat{idF}];
+                        end
+                     else
+                        for id1 = 1:size(dataTmp, 1)
+                           data = [data double(dataTmp(id1, :, idP)')];
+                           dataFillValue = [dataFillValue paramFillValue{idF}];
+                           format = [format '; ' paramFormat{idF}];
+                        end
                      end
                   end
+                  dataQcTmp = paramDataQc{idF};
+                  if (~isempty(dataQcTmp))
+                     dataQcTmp = dataQcTmp(:, idP);
+                     dataQcTmp(find(dataQcTmp == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
+                     dataQcTmp = str2num(dataQcTmp);
+                     dataQcTmp(find(dataQcTmp == str2num(g_decArgo_qcStrUnused2))) = -1;
+                     data = [data double(dataQcTmp)];
+                     dataFillValue = [dataFillValue -1];
+                     format = [format '; ' '%d'];
+                  end
+               else
+                  fprintf('ERROR: Variable %s is missing in file %s\n', ...
+                     paramName, inputFileName);
                end
-               dataQcTmp = paramDataQc{idF};
-               if (~isempty(dataQcTmp))
-                  dataQcTmp = dataQcTmp(:, idP);
-                  dataQcTmp(find(dataQcTmp == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
-                  dataQcTmp = str2num(dataQcTmp);
-                  dataQcTmp(find(dataQcTmp == str2num(g_decArgo_qcStrUnused2))) = -1;
-                  data = [data double(dataQcTmp)];
-                  dataFillValue = [dataFillValue -1];
-                  format = [format '; ' '%d'];
-               end
-            else
-               fprintf('ERROR: Variable %s is missing in file %s\n', ...
-                  paramName, inputFileName);
             end
          end
       end

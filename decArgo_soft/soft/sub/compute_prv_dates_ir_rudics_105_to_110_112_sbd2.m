@@ -87,7 +87,11 @@ for idP = 1:size(a_tabTech, 1)
    
    cycleNum = a_tabTech(idP, 4);
    profileNum = a_tabTech(idP, 5);
-   
+
+   % if ((cycleNum == 465) || (cycleNum == 466))
+   %    a=1
+   % end
+
    % set the current reference day for this cycle and prof number
    refDay = a_refDay;
    if (~isempty(g_decArgo_julD2FloatDayOffset))
@@ -190,48 +194,59 @@ for idP = 1:size(a_tabTech, 1)
             descentToProfStartDate = refDay + a_tabTech(idP, 34) + a_tabTech(idP, 35)/1440;
             descentToProfStartDate = gregorian_2_julian_dec_argo(julian_2_gregorian_dec_argo(descentToProfStartDate)); % needed for comparison
             
-            if (minParkDriftDate > descentToProfStartDate)
-               offset2 = 1;
-               while (maxParkDriftDate > descentToProfStartDate)
-                  descentToProfStartDate = descentToProfStartDate + offset2;
-                  offset2 = offset2 + 1;
-               end
-               offset2 = offset2 - 1;
-            elseif (maxParkDriftDate < descentToParkEndDate)
-               offset2 = -1;
-               while (minParkDriftDate < descentToParkEndDate)
-                  descentToParkEndDate = descentToParkEndDate + offset2;
+
+            % specific
+            if ~((g_decArgo_floatNum == 6902902) && (cycleNum >= 466))
+               if (minParkDriftDate > descentToProfStartDate)
+                  offset2 = 1;
+                  while (maxParkDriftDate > descentToProfStartDate)
+                     descentToProfStartDate = descentToProfStartDate + offset2;
+                     offset2 = offset2 + 1;
+                  end
                   offset2 = offset2 - 1;
+               elseif (maxParkDriftDate < descentToParkEndDate)
+                  offset2 = -1;
+                  while (minParkDriftDate < descentToParkEndDate)
+                     descentToParkEndDate = descentToParkEndDate + offset2;
+                     offset2 = offset2 - 1;
+                  end
+                  offset2 = offset2 + 1;
+               else
+                  offset2 = 0;
                end
-               offset2 = offset2 + 1;
             else
                offset2 = 0;
             end
          end
          if (~isempty(minAscProfDate))
-            
+
             % determination of ascent start date
             ascentStartDate = refDay + a_tabTech(idP, 47) + a_tabTech(idP, 48)/1440;
             ascentStartDate = gregorian_2_julian_dec_argo(julian_2_gregorian_dec_argo(ascentStartDate)); % needed for comparison
-            
+
             % determination of ascent end date
             ascentEndDate = refDay + a_tabTech(idP, 49) + (a_tabTech(idP, 50)-10)/1440;
             ascentEndDate = gregorian_2_julian_dec_argo(julian_2_gregorian_dec_argo(ascentEndDate)); % needed for comparison
-            
-            if (minAscProfDate > ascentEndDate)
-               offset3 = 1;
-               while (minAscProfDate > ascentEndDate)
-                  ascentEndDate = ascentEndDate + offset3;
-                  offset3 = offset3 + 1;
-               end
-               offset3 = offset3 - 1;
-            elseif (maxAscProfDate < ascentStartDate)
-               offset3 = -1;
-               while (minAscProfDate < ascentStartDate)
-                  ascentStartDate = ascentStartDate + offset3;
+
+            % specific
+            if ~((g_decArgo_floatNum == 6902902) && (cycleNum >= 466))
+               if (minAscProfDate > ascentEndDate)
+                  offset3 = 1;
+                  while (minAscProfDate > ascentEndDate)
+                     ascentEndDate = ascentEndDate + offset3;
+                     offset3 = offset3 + 1;
+                  end
                   offset3 = offset3 - 1;
+               elseif (maxAscProfDate < ascentStartDate)
+                  offset3 = -1;
+                  while (minAscProfDate < ascentStartDate)
+                     ascentStartDate = ascentStartDate + offset3;
+                     offset3 = offset3 - 1;
+                  end
+                  offset3 = offset3 + 1;
+               else
+                  offset3 = 0;
                end
-               offset3 = offset3 + 1;
             else
                offset3 = 0;
             end

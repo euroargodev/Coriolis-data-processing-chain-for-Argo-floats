@@ -42,7 +42,7 @@ metaStructNames = fieldnames(metaStruct);
 for idBSN = 1:length(metaStructNames)
    fprintf(fidOut, '   "%s" : ', char(metaStructNames(idBSN)));
    fieldVal = metaStruct.(metaStructNames{idBSN});
-   if (strcmp(metaStructNames{idBSN}, 'CALIBRATION_COEFFICIENT') == 1)
+   if (strcmp(metaStructNames{idBSN}, 'CALIBRATION_COEFFICIENT'))
       if (isempty(fieldVal) || (isa(fieldVal, 'struct')))
          fprintf(fidOut, '[ \n');
          if (~isempty(fieldVal))
@@ -77,7 +77,7 @@ for idBSN = 1:length(metaStructNames)
             fprintf(fidOut, '   ]\n');
          end
       end
-   elseif (strcmp(metaStructNames{idBSN}, 'RT_OFFSET') == 1)
+   elseif (strcmp(metaStructNames{idBSN}, 'RT_OFFSET'))
       if (isempty(fieldVal) || (isa(fieldVal, 'struct')))
          fprintf(fidOut, '[ \n');
          if (~isempty(fieldVal))
@@ -111,6 +111,58 @@ for idBSN = 1:length(metaStructNames)
          else
             fprintf(fidOut, '   ]\n');
          end
+      end
+   elseif (strcmp(metaStructNames{idBSN}, 'META_AUX_UVP_CONFIG'))
+      fprintf(fidOut, '[\n');
+      fprintf(fidOut, '      {\n');
+      fieldNames = fields(metaStruct.(metaStructNames{idBSN}));
+      for idF = 1:length(fieldNames)
+         if (isfield(metaStruct.(metaStructNames{idBSN}).(fieldNames{idF}), 'frame'))
+            fprintf(fidOut, '      "%s" : "%s"', ...
+               upper(fieldNames{idF}), metaStruct.(metaStructNames{idBSN}).(fieldNames{idF}).frame);
+         else
+            fprintf(fidOut, '      "%s" : "%s"', ...
+               upper(fieldNames{idF}), metaStruct.(metaStructNames{idBSN}).(fieldNames{idF}));
+         end
+         if (idF < length(fieldNames))
+            fprintf(fidOut, ',\n');
+         else
+            fprintf(fidOut, '\n');
+         end
+      end
+      fprintf(fidOut, '      }\n');
+      if (idBSN < length(metaStructNames))
+         fprintf(fidOut, '   ],\n');
+      else
+         fprintf(fidOut, '   ]\n');
+      end
+   elseif (strcmp(metaStructNames{idBSN}, 'TAXO_CATEGORY_ID') || ...
+         strcmp(metaStructNames{idBSN}, 'TAXO_CATEGORY_NAME'))
+      fprintf(fidOut, '[ \n');
+      fprintf(fidOut, '      {\n');
+      for idDim = 1:size(fieldVal, 2)
+         if (strcmp(metaStructNames{idBSN}, 'TAXO_CATEGORY_ID'))
+            fprintf(fidOut, '      "%s_%d" : %d', ...
+               char(metaStructNames(idBSN)), ...
+               idDim, ...
+               fieldVal{idDim});
+         elseif (strcmp(metaStructNames{idBSN}, 'TAXO_CATEGORY_NAME'))
+            fprintf(fidOut, '      "%s_%d" : "%s"', ...
+               char(metaStructNames(idBSN)), ...
+               idDim, ...
+               fieldVal{idDim});
+         end
+         if (idDim < size(fieldVal, 2))
+            fprintf(fidOut, ',\n');
+         else
+            fprintf(fidOut, '\n');
+         end
+      end
+      fprintf(fidOut, '      }\n');
+      if (idBSN < length(metaStructNames))
+         fprintf(fidOut, '   ],\n');
+      else
+         fprintf(fidOut, '   ]\n');
       end
    else
       if (isa(fieldVal, 'char'))

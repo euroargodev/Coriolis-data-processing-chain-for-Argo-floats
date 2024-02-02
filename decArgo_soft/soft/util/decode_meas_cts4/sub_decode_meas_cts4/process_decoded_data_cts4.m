@@ -191,7 +191,7 @@ if (ismember('SUNA', g_decArgo_sensorMountedOnFloat))
 end
 
 % store GPS data
-store_gps_data_ir_rudics_111_113_114_115(tabTech);
+store_gps_data_ir_rudics_111_113_to_116(tabTech);
 
 if (~isempty(cyProfPhaseList) && any(cyProfPhaseList(:, 1) == 0))
    
@@ -202,7 +202,7 @@ if (~isempty(cyProfPhaseList) && any(cyProfPhaseList(:, 1) == 0))
    ascentEndDate = '';
    
    % process profile data for PROF NetCDF file
-   [tabProfiles, tabDrift] = process_profiles_ir_rudics_cts4_111_113_114_115( ...
+   [tabProfiles, tabDrift] = process_profiles_ir_rudics_cts4_111_113_to_116( ...
       a_decoderId, ...
       cyProfPhaseList, ...
       dataCTD, dataOXY, dataOCR, ...

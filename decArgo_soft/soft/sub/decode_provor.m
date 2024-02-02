@@ -57,7 +57,7 @@ global g_decArgo_reportStruct;
 global g_decArgo_floatInformationFileName;
 global g_decArgo_dirInputJsonTechLabelFile;
 global g_decArgo_dirInputJsonConfLabelFile;
-global g_decArgo_generateNcTraj;
+global g_decArgo_generateNcTraj31;
 global g_decArgo_generateNcTraj32;
 global g_decArgo_generateNcMultiProf;
 global g_decArgo_generateNcMonoProf;
@@ -127,6 +127,9 @@ global g_decArgo_dirInputJsonFloatMetaDataFile;
 % json meta-data
 global g_decArgo_jsonMetaData;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 
 % get floats information
 if ((g_decArgo_realtimeFlag == 0) && (g_decArgo_delayedModeFlag == 0))
@@ -171,6 +174,8 @@ for idFloat = 1:nbFloats
    g_decArgo_addParamListRadiometry = [];
    g_decArgo_addParamListCp = [];
    g_decArgo_addParamListTurbidity = [];
+
+   g_decArgo_sensorMountedOnFloat = [];
 
    floatNum = a_floatList(idFloat);
    g_decArgo_floatNum = floatNum;
@@ -393,8 +398,23 @@ for idFloat = 1:nbFloats
          g_decArgo_gpsData{13} = 0;
       end
       
-      if (ismember(floatDecId, [212, 222, 214, 216, 217, 218, 221, 223, 224, 225]))
+      if (ismember(floatDecId, [212, 222, 214, 216, 217, 218, 221, 223, 224, 225, 226]))
+
          % ICE floats
+
+         % since version 5.67 Arvor Deep are supposed to be in the
+         % float_sensor_list
+         if (ismember(floatDecId, [221]))
+            % store the sensor list
+            if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT') && ~isempty(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT))
+               jSensorNames = struct2cell(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT);
+               g_decArgo_sensorMountedOnFloat = jSensorNames';
+            else
+               fprintf('ERROR: Float #%d: No information on sensor mounted on the float - check float_sensor_list\n', ...
+                  g_decArgo_floatNum);
+            end
+         end
+
          [tabProfiles, ...
             tabTrajNMeas, tabTrajNCycle, ...
             tabNcTechIndex, tabNcTechVal, tabTechAuxNMeas, ...
@@ -402,7 +422,9 @@ for idFloat = 1:nbFloats
             floatNum, floatCycleList, ...
             floatDecId, str2num(floatArgosId), ...
             floatLaunchDate, floatRefDay, floatEndDate);
+
       elseif (ismember(floatDecId, [219, 220]))
+
          % Arvor-C floats
          % specific code because, even if they are not ice floats we must
          % decode them in delayed mode to efficiently process EOL data (Ex
@@ -414,7 +436,9 @@ for idFloat = 1:nbFloats
             floatNum, floatCycleList, ...
             floatDecId, str2num(floatArgosId), ...
             floatLaunchDate, floatEndDate);
+
       else
+         
          [tabProfiles, ...
             tabTrajNMeas, tabTrajNCycle, ...
             tabNcTechIndex, tabNcTechVal, tabTechAuxNMeas, ...
@@ -492,7 +516,7 @@ for idFloat = 1:nbFloats
       end
       
       % NetCDF TRAJ file
-      if (((g_decArgo_generateNcTraj ~= 0) || (g_decArgo_generateNcTraj32 ~= 0)) && ~isempty(tabTrajNMeas))
+      if (((g_decArgo_generateNcTraj31 ~= 0) || (g_decArgo_generateNcTraj32 ~= 0)) && ~isempty(tabTrajNMeas))
          create_nc_traj_file(floatDecId, ...
             tabTrajNMeas, tabTrajNCycle, additionalMetaData);
       end

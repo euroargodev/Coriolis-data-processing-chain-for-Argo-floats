@@ -376,7 +376,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabTrajNMeas, o_tabTrajNCycle, a_decoderId);
    
    % add interpolated/extrapolated profile locations
-   [o_tabProfiles] = fill_empty_profile_locations_ir_rudics(o_tabProfiles, g_decArgo_gpsData, ...
+   [o_tabProfiles] = fill_empty_profile_locations_cts4_ir_rudics(o_tabProfiles, g_decArgo_gpsData, ...
       o_tabTrajNMeas, o_tabTrajNCycle);
    
    % add MTIME in profiles

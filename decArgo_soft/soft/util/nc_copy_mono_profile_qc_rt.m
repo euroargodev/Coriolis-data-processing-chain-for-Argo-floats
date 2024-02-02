@@ -1,6 +1,20 @@
 % ------------------------------------------------------------------------------
-% Create a new set of NetCDF mono-profile files by adding Qc flags (provided in
-% NetCDF unique-profile (N_PROF = 1) files).
+% Report SCOOP QC from a Qc file (DIR_INPUT_QC_NC_FILES) to associated C-PROF
+% and/or B-PROF files.
+%
+% 1- Reported SCOOP QC are retrieved from HISTORY section of Qc file under the
+% constrains HISTORY_SOFTWARE = 'SCOO' and HISTORY_ACTION = 'CF', then
+% HISTORY_PARAMETER =
+% - <PARAM> => update <PARAM>_QC (<PARAM> can be adjusted parameter name)
+% - 'DAT$'  => update JULD_QC
+% - 'POS$'  => update POSITION_QC
+%
+% 2- Input files to update are first searched in DIR_OUTPUT_NC_FILES, then in
+% DIR_INPUT_NC_FILES
+%
+% 3- When QC updates modify at least one QC of the target file, it is updated.
+% The SCOOP QC entries of the HISTORY section of the Qc file are then duplicated
+% in the associated C-PROF and/or B-PROF files (depending on HISTORY_PARAMETER).
 %
 % SYNTAX :
 %   nc_copy_mono_profile_qc_rt(varargin)
@@ -14,7 +28,7 @@
 %      floatWmo       : float to process (if not given: all the floats of the Qc
 %                       directory are processed)
 %      inputQcDir     : directory of input NetCDF files containing the Qc values
-%      inputDir     : directory of input NetCDF files to be updated
+%      inputDir       : directory of input NetCDF files to be updated
 %      outputDir      : directory of output NetCDF updated files
 %      logDir         : directory to store the log file
 %
@@ -80,8 +94,38 @@
 %                             (which should not exceed a 1.e-5 interval).
 %   07/01/2021 - RNU - V 3.4: Before comparison, PRES data are rounded to 1.e-3
 %                             and other parameters to 1.e-5.
+%   09/25/2023 - RNU - V 3.5: Only QC SCOOP flags should be reported.
+%   10/17/2023 - RNU - V 3.6: When one HISTORY_START/STOP_PRES matches more than
+%                             one level of the profile, we consider it only if:
+%                             1- the immersion levels are contiguous 2- the
+%                             parameter values of these levels are the same.
 % ------------------------------------------------------------------------------
 function nc_copy_mono_profile_qc_rt(varargin)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CONFIGURATION - START
+
+% top directory of input NetCDF files containing the Qc values
+DIR_INPUT_QC_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_NC_COPY_MONO_PROFILE_QC\TEST_20230927\dbqc\';
+
+% top directory of input NetCDF files to be updated (executive DAC, thus top
+% directory of the DAC name directories)
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_NC_COPY_MONO_PROFILE_QC\TEST_20230927\edac\';
+
+% top directory of output NetCDF updated files
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_NC_COPY_MONO_PROFILE_QC\TEST_20230927\out\';
+
+% directory to store the log file
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log';
+
+% directory to store the xml report
+DIR_XML_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\xml\';
+
+% flag to print QC updated values
+VERBOSE_MODE = 0;
+
+% CONFIGURATION - END
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 global g_cocq_dirOutputXmlFile;
 global g_cocq_xmlReportFileName;
@@ -97,7 +141,7 @@ g_cocq_realtimeFlag = 1;
 
 % program version
 global g_cocq_ncCopyMonoProfileQcVersion;
-g_cocq_ncCopyMonoProfileQcVersion = '3.4';
+g_cocq_ncCopyMonoProfileQcVersion = '3.6';
 
 % DOM node of XML report
 global g_cocq_xmlReportDOMNode;
@@ -106,29 +150,9 @@ global g_cocq_xmlReportDOMNode;
 global g_cocq_reportData;
 g_cocq_reportData = [];
 
-% list of HISTORY_SOFTWARE that should be reported from the QC file to the
-% output file
-global g_cocq_historySoftwareToReport;
-g_cocq_historySoftwareToReport = [ ...
-   {'COOA'} ...
-   {'SCOO'} ...
-   ];
-
-% top directory of input NetCDF files containing the Qc values
-DIR_INPUT_QC_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20210630\dbqc\';
-
-% top directory of input NetCDF files to be updated (executive DAC, thus top
-% directory of the DAC name directories)
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20210630\edac\';
-
-% top directory of output NetCDF updated files
-DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\TEST_20210630\out\';
-
-% directory to store the log file
-DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log';
-
-% directory to store the xml report
-DIR_XML_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\xml\';
+% verbose mode flag
+global g_cocq_verboseMode;
+g_cocq_verboseMode = VERBOSE_MODE;
 
 % default values initialization
 init_default_values;

@@ -47,6 +47,7 @@ end
 % compute derived parameters for some sensors
 if (~isempty(profInfo))
    
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % compute OPTODE derived parameters
    idSensor1 = find((profInfo(:, 2) == 1) & (profInfo(:, 3) == 0));
    for idP = 1:length(idSensor1)
@@ -80,14 +81,23 @@ if (~isempty(profInfo))
          profOptode, profCtd, a_decoderId);
    end
    
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % compute OCR derived parameters
    idSensor2 = find((profInfo(:, 2) == 2) & (profInfo(:, 3) == 0));
    for idP = 1:length(idSensor2)
       a_tabProfiles(profInfo(idSensor2(idP), 1)) = compute_profile_derived_parameters_for_OCR(a_tabProfiles(profInfo(idSensor2(idP), 1)));
    end
-   
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % compute CROVER derived parameters
+   idSensor5 = find((profInfo(:, 2) == 5) & (profInfo(:, 3) == 0));
+   for idP = 1:length(idSensor5)
+      a_tabProfiles(profInfo(idSensor5(idP), 1)) = compute_profile_derived_parameters_for_CROVER(a_tabProfiles(profInfo(idSensor5(idP), 1)));
+   end
+
    if (ismember('ECO2', g_decArgo_sensorMountedOnFloat))
-      
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % compute ECO2 derived parameters
       idSensor3 = find((profInfo(:, 2) == 3) & (profInfo(:, 3) == 0));
       for idP = 1:length(idSensor3)
@@ -122,7 +132,8 @@ if (~isempty(profInfo))
       end
       
    elseif (ismember('ECO3', g_decArgo_sensorMountedOnFloat))
-      
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % compute ECO3 derived parameters
       % V1 START
       %       idSensor3 = find((profInfo(:, 2) == 3) & (profInfo(:, 3) == 0));
@@ -130,9 +141,9 @@ if (~isempty(profInfo))
       %          a_tabProfiles(profInfo(idSensor3(idP), 1)) = compute_profile_derived_parameters_for_ECO3_V1(a_tabProfiles(profInfo(idSensor3(idP), 1)));
       %       end
       % V1 END
-      idSensor3 = find((profInfo(:, 2) == 3) & (profInfo(:, 3) == 0));
-      for idP = 1:length(idSensor3)
-         profEco3 = a_tabProfiles(profInfo(idSensor3(idP), 1));
+      idSensor3or104 = find(((profInfo(:, 2) == 3) | (profInfo(:, 2) == 104)) & (profInfo(:, 3) == 0));
+      for idP = 1:length(idSensor3or104)
+         profEco3 = a_tabProfiles(profInfo(idSensor3or104(idP), 1));
          
          % look for the associated CTD profile
          profCtd = [];
@@ -158,11 +169,12 @@ if (~isempty(profInfo))
                   profEco3.direction);
             end
          end
-         a_tabProfiles(profInfo(idSensor3(idP), 1)) = compute_profile_derived_parameters_for_ECO3( ...
+         a_tabProfiles(profInfo(idSensor3or104(idP), 1)) = compute_profile_derived_parameters_for_ECO3( ...
             profEco3, profCtd);
       end
    end
-   
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % compute SUNA derived parameters
    idSensor6 = find((profInfo(:, 2) == 6) & (profInfo(:, 3) == 0));
    for idP = 1:length(idSensor6)
@@ -267,7 +279,8 @@ if (~isempty(profInfo))
       a_tabProfiles(profInfo(idSensor6(idP), 1)) = compute_profile_derived_parameters_for_SUNA( ...
          profSuna, profCtd, a_decoderId);
    end
-   
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % compute TRANSISTOR_PH derived parameters
    idSensorPh = [];
    if (a_decoderId <= 120)
@@ -310,7 +323,17 @@ if (~isempty(profInfo))
          compute_profile_derived_parameters_for_TRANSISTOR_PH( ...
          profTransPh, profCtd);
    end
+   
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % compute UVP derived parameters
+   if (a_decoderId ~= 124)
+      idSensor107 = find((profInfo(:, 2) == 107) & (profInfo(:, 3) == 0));
+      for idP = 1:length(idSensor107)
+         a_tabProfiles(profInfo(idSensor107(idP), 1)) = compute_profile_derived_parameters_for_UVP(a_tabProfiles(profInfo(idSensor107(idP), 1)), a_decoderId);
+      end
+   end
 
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % compute MPE derived parameters
    idSensor110 = find((profInfo(:, 2) == 110) & (profInfo(:, 3) == 0));
    for idP = 1:length(idSensor110)
@@ -369,7 +392,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_112_121_to_131( ...
+      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_112_121_to_133( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -392,7 +415,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_profOcr.data(:, derivedParamId) = downIrr380;
       downIrr380Qc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
-      downIrr380Qc(find(downIrr380 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      downIrr380Qc(downIrr380 ~= derivedParam.fillValue) = g_decArgo_qcNoQc;
       a_profOcr.dataQc(:, derivedParamId) = downIrr380Qc;
    end
 end
@@ -410,7 +433,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_112_121_to_131( ...
+      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_112_121_to_132( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -433,7 +456,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_profOcr.data(:, derivedParamId) = downIrr412;
       downIrr412Qc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
-      downIrr412Qc(find(downIrr412 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      downIrr412Qc(downIrr412 ~= derivedParam.fillValue) = g_decArgo_qcNoQc;
       a_profOcr.dataQc(:, derivedParamId) = downIrr412Qc;
    end
 end
@@ -451,7 +474,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr443 = compute_DOWN_IRRADIANCE443_130( ...
+      downIrr443 = compute_DOWN_IRRADIANCE443_130_133( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -474,7 +497,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_profOcr.data(:, derivedParamId) = downIrr443;
       downIrr443Qc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
-      downIrr443Qc(find(downIrr443 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      downIrr443Qc(downIrr443 ~= derivedParam.fillValue) = g_decArgo_qcNoQc;
       a_profOcr.dataQc(:, derivedParamId) = downIrr443Qc;
    end
 end
@@ -492,7 +515,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_112_121_to_131( ...
+      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_112_121_to_133( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -515,8 +538,49 @@ for idP = 1:length(paramToDeriveList)
       
       a_profOcr.data(:, derivedParamId) = downIrr490;
       downIrr490Qc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
-      downIrr490Qc(find(downIrr490 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      downIrr490Qc(downIrr490 ~= derivedParam.fillValue) = g_decArgo_qcNoQc;
       a_profOcr.dataQc(:, derivedParamId) = downIrr490Qc;
+   end
+end
+
+% compute DOWN_IRRADIANCE555 data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'RAW_DOWNWELLING_IRRADIANCE555'} ...
+   ];
+derivedParamList = [ ...
+   {'DOWN_IRRADIANCE555'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      downIrr555 = compute_DOWN_IRRADIANCE555_133( ...
+         a_profOcr.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      % for CTS5 floats the derived parameter could be already in the list of
+      % parameters => we should first look for it
+      
+      idFDerivedParam = find(strcmp({a_profOcr.paramList.name}, derivedParamList{idP}), 1);
+      if (isempty(idFDerivedParam))
+         a_profOcr.data(:, end+1) = ones(size(a_profOcr.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_profOcr.dataQc))
+            a_profOcr.dataQc = ones(size(a_profOcr.data, 1), length(a_profOcr.paramList))*g_decArgo_qcDef;
+         else
+            a_profOcr.dataQc(:, end+1) = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_profOcr.paramList = [a_profOcr.paramList derivedParam];
+         derivedParamId = size(a_profOcr.data, 2);
+      else
+         derivedParamId = idFDerivedParam;
+      end
+      
+      a_profOcr.data(:, derivedParamId) = downIrr555;
+      downIrr555Qc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
+      downIrr555Qc(downIrr555 ~= derivedParam.fillValue) = g_decArgo_qcNoQc;
+      a_profOcr.dataQc(:, derivedParamId) = downIrr555Qc;
    end
 end
 
@@ -556,7 +620,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_profOcr.data(:, derivedParamId) = downIrr665;
       downIrr665Qc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
-      downIrr665Qc(find(downIrr665 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      downIrr665Qc(downIrr665 ~= derivedParam.fillValue) = g_decArgo_qcNoQc;
       a_profOcr.dataQc(:, derivedParamId) = downIrr665Qc;
    end
 end
@@ -574,7 +638,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downPar = compute_DOWNWELLING_PAR_105_to_112_121_to_129_131( ...
+      downPar = compute_DOWNWELLING_PAR_105_to_112_121_to_129_132( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -597,7 +661,7 @@ for idP = 1:length(paramToDeriveList)
       
       a_profOcr.data(:, derivedParamId) = downPar;
       downParQc = ones(size(a_profOcr.data, 1), 1)*g_decArgo_qcDef;
-      downParQc(find(downPar ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      downParQc(downPar ~= derivedParam.fillValue) = g_decArgo_qcNoQc;
       a_profOcr.dataQc(:, derivedParamId) = downParQc;
    end
 end
@@ -605,6 +669,86 @@ end
 % update output parameters
 a_profOcr.derived = 1;
 o_profOcr = a_profOcr;
+
+return
+
+% ------------------------------------------------------------------------------
+% Compute derived parameters for the CROVER sensor.
+%
+% SYNTAX :
+%  [o_profCrover] = compute_profile_derived_parameters_for_CROVER(a_profCrover)
+%
+% INPUT PARAMETERS :
+%   a_profCrover : input CROVER profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_profCrover : output CROVER profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   06/07/2023 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_profCrover] = compute_profile_derived_parameters_for_CROVER(a_profCrover)
+
+% output parameters initialization
+o_profCrover = [];
+
+% global default values
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+
+% list of parameters of the profile
+paramNameList = {a_profCrover.paramList.name};
+
+% compute CP660 data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660'} ...
+   ];
+derivedParamList = [ ...
+   {'CP660'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      cp660 = compute_CP660( ...
+         a_profCrover.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      % for CTS5 floats the derived parameter could be already in the list of
+      % parameters => we should first look for it
+      
+      idFDerivedParam = find(strcmp({a_profCrover.paramList.name}, derivedParamList{idP}), 1);
+      if (isempty(idFDerivedParam))
+         a_profCrover.data(:, end+1) = ones(size(a_profCrover.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_profCrover.dataQc))
+            a_profCrover.dataQc = ones(size(a_profCrover.data, 1), length(a_profCrover.paramList))*g_decArgo_qcDef;
+         else
+            a_profCrover.dataQc(:, end+1) = ones(size(a_profCrover.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_profCrover.paramList = [a_profCrover.paramList derivedParam];
+         derivedParamId = size(a_profCrover.data, 2);
+      else
+         derivedParamId = idFDerivedParam;
+      end
+      
+      a_profCrover.data(:, derivedParamId) = cp660;
+      cp660Qc = ones(size(a_profCrover.data, 1), 1)*g_decArgo_qcDef;
+      cp660Qc(find(cp660 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_profCrover.dataQc(:, derivedParamId) = cp660Qc;
+   end
+end
+
+% update output parameters
+a_profCrover.derived = 1;
+o_profCrover = a_profCrover;
 
 return
 
@@ -657,7 +801,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      chla = compute_CHLA_105_to_112_121_to_131_1121_to_28_1322_1323( ...
+      chla = compute_CHLA_105_to_112_121_to_133_1121_to_28_1322_1323( ...
          a_profEco2.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -682,6 +826,28 @@ for idP = 1:length(paramToDeriveList)
       chlaQc = ones(size(a_profEco2.data, 1), 1)*g_decArgo_qcDef;
       chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profEco2.dataQc(:, derivedParamId) = chlaQc;
+
+      % duplicate CHLA profile as CHLA_FLUORESCENCE one
+      chlaFluoParam = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
+      
+      idFChlaFluoParam = find(strcmp({a_profEco2.paramList.name}, 'CHLA_FLUORESCENCE'), 1);
+      if (isempty(idFChlaFluoParam))
+         a_profEco2.data(:, end+1) = ones(size(a_profEco2.data, 1), 1)*chlaFluoParam.fillValue;
+         if (isempty(a_profEco2.dataQc))
+            a_profEco2.dataQc = ones(size(a_profEco2.data, 1), length(a_profEco2.paramList))*g_decArgo_qcDef;
+         else
+            a_profEco2.dataQc(:, end+1) = ones(size(a_profEco2.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_profEco2.paramList = [a_profEco2.paramList chlaFluoParam];
+         derivedParamId = size(a_profEco2.data, 2);
+      else
+         derivedParamId = idFChlaFluoParam;
+      end
+      
+      a_profEco2.data(:, derivedParamId) = chla;
+      chlaFluoQc = ones(size(a_profEco2.data, 1), 1)*g_decArgo_qcDef;
+      chlaFluoQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_profEco2.dataQc(:, derivedParamId) = chlaFluoQc;
    end
 end
 
@@ -829,7 +995,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      chla = compute_CHLA_105_to_112_121_to_131_1121_to_28_1322_1323( ...
+      chla = compute_CHLA_105_to_112_121_to_133_1121_to_28_1322_1323( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -854,6 +1020,69 @@ for idP = 1:length(paramToDeriveList)
       chlaQc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
       chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_profEco3.dataQc(:, derivedParamId) = chlaQc;
+
+      % duplicate CHLA profile as CHLA_FLUORESCENCE one
+      chlaFluoParam = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
+
+      idFChlaFluoParam = find(strcmp({a_profEco3.paramList.name}, 'CHLA_FLUORESCENCE'), 1);
+      if (isempty(idFChlaFluoParam))
+         a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*chlaFluoParam.fillValue;
+         if (isempty(a_profEco3.dataQc))
+            a_profEco3.dataQc = ones(size(a_profEco3.data, 1), length(a_profEco3.paramList))*g_decArgo_qcDef;
+         else
+            a_profEco3.dataQc(:, end+1) = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_profEco3.paramList = [a_profEco3.paramList chlaFluoParam];
+         derivedParamId = size(a_profEco3.data, 2);
+      else
+         derivedParamId = idFChlaFluoParam;
+      end
+
+      a_profEco3.data(:, derivedParamId) = chla;
+      chlaFluoQc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
+      chlaFluoQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_profEco3.dataQc(:, derivedParamId) = chlaFluoQc;
+   end
+end
+
+% compute CHLA435 data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'FLUORESCENCE_CHLA435'} ...
+   ];
+derivedParamList = [ ...
+   {'CHLA435'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      chla435 = compute_CHLA435_131_132( ...
+         a_profEco3.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      % for CTS5 floats the derived parameter could be already in the list of
+      % parameters => we should first look for it
+      
+      idFDerivedParam = find(strcmp({a_profEco3.paramList.name}, derivedParamList{idP}), 1);
+      if (isempty(idFDerivedParam))
+         a_profEco3.data(:, end+1) = ones(size(a_profEco3.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_profEco3.dataQc))
+            a_profEco3.dataQc = ones(size(a_profEco3.data, 1), length(a_profEco3.paramList))*g_decArgo_qcDef;
+         else
+            a_profEco3.dataQc(:, end+1) = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_profEco3.paramList = [a_profEco3.paramList derivedParam];
+         derivedParamId = size(a_profEco3.data, 2);
+      else
+         derivedParamId = idFDerivedParam;
+      end
+      
+      a_profEco3.data(:, derivedParamId) = chla435;
+      chla435Qc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
+      chla435Qc(find(chla435 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_profEco3.dataQc(:, derivedParamId) = chla435Qc;
    end
 end
 
@@ -1010,7 +1239,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      cdom = compute_CDOM_105_to_107_110_112_121_to_130_1121_to_28_1322_1323( ...
+      cdom = compute_CDOM_105_to_107_110_112_121_to_133_1121_to_28_1322_1323( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -1110,7 +1339,7 @@ if (~isempty(ctdDataNoDef))
       idNoDef = find((ctdIntData(:, 2) ~= paramTemp.fillValue) & (ctdIntData(:, 3) ~= paramPsal.fillValue));
       
       if (a_lambda == 700)
-         o_BBP(idNoDef) = compute_BBP700_105_to_112_121_to_131_1121_to_28_1322_1323( ...
+         o_BBP(idNoDef) = compute_BBP700_105_to_112_121_to_133_1121_to_28_1322_1323( ...
             a_BETA_BACKSCATTERING(idNoDef), ...
             a_BETA_BACKSCATTERING_fillValue, ...
             a_BBP_fillValue, ...
@@ -1164,161 +1393,6 @@ else
    o_BBP = [];
    
 end
-
-return
-
-% ------------------------------------------------------------------------------
-% Compute derived parameters for the ECO3 sensor.
-%
-% SYNTAX :
-%  [o_profEco3] = compute_profile_derived_parameters_for_ECO3(a_profEco3)
-%
-% INPUT PARAMETERS :
-%   a_profEco3   : input ECO3 profile structure
-%
-% OUTPUT PARAMETERS :
-%   o_profEco3   : output ECO3 profile structure
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   06/01/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_profEco3] = compute_profile_derived_parameters_for_ECO3_V1(a_profEco3)
-
-% output parameters initialization
-o_profEco3 = [];
-
-% global default values
-global g_decArgo_qcDef;
-global g_decArgo_qcNoQc;
-
-
-% list of parameters of the profile
-paramNameList = {a_profEco3.paramList.name};
-
-% compute CHLA data and add them in the profile structure
-paramToDeriveList = [ ...
-   {'FLUORESCENCE_CHLA'} ...
-   ];
-derivedParamList = [ ...
-   {'CHLA'} ...
-   ];
-for idP = 1:length(paramToDeriveList)
-   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
-   if (~isempty(idF))
-      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
-      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      chla = compute_CHLA_105_to_112_121_to_131_1121_to_28_1322_1323( ...
-         a_profEco3.data(:, idF), ...
-         paramToDerive.fillValue, derivedParam.fillValue);
-      
-      a_profEco3.data(:, end+1) = chla;
-      if (isempty(a_profEco3.dataQc))
-         a_profEco3.dataQc = ones(size(a_profEco3.data, 1), length(a_profEco3.paramList))*g_decArgo_qcDef;
-      end
-      chlaQc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
-      chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
-      a_profEco3.dataQc(:, end+1) = chlaQc;
-      
-      a_profEco3.paramList = [a_profEco3.paramList derivedParam];
-   end
-end
-
-% compute BBP700 data and add them in the profile structure
-paramToDeriveList = [ ...
-   {'BETA_BACKSCATTERING700'} ...
-   ];
-derivedParamList = [ ...
-   {'BBP700'} ...
-   ];
-for idP = 1:length(paramToDeriveList)
-   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
-   if (~isempty(idF))
-      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
-      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      bbp700 = compute_BBP700_105_to_112_121_to_131_1121_to_28_1322_1323_V1( ...
-         a_profEco3.data(:, idF), ...
-         paramToDerive.fillValue, derivedParam.fillValue);
-      
-      a_profEco3.data(:, end+1) = bbp700;
-      if (isempty(a_profEco3.dataQc))
-         a_profEco3.dataQc = ones(size(a_profEco3.data, 1), length(a_profEco3.paramList))*g_decArgo_qcDef;
-      end
-      bbp700Qc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
-      bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
-      a_profEco3.dataQc(:, end+1) = bbp700Qc;
-      
-      a_profEco3.paramList = [a_profEco3.paramList derivedParam];
-   end
-end
-
-% compute BBP532 data and add them in the profile structure
-paramToDeriveList = [ ...
-   {'BETA_BACKSCATTERING532'} ...
-   ];
-derivedParamList = [ ...
-   {'BBP532'} ...
-   ];
-for idP = 1:length(paramToDeriveList)
-   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
-   if (~isempty(idF))
-      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
-      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      bbp532 = compute_BBP532_108_109_V1( ...
-         a_profEco3.data(:, idF), ...
-         paramToDerive.fillValue, derivedParam.fillValue);
-      
-      a_profEco3.data(:, end+1) = bbp532;
-      if (isempty(a_profEco3.dataQc))
-         a_profEco3.dataQc = ones(size(a_profEco3.data, 1), length(a_profEco3.paramList))*g_decArgo_qcDef;
-      end
-      bbp532Qc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
-      bbp532Qc(find(bbp532 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
-      a_profEco3.dataQc(:, end+1) = bbp532Qc;
-      
-      a_profEco3.paramList = [a_profEco3.paramList derivedParam];
-   end
-end
-
-% compute CDOM data and add them in the profile structure
-paramToDeriveList = [ ...
-   {'FLUORESCENCE_CDOM'} ...
-   ];
-derivedParamList = [ ...
-   {'CDOM'} ...
-   ];
-for idP = 1:length(paramToDeriveList)
-   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
-   if (~isempty(idF))
-      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
-      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      cdom = compute_CDOM_105_to_107_110_112_121_to_130_1121_to_28_1322_1323( ...
-         a_profEco3.data(:, idF), ...
-         paramToDerive.fillValue, derivedParam.fillValue);
-      
-      a_profEco3.data(:, end+1) = cdom;
-      if (isempty(a_profEco3.dataQc))
-         a_profEco3.dataQc = ones(size(a_profEco3.data, 1), length(a_profEco3.paramList))*g_decArgo_qcDef;
-      end
-      cdomQc = ones(size(a_profEco3.data, 1), 1)*g_decArgo_qcDef;
-      cdomQc(find(cdom ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
-      a_profEco3.dataQc(:, end+1) = cdomQc;
-      
-      a_profEco3.paramList = [a_profEco3.paramList derivedParam];
-   end
-end
-
-% update output parameters
-a_profEco3.derived = 1;
-o_profEco3 = a_profEco3;
 
 return
 
@@ -1379,7 +1453,7 @@ end
 % if the fitlm Matlab function is available, compute NITRATE data from
 % transmitted spectrum and add them in the profile structure
 if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
-   if (~ismember(a_decoderId, [110, 113, 127]))
+   if (~ismember(a_decoderId, [110, 113, 116, 127]))
       
       % compute NITRATE
       paramToDeriveList = [ ...
@@ -1399,7 +1473,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idP, 2});
             derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
             
-            [nitrate, rmsError] = compute_prof_NITRATE_1xx_5_to_9_11_12_14_15_21_to_26_28_to_31( ...
+            [nitrate, rmsError] = compute_prof_NITRATE_1xx_5_to_9_11_12_14_15_21_to_26_28_to_33( ...
                a_profSuna.data(:, idF1:idF1+a_profSuna.paramNumberOfSubLevels-1), ...
                a_profSuna.data(:, idF2), ...
                paramToDerive1.fillValue, ...
@@ -1424,8 +1498,9 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             a_profSuna.rmsError = rmsError;
          end
       end
-   else
-      
+
+   elseif (a_decoderId == 116)
+
       % compute NITRATE and BISULFIDE
       paramToDeriveList = [ ...
          {'UV_INTENSITY_NITRATE'} {'UV_INTENSITY_DARK_NITRATE'} ...
@@ -1444,7 +1519,66 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idP, 2});
             derivedParam1 = get_netcdf_param_attributes(derivedParamList{idP, 1});
             derivedParam2 = get_netcdf_param_attributes(derivedParamList{idP, 2});
-            
+
+            [nitrate, bisulfide, rmsError] = compute_profile_NITRATE_BISULFIDE_from_spectrum_116( ...
+               a_profSuna.data(:, idF1:idF1+a_profSuna.paramNumberOfSubLevels-1), ...
+               a_profSuna.data(:, idF2), ...
+               paramToDerive1.fillValue, ...
+               paramToDerive2.fillValue, ...
+               derivedParam1.fillValue, ...
+               derivedParam2.fillValue, ...
+               a_profSuna.data(:, 1), ctdMeasData, ...
+               paramPres.fillValue, ...
+               paramTemp.fillValue, ...
+               paramPsal.fillValue, ...
+               a_profSuna);
+
+            % store NITRATE
+            a_profSuna.data(:, end+1) = nitrate;
+            if (isempty(a_profSuna.dataQc))
+               a_profSuna.dataQc = ones(size(a_profSuna.data, 1), length(a_profSuna.paramList))*g_decArgo_qcDef;
+            end
+            nitrateQc = ones(size(a_profSuna.data, 1), 1)*g_decArgo_qcDef;
+            nitrateQc(find(nitrate ~= derivedParam1.fillValue)) = g_decArgo_qcNoQc;
+            a_profSuna.dataQc(:, end+1) = nitrateQc;
+
+            a_profSuna.paramList = [a_profSuna.paramList derivedParam1];
+            a_profSuna.rmsError = rmsError;
+
+            % store BISULFIDE
+            a_profSuna.data(:, end+1) = bisulfide;
+            if (isempty(a_profSuna.dataQc))
+               a_profSuna.dataQc = ones(size(a_profSuna.data, 1), length(a_profSuna.paramList))*g_decArgo_qcDef;
+            end
+            bisulfideQc = ones(size(a_profSuna.data, 1), 1)*g_decArgo_qcDef;
+            bisulfideQc(find(bisulfide ~= derivedParam2.fillValue)) = g_decArgo_qcNoQc;
+            a_profSuna.dataQc(:, end+1) = bisulfideQc;
+
+            a_profSuna.paramList = [a_profSuna.paramList derivedParam2];
+         end
+      end
+
+   else
+
+      % compute NITRATE and BISULFIDE
+      paramToDeriveList = [ ...
+         {'UV_INTENSITY_NITRATE'} {'UV_INTENSITY_DARK_NITRATE'} ...
+         ];
+      derivedParamList = [ ...
+         {'NITRATE'} {'BISULFIDE'} ...
+         ];
+      paramPres = get_netcdf_param_attributes('PRES');
+      paramTemp = get_netcdf_param_attributes('TEMP');
+      paramPsal = get_netcdf_param_attributes('PSAL');
+      for idP = 1:size(paramToDeriveList, 1)
+         idF1 = find(strcmp(paramToDeriveList{idP, 1}, paramNameList) == 1, 1);
+         idF2 = find(strcmp(paramToDeriveList{idP, 2}, paramNameList) == 1, 1);
+         if (~isempty(idF1) && ~isempty(idF2))
+            paramToDerive1 = get_netcdf_param_attributes(paramToDeriveList{idP, 1});
+            paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idP, 2});
+            derivedParam1 = get_netcdf_param_attributes(derivedParamList{idP, 1});
+            derivedParam2 = get_netcdf_param_attributes(derivedParamList{idP, 2});
+
             [nitrate, bisulfide, rmsError] = compute_profile_NITRATE_BISULFIDE_from_spectrum_110_113_127( ...
                a_profSuna.data(:, idF1:idF1+a_profSuna.paramNumberOfSubLevels-1), ...
                a_profSuna.data(:, idF2), ...
@@ -1457,7 +1591,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
                paramTemp.fillValue, ...
                paramPsal.fillValue, ...
                a_profSuna);
-            
+
             % store NITRATE
             a_profSuna.data(:, end+1) = nitrate;
             if (isempty(a_profSuna.dataQc))
@@ -1466,10 +1600,10 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             nitrateQc = ones(size(a_profSuna.data, 1), 1)*g_decArgo_qcDef;
             nitrateQc(find(nitrate ~= derivedParam1.fillValue)) = g_decArgo_qcNoQc;
             a_profSuna.dataQc(:, end+1) = nitrateQc;
-            
+
             a_profSuna.paramList = [a_profSuna.paramList derivedParam1];
             a_profSuna.rmsError = rmsError;
-            
+
             % store BISULFIDE
             a_profSuna.data(:, end+1) = bisulfide;
             if (isempty(a_profSuna.dataQc))
@@ -1478,11 +1612,12 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             bisulfideQc = ones(size(a_profSuna.data, 1), 1)*g_decArgo_qcDef;
             bisulfideQc(find(bisulfide ~= derivedParam2.fillValue)) = g_decArgo_qcNoQc;
             a_profSuna.dataQc(:, end+1) = bisulfideQc;
-            
+
             a_profSuna.paramList = [a_profSuna.paramList derivedParam2];
          end
       end
    end
+
 else
    
    if (~ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
@@ -1594,7 +1729,7 @@ global g_decArgo_qcNoQc;
 % list of parameters of the profile
 paramNameList = {a_profOptode.paramList.name};
 
-if (~ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113, 114, 115])) % without PPOX_DOXY
+if (~ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113, 114, 115, 116])) % without PPOX_DOXY
    
    if (isempty(a_profCtd))
       
@@ -1877,10 +2012,10 @@ if (~isempty(ctdDataNoDef))
       
       switch (a_decoderId)
                      
-         case {121, 122, 124, 126, 127, 128, 129, 130, 131}
+         case {121, 122, 124, 126, 127, 128, 129, 130, 131, 132, 133}
             
             % compute DOXY values using the Stern-Volmer equation
-            o_DOXY(idNoDef) = compute_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_31( ...
+            o_DOXY(idNoDef) = compute_DOXY_1xx_7_9_to_11_13_to_16_21_22_24_26_to_33( ...
                a_C1PHASE_DOXY(idNoDef), ...
                a_C2PHASE_DOXY(idNoDef), ...
                a_TEMP_DOXY(idNoDef), ...
@@ -2065,10 +2200,10 @@ if (~isempty(ctdDataNoDef))
                a_PPOX_DOXY_fillValue, ...
                a_profOptode);
             
-         case {107, 109, 110, 111, 113, 114, 115}
+         case {107, 109, 110, 111, 113, 114, 115, 116}
             
             % compute DOXY values using the Stern-Volmer equation
-            o_DOXY(idNoDef) = compute_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_31( ...
+            o_DOXY(idNoDef) = compute_DOXY_1xx_7_9_to_11_13_to_16_21_22_24_26_to_33( ...
                a_C1PHASE_DOXY(idNoDef), ...
                a_C2PHASE_DOXY(idNoDef), ...
                a_TEMP_DOXY(idNoDef), ...
@@ -2086,7 +2221,7 @@ if (~isempty(ctdDataNoDef))
             o_ptsForDoxy = ctdIntData;
             
             % compute PPOX_DOXY values using the Stern-Volmer equation
-            o_PPOX_DOXY(idNoDef) = compute_PPOX_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_31( ...
+            o_PPOX_DOXY(idNoDef) = compute_PPOX_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_33( ...
                a_C1PHASE_DOXY(idNoDef), ...
                a_C2PHASE_DOXY(idNoDef), ...
                a_TEMP_DOXY(idNoDef), ...
@@ -2399,7 +2534,7 @@ if (~isempty(ctdDataNoDef))
       idNoDef = find((ctdIntData(:, 2) ~= paramTemp.fillValue) & (ctdIntData(:, 3) ~= paramPsal.fillValue));
       
       % compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL values
-      [o_PH_IN_SITU_FREE(idNoDef), o_PH_IN_SITU_TOTAL(idNoDef)] = compute_PH_111_113_114_115_123( ...
+      [o_PH_IN_SITU_FREE(idNoDef), o_PH_IN_SITU_TOTAL(idNoDef)] = compute_PH_111_113_to_116_123( ...
          a_VRS_PH(idNoDef), ...
          a_VRS_PH_fillValue, ...
          ctdIntData(idNoDef, 1), ...
@@ -2438,6 +2573,398 @@ else
    o_PH_IN_SITU_TOTAL = [];
    
 end
+
+return
+
+% ------------------------------------------------------------------------------
+% Compute derived parameters for the UVP sensor.
+%
+% SYNTAX :
+% [o_profUvp] = compute_profile_derived_parameters_for_UVP(a_profUvp, a_decoderId)
+%
+% INPUT PARAMETERS :
+%   a_profUvp   : input LPM profile structure
+%   a_decoderId : float decoder Id
+%
+% OUTPUT PARAMETERS :
+%   o_profUvp : output LPM profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   12/14/2023 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_profUvp] = compute_profile_derived_parameters_for_UVP(a_profUvp, a_decoderId)
+
+% output parameters initialization
+o_profUvp = [];
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% current cycle number
+global g_decArgo_cycleNum;
+
+% arrays to store decoded calibration coefficient
+global g_decArgo_calibInfo;
+
+
+% list of parameters of the profile
+paramNameList = {a_profUvp.paramList.name};
+
+% compute CONCENTRATION_LPM data and add them in the profile structure
+% for 2022.01 version of UVP
+if (any(strcmp('NB_IMAGE_PARTICLES', paramNameList)) && ...
+      any(strcmp('NB_SIZE_SPECTRA_PARTICLES', paramNameList)))
+
+   % calibration coefficients
+   imageVolume = nan;
+   if (isempty(g_decArgo_calibInfo))
+      fprintf('WARNING: Float #%d Cycle #%d: calibration information is missing\n', ...
+         g_decArgo_floatNum, ...
+         g_decArgo_cycleNum);
+   elseif (~isfield(g_decArgo_calibInfo, 'UVP'))
+      fprintf('WARNING: Float #%d Cycle #%d: UVP sensor calibration information is missing\n', ...
+         g_decArgo_floatNum, ...
+         g_decArgo_cycleNum);
+   elseif (isfield(g_decArgo_calibInfo.UVP, 'ImageVolume'))
+      imageVolume = str2double(g_decArgo_calibInfo.UVP.ImageVolume);
+   else
+      fprintf('ERROR: Float #%d Cycle #%d: inconsistent UVP sensor calibration information\n', ...
+         g_decArgo_floatNum, ...
+         g_decArgo_cycleNum);
+   end
+
+   paramNbImPart = get_netcdf_param_attributes('NB_IMAGE_PARTICLES');
+   paramNbSizeSpecPart = get_netcdf_param_attributes('NB_SIZE_SPECTRA_PARTICLES');
+   paramConcLpm = get_netcdf_param_attributes('CONCENTRATION_LPM');
+
+   [~, nbImPartFirstCol, nbImPartLastCol] = get_param_data_index(a_profUvp, 'NB_IMAGE_PARTICLES');
+   [~, nbSizeSpecPartFirstCol, nbSizeSpecPartLastCol] = get_param_data_index(a_profUvp, 'NB_SIZE_SPECTRA_PARTICLES');
+
+   dataNbImPart = a_profUvp.data(:, nbImPartFirstCol:nbImPartLastCol);
+   dataNbImPart(dataNbImPart == paramNbImPart.fillValue) = nan;
+   dataNbSizeSpecPart = a_profUvp.data(:, nbSizeSpecPartFirstCol:nbSizeSpecPartLastCol);
+   dataNbSizeSpecPart(dataNbSizeSpecPart == paramNbSizeSpecPart.fillValue) = nan;
+
+   if (~isnan(imageVolume))
+      dataConcLpm = dataNbSizeSpecPart./(imageVolume*dataNbImPart);
+   else
+      dataConcLpm = nan(size(dataNbSizeSpecPart));
+   end
+   dataConcLpm(isnan(dataConcLpm)) = paramConcLpm.fillValue;
+
+   a_profUvp.paramList = [a_profUvp.paramList paramConcLpm];
+   a_profUvp.paramNumberWithSubLevels = [a_profUvp.paramNumberWithSubLevels length(a_profUvp.paramList)];
+   a_profUvp.paramNumberOfSubLevels = [a_profUvp.paramNumberOfSubLevels size(dataConcLpm, 2)];
+
+   a_profUvp.data(:, end+1:end+size(dataConcLpm, 2)) = dataConcLpm;
+
+end
+
+% compute CONCENTRATION_LPM data and add them in the profile structure
+% for 2020.01 version of UVP
+if (any(strcmp('NB_SIZE_SPECTRA_PARTICLES_PER_IMAGE', paramNameList)))
+
+   % calibration coefficients
+   imageVolume = nan;
+   if (isempty(g_decArgo_calibInfo))
+      fprintf('WARNING: Float #%d Cycle #%d: calibration information is missing\n', ...
+         g_decArgo_floatNum, ...
+         g_decArgo_cycleNum);
+   elseif (~isfield(g_decArgo_calibInfo, 'UVP'))
+      fprintf('WARNING: Float #%d Cycle #%d: UVP sensor calibration information is missing\n', ...
+         g_decArgo_floatNum, ...
+         g_decArgo_cycleNum);
+   elseif (isfield(g_decArgo_calibInfo.UVP, 'ImageVolume'))
+      imageVolume = str2double(g_decArgo_calibInfo.UVP.ImageVolume);
+   else
+      fprintf('ERROR: Float #%d Cycle #%d: inconsistent ECO3 sensor calibration information\n', ...
+         g_decArgo_floatNum, ...
+         g_decArgo_cycleNum);
+      return
+   end
+
+   paramNbSizeSpecPartPerIm = get_netcdf_param_attributes('NB_SIZE_SPECTRA_PARTICLES_PER_IMAGE');
+   paramConcLpm = get_netcdf_param_attributes('CONCENTRATION_LPM');
+
+   [~, nbSizeSpecPartPerImFirstCol, nbSizeSpecPartPerImLastCol] = get_param_data_index(a_profUvp, 'NB_SIZE_SPECTRA_PARTICLES_PER_IMAGE');
+
+   dataNbSizeSpecPartPerIm = a_profUvp.data(:, nbSizeSpecPartPerImFirstCol:nbSizeSpecPartPerImLastCol);
+   dataNbSizeSpecPartPerIm(dataNbSizeSpecPartPerIm == paramNbSizeSpecPartPerIm.fillValue) = nan;
+
+   if (~isnan(imageVolume))
+      dataConcLpm = dataNbSizeSpecPartPerIm/imageVolume;
+   else
+      dataConcLpm = nan(size(dataNbSizeSpecPartPerIm));
+   end
+   dataConcLpm(isnan(dataConcLpm)) = paramConcLpm.fillValue;
+
+   a_profUvp.paramList = [a_profUvp.paramList paramConcLpm];
+   a_profUvp.paramNumberWithSubLevels = [a_profUvp.paramNumberWithSubLevels length(a_profUvp.paramList)];
+   a_profUvp.paramNumberOfSubLevels = [a_profUvp.paramNumberOfSubLevels size(dataConcLpm, 2)];
+
+   a_profUvp.data(:, end+1:end+size(dataConcLpm, 2)) = dataConcLpm;
+
+end
+
+% compute CONCENTRATION_CATEGORY and BIOVOLUME_CATEGORY data and add them in the profile structure
+if (any(strcmp('NB_IMAGE_CATEGORY', paramNameList)) && ...
+      any(strcmp('NB_OBJECT_CATEGORY', paramNameList)) && ...
+      any(strcmp('OBJECT_MEAN_VOLUME_CATEGORY', paramNameList)))
+
+   % calibration coefficients
+   imageVolume = nan;
+   pixelSize = nan;
+   if (isempty(g_decArgo_calibInfo))
+      fprintf('WARNING: Float #%d Cycle #%d: calibration information is missing\n', ...
+         g_decArgo_floatNum, ...
+         g_decArgo_cycleNum);
+   elseif (~isfield(g_decArgo_calibInfo, 'UVP'))
+      fprintf('WARNING: Float #%d Cycle #%d: UVP sensor calibration information is missing\n', ...
+         g_decArgo_floatNum, ...
+         g_decArgo_cycleNum);
+   elseif (isfield(g_decArgo_calibInfo.UVP, 'ImageVolume') && ...
+         isfield(g_decArgo_calibInfo.UVP, 'PixelSize'))
+      imageVolume = str2double(g_decArgo_calibInfo.UVP.ImageVolume);
+      pixelSize = str2double(g_decArgo_calibInfo.UVP.PixelSize);
+   else
+      fprintf('ERROR: Float #%d Cycle #%d: inconsistent ECO3 sensor calibration information\n', ...
+         g_decArgo_floatNum, ...
+         g_decArgo_cycleNum);
+   end
+
+   paramNbImCat = get_netcdf_param_attributes('NB_IMAGE_CATEGORY');
+   paramNbObjCat = get_netcdf_param_attributes('NB_OBJECT_CATEGORY');
+   paramObjectMeanVolCat = get_netcdf_param_attributes('OBJECT_MEAN_VOLUME_CATEGORY');
+   paramConcCat = get_netcdf_param_attributes('CONCENTRATION_CATEGORY');
+   paramBioVolCat = get_netcdf_param_attributes('BIOVOLUME_CATEGORY');
+
+   [~, nbImCatFirstCol, nbImCatLastCol] = get_param_data_index(a_profUvp, 'NB_IMAGE_CATEGORY');
+   [~, nbObjCatFirstCol, nbObjCatLastCol] = get_param_data_index(a_profUvp, 'NB_OBJECT_CATEGORY');
+   [~, objMeanVolCatFirstCol, objMeanVolCatLastCol] = get_param_data_index(a_profUvp, 'OBJECT_MEAN_VOLUME_CATEGORY');
+
+   dataNbImCat = a_profUvp.data(:, nbImCatFirstCol:nbImCatLastCol);
+   dataNbImCat(dataNbImCat == paramNbImCat.fillValue) = nan;
+   dataNbObjCat = a_profUvp.data(:, nbObjCatFirstCol:nbObjCatLastCol);
+   dataNbObjCat(dataNbObjCat == paramNbObjCat.fillValue) = nan;
+   dataObjMeanVolCat = a_profUvp.data(:, objMeanVolCatFirstCol:objMeanVolCatLastCol);
+   dataObjMeanVolCat(dataObjMeanVolCat == paramObjectMeanVolCat.fillValue) = nan;
+
+   if (~isnan(imageVolume))
+      dataConcCat = dataNbObjCat./(imageVolume*dataNbImCat);
+   else
+      dataConcCat = nan(size(dataNbObjCat));
+   end
+   dataConcCat(isnan(dataConcCat)) = paramConcCat.fillValue;
+
+   a_profUvp.paramList = [a_profUvp.paramList paramConcCat];
+   a_profUvp.paramNumberWithSubLevels = [a_profUvp.paramNumberWithSubLevels length(a_profUvp.paramList)];
+   a_profUvp.paramNumberOfSubLevels = [a_profUvp.paramNumberOfSubLevels size(dataConcCat, 2)];
+
+   a_profUvp.data(:, end+1:end+size(dataConcCat, 2)) = dataConcCat;
+
+   if (~isnan(pixelSize))
+      dataBioVolCat = dataConcCat.*(dataObjMeanVolCat*pixelSize*pixelSize*pixelSize*1000);
+   else
+      dataBioVolCat = nan(size(dataConcCat));
+   end
+   dataBioVolCat(isnan(dataBioVolCat)) = paramBioVolCat.fillValue;
+
+   a_profUvp.paramList = [a_profUvp.paramList paramBioVolCat];
+   a_profUvp.paramNumberWithSubLevels = [a_profUvp.paramNumberWithSubLevels length(a_profUvp.paramList)];
+   a_profUvp.paramNumberOfSubLevels = [a_profUvp.paramNumberOfSubLevels size(dataBioVolCat, 2)];
+
+   a_profUvp.data(:, end+1:end+size(dataBioVolCat, 2)) = dataBioVolCat;
+
+end
+
+% retrieve ECOTAXA_CATEGORY_ID from INDEX_CATEGORY (and configuration information) and add them in the profile structure
+if (any(strcmp('PRES', paramNameList)) && ...
+      any(strcmp('INDEX_CATEGORY', paramNameList)))
+
+   paramPres = get_netcdf_param_attributes('PRES');
+   paramIndexCat = get_netcdf_param_attributes('INDEX_CATEGORY');
+   paramEcoCatId = get_netcdf_param_attributes('ECOTAXA_CATEGORY_ID');
+
+   [~, presFirstCol, presLastCol] = get_param_data_index(a_profUvp, 'PRES');
+   [~, indexCatFirstCol, indexCatLastCol] = get_param_data_index(a_profUvp, 'INDEX_CATEGORY');
+
+   dataPres = a_profUvp.data(:, presFirstCol:presLastCol);
+   dataIndexCat = a_profUvp.data(:, indexCatFirstCol:indexCatLastCol);
+   dataEcotaxaCatId = get_eco_tax_id(dataPres, paramPres.fillValue, ...
+      dataIndexCat, paramIndexCat.fillValue, paramEcoCatId.fillValue, ...
+      a_profUvp.cycleNumber, a_profUvp.profileNumber);
+
+   a_profUvp.paramList = [a_profUvp.paramList paramEcoCatId];
+   a_profUvp.paramNumberWithSubLevels = [a_profUvp.paramNumberWithSubLevels length(a_profUvp.paramList)];
+   a_profUvp.paramNumberOfSubLevels = [a_profUvp.paramNumberOfSubLevels size(dataEcotaxaCatId, 2)];
+
+   a_profUvp.data(:, end+1:end+size(dataEcotaxaCatId, 2)) = dataEcotaxaCatId;
+
+end
+
+% update output parameters
+o_profUvp.derived = 1;
+o_profUvp = a_profUvp;
+
+return
+
+% ------------------------------------------------------------------------------
+% Retrieve ecotaxa category Ids from index category.
+%
+% SYNTAX :
+% [o_dataEcotaxaCatId] = get_eco_tax_id(a_dataPres, a_dataPresFillValue, ...
+%   a_dataIndexCat, a_dataIndexCatFillValue, a_dataEcotaxaCatIdFillValue, a_cycleNum, a_profNum)
+%
+% INPUT PARAMETERS :
+%   a_dataPres                  : PRES data
+%   a_dataPresFillValue         : PRES parameter FillValue
+%   a_dataIndexCat              : INDEX_CATEGORY data
+%   a_dataIndexCatFillValue     : INDEX_CATEGORY parameter FillValue
+%   a_dataEcotaxaCatIdFillValue : ECOTAXA_CATEGORY_ID parameter FillValue
+%   a_cycleNum                  : cycle number
+%   a_profNum                   : profile number
+%
+% OUTPUT PARAMETERS :
+%   o_dataEcotaxaCatId : output ECOTAXA_CATEGORY_ID profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   01/03/2024 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_dataEcotaxaCatId] = get_eco_tax_id(a_dataPres, a_dataPresFillValue, ...
+   a_dataIndexCat, a_dataIndexCatFillValue, a_dataEcotaxaCatIdFillValue, a_cycleNum, a_profNum)
+
+% output parameters initialization
+o_dataEcotaxaCatId = nan(size(a_dataIndexCat));
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% float configuration
+global g_decArgo_floatConfig;
+
+% json meta-data
+global g_decArgo_jsonMetaData;
+
+
+% retrieve the list of taxonomy category Ids for each acquisition configuration
+acqName = [];
+acqTaxId = [];
+if (isfield(g_decArgo_jsonMetaData, 'META_AUX_UVP_CONFIG_NAMES') && ...
+      isfield(g_decArgo_jsonMetaData, 'META_AUX_UVP_CONFIG_PARAMETERS') && ...
+      isfield(g_decArgo_jsonMetaData, 'META_AUX_UVP_FIRMWARE_VERSION'))
+   jonfNames = struct2cell(g_decArgo_jsonMetaData.META_AUX_UVP_CONFIG_NAMES);
+   jConfValues = struct2cell(g_decArgo_jsonMetaData.META_AUX_UVP_CONFIG_PARAMETERS);
+   uvpFirmVersion = g_decArgo_jsonMetaData.META_AUX_UVP_FIRMWARE_VERSION;
+   switch (uvpFirmVersion)
+      case '2022.01'
+         TAXO_CONF_NAME = 18;
+      otherwise
+         fprintf('ERROR: Float #%d: Not managed UVP firmware version (''%s'') - ASK FOR AN UPDATE OF THE DECODER\n', ...
+            g_decArgo_floatNum, uvpFirmVersion);
+         return
+   end
+   for idC = 1:length(jonfNames)
+      if (strncmp(jonfNames{idC}, 'ACQ_NKE_', length('ACQ_NKE_')))
+         acqName{end+1} = jonfNames{idC};
+         acqConfVal = jConfValues{idC};
+         acqConfVal = textscan(acqConfVal, '%s', 'delimiter', ',');
+         acqConfVal = acqConfVal{:};
+         taxoName = acqConfVal{TAXO_CONF_NAME};
+         if (~strcmp(taxoName, 'NO_RE'))
+            idF = find(strcmp(taxoName, jonfNames));
+            taxConfVal = jConfValues{idF};
+            taxConfVal = textscan(taxConfVal, '%s', 'delimiter', ',');
+            taxConfVal = taxConfVal{:};
+            nbCat = str2double(taxConfVal{4});
+            acqTaxId{end+1} = str2double(taxConfVal(4+1:4+nbCat));
+         else
+            acqTaxId{end+1} = [];
+         end
+      end
+   end
+end
+if (isempty(acqName))
+   return
+end
+
+% current configuration
+configNum = g_decArgo_floatConfig.DYNAMIC.NUMBER;
+configName = g_decArgo_floatConfig.DYNAMIC.NAMES;
+configValue = g_decArgo_floatConfig.DYNAMIC.VALUES;
+usedCy = g_decArgo_floatConfig.USE.CYCLE;
+usedProf = g_decArgo_floatConfig.USE.PROFILE;
+usedConfNum = g_decArgo_floatConfig.USE.CONFIG;
+
+% find the id of the concerned configuration
+idUsedConf = find((usedCy == a_cycleNum) & (usedProf == a_profNum));
+if (isempty(idUsedConf))
+   % the configuration does not exist (no data received yet)
+   return
+end
+idConf = find(configNum == usedConfNum(idUsedConf));
+
+% find the depth zone thresholds
+zoneThreshold = nan(4, 1);
+for id = 1:4
+   % zone threshold
+   confParamName = sprintf('CONFIG_APMT_SENSOR_08_P%d', 45+id);
+   idPos = find(strcmp(confParamName, configName), 1);
+   zoneThreshold(id) = configValue(idPos, idConf);
+end
+
+% process levels of each depth zone
+idNoDefPres = find(a_dataPres ~= a_dataPresFillValue);
+dataPres = a_dataPres(idNoDefPres);
+for idZ = 1:5
+   idLev = [];
+   if (idZ < 5)
+      if (idZ < 2)
+         if (any(dataPres <= zoneThreshold(idZ)))
+            idLev = find(dataPres <= zoneThreshold(idZ));
+            depthZoneNum = idZ;
+         end
+      else
+         if (any((dataPres > zoneThreshold(idZ-1)) & (dataPres <= zoneThreshold(idZ))))
+            idLev = find((dataPres > zoneThreshold(idZ-1)) & (dataPres <= zoneThreshold(idZ)));
+            depthZoneNum = idZ;
+         end
+      end
+   else
+      if (any(dataPres > zoneThreshold(idZ-1)))
+         idLev = find(dataPres > zoneThreshold(idZ-1));
+         depthZoneNum = idZ;
+      end
+   end
+   if (~isempty(idLev))
+      confParamName = sprintf('CONFIG_APMT_SENSOR_08_P%d', 53+depthZoneNum);
+      idPos = find(strcmp(confParamName, configName), 1);
+      acqNum = configValue(idPos, idConf);
+      idF = find(strcmp(['ACQ_NKE_' num2str(acqNum)], acqName));
+      if (isempty(idF))
+         fprintf('ERROR: Float #%d: Cannot find ''%s'' configuration\n', ...
+            g_decArgo_floatNum, ['ACQ_NKE_' num2str(acqNum)]);
+         return
+      end
+      taxIdList = acqTaxId{idF};
+      for idL = idLev'
+         dataIndexCat = a_dataIndexCat(idNoDefPres(idL), :);
+         idNoDefData = find(dataIndexCat ~= a_dataIndexCatFillValue);
+         o_dataEcotaxaCatId(idNoDefPres(idL), idNoDefData) = taxIdList(dataIndexCat(idNoDefData)+1);
+      end
+   end
+end
+
+o_dataEcotaxaCatId(isnan(o_dataEcotaxaCatId)) = a_dataEcotaxaCatIdFillValue;
 
 return
 
@@ -2487,7 +3014,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downPar = compute_DOWNWELLING_PAR_mpe_128_to_131( ...
+      downPar = compute_DOWNWELLING_PAR_mpe_128_to_133( ...
          a_profMpe.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       

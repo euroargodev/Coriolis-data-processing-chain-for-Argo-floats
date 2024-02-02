@@ -224,7 +224,15 @@ for idFloat = 1:length(floatList)
          continue
       end
    else
-      if (~ismember(dacFormatId, [{'2.10.4.R'} {'2.11.3.R'} {'2.12.2.1.R'} {'2.12.3.R'} {'2.13.1.R'} {'2.13.1.1.R'} {'2.14.3.R'} {'2.15.0.R'} {'2.15.2.R'} {'2.15.5.R'}]))
+      if (~ismember(dacFormatId, [ ...
+            {'2.10.4.R'} ...
+            {'2.11.3.R'} ...
+            {'2.12.2.1.R'} {'2.12.3.R'} ...
+            {'2.13.1.R'} {'2.13.1.1.R'} ...
+            {'2.14.3.R'} ...
+            {'2.15.0.R'} {'2.15.2.R'} {'2.15.5.R'} ...
+            {'2.16.0.R'} ...
+            {'2.17.4.R'}]))
          fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
             floatNum, dacFormatId);
          continue
@@ -297,6 +305,7 @@ for idFloat = 1:length(floatList)
       {'CALIB_RT_COEFFICIENT'} ...
       {'CALIB_RT_COMMENT'} ...
       {'CALIB_RT_DATE'} ...
+      {'CALIB_RT_DATE_APPLY'} ...
       {'CALIB_RT_ADJUSTED_ERROR'} ...
       {'CALIB_RT_ADJ_ERROR_METHOD'} ...
       ];
@@ -379,7 +388,7 @@ for idFloat = 1:length(floatList)
    
    % add the calibration coefficients for OPTODE sensor (coming from the data base)
    switch (dacFormatId)
-      case {'2.11.1.S', '2.12.2.1.S', '2.11.3.R', '2.12.2.1.R', '2.12.3.R', '2.13.1.R', '2.13.1.1.R', '2.14.3.R', '2.15.0.R', '2.15.2.R', '2.15.5.R'}
+      case {'2.11.1.S', '2.12.2.1.S', '2.11.3.R', '2.12.2.1.R', '2.12.3.R', '2.13.1.R', '2.13.1.1.R', '2.14.3.R', '2.15.0.R', '2.15.2.R', '2.15.5.R', '2.16.0.R', '2.17.4.R'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C'))) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_'))) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_'))));
@@ -401,16 +410,21 @@ for idFloat = 1:length(floatList)
    end
    
    % add the calibration information for TRANSISTOR_PH sensor
-   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'TRANSISTOR_PH')))
+   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'TRANSISTOR_PH') == 1))
       
-      idF = find((strncmp(metaData(idForWmo, 5), 'SBE_TRANSISTOR_PH_', length('SBE_TRANSISTOR_PH_'))));
+      idF = find((strncmp(metaData(idForWmo, 5), 'SBE_TRANSISTOR_PH_', length('SBE_TRANSISTOR_PH_')) == 1));
       phCalibData = [];
       for id = 1:length(idF)
          calibName = metaData{idForWmo(idF(id)), 5};
-         if (strncmp(calibName, 'SBE_TRANSISTOR_PH_K', length('SBE_TRANSISTOR_PH_K')))
-            fieldName = ['k' calibName(end)];
-         elseif (strncmp(calibName, 'SBE_TRANSISTOR_PH_F', length('SBE_TRANSISTOR_PH_F')))
-            fieldName = ['f' calibName(end)];
+         if (strcmp(calibName, 'SBE_TRANSISTOR_PH_K0'))
+            fieldName = 'k0';
+         elseif (strncmp(calibName, 'SBE_TRANSISTOR_PH_K2_F', length('SBE_TRANSISTOR_PH_K2_F')) == 1)
+            fieldName = ['k2f' calibName(end)];
+         elseif (strcmp(calibName, 'SBE_TRANSISTOR_PH_K2'))
+            fieldName = 'k2';
+         elseif (strncmp(calibName, 'SBE_TRANSISTOR_PH_F', length('SBE_TRANSISTOR_PH_F')) == 1)
+            idS = strfind(calibName, '_F');
+            fieldName = ['f' calibName(idS+2:end)];
          end
          phCalibData.(fieldName) = metaData{idForWmo(idF(id)), 4};
       end
@@ -466,7 +480,7 @@ for idFloat = 1:length(floatList)
          if (strcmp(floatConfName, 'iridium')) % see 6903699 & 6903700
             if (ismember(dacFormatId, [{'2.10.1.S'} {'2.11.1.S'} {'2.12.2.1.S'} {'2.10.4.R'} {'2.11.3.R'} {'2.12.2.1.R'} {'2.12.3.R'}]))
                continue
-            elseif (ismember(dacFormatId, [{'2.13.1.R'} {'2.13.1.1.R'} {'2.14.3.R'} {'2.15.0.R'} {'2.15.2.R'} {'2.15.5.R'}]))
+            elseif (ismember(dacFormatId, [{'2.13.1.R'} {'2.13.1.1.R'} {'2.14.3.R'} {'2.15.0.R'} {'2.15.2.R'} {'2.15.5.R'} {'2.16.0.R'} {'2.17.4.R'}]))
                floatConfValue = confData.(floatConfName){1};
                bddConfName = 'FLOAT_RUDICS_ID';
             else
@@ -543,7 +557,7 @@ for idFloat = 1:length(floatList)
                   nbLoops = 2;
                end
             end
-            if (ismember(dacFormatId, [{'2.13.1.R'} {'2.13.1.1.R'} {'2.14.3.R'} {'2.15.0.R'} {'2.15.2.R'} {'2.15.5.R'}]))
+            if (ismember(dacFormatId, [{'2.13.1.R'} {'2.13.1.1.R'} {'2.14.3.R'} {'2.15.0.R'} {'2.15.2.R'} {'2.15.5.R'} {'2.16.0.R'} {'2.17.4.R'}]))
                if (strcmp(floatConfName, 'TelemetryDays'))
                   nbLoops = 2;
                   bddConfNameAll = bddConfName;
@@ -965,7 +979,7 @@ switch (a_dacFormatId)
          'CONFIG_FRET_PistonFullRetraction', 'RetractedPistonPos', ...
          'CONFIG_COP_CtdCutOffPressure', 'CTD_CUT_OFF_PRESSURE' ...
       );
-   case {'2.15.0.R', '2.15.2.R', '2.15.5.R'}
+   case {'2.15.0.R', '2.15.2.R', '2.15.5.R', '2.16.0.R', '2.17.4.R'}
       o_configStruct = struct( ...
          'CONFIG_DIR_ProfilingDirection', 'DIRECTION', ...
          'CONFIG_CT_CycleTime', 'CYCLE_TIME', ...
@@ -1168,7 +1182,7 @@ switch (a_dacFormatId)
          'argos_hex_id', 'PTT_HEX', ...
          'argos_frequency', 'TRANS_FREQUENCY');
       
-   case {'2.15.0.R', '2.15.2.R', '2.15.5.R'}
+   case {'2.15.0.R', '2.15.2.R', '2.15.5.R', '2.16.0.R', '2.17.4.R'}
       o_configStruct = struct( ...
          'ActivateRecoveryMode', 'CONFIG_ARM_ActivateRecoveryModeFlag', ...
          'AscentRate', 'CONFIG_AR_AscentRate', ...

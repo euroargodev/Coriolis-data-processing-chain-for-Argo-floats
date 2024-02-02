@@ -37,11 +37,11 @@ switch (a_decoderId)
       % ARVOR Argos
       o_platformFamily = 'FLOAT';
       
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 301}
+   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 301}
       % PROVOR CTS4
       o_platformFamily = 'FLOAT';
       
-   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131}
+   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133}
       % PROVOR CTS5
       o_platformFamily = 'FLOAT';
       
@@ -49,7 +49,7 @@ switch (a_decoderId)
       % DEEP ARVOR
       o_platformFamily = 'FLOAT_DEEP';
       
-   case {205, 204, 210, 211, 212, 222, 224}
+   case {205, 204, 210, 211, 212, 222, 224, 226}
       % ARVOR Iridium
       o_platformFamily = 'FLOAT';
       
@@ -69,7 +69,7 @@ switch (a_decoderId)
       % NOVA & DOVA
       o_platformFamily = 'FLOAT';
          
-   case {1321, 1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128}
+   case {1321, 1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130}
       % Apex APF11
       o_platformFamily = 'FLOAT';
 

@@ -59,9 +59,6 @@ elseif ((isfield(g_decArgo_calibInfo.FLBB, 'ScaleFactBackscatter700')) && ...
       (isfield(g_decArgo_calibInfo.FLBB, 'KhiCoefBackscatter')))
    scaleFactBackscatter700 = double(g_decArgo_calibInfo.FLBB.ScaleFactBackscatter700);
    darkCountBackscatter700 = double(g_decArgo_calibInfo.FLBB.DarkCountBackscatter700);
-   if (isfield(g_decArgo_calibInfo.FLBB, 'DarkCountBackscatter700_O'))
-      darkCountBackscatter700 = double(g_decArgo_calibInfo.FLBB.DarkCountBackscatter700_O);
-   end
    khiCoefBackscatter = double(g_decArgo_calibInfo.FLBB.KhiCoefBackscatter);
 else
    fprintf('ERROR: Float #%d Cycle #%d: inconsistent FLBB sensor calibration information\n', ...

@@ -14,6 +14,7 @@
 %         floatWmo      : WMO number of concerned float
 %         inputDirName  : name of the input directory
 %         outputDirName : name of the output directory
+%         addPresCore   : flag to add PRES_CORE parameter in output file
 %      if input parameters are not provided:
 %         floatWmo      => floats of the FLOAT_LIST_FILE_NAME list are processed
 %         inputDirName  => DIR_INPUT_NC_FILES is used
@@ -61,6 +62,11 @@
 %   09/13/2022 - RNU - V 1.15: report ERROR message and don't generate S-PROF
 %                              file if PRES profiles are not consistent between
 %                              core and B files
+%   10/13/2023 - RNU - V 1.16: a PRES_CORE parameter can be added to the output
+%                              S-PROF files (by using the 'addPresCore' input
+%                              parameter).
+%   12/04/2023 - RNU - V 1.17: includes version 01.12.2023 of ARGO_simplified_profile
+%   01/19/2024 - RNU - V 1.18: includes version 11.01.2024 of ARGO_simplified_profile
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile(varargin)
 
@@ -73,7 +79,7 @@ global g_cocs_netCDF4FlagForMultiProf;
 g_cocs_netCDF4FlagForMultiProf = 1;
 
 % list of floats to process (if empty, all encountered files of the DIR_INPUT_NC_FILES directory will be processed)
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_pb_S-prof.txt';
 % FLOAT_LIST_FILE_NAME = '';
 
@@ -83,7 +89,6 @@ DIR_INPUT_NC_FILES = 'H:\archive_201801\aoml\';
 DIR_INPUT_NC_FILES = 'H:\archive_201801\CSIRO\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\SYNTHETIC_PROFILE\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-DIR_INPUT_NC_FILES = 'D:\202209-ArgoData\coriolis\';
 
 % top directory of output NetCDF files
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
@@ -115,9 +120,12 @@ end
 % to generate the multi-profile file
 CREATE_MULTI_PROF_FLAG = 0;
 
+% to add PRES_CORE variable in the generated S-PROF file
+CREATE_MULTI_PROF_FLAG = 0;
+
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.15 (version 09.06.2022 for ARGO_simplified_profile)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.18 (version 11.01.2024 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;
@@ -125,6 +133,10 @@ global g_cocs_floatNum;
 % output CSV file Id
 global g_cocs_fidCsvFile;
 g_cocs_fidCsvFile = -1;
+
+% to add PRES_CORE variable in the generated S-PROF file
+global g_cocs_addPresCoreFlag;
+g_cocs_addPresCoreFlag = 0;
 
 
 % default values initialization
@@ -457,11 +469,15 @@ return
 function [o_inputError, o_floatWmo, o_inputDirName, o_outputDirName] = ...
    parse_input_param(a_varargin)
 
+% to add PRES_CORE variable in the generated S-PROF file
+global g_cocs_addPresCoreFlag;
+
 % output parameters initialization
 o_inputError = 0;
 o_floatWmo = [];
 o_inputDirName = '';
 o_outputDirName = '';
+addPresCore = '';
 
 
 % ignore empty input parameters
@@ -487,6 +503,8 @@ if (~isempty(a_varargin))
             o_inputDirName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'outputDirName'))
             o_outputDirName = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'addPresCore'))
+            addPresCore = a_varargin{id+1};
          else
             fprintf('WARNING: unexpected input argument (''%s'') - ignored\n', a_varargin{id});
          end
@@ -511,6 +529,14 @@ if (~isempty(o_inputDirName) && ~isempty(o_floatWmo))
    if ~(exist([o_inputDirName '/' o_floatWmo], 'dir') == 7)
       fprintf('ERROR: Float input directory not found: %s\n', [o_inputDirName '/' o_floatWmo]);
       o_inputError = 1;
+   end
+end
+if (~isempty(addPresCore))
+   if ((addPresCore ~= '0') && (addPresCore ~= '1'))
+      fprintf('ERROR: Inconsistent ''addPresCore'' value (%s) (expected ''0'' or ''1'')\n', addPresCore);
+      o_inputError = 1;
+   else
+      g_cocs_addPresCoreFlag = str2double(addPresCore);
    end
 end
       

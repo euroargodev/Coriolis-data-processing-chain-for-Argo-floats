@@ -55,17 +55,17 @@ global g_decArgo_dirOutputLogFile;
 global g_decArgo_dirOutputCsvFile;
 global g_decArgo_dirOutputXmlFile;
 global g_decArgo_dirOutputNetcdfFile;
+global g_decArgo_dirOutputTraj31NetcdfFile;
+global g_decArgo_dirOutputTraj32NetcdfFile;
 
 global g_decArgo_processRemainingBuffers;
 
-global g_decArgo_generateNcTraj;
 global g_decArgo_generateNcMultiProf;
 global g_decArgo_generateNcMonoProf;
 global g_decArgo_generateNcTech;
 global g_decArgo_generateNcMeta;
-
+global g_decArgo_generateNcTraj31;
 global g_decArgo_generateNcTraj32;
-global g_decArgo_dirOutputTraj32NetcdfFile;
 
 global g_decArgo_addErrorEllipses;
 global g_decArgo_dirInputErrorEllipsesMail;
@@ -97,6 +97,7 @@ global g_decArgo_rtqcTest23;
 global g_decArgo_rtqcTest24;
 global g_decArgo_rtqcTest25;
 global g_decArgo_rtqcTest26;
+global g_decArgo_rtqcTest56;
 global g_decArgo_rtqcTest57;
 global g_decArgo_rtqcTest59;
 global g_decArgo_rtqcTest62;
@@ -138,19 +139,19 @@ configVar{end+1} = 'DIR_OUTPUT_LOG_FILE';
 configVar{end+1} = 'DIR_OUTPUT_CSV_FILE';
 configVar{end+1} = 'DIR_OUTPUT_XML_FILE';
 configVar{end+1} = 'DIR_OUTPUT_NETCDF_FILE';
+configVar{end+1} = 'DIR_OUTPUT_NETCDF_TRAJ_3_1_FILE';
+configVar{end+1} = 'DIR_OUTPUT_NETCDF_TRAJ_3_2_FILE';
 
 if (g_decArgo_realtimeFlag)
    configVar{end+1} = 'PROCESS_REMAINING_BUFFERS';
 end
 
-configVar{end+1} = 'GENERATE_NC_TRAJ';
 configVar{end+1} = 'GENERATE_NC_MULTI_PROF';
 configVar{end+1} = 'GENERATE_NC_MONO_PROF';
 configVar{end+1} = 'GENERATE_NC_TECH';
 configVar{end+1} = 'GENERATE_NC_META';
-
+configVar{end+1} = 'GENERATE_NC_TRAJ_3_1';
 configVar{end+1} = 'GENERATE_NC_TRAJ_3_2';
-configVar{end+1} = 'DIR_OUTPUT_NETCDF_TRAJ_3_2_FILE';
 
 configVar{end+1} = 'ADD_ARGOS_ERROR_ELLIPSES';
 configVar{end+1} = 'DIR_INPUT_ARGOS_ERROR_ELLIPSES_MAIL';
@@ -182,6 +183,7 @@ configVar{end+1} = 'TEST023_DEEP_FLOAT';
 configVar{end+1} = 'TEST024_RBR_FLOAT';
 configVar{end+1} = 'TEST025_MEDD';
 configVar{end+1} = 'TEST026_TEMP_CNDC';
+configVar{end+1} = 'TEST056_PH';
 configVar{end+1} = 'TEST057_DOXY';
 configVar{end+1} = 'TEST059_NITRATE';
 configVar{end+1} = 'TEST062_BBP';
@@ -249,14 +251,16 @@ if (o_inputError == 0)
    configVal(1) = [];
    g_decArgo_dirOutputNetcdfFile = configVal{1};
    configVal(1) = [];
-   
+   g_decArgo_dirOutputTraj31NetcdfFile = configVal{1};
+   configVal(1) = [];
+   g_decArgo_dirOutputTraj32NetcdfFile = configVal{1};
+   configVal(1) = [];
+
    if (g_decArgo_realtimeFlag)
       g_decArgo_processRemainingBuffers = str2num(configVal{1});
       configVal(1) = [];
    end
    
-   g_decArgo_generateNcTraj = str2num(configVal{1});
-   configVal(1) = [];
    g_decArgo_generateNcMultiProf = str2num(configVal{1});
    configVal(1) = [];
    g_decArgo_generateNcMonoProf = str2num(configVal{1});
@@ -265,19 +269,18 @@ if (o_inputError == 0)
    configVal(1) = [];
    g_decArgo_generateNcMeta = str2num(configVal{1});
    configVal(1) = [];
-
+   g_decArgo_generateNcTraj31 = str2num(configVal{1});
+   configVal(1) = [];
    g_decArgo_generateNcTraj32 = str2num(configVal{1});
    configVal(1) = [];
-   g_decArgo_dirOutputTraj32NetcdfFile = configVal{1};
-   configVal(1) = [];
    
-   % if TRAJ 3.1 and TRAJ 3.2 files should be generated on the same output
-   % directory, we generate only the TRAJ 3.2 file
-   if ((g_decArgo_generateNcTraj ~= 0) && (g_decArgo_generateNcTraj32 ~= 0))
-      [dirOutputNetcdfFile, ~, ~] = fileparts(g_decArgo_dirOutputNetcdfFile);
+   % if TRAJ 3.1 and TRAJ 3.2 files should be generated in the same directory
+   % we generate only the TRAJ 3.2 file
+   if ((g_decArgo_generateNcTraj31 ~= 0) && (g_decArgo_generateNcTraj32 ~= 0))
+      [dirOutputTraj31NetcdfFile, ~, ~] = fileparts(g_decArgo_dirOutputTraj31NetcdfFile);
       [dirOutputTraj32NetcdfFile, ~, ~] = fileparts(g_decArgo_dirOutputTraj32NetcdfFile);
-      if (strcmp(dirOutputNetcdfFile, dirOutputTraj32NetcdfFile))
-         g_decArgo_generateNcTraj = 0;
+      if (strcmp(dirOutputTraj31NetcdfFile, dirOutputTraj32NetcdfFile))
+         g_decArgo_generateNcTraj31 = 0;
       end
    end
    
@@ -338,6 +341,8 @@ if (o_inputError == 0)
    g_decArgo_rtqcTest25 = str2num(configVal{1});
    configVal(1) = [];
    g_decArgo_rtqcTest26 = str2num(configVal{1});
+   configVal(1) = [];
+   g_decArgo_rtqcTest56 = str2num(configVal{1});
    configVal(1) = [];
    g_decArgo_rtqcTest57 = str2num(configVal{1});
    configVal(1) = [];

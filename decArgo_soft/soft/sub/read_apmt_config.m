@@ -158,6 +158,18 @@ for idF = 1:length(fieldNames)
          if (strcmp(data, 'P60=0'))
             continue
          end
+      elseif (ismember(a_decoderId, [129, 130, 131, 132, 133]))
+         allowedNum = [configInfoStruct.(fieldNames{idF}){:}];
+         allowedNum = [allowedNum.num];
+         idFEq = strfind(data, '=');
+         if (~isempty(idFEq))
+            paramNum = str2double(data(2:idFEq(1)-1));
+            if (~ismember(paramNum, allowedNum))
+               fprintf('INFO: read_apmt_config: Parameter [%s].P%d is not in the configuration of decId %d floats - ignored\n', ...
+                  fieldNames{idF}, paramNum, a_decoderId);
+               continue
+            end
+         end
       end
       idFEq = strfind(data, '=');
       % manage known errors
@@ -256,8 +268,8 @@ switch (a_decoderId)
       [o_configSectionList, o_configInfoStruct] = init_config_info_struct_127;
    case {128}
       [o_configSectionList, o_configInfoStruct] = init_config_info_struct_128;
-   case {129, 130, 131}
-      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_129_130_131;
+   case {129, 130, 131, 132, 133}
+      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_129_to_133;
    otherwise
       fprintf('ERROR: Don''t know how to initialize decoding structure for decoder Id #%d\n', ...
          a_decoderId);

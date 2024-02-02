@@ -157,6 +157,18 @@ g_decArgo_7TypePacketReceivedCyNum = [];
 global g_decArgo_lastDetectionDate;
 g_decArgo_lastDetectionDate = [];
 
+% date of last surfacing
+global g_decArgo_lastSurfacingDate;
+g_decArgo_lastSurfacingDate = [];
+
+% number of consecutive ISA detection
+global g_decArgo_isaDetectionCounter;
+g_decArgo_isaDetectionCounter = 0;
+
+% name of the CSV file of ICE information
+global g_decArgo_iceInfoFilePathName;
+g_decArgo_iceInfoFilePathName = [];
+
 % float configuration
 global g_decArgo_floatConfig;
 
@@ -362,7 +374,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
    curMailFileDate = tabAllFileDates(idSpoolFile);
    
    % specific
-   if (ismember(g_decArgo_floatNum, [3901644, 6904105]))
+   if (ismember(g_decArgo_floatNum, [3901644, 6904105, 6903038]))
       switch g_decArgo_floatNum
          case 3901644
             % 2 mails are probably not transmitted by this float
@@ -373,6 +385,19 @@ for idSpoolFile = 1:length(tabAllFileNames)
          case 6904105
             % one mail sent and received twice
             if (curMailFileDate == gregorian_2_julian_dec_argo('2021/03/07 07:04:43'))
+               continue
+            end
+         case 6903038
+            % 9 mails are erroneous data
+            if (curMailFileDate == gregorian_2_julian_dec_argo('2021/10/12 15:18:55') || ...
+                  curMailFileDate == gregorian_2_julian_dec_argo('2021/10/12 19:33:42') || ...
+                  curMailFileDate == gregorian_2_julian_dec_argo('2021/10/12 20:44:00') || ...
+                  curMailFileDate == gregorian_2_julian_dec_argo('2021/10/13 06:25:29') || ...
+                  curMailFileDate == gregorian_2_julian_dec_argo('2021/10/13 07:15:02') || ...
+                  curMailFileDate == gregorian_2_julian_dec_argo('2021/10/13 08:12:23') || ...
+                  curMailFileDate == gregorian_2_julian_dec_argo('2021/10/13 09:11:37') || ...
+                  curMailFileDate == gregorian_2_julian_dec_argo('2021/10/13 10:12:19') || ...
+                  curMailFileDate == gregorian_2_julian_dec_argo('2021/10/13 11:14:29'))
                continue
             end
       end

@@ -4,7 +4,7 @@
 % SYNTAX :
 %  o_cycleTimeData = ...
 %    compute_prv_dates_221(a_tabTech1, a_tabTech2, a_deepCycle, ...
-%    a_iceDelayedCycleFlag, a_refDay, a_cycleNum)
+%    a_iceDelayedCycleFlag, a_refDay, a_cycleNum, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_tabTech1            : decoded data of technical msg #1
@@ -13,6 +13,7 @@
 %   a_iceDelayedCycleFlag : Ice delayed cycle flag
 %   a_refDay              : reference day
 %   a_cycleNum            : cycle number
+%   a_decoderId           : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_cycleTimeData : cycle timings structure
@@ -27,7 +28,7 @@
 % ------------------------------------------------------------------------------
 function o_cycleTimeData = ...
    compute_prv_dates_221(a_tabTech1, a_tabTech2, a_deepCycle, ...
-   a_iceDelayedCycleFlag, a_refDay, a_cycleNum)
+   a_iceDelayedCycleFlag, a_refDay, a_cycleNum, a_decoderId)
 
 % output parameters initialization
 o_cycleTimeData = get_prv_ir_float_time_init_struct(a_cycleNum);
@@ -42,18 +43,9 @@ global g_decArgo_cycleNum;
 global g_decArgo_janFirst1950InMatlab;
 global g_decArgo_dateDef;
 
-% list of cycle numbers and ice detection flag
-global g_decArgo_cycleNumListForIce;
-global g_decArgo_cycleNumListIceDetected;
-
-% date of last ICE detection
-global g_decArgo_lastDetectionDate;
-
-% float configuration
-global g_decArgo_floatConfig;
-
 % maximum descent speed (in cm/s)
 MAX_DESC_SPEED = 20;
+
 
 % times and information to be set
 cycleStartDate = [];
@@ -76,128 +68,12 @@ firstEmergencyAscentDate = [];
 firstEmergencyAscentPres = [];
 iceDetected = -1;
 
-
-if ((a_deepCycle == 1) || (a_iceDelayedCycleFlag == 1))
-   idFCy = find(g_decArgo_cycleNumListForIce == g_decArgo_cycleNum);
-   if (isempty(idFCy))
-      idFCy = length(g_decArgo_cycleNumListForIce) + 1;
-   end
-   g_decArgo_cycleNumListForIce(idFCy) = g_decArgo_cycleNum;
-   g_decArgo_cycleNumListIceDetected(idFCy) = 0;
-end
-
 if (isempty(a_tabTech1) && isempty(a_tabTech2))
    return
 end
 
 % ice detection determination
-% technical message #1
-id1 = [];
-if (~isempty(a_tabTech1))
-   idF1 = find(a_tabTech1(:, 1) == 0);
-   if (length(idF1) == 1)
-      id1 = idF1(1);
-   end
-end
-% technical message #2
-id2 = [];
-if (~isempty(a_tabTech2))
-   idF2 = find(a_tabTech2(:, 1) == 4);
-   if (length(idF2) == 1)
-      id2 = idF2(1);
-   end
-end
-if (~isempty(id1) && ~isempty(id2))
-   gpsDateVal = a_tabTech1(id1, end-3); % float time at the creation of the TECH packet
-   iceDetectionFlag = a_tabTech2(id2, 43);
-   if (iceDetectionFlag ~= 0)
-      % ice has been detected by the float
-      if (isempty(g_decArgo_lastDetectionDate) || (g_decArgo_lastDetectionDate < gpsDateVal))
-         g_decArgo_lastDetectionDate = gpsDateVal;
-      end
-      iceDetected = 1;
-   end
-   
-   % retrieve the PG0 configuration parameter
-   if (iceDetected == -1)
-      if (a_deepCycle == 1)
-         [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
-         pg0Value = get_config_value('CONFIG_PG00', configNames, configValues);
-         if (~isempty(pg0Value))
-            if (gpsDateVal < g_decArgo_lastDetectionDate + pg0Value)
-               iceDetected = 2;
-            else
-               iceDetected = 0;
-            end
-         end
-      elseif (a_iceDelayedCycleFlag == 1) % there is no configuration for such cycle, look for the previous one
-         cyNum = g_decArgo_cycleNum - 1;
-         while (cyNum >= 0)
-            if (any(g_decArgo_floatConfig.USE.CYCLE == cyNum))
-               [configNames, configValues] = get_float_config_ir_sbd(cyNum);
-               break
-            end
-            cyNum = cyNum - 1;
-         end
-         pg0Value = get_config_value('CONFIG_PG00', configNames, configValues);
-         if (~isempty(pg0Value))
-            if (gpsDateVal < g_decArgo_lastDetectionDate + pg0Value)
-               iceDetected = 2;
-            else
-               iceDetected = 0;
-            end
-         end
-      end
-   end
-   
-   % check consitency with other information
-   gpsValidFix = a_tabTech1(id1, 59);
-   gpsSessionDuration = a_tabTech1(id1, 60);
-   if ((gpsValidFix == 255) && (gpsSessionDuration == 0))
-      if (iceDetected == 0)
-         fprintf('INFO: Float #%d cycle #%d: the float did not try to reach the surface (still in the IC0 days period) (Ice detection flag: %d, GPS valid fix: %d, GPS session duration: %d)\n', ...
-            g_decArgo_floatNum, g_decArgo_cycleNum, ...
-            iceDetectionFlag, gpsValidFix, gpsSessionDuration);
-      end
-   end
-elseif (~isempty(id1))
-   gpsDateVal = a_tabTech1(id1, end-3); % float time at the creation of the TECH packet
-   if (~isempty(g_decArgo_lastDetectionDate))
-      % retrieve the PG0 configuration parameter
-      [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
-      pg0Value = get_config_value('CONFIG_PG00', configNames, configValues);
-      if (~isempty(pg0Value))
-         if (gpsDateVal < g_decArgo_lastDetectionDate + pg0Value)
-            iceDetected = 2;
-         else
-            iceDetected = 0;
-         end
-      end
-   end
-   
-   % check consitency with other information
-   gpsValidFix = a_tabTech1(id1, 59);
-   gpsSessionDuration = a_tabTech1(id1, 60);
-   if ((gpsValidFix == 255) && (gpsSessionDuration == 0))
-      if (iceDetected == 0)
-         fprintf('ERROR: Float #%d cycle #%d: ice detection information not consistent with TECH information (Ice detection: %d, GPS valid fix: %d, GPS session duration: %d)\n', ...
-            g_decArgo_floatNum, g_decArgo_cycleNum, ...
-            iceDetected, gpsValidFix, gpsSessionDuration);
-      end
-   end
-elseif (~isempty(id2))
-   iceDetectionFlag = a_tabTech2(id2, 43);
-   if (iceDetectionFlag ~= 0)
-      % ice has been detected by the float
-      iceDetected = 1;
-   end
-end
-
-% transmission session aborted during this cycle
-if (iceDetected ~= 0)
-   idFCy = find(g_decArgo_cycleNumListForIce == g_decArgo_cycleNum);
-   g_decArgo_cycleNumListIceDetected(idFCy) = 1;
-end
+iceDetected = compute_ascent_aborted_flag(a_tabTech1, a_tabTech2, a_decoderId);
 
 % technical message #1
 idF1 = find(a_tabTech1(:, 1) == 0);

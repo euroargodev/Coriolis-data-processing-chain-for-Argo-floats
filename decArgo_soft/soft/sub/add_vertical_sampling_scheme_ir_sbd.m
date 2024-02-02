@@ -76,7 +76,7 @@ for idP = 1:length(a_tabProfiles)
                threshold3 = prof.additionnalBottomThreshold;
                thickBottom2 = 1;
             end
-         case {210, 211, 212, 222, 223, 224, 213, 214, 217, 225}
+         case {210, 211, 212, 222, 223, 224, 213, 214, 217, 225, 226}
             nbThreshold = 2;
             descSamplingPeriod = get_config_value('CONFIG_MC08_', configNames, configValues);
             ascSamplingPeriod = get_config_value('CONFIG_MC10_', configNames, configValues);
@@ -129,7 +129,7 @@ for idP = 1:length(a_tabProfiles)
             
             vssText = [vssText ' [' description ']'];
          elseif (nbThreshold == 2)
-            if (~ismember(a_decoderId, [224]))
+            if (~ismember(a_decoderId, [224 226]))
                if (~isempty(ascSamplingPeriod) && ~isempty(profilePres) && ...
                      ~isempty(threshold1) && ~isempty(threshold2) && ...
                      ~isempty(thickSurf) && ~isempty(thickMiddle) && ~isempty(thickBottom) && ...

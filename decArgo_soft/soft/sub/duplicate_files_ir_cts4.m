@@ -22,6 +22,12 @@
 % ------------------------------------------------------------------------------
 function [o_ok] = duplicate_files_ir_cts4(a_listFileNames, a_inputDir, a_outputDir)
 
+global g_decArgo_floatNum;
+
+% SBD sub-directories
+global g_decArgo_unusedDirectory;
+
+
 % output parameters initialization
 o_ok = 1;
 
@@ -34,6 +40,17 @@ for idFile = 1:length(a_listFileNames)
       o_ok = 0;
       return
    end
+end
+
+% specific
+switch(g_decArgo_floatNum)
+   case 6902902
+      % files transmitted in 2023 should be ignored (bad cycle number and
+      % dates due to emergency ascent)
+      delFile = dir([a_outputDir '/230113_*.b64']);
+      for idF = 1:length(delFile)
+         move_file([a_outputDir '/' delFile(idF).name], g_decArgo_unusedDirectory);
+      end
 end
 
 return

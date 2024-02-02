@@ -118,7 +118,14 @@ for idMes = 1:size(a_tabSensors, 1)
             ];
          % get item bits
          o_tabTech1 = get_bits(firstBit, tabNbBits, msgData);
-         
+
+         % specific
+         % float #6902782 transmits information of cycle #185 with cycle #184
+         if ((g_decArgo_floatNum == 6902782) && (o_tabTech1(1) == 184))
+            o_tabTech1 = [];
+            continue
+         end
+   
          % some pressures are given in bars
          o_tabTech1(14) = o_tabTech1(14)*10;
          if (o_tabTech1(45) ~= 0)
@@ -136,13 +143,13 @@ for idMes = 1:size(a_tabSensors, 1)
          if (~isempty(g_decArgo_outputCsvFileId))
             print_tech1_data_in_csv_30_32(o_tabTech1);
          end
-         
+
          % check if it is a deep cycle
          deepInfo = unique(o_tabTech1([6:13 19:32]));
          if ((length(deepInfo) == 1) && (deepInfo == 0))
             o_deepCycle = 0;
          end
-         
+
          % check cycle number consistency
          offset = o_deepCycle;
          if ((o_tabTech1(1) + offset) ~= g_decArgo_cycleNum)
@@ -188,7 +195,7 @@ for idMes = 1:size(a_tabSensors, 1)
             ];
          % get item bits
          o_tabTech2 = get_bits(firstBit, tabNbBits, msgData);
-         
+
          % compute pressure sensor offset
          o_tabTech2(25) = twos_complement_dec_argo(o_tabTech2(25), 7);
          

@@ -293,8 +293,8 @@ switch (a_decoderId)
             
       end
       
-   case {114}
-      % PROVOR CTS4 EuroSea 6.13
+   case {114, 116}
+      % PROVOR CTS4 EuroSea 6.13 & 6.15
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
             
@@ -429,7 +429,7 @@ switch (a_decoderId)
             
       end
       
-   case {126, 127, 128, 129, 130, 131}
+   case {126, 127, 128, 129, 130, 131, 132, 133}
       % PROVOR CTS5-USEA
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
@@ -637,7 +637,7 @@ switch (a_decoderId)
             
       end
       
-   case {210, 211, 212, 222, 213, 214, 217, 223, 224, 225}
+   case {210, 211, 212, 222, 213, 214, 217, 223, 224, 225, 226}
       % ARVOR ARN Iridium
       % PROVOR ARN DO Iridium
       % Provor-ARN-Ice Iridium 5.45 & 5.47
@@ -646,6 +646,7 @@ switch (a_decoderId)
       % Arvor-ARN-DO-Ice Iridium 5.48
       % Provor-ARN-Ice RBR Iridium 5.49
       % Provor-ARN-DO-Ice Iridium 5.76
+      % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
             
@@ -1013,7 +1014,7 @@ switch (a_decoderId)
             o_resolution = double(1/86400); % 1 second
       end
       
-   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1321, 1322, 1323}
+   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1321, 1322, 1323}
       % Apex APF11 Iridium
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}

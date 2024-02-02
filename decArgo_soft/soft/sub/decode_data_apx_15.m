@@ -672,6 +672,7 @@ for idL = 1:size(a_sensorData, 1)
       paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
       paramTempCpuChla = get_netcdf_param_attributes('TEMP_CPU_CHLA');
       paramChla = get_netcdf_param_attributes('CHLA');
+      paramChlaFluo = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
       paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
       paramBbp700 = get_netcdf_param_attributes('BBP700');
       
@@ -691,6 +692,8 @@ for idL = 1:size(a_sensorData, 1)
       surfChla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
          surfFluorescenceChla, ...
          g_decArgo_fluorescenceChlaDef, g_decArgo_chloroADef);
+      % duplicate CHLA profile as CHLA_FLUORESCENCE one
+      surfChlaFluo = surfChla;
 
       % compute BBP700
       % surface BBP700 will be computed later (once the profile is decoded
@@ -703,18 +706,19 @@ for idL = 1:size(a_sensorData, 1)
       surfBetaBackscattering700(find(surfBetaBackscattering700 == g_decArgo_betaBackscattering700Def)) = paramBetaBackscattering700.fillValue;
       surfTempCpuChla(find(surfTempCpuChla == g_decArgo_tempCpuChlaDef)) = paramTempCpuChla.fillValue;
       surfChla(find(surfChla == g_decArgo_chloroADef)) = paramChla.fillValue;
+      surfChlaFluo(find(surfChlaFluo == g_decArgo_chloroADef)) = paramChlaFluo.fillValue;
 
       % store surface data
       o_surfData = get_apx_profile_data_init_struct;
       
       % add parameter variables to the data structure
       o_surfData.paramList = [paramPres ...
-         paramFluorescenceChla paramTempCpuChla paramChla ...
+         paramFluorescenceChla paramTempCpuChla paramChla paramChlaFluo ...
          paramBetaBackscattering700 paramBbp700];
       
       % add parameter data to the data structure
       o_surfData.data = [surfPres ...
-         surfFluorescenceChla  surfTempCpuChla surfChla ...
+         surfFluorescenceChla  surfTempCpuChla surfChla surfChlaFluo ...
          surfBetaBackscattering700 surfBbp700];
       
       % add parameter data redundancy to the profile structure
@@ -740,6 +744,8 @@ for idL = 1:size(a_sensorData, 1)
       parkChla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
          parkFluorescenceChla, ...
          g_decArgo_fluorescenceChlaDef, g_decArgo_chloroADef);
+      % duplicate CHLA profile as CHLA_FLUORESCENCE one
+      parkChlaFluo = parkChla;
 
       % compute BBP700
       parkBbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
@@ -756,6 +762,7 @@ for idL = 1:size(a_sensorData, 1)
       parkFluorescenceChla(find(parkFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
       parkTempCpuChla(find(parkTempCpuChla == g_decArgo_tempCpuChlaDef)) = paramTempCpuChla.fillValue;
       parkChla(find(parkChla == g_decArgo_chloroADef)) = paramChla.fillValue;
+      parkChlaFluo(find(parkChlaFluo == g_decArgo_chloroADef)) = paramChlaFluo.fillValue;
       parkBetaBackscattering700(find(parkBetaBackscattering700 == g_decArgo_betaBackscattering700Def)) = paramBetaBackscattering700.fillValue;
       parkBbp700(find(parkBbp700 == g_decArgo_backscatDef)) = paramBbp700.fillValue;
       
@@ -765,17 +772,17 @@ for idL = 1:size(a_sensorData, 1)
       % add parameter variables to the data structure
       o_parkData.paramList = [paramPres paramTemp paramSal ...
          paramFrequencyDoxy paramDoxy ...
-         paramFluorescenceChla paramTempCpuChla paramChla ...
+         paramFluorescenceChla paramTempCpuChla paramChla paramChlaFluo ...
          paramBetaBackscattering700 paramBbp700];
       
       % add parameter data to the data structure
       o_parkData.data = [parkPres parkTemp parkSal ...
          parkFrequencyDoxy parkDoxy ...
-         parkFluorescenceChla parkTempCpuChla parkChla ...
+         parkFluorescenceChla parkTempCpuChla parkChla parkChlaFluo ...
          parkBetaBackscattering700 parkBbp700];
       
       % add parameter data redundancy to the profile structure
-      o_parkData.dataRed = repmat(msgRed, 1, 10);      
+      o_parkData.dataRed = repmat(msgRed, 1, 11);      
 
       % store profile data
       profData(1) = msgData(31);
@@ -1016,6 +1023,7 @@ if (nbLev > 0)
    paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
    paramTempCpuChla = get_netcdf_param_attributes('TEMP_CPU_CHLA');
    paramChla = get_netcdf_param_attributes('CHLA');
+   paramChlaFluo = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
    paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
    paramBbp700 = get_netcdf_param_attributes('BBP700');
    
@@ -1032,8 +1040,11 @@ if (nbLev > 0)
    profChla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
       profFluorescenceChla, ...
       g_decArgo_fluorescenceChlaDef, g_decArgo_chloroADef);
-   
+   % duplicate CHLA profile as CHLA_FLUORESCENCE one
+   profChlaFluo = profChla;
+
    profChlaRed = profFluorescenceChlaRed;
+   profChlaFluoRed = profFluorescenceChlaRed;
 
    % compute BBP700
    profBbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
@@ -1052,25 +1063,26 @@ if (nbLev > 0)
    profFluorescenceChla(find(profFluorescenceChla == g_decArgo_fluorescenceChlaDef)) = paramFluorescenceChla.fillValue;
    profTempCpuChla(find(profTempCpuChla == g_decArgo_tempCpuChlaDef)) = paramTempCpuChla.fillValue;
    profChla(find(profChla == g_decArgo_chloroADef)) = paramChla.fillValue;
+   profChlaFluo(find(profChlaFluo == g_decArgo_chloroADef)) = paramChlaFluo.fillValue;
    profBetaBackscattering700(find(profBetaBackscattering700 == g_decArgo_betaBackscattering700Def)) = paramBetaBackscattering700.fillValue;
    profBbp700(find(profBbp700 == g_decArgo_backscatDef)) = paramBbp700.fillValue;
 
    % add parameter variables to the profile structure
    o_profData.paramList = [paramPres paramTemp paramSal ...
       paramFrequencyDoxy paramDoxy ...
-      paramFluorescenceChla paramTempCpuChla paramChla ...
+      paramFluorescenceChla paramTempCpuChla paramChla paramChlaFluo ...
       paramBetaBackscattering700 paramBbp700];
    
    % add parameter data to the profile structure
    o_profData.data = [profPres profTemp profSal ...
       profFrequencyDoxy profDoxy ...
-      profFluorescenceChla profTempCpuChla profChla ...
+      profFluorescenceChla profTempCpuChla profChla profChlaFluo ...
       profBetaBackscattering700 profBbp700];
    
    % add parameter data redundancy to the profile structure
    o_profData.dataRed = [profPresRed profTempRed profSalRed ...
       profFrequencyDoxyRed profDoxyRed ...
-      profFluorescenceChlaRed profTempCpuChlaRed profChlaRed ...
+      profFluorescenceChlaRed profTempCpuChlaRed profChlaRed profChlaFluoRed ...
       profBetaBackscattering700Red profBbp700Red];
    
    % compute and add BBP700 value to surface data

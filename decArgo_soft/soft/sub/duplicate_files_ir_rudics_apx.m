@@ -66,7 +66,7 @@ for idFile = 1:length(fileIdList)
    if (isempty(dataFileExt))
       dataFileExt = '.msg';
    end
-   
+
    idF = strfind(dataFileName, '_');
    floatId = str2double(dataFileName(1:idF(1)-1));
    if (length(idF) == 3)
@@ -111,7 +111,14 @@ for idFile = 1:length(fileIdList)
       end
       profInfo = parse_apx_ir_profile_info(profInfoDataStr);
       if (~isempty(profInfo) && isfield(profInfo, 'ProfTime'))
-         dates = [dates; profInfo.ProfTime];
+         % specific to PTT 9568, i.e. floats 6902019, 6902024, 6903697, 4903714
+         if (ismember(a_floatNum, [6902019, 6902024, 6903697, 4903714]))
+            if (profInfo.ProfTime >= max(dates)) % see #4903714 #11 for example
+               dates = [dates; profInfo.ProfTime];
+            end
+         else
+            dates = [dates; profInfo.ProfTime];
+         end
       end
       [gpsLocDate, gpsLocLon, gpsLocLat, ...
          gpsLocNbSat, gpsLocAcqTime, ...

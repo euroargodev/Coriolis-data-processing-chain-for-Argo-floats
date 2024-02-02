@@ -539,7 +539,9 @@ if (a_cycleNum >= firstDeepCycle)
 end
 
 % configuration mission number
-if (a_cycleNum > 0) % we don't assign any configuration to cycle #0 data
+% we don't assign any configuration to cycle #0 data (except for some old floats
+% with a first deep cycle numbered #0)
+if ((a_cycleNum > 0) || ((a_cycleNum == 0) && (firstDeepCycle == 0)))
    configMissionNumber = get_config_mission_number_argos( ...
       a_cycleNum, a_repRateMetaData, a_decoderId);
    if (~isempty(configMissionNumber))

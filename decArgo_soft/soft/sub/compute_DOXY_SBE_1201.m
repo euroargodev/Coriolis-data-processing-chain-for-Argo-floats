@@ -1,5 +1,5 @@
 % ------------------------------------------------------------------------------
-% Compute DOXY from FREQUENCY_DOXY for a SBE 63 IDO sensor.
+% Compute DOXY from PHASE_DELAY_DOXY for a SBE 63 IDO sensor.
 %
 % SYNTAX :
 %  [o_DOXY] = compute_DOXY_SBE_1201( ...

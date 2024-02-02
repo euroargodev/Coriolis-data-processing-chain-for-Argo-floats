@@ -62,7 +62,7 @@ global g_decArgo_cycleNum;
 switch (a_decoderId)
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1322, 1323}
+   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1322, 1323}
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % DOXY & PPOX_DOXY
@@ -549,6 +549,7 @@ switch (a_decoderId)
       if (~isempty(o_profFlbb))
          
          paramChla = get_netcdf_param_attributes('CHLA');
+         paramChlaFluo = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
          paramBbp700 = get_netcdf_param_attributes('BBP700');
          
          paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
@@ -557,28 +558,34 @@ switch (a_decoderId)
          paramSal = get_netcdf_param_attributes('PSAL');
          paramBetaBackscattering700 = get_netcdf_param_attributes('BETA_BACKSCATTERING700');
          
-         % add CHLA and BBP700 to the FLBB profile
-         o_profFlbb.paramList = [o_profFlbb.paramList paramChla paramBbp700];
+         % add CHLA, CHLA_FLUORESCENCE and BBP700 to the FLBB profile
+         o_profFlbb.paramList = [o_profFlbb.paramList paramChla paramChlaFluo paramBbp700];
          o_profFlbb.data = [o_profFlbb.data ...
             ones(size(o_profFlbb.data, 1), 1)*paramChla.fillValue ...
+            ones(size(o_profFlbb.data, 1), 1)*paramChlaFluo.fillValue ...
             ones(size(o_profFlbb.data, 1), 1)*paramBbp700.fillValue];
          if (~isempty(o_profFlbb.dataAdj))
-            o_profFlbb.paramDataMode = [o_profFlbb.paramDataMode '  '];
+            o_profFlbb.paramDataMode = [o_profFlbb.paramDataMode '   '];
             o_profFlbb.dataAdj = [o_profFlbb.dataAdj ...
                ones(size(o_profFlbb.dataAdj, 1), 1)*paramChla.fillValue ...
+               ones(size(o_profFlbb.dataAdj, 1), 1)*paramChlaFluo.fillValue ...
                ones(size(o_profFlbb.dataAdj, 1), 1)*paramBbp700.fillValue];
          end
          
          % CHLA
          idFluorescenceChla = find(strcmp({o_profFlbb.paramList.name}, 'FLUORESCENCE_CHLA') == 1);
          idChla = find(strcmp({o_profFlbb.paramList.name}, 'CHLA') == 1);
+         idChlaFluo = find(strcmp({o_profFlbb.paramList.name}, 'CHLA_FLUORESCENCE') == 1);
          
-         if (~isempty(idFluorescenceChla) && ~isempty(idChla))
+         if (~isempty(idFluorescenceChla) && ~isempty(idChla) && ~isempty(idChlaFluo))
             % compute CHLA
-            chlaValues = compute_CHLA_105_to_112_121_to_131_1121_to_28_1322_1323( ...
+            chlaValues = compute_CHLA_105_to_112_121_to_133_1121_to_28_1322_1323( ...
                o_profFlbb.data(:, idFluorescenceChla), ...
                paramFluorescenceChla.fillValue, paramChla.fillValue);
             o_profFlbb.data(:, idChla) = chlaValues;
+
+            % duplicate CHLA profile as CHLA_FLUORESCENCE one
+            o_profFlbb.data(:, idChlaFluo) = chlaValues;
          end
          
          % BBP700
@@ -627,7 +634,7 @@ switch (a_decoderId)
                      if (~isempty(ctdLinkData))
                         
                         % compute BBP700
-                        bbp700Values = compute_BBP700_105_to_112_121_to_131_1121_to_28_1322_1323( ...
+                        bbp700Values = compute_BBP700_105_to_112_121_to_133_1121_to_28_1322_1323( ...
                            o_profFlbb.data(idPark, idBetaBackscattering700), ...
                            paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
                            ctdLinkData, ...
@@ -708,7 +715,7 @@ switch (a_decoderId)
                         ctdDataAscent.data, o_profFlbb.data(idAscent, idPres), 'A');
                      
                      % compute BBP700
-                     bbp700Values = compute_BBP700_105_to_112_121_to_131_1121_to_28_1322_1323( ...
+                     bbp700Values = compute_BBP700_105_to_112_121_to_133_1121_to_28_1322_1323( ...
                         o_profFlbb.data(idAscent, idBetaBackscattering700), ...
                         paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
                         [o_profFlbb.data(idAscent, idPres), ctdIntData(:, 2), ctdIntData(:, 3)], ...
@@ -730,6 +737,7 @@ switch (a_decoderId)
       if (~isempty(o_profFlbbCd))
          
          paramChla = get_netcdf_param_attributes('CHLA');
+         paramChlaFluo = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
          paramBbp700 = get_netcdf_param_attributes('BBP700');
          paramCdom = get_netcdf_param_attributes('CDOM');
          
@@ -741,15 +749,17 @@ switch (a_decoderId)
          paramFluorescenceCdom = get_netcdf_param_attributes('FLUORESCENCE_CDOM');
          
          % add CHLA, BBP700 and CDOM to the FLBBCD profile
-         o_profFlbbCd.paramList = [o_profFlbbCd.paramList paramChla paramBbp700 paramCdom];
+         o_profFlbbCd.paramList = [o_profFlbbCd.paramList paramChla paramChlaFluo paramBbp700 paramCdom];
          o_profFlbbCd.data = [o_profFlbbCd.data ...
             ones(size(o_profFlbbCd.data, 1), 1)*paramChla.fillValue ...
+            ones(size(o_profFlbbCd.data, 1), 1)*paramChlaFluo.fillValue ...
             ones(size(o_profFlbbCd.data, 1), 1)*paramBbp700.fillValue ...
             ones(size(o_profFlbbCd.data, 1), 1)*paramCdom.fillValue];
          if (~isempty(o_profFlbbCd.dataAdj))
-            o_profFlbbCd.paramDataMode = [o_profFlbbCd.paramDataMode '   '];
+            o_profFlbbCd.paramDataMode = [o_profFlbbCd.paramDataMode '    '];
             o_profFlbbCd.dataAdj = [o_profFlbbCd.dataAdj ...
                ones(size(o_profFlbbCd.dataAdj, 1), 1)*paramChla.fillValue ...
+               ones(size(o_profFlbbCd.dataAdj, 1), 1)*paramChlaFluo.fillValue ...
                ones(size(o_profFlbbCd.dataAdj, 1), 1)*paramBbp700.fillValue ...
                ones(size(o_profFlbbCd.dataAdj, 1), 1)*paramCdom.fillValue];
          end
@@ -757,13 +767,17 @@ switch (a_decoderId)
          % CHLA
          idFluorescenceChla = find(strcmp({o_profFlbbCd.paramList.name}, 'FLUORESCENCE_CHLA') == 1);
          idChla = find(strcmp({o_profFlbbCd.paramList.name}, 'CHLA') == 1);
+         idChlaFluo = find(strcmp({o_profFlbbCd.paramList.name}, 'CHLA_FLUORESCENCE') == 1);
          
-         if (~isempty(idFluorescenceChla) && ~isempty(idChla))
+         if (~isempty(idFluorescenceChla) && ~isempty(idChla) && ~isempty(idChlaFluo))
             % compute CHLA
-            chlaValues = compute_CHLA_105_to_112_121_to_131_1121_to_28_1322_1323( ...
+            chlaValues = compute_CHLA_105_to_112_121_to_133_1121_to_28_1322_1323( ...
                o_profFlbbCd.data(:, idFluorescenceChla), ...
                paramFluorescenceChla.fillValue, paramChla.fillValue);
             o_profFlbbCd.data(:, idChla) = chlaValues;
+
+            % duplicate CHLA profile as CHLA_FLUORESCENCE one
+            o_profFlbbCd.data(:, idChlaFluo) = chlaValues;
          end
          
          % BBP700
@@ -821,7 +835,7 @@ switch (a_decoderId)
                      if (~isempty(ctdLinkData))
                         
                         % compute BBP700
-                        bbp700Values = compute_BBP700_105_to_112_121_to_131_1121_to_28_1322_1323( ...
+                        bbp700Values = compute_BBP700_105_to_112_121_to_133_1121_to_28_1322_1323( ...
                            o_profFlbbCd.data(idPark, idBetaBackscattering700), ...
                            paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
                            ctdLinkData, ...
@@ -919,7 +933,7 @@ switch (a_decoderId)
                         ctdDataAscent.data, o_profFlbbCd.data(idAscent, idPres), 'A');
                      
                      % compute BBP700
-                     bbp700Values = compute_BBP700_105_to_112_121_to_131_1121_to_28_1322_1323( ...
+                     bbp700Values = compute_BBP700_105_to_112_121_to_133_1121_to_28_1322_1323( ...
                         o_profFlbbCd.data(idAscent, idBetaBackscattering700), ...
                         paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
                         [o_profFlbbCd.data(idAscent, idPres), ctdIntData(:, 2), ctdIntData(:, 3)], ...
@@ -940,7 +954,7 @@ switch (a_decoderId)
          
          if (~isempty(idFluorescenceCdom) && ~isempty(idCdom))
             % compute CDOM
-            cdomValues = compute_CDOM_105_to_107_110_112_121_to_130_1121_to_28_1322_1323( ...
+            cdomValues = compute_CDOM_105_to_107_110_112_121_to_133_1121_to_28_1322_1323( ...
                o_profFlbbCd.data(:, idFluorescenceCdom), ...
                paramFluorescenceCdom.fillValue, paramCdom.fillValue);
             o_profFlbbCd.data(:, idCdom) = cdomValues;

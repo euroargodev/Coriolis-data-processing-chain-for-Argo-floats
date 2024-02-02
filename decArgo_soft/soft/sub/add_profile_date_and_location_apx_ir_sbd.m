@@ -159,7 +159,7 @@ for idP = 1:length(o_tabProfiles)
       % Iridium locations
       if (prof.locationDate == g_decArgo_dateDef)
 
-         [locDate, locLon, locLat, locQc, ~] = ...
+         [locDate, locLon, locLat, locQc] = ...
             compute_profile_location_from_iridium_locations_ir_sbd(a_iridiumMailData, prof.cycleNumber);
          if (~isempty(locDate))
             % assign the averaged Iridium location to the profile
@@ -174,7 +174,7 @@ for idP = 1:length(o_tabProfiles)
 
          else
 
-            [locDate, locLon, locLat, locQc, ~] = ...
+            [locDate, locLon, locLat, locQc] = ...
                compute_profile_location2_from_iridium_locations_ir_sbd(a_iridiumMailData, prof.cycleNumber);
             if (~isempty(locDate))
                % assign the averaged Iridium location to the profile

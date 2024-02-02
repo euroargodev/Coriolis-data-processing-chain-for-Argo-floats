@@ -362,6 +362,13 @@ if (g_decArgo_realtimeFlag)
                   remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer', 1, 0);
                end
             end
+            % 3901890: co_20230207T071609Z_300234063609200_005640_000000_21027
+            % should be ignored
+            if (g_decArgo_floatNum == 3901890)
+               if (strcmp(mailFileNameList{idFileList(idF)}, 'co_20230207T071609Z_300234063609200_005640_000000_21027.txt'))
+                  remove_from_list_ir_sbd(mailFileNameList{idFileList(idF)}, 'buffer', 1, 0);
+               end
+            end
          end
       end
       
@@ -451,7 +458,13 @@ for idSpoolFile = 1:length(tabAllFileNames)
       % 3901875: co_20220620T123329Z_300234063906180_003509_000000_26912.txt
       % contains data for cycle #213 that have already been transmitted
       
-      if (ismember(g_decArgo_floatNum, [3901598, 3901854, 3901875]))
+      % 3901890: co_20230207T071609Z_300234063609200_005640_000000_21027.txt
+      % contains data for cycle #424 that have already been transmitted
+
+      % 3901851: co_20230324T080357Z_300234063603100_005864_000000_15405.txt
+      % contains data for cycle #248 that have already been transmitted
+
+      if (ismember(g_decArgo_floatNum, [3901598, 3901854, 3901875, 3901890, 3901851]))
          if (g_decArgo_floatNum == 3901598)
             fileNameTodel = 'co_20190119T061121Z_300234064737400_001169_000000_4032.txt';
          end
@@ -460,6 +473,12 @@ for idSpoolFile = 1:length(tabAllFileNames)
          end
          if (g_decArgo_floatNum == 3901875)
             fileNameTodel = 'co_20220620T123329Z_300234063906180_003509_000000_26912.txt';
+         end
+         if (g_decArgo_floatNum == 3901890)
+            fileNameTodel = 'co_20230207T071609Z_300234063609200_005640_000000_21027.txt';
+         end
+         if (g_decArgo_floatNum == 3901851)
+            fileNameTodel = 'co_20230324T080357Z_300234063603100_005864_000000_15405.txt';
          end
          if (strcmp(tabAllFileNames{idSpoolFile}, fileNameTodel))
             remove_from_list_ir_sbd(tabAllFileNames{idSpoolFile}, 'buffer', 1, 0);
@@ -531,11 +550,16 @@ for idSpoolFile = 1:length(tabAllFileNames)
    % 3- some expected data are missing for cycle #129, as there is a
    % second Iridium session we must artificially separate first session (which
    % ends with MOMSN = 3043) and second Iridium session
-   
+   %
+   % MOMSN = 10394 is the second Iridium session of cycle #276,
+   % we must artificially separate first and second Iridium session 
+   % MOMSN = 10824 is the second Iridium session of cycle #284,
+   % we must artificially separate first and second Iridium session 
+
    % 6902935: MOMSN = 3076 to 3087 are missing, we must artificially separate
    % first and second Iridium session (which start with MOMSN = 31126 (and 31127))
    
-   if (ismember(g_decArgo_floatNum, [3901850, 6902798, 6902799, 6902935]))
+   if (ismember(g_decArgo_floatNum, [3901850, 6902798, 6902799, 6902935, 6902799]))
       if (g_decArgo_floatNum == 3901850)
          filePattern = '_300234063600100_002513_';
       end
@@ -554,13 +578,19 @@ for idSpoolFile = 1:length(tabAllFileNames)
             filePattern = '_300234064633980_002584_';
             if (isempty(strfind(tabAllFileNames{idSpoolFile}, filePattern)))
                filePattern = '_300234064633980_003043_';
+               if (isempty(strfind(tabAllFileNames{idSpoolFile}, filePattern)))
+                  filePattern = '_300234064633980_010392_';
+                  if (isempty(strfind(tabAllFileNames{idSpoolFile}, filePattern)))
+                     filePattern = '_300234064633980_010824_';
+                  end
+               end
             end
          end
       end
       if (g_decArgo_floatNum == 6902935)
          filePattern = '_300234066511640_003125_';
       end
-      
+
       if (~isempty(strfind(tabAllFileNames{idSpoolFile}, filePattern)))
          idOld = 1:length(tabFileNames);
          tabOldFileNames = tabFileNames(idOld);
@@ -1332,12 +1362,12 @@ switch (a_decoderId)
       
       % convert counts to physical values
       if (~isempty(dataCTD))
-         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202_210_to_214_217_222_to_225(dataCTD(:, 32:46));
+         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(dataCTD(:, 32:46));
          [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_201_to_203_215_216_218_221(dataCTD(:, 47:61));
          [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_201_to_203_215_216_218_221(dataCTD(:, 62:76));
       end
       if (~isempty(dataCTDO))
-         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_202_210_to_214_217_222_to_225(dataCTDO(:, 16:22));
+         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(dataCTDO(:, 16:22));
          [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_201_to_203_215_216_218_221(dataCTDO(:, 23:29));
          [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_201_to_203_215_216_218_221(dataCTDO(:, 30:36));
          [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2phase_ir_sbd_2xx(dataCTDO(:, 37:50));
@@ -1606,7 +1636,7 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTD))
          [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_225(dataCTD(:, 47:61));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTD(:, 47:61));
          [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTD(:, 62:76));
       end
       
@@ -1849,7 +1879,7 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTD))
          [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_225(dataCTD(:, 47:61));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTD(:, 47:61));
          [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTD(:, 62:76));
       end
       
@@ -2093,7 +2123,7 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTDO))
          [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 16:22));
-         [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_225(dataCTDO(:, 23:29));
+         [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTDO(:, 23:29));
          [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 30:36));
          [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2phase_ir_sbd_2xx(dataCTDO(:, 37:50));
          [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_ir_sbd_2xx(dataCTDO(:, 51:57));
@@ -2406,26 +2436,26 @@ switch (a_decoderId)
             case 2
                % CTD only
                [dataCTDO(:, 32:46)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 32:46));
-               [dataCTDO(:, 47:61)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_225(dataCTDO(:, 47:61));
+               [dataCTDO(:, 47:61)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTDO(:, 47:61));
                [dataCTDO(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 62:76));
             case 1
                % CTD + Aanderaa 4330
                [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 16:22));
-               [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_225(dataCTDO(:, 23:29));
+               [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTDO(:, 23:29));
                [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 30:36));
                [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2phase_ir_sbd_2xx(dataCTDO(:, 37:50));
                [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_ir_sbd_2xx(dataCTDO(:, 51:57));
             case 4
                % CTD + SBE 63
                [dataCTDO(:, 20:28)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 20:28));
-               [dataCTDO(:, 29:37)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_225(dataCTDO(:, 29:37));
+               [dataCTDO(:, 29:37)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTDO(:, 29:37));
                [dataCTDO(:, 38:46)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 38:46));
                [dataCTDO(:, 47:55)] = sensor_2_value_for_phase_delay_doxy_209(dataCTDO(:, 47:55));
                [dataCTDO(:, 56:64)] = sensor_2_value_for_temp_doxy_ir_sbd_2xx(dataCTDO(:, 56:64));
             case 5
                % CTD + Aanderaa 4330 + SBE 63
                [dataCTDO(:, 12:16)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 12:16));
-               [dataCTDO(:, 17:21)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_225(dataCTDO(:, 17:21));
+               [dataCTDO(:, 17:21)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTDO(:, 17:21));
                [dataCTDO(:, 22:26)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 22:26));
                [dataCTDO(:, 27:36)] = sensor_2_value_for_C1C2phase_ir_sbd_2xx(dataCTDO(:, 27:36));
                [dataCTDO(:, 37:41)] = sensor_2_value_for_temp_doxy_ir_sbd_2xx(dataCTDO(:, 37:41));
@@ -2727,9 +2757,9 @@ switch (a_decoderId)
       
       % convert counts to physical values
       if (~isempty(dataCTD))
-         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202_210_to_214_217_222_to_225(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_225(dataCTD(:, 47:61));
-         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_210_to_214_217_220_222_to_225(dataCTD(:, 62:76));
+         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(dataCTD(:, 32:46));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTD(:, 47:61));
+         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_210_to_214_217_220_222_to_226(dataCTD(:, 62:76));
       end
       
       % create drift data set
@@ -2922,7 +2952,7 @@ switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {213} % Provor-ARN-DO Iridium 5.74
-      
+
       % decode the collected data
       [tabTech1, tabTech2, dataCTDO, evAct, pumpAct, floatParam, ...
          irSessionNum, deepCycle, resetDetected] = ...
@@ -2968,13 +2998,13 @@ switch (a_decoderId)
       
       % convert counts to physical values
       if (~isempty(dataCTDO))
-         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_202_210_to_214_217_222_to_225(dataCTDO(:, 16:22));
-         [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_225(dataCTDO(:, 23:29));
-         [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_210_to_214_217_220_222_to_225(dataCTDO(:, 30:36));
+         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(dataCTDO(:, 16:22));
+         [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTDO(:, 23:29));
+         [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_210_to_214_217_220_222_to_226(dataCTDO(:, 30:36));
          [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2phase_ir_sbd_2xx(dataCTDO(:, 37:50));
          [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_ir_sbd_2xx(dataCTDO(:, 51:57));
       end
-      
+
       % create drift data set
       [parkDate, parkTransDate, ...
          parkPres, parkTemp, parkSal, ...

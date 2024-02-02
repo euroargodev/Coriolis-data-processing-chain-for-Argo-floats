@@ -34,7 +34,8 @@ o_lastMsgDate = [];
 global g_decArgo_dateDef;
 
 % input NetCDF directory
-global g_decArgo_dirOutputNetcdfFile;
+global g_decArgo_dirOutputTraj31NetcdfFile;
+global g_decArgo_dirOutputTraj32NetcdfFile;
 
 % global measurement codes
 global g_MC_FMT;
@@ -42,7 +43,14 @@ global g_MC_LMT;
 
 
 % netCDF TRAJ file pathname
-ncTrajPathFileName = [g_decArgo_dirOutputNetcdfFile '/' num2str(a_floatNum) '/' num2str(a_floatNum) '_Rtraj.nc'];
+% in the RT decoder when 'processmode' = 'profile' or 'redecode',
+% g_decArgo_generateNcTraj32 and g_decArgo_generateNcTraj31 are set to 0, we are
+% then not able to know which TRAJ version was usually needed.
+% We then check for both versions with the priority to the 3.2 one.
+ncTrajPathFileName = [g_decArgo_dirOutputTraj32NetcdfFile '/' num2str(a_floatNum) '/' num2str(a_floatNum) '_Rtraj.nc'];
+if ~(exist(ncTrajPathFileName, 'file') == 2)
+   ncTrajPathFileName = [g_decArgo_dirOutputTraj31NetcdfFile '/' num2str(a_floatNum) '/' num2str(a_floatNum) '_Rtraj.nc'];
+end
 
 if (exist(ncTrajPathFileName, 'file') == 2)
    

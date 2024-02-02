@@ -35,6 +35,7 @@
 %                                    Provor-ARN-DO-Ice Iridium 5.76
 %                                    CTS4 Ice
 %   03/24/2022 - RNU - 2 rsync directories are available for PROVOR CTS5 floats
+%   07/08/2023 - RNU - added Apex APF9 Iridium Rudics floats
 % ------------------------------------------------------------------------------
 function decode_float_locations(varargin)
 
@@ -72,6 +73,21 @@ if (CORIOLIS_CONFIGURATION_FLAG)
    DIR_OUTPUT_DATA_IRIDIUM_SBD = '/home/coriolis_exp/spool/co04/co0414/co041404/recovery/iridium/';
 
    % IRIDIUM SBD CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % APF9 RUDICS CONFIGURATION - START
+
+   % rsync directory
+   DIR_INPUT_RSYNC_DATA_APF9_RUDICS = '/home/coriolis_exp/spool/co01/co0101/co010108/archive/cycle/';
+
+   % spool directory
+   DIR_INPUT_SPOOL_DATA_APF9_RUDICS = '';
+
+   % directory to store duplicated mail files
+   DIR_OUTPUT_DATA_APF9_RUDICS = '/home/coriolis_exp/spool/co04/co0414/co041404/recovery/iridium/';
+
+   % APF9 RUDICS CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,6 +172,7 @@ else
 
    % maximum age of input files to consider (in hours)
    MAX_FILE_AGE_IN_HOUR = 10*365*24;
+   % MAX_FILE_AGE_IN_HOUR = 30*24;
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % IRIDIUM SBD CONFIGURATION - START
@@ -170,6 +187,21 @@ else
    DIR_OUTPUT_DATA_IRIDIUM_SBD = 'C:\Users\jprannou\_DATA\TEST\OUTPUT\';
 
    % IRIDIUM SBD CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % APF9 RUDICS CONFIGURATION - START
+
+   % rsync directory
+   DIR_INPUT_RSYNC_DATA_APF9_RUDICS = 'C:\Users\jprannou\_DATA\IN\RSYNC\APEX_IR_RUDICS\rsync_data\';
+
+   % spool directory
+   DIR_INPUT_SPOOL_DATA_APF9_RUDICS = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\FLOAT_RECOVERY\TEST_SPOOL\';
+
+   % directory to store duplicated mail files
+   DIR_OUTPUT_DATA_APF9_RUDICS = 'C:\Users\jprannou\_DATA\TEST\OUTPUT\';
+
+   % APF9 RUDICS CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -247,6 +279,7 @@ global g_decArgo_decoderIdListNkeCts4NotIce;
 global g_decArgo_decoderIdListNkeCts4Ice;
 global g_decArgo_decoderIdListNkeCts4;
 global g_decArgo_decoderIdListNkeCts5;
+global g_decArgo_decoderIdListApexApf9IridiumRudics;
 global g_decArgo_decoderIdListApexApf11IridiumRudics;
 
 % default values
@@ -273,9 +306,11 @@ decIdManagedList = [ ...
    213 ... % Provor-ARN-DO Iridium 5.74
    214 ... % Provor-ARN-DO-Ice Iridium 5.75
    225 ... % Provor-ARN-DO-Ice Iridium 5.76
+   226 ... % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
    g_decArgo_decoderIdListNkeCts4 ... % all versions of Provor CTS4
    g_decArgo_decoderIdListNkeCts5 ... % all versions of Provor CTS5
    g_decArgo_decoderIdListApexApf11IridiumRudics ... % all versions of Apex APF11 Iridium Rudics
+   g_decArgo_decoderIdListApexApf9IridiumRudics ... % all versions of Apex APF9 Iridium Rudics
    ];
 
 % check inputs
@@ -340,7 +375,7 @@ end
 % read information file
 fileContents = loadjson(floatInfoFileName);
 
-% retrieve ptt and decoderId
+% retrieve ptt, decoderId, launchDate and endDate
 if (isfield(fileContents, 'PTT'))
    floatPtt = fileContents.PTT;
 else
@@ -358,6 +393,18 @@ else
    fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
    diary off;
    return
+end
+if (ismember(floatDecId, g_decArgo_decoderIdListApexApf9IridiumRudics))
+   if (isfield(fileContents, 'LAUNCH_DATE'))
+      floatLaunchDate = fileContents.LAUNCH_DATE;
+      floatLaunchDate = datenum(floatLaunchDate, 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
+   else
+      fprintf('ERROR: Cannot find ''LAUNCH_DATE'' in file %s\n', floatInfoFileName);
+      ellapsedTime = toc;
+      fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
+      diary off;
+      return
+   end
 end
 
 % check that decdId is managed
@@ -390,6 +437,15 @@ if (ismember(floatDecId, g_decArgo_decoderIdListNkeCts4))
          DIR_OUTPUT_DATA_ATLANTOS_SBD, ...
          MAX_FILE_AGE_IN_HOUR);
    end
+elseif (ismember(floatDecId, g_decArgo_decoderIdListApexApf9IridiumRudics))
+   duplicate_apx_apf9_iridium_rudics_files_float_to_recover( ...
+      floatWmo, ...
+      floatPtt, ...
+      DIR_INPUT_RSYNC_DATA_APF9_RUDICS, ...
+      DIR_INPUT_SPOOL_DATA_APF9_RUDICS, ...
+      DIR_OUTPUT_DATA_APF9_RUDICS, ...
+      MAX_FILE_AGE_IN_HOUR, ...
+      floatLaunchDate, floatDecId);
 elseif (ismember(floatDecId, g_decArgo_decoderIdListApexApf11IridiumRudics))
    duplicate_apx_apf11_iridium_rudics_files_float_to_recover( ...
       floatWmo, ...
@@ -410,7 +466,7 @@ elseif (ismember(floatDecId, g_decArgo_decoderIdListNkeCts5))
 else
    switch (floatDecId)
       case {219, ...
-            210, 211, 212, 217, 222, 223, 224, ...
+            210, 211, 212, 217, 222, 223, 224, 226, ...
             203, 215, 218, 221, ...
             213, 214, 225}
          duplicate_iridium_mail_files_float_to_recover( ...
@@ -431,6 +487,8 @@ if (ismember(floatDecId, g_decArgo_decoderIdListNkeCts4NotIce))
    [decodedDataTab] = decode_float_location_cts4_sbd(floatWmo, floatPtt, DIR_OUTPUT_DATA_REMOCEAN_SBD);
 elseif (ismember(floatDecId, g_decArgo_decoderIdListNkeCts4Ice))
    [decodedDataTab] = decode_float_location_cts4_ice_sbd(floatWmo, floatPtt, DIR_OUTPUT_DATA_REMOCEAN_SBD);
+elseif (ismember(floatDecId, g_decArgo_decoderIdListApexApf9IridiumRudics))
+   [decodedDataTab] = decode_float_location_apf9_rudics(floatWmo, floatPtt, DIR_OUTPUT_DATA_APF9_RUDICS, floatDecId);
 elseif (ismember(floatDecId, g_decArgo_decoderIdListApexApf11IridiumRudics))
    [decodedDataTab] = decode_float_location_apf11_rudics(floatWmo, floatPtt, DIR_OUTPUT_DATA_APF11_RUDICS);
 elseif (ismember(floatDecId, g_decArgo_decoderIdListNkeCts5))
@@ -438,7 +496,7 @@ elseif (ismember(floatDecId, g_decArgo_decoderIdListNkeCts5))
 else
    switch (floatDecId)
       case {219, ...
-            210, 211, 212, 217, 222, 223, 224, ...
+            210, 211, 212, 217, 222, 223, 224, 226, ...
             203, 215, 218, 221, ...
             213, 214, 225}
          [decodedDataTab] = decode_float_location_iridium_sbd(floatDecId, floatWmo, floatPtt, DIR_OUTPUT_DATA_IRIDIUM_SBD);
@@ -946,6 +1004,115 @@ for idMes = 1:size(tabSensors, 1)
 
       o_decodedData = [o_decodedData; [packJulD gpsLocLon gpsLocLat]];
    end
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Decode GPS location for Apex APF9 RUDICS floats.
+%
+% SYNTAX :
+%  [o_decodedData] = decode_float_location_apf9_rudics(a_floatNum, a_floatRudicsId, a_inputFileDir, a_decoderId)
+%
+% INPUT PARAMETERS :
+%   a_floatNum      : float WMO number
+%   a_floatRudicsId : float RUDICS Id
+%   a_inputFileDir  : top directory of files to be decoded
+%   a_decoderId     : float decoder Id
+%
+% OUTPUT PARAMETERS :
+%   o_decodedData : GPS data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   06/07/2023 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_decodedData] = decode_float_location_apf9_rudics(a_floatNum, a_floatRudicsId, a_inputFileDir, a_decoderId)
+
+% output parameters initialization
+o_decodedData = [];
+
+% set useful directories
+floatIriDirName = [a_inputFileDir '/' a_floatRudicsId '_' num2str(a_floatNum) '/'];
+archiveDirectory = [floatIriDirName 'archive/'];
+
+% process float log files
+fileNames = dir([archiveDirectory a_floatRudicsId '*.log']);
+for idFile = 1:length(fileNames)
+
+   logFilePathName = [archiveDirectory fileNames(idFile).name];
+
+   % read input file
+   [error, events] = read_apx_ir_log_file(logFilePathName, a_decoderId);
+   if (error == 1)
+      fprintf('ERROR: Float #%d: Error in file: %s - ignored\n', ...
+         a_floatNum, logFilePathName);
+      return
+   end
+
+   if (any(strcmp({events.cmd}, 'GpsServices()')))
+      idEvts = find(strcmp({events.cmd}, 'GpsServices()'));
+      [gpsData, ~] = process_apx_ir_gps_data_evts(events(idEvts));
+      for idFix = 1:length(gpsData)
+         o_decodedData = [o_decodedData; ...
+            [gpsData{idFix}.gpsFixDate gpsData{idFix}.gpsFixLon gpsData{idFix}.gpsFixLat]];
+      end
+   end
+end
+
+% process float msg files
+fileNames = dir([archiveDirectory a_floatRudicsId '*.msg']);
+for idFile = 1:length(fileNames)
+
+   msgFilePathName = [archiveDirectory fileNames(idFile).name];
+
+   % read input file
+   [error, ...
+      configDataStr, ...
+      driftMeasDataStr, ...
+      profInfoDataStr, ...
+      profLowResMeasDataStr, ...
+      profHighResMeasDataStr, ...
+      gpsFixDataStr, ...
+      engineeringDataStr, ...
+      nearSurfaceDataStr ...
+      ] = read_apx_ir_msg_file(msgFilePathName, a_decoderId, 1);
+   if (error == 1)
+      fprintf('ERROR: Float #%d: Error in file: %s - ignored\n', ...
+         a_floatNum, msgFilePathName);
+      return
+   end
+
+   % parse msg file information
+   [gpsLocDate, gpsLocLon, gpsLocLat, ...
+      gpsLocNbSat, gpsLocAcqTime, ...
+      gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_gps_fix(gpsFixDataStr);
+
+   % store GPS fixes
+   for idFix = 1:length(gpsLocDate)
+      o_decodedData = [o_decodedData; ...
+         [gpsLocDate(idFix) gpsLocLon(idFix) gpsLocLat(idFix)]];
+   end
+end
+
+% clear duplicates in GPS fixes
+if (~isempty(o_decodedData))
+
+   % sort remaining GPS fixes
+   [~, idSort] = sort(o_decodedData(:, 1));
+   o_decodedData = o_decodedData(idSort, :);
+
+   gpsDataStr = [];
+   for idFix = 1:size(o_decodedData, 1)
+      gpsDataStr{end+1} = sprintf('%s %.3f %.3f', ...
+         julian_2_gregorian_dec_argo(o_decodedData(idFix, 1)), o_decodedData(idFix, 2:3));
+   end
+   [~, idUnique, ~] = unique(gpsDataStr);
+   o_decodedData = o_decodedData(idUnique, :);
 end
 
 return
@@ -1508,8 +1675,9 @@ for idMsg = 1:size(sbdDataTab, 1)
             o_decodedData = [o_decodedData; [floatTime gpsLocLon gpsLocLat]];
 
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-         case {224}
+         case {224, 226}
             % Arvor-ARN-Ice RBR Iridium 5.49
+            % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
 
             % first item bit number
             firstBit = 1;

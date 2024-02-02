@@ -287,6 +287,7 @@ for idFloat = 1:length(floatList)
       {'CALIB_RT_COEFFICIENT'} ...
       {'CALIB_RT_COMMENT'} ...
       {'CALIB_RT_DATE'} ...
+      {'CALIB_RT_DATE_APPLY'} ...
       {'CALIB_RT_ADJUSTED_ERROR'} ...
       {'CALIB_RT_ADJ_ERROR_METHOD'} ...
       ];
@@ -350,26 +351,7 @@ for idFloat = 1:length(floatList)
       dataStruct.(fieldName1).(fieldName2) = calibData{idF(id), 4};
    end
    metaStruct.CALIBRATION_COEFFICIENT = dataStruct;
-   
-   % add DARK_O coefficients for FLBB sensor
-   if (isfield(metaStruct.CALIBRATION_COEFFICIENT, 'FLBB'))
-      idForWmo = find(wmoList == floatNum);
-      idF = find(strcmp(metaData(idForWmo, 5), 'NEW_DARK_FOR_FLUOROMETER_CHLA'));
-      if (~isempty(idF))
-         idF2 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 1); % always dim level 1 for DarkCountChloroA_O
-         if (~isempty(idF2))
-            metaStruct.CALIBRATION_COEFFICIENT.FLBB.DarkCountChloroA_O = metaData{idForWmo(idF(idF2)), 4};
-         end
-      end
-      idF = find(strcmp(metaData(idForWmo, 5), 'NEW_DARK_FOR_SCATTEROMETER_BBP'));
-      if (~isempty(idF))
-         idF2 = find(cellfun(@str2num, metaData(idForWmo(idF), 3)) == 1); % dim level 1 for DarkCountBackscatter700_O
-         if (~isempty(idF2))
-            metaStruct.CALIBRATION_COEFFICIENT.FLBB.DarkCountBackscatter700_O = metaData{idForWmo(idF(idF2)), 4};
-         end
-      end
-   end
-   
+      
    % add the calibration coefficients for OPTODE sensor (coming from the
    % data base)
    switch (dacFormatId)

@@ -83,6 +83,11 @@ if (ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium))
       finalConfigValue(idDel, :) = [];
    end
    
+   % merge PT and PTS SAMPLE configurations (see 3901667 #18 and #19)
+   % if SAMPE PT and PTS configurations are simultaneously present this will
+   % cause duplicates in configuration labels (because both reported with 'Ctd')
+   [finalConfigName, finalConfigValue] = merge_pt_pts_config(finalConfigName, finalConfigValue);
+
    % link between sensor names (to create Argo names from float ones)
    floatToNcSensorList = [ ...
       {'PT'} {'Ctd'}; ...
@@ -122,13 +127,13 @@ if (~isempty(a_decArgoConfParamNames))
 
                % retrieve phase name
                if (~isempty(strfind(finalConfigName{idConfParam}, '_ICEDESCENT_')))
-                  phaseName = 'DescentPhase';
+                  phaseName = 'IceDescentPhase';
                elseif (~isempty(strfind(finalConfigName{idConfParam}, '_PARK_')))
                   phaseName = 'ParkDriftPhase';
                elseif (~isempty(strfind(finalConfigName{idConfParam}, '_ASCENT_')))
                   phaseName = 'AscentPhase';
                elseif (~isempty(strfind(finalConfigName{idConfParam}, '_ICEASCENT_')))
-                  phaseName = 'AscentPhase';
+                  phaseName = 'IceAscentPhase';
                elseif (~isempty(strfind(finalConfigName{idConfParam}, '_SURFACE_')))
                   phaseName = 'SurfaceDriftPhase';
                else
@@ -166,58 +171,142 @@ if (~isempty(a_decArgoConfParamNames))
                
                if (strcmp(finalConfigName{idConfParam}(1:idFUs(2)-1), 'CONFIG_SAMPLE'))
                   
-                  switch (finalConfigName{idConfParam}(idFUs(end)+1:end))
-                     case 'NumberOfZones'
-                        idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE01'));
-                        finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
-                           [{'<short_sensor_name>'} {sensorNameOut} ...
-                           {'<cycle_phase_name>'} {phaseName}]);
-                        finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
-                     case 'StartPressure'
-                        idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE02'));
-                        finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
-                           [{'<short_sensor_name>'} {sensorNameOut} ...
-                           {'<cycle_phase_name>'} {phaseName} ...
-                           {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
-                        finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
-                     case 'StopPressure'
-                        idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE03'));
-                        finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
-                           [{'<short_sensor_name>'} {sensorNameOut} ...
-                           {'<cycle_phase_name>'} {phaseName} ...
-                           {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
-                        finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
-                     case 'DepthInterval'
-                        if (~any(finalConfigValue(idConfParam, :) == 0))
-                           idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE04'));
+                  if (~ismember(phaseName, [{'IceDescentPhase'} {'IceAscentPhase'}]))
+
+                     switch (finalConfigName{idConfParam}(idFUs(end)+1:end))
+                        case 'NumberOfZones'
+                           idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE01'));
+                           finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                              [{'<short_sensor_name>'} {sensorNameOut} ...
+                              {'<cycle_phase_name>'} {phaseName}]);
+                           finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                        case 'StartPressure'
+                           idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE02'));
                            finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
                               [{'<short_sensor_name>'} {sensorNameOut} ...
                               {'<cycle_phase_name>'} {phaseName} ...
                               {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
                            finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
-                        else
-                           % retrieve CONFIG_ATI_AscentTimerInterval information
-                           idF3 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_ATI'));
-                           finalConfigValue(idConfParam, :) = finalConfigValue(idF3, :);
+                        case 'StopPressure'
+                           idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE03'));
+                           finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                              [{'<short_sensor_name>'} {sensorNameOut} ...
+                              {'<cycle_phase_name>'} {phaseName} ...
+                              {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                           finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                        case 'DepthInterval'
+                           if (~any(finalConfigValue(idConfParam, :) == 0))
+                              idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE04'));
+                              finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                                 [{'<short_sensor_name>'} {sensorNameOut} ...
+                                 {'<cycle_phase_name>'} {phaseName} ...
+                                 {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                              finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                           else
+                              if (~ismember(phaseName, [{'ParkDriftPhase'} {'SurfaceDriftPhase'}]))
+                                 % retrieve CONFIG_PressureCheckTimeAscent_seconds information
+                                 idF3 = find(strcmp(finalConfigName, 'CONFIG_PressureCheckTimeAscent_seconds'));
+                                 finalConfigValue(idConfParam, :) = finalConfigValue(idF3, :);
+                                 idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE05'));
+                                 finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                                    [{'<short_sensor_name>'} {sensorNameOut} ...
+                                    {'<cycle_phase_name>'} {phaseName} ...
+                                    {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                                 finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                              else
+                                 % retrieve CONFIG_PressureCheckTimeParking_seconds information
+                                 idF3 = find(strcmp(finalConfigName, 'CONFIG_PressureCheckTimeParking_seconds'));
+                                 finalConfigValue(idConfParam, :) = finalConfigValue(idF3, :);
+                                 idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE05'));
+                                 finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                                    [{'<short_sensor_name>'} {sensorNameOut} ...
+                                    {'<cycle_phase_name>'} {phaseName} ...
+                                    {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                                 finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                              end
+                           end
+                        case 'TimeInterval'
                            idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE05'));
                            finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
                               [{'<short_sensor_name>'} {sensorNameOut} ...
                               {'<cycle_phase_name>'} {phaseName} ...
                               {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
                            finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
-                        end
-                     case 'NumberOfSamples'
-                        idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE06'));
-                        finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
-                           [{'<short_sensor_name>'} {sensorNameOut} ...
-                           {'<cycle_phase_name>'} {phaseName} ...
-                           {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
-                        finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
-                     otherwise
-                        fprintf('WARNING: Float #%d: Configuration parameter (*%s) not managed yet for decoderId #%d\n', ...
-                           g_decArgo_floatNum, ...
-                           finalConfigName{idConfParam}(idFUs(end)+1:end), ...
-                           a_decoderId);
+                        case 'NumberOfSamples'
+                           idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE06'));
+                           finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                              [{'<short_sensor_name>'} {sensorNameOut} ...
+                              {'<cycle_phase_name>'} {phaseName} ...
+                              {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                           finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                        otherwise
+                           fprintf('WARNING: Float #%d: Configuration parameter (*%s) not managed yet for decoderId #%d\n', ...
+                              g_decArgo_floatNum, ...
+                              finalConfigName{idConfParam}(idFUs(end)+1:end), ...
+                              a_decoderId);
+                     end
+                  else
+
+                     switch (finalConfigName{idConfParam}(idFUs(end)+1:end))
+                        case 'NumberOfZones'
+                           idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE001'));
+                           finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                              [{'<short_sensor_name>'} {sensorNameOut} ...
+                              {'<cycle_phase_name>'} {phaseName}]);
+                           finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                        case 'StartPressure'
+                           idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE002'));
+                           finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                              [{'<short_sensor_name>'} {sensorNameOut} ...
+                              {'<cycle_phase_name>'} {phaseName} ...
+                              {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                           finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                        case 'StopPressure'
+                           idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE003'));
+                           finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                              [{'<short_sensor_name>'} {sensorNameOut} ...
+                              {'<cycle_phase_name>'} {phaseName} ...
+                              {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                           finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                        case 'DepthInterval'
+                           if (~any(finalConfigValue(idConfParam, :) == 0))
+                              idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE004'));
+                              finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                                 [{'<short_sensor_name>'} {sensorNameOut} ...
+                                 {'<cycle_phase_name>'} {phaseName} ...
+                                 {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                              finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                           else
+                              % retrieve CONFIG_PressureCheckTimeAscent_seconds information
+                              idF3 = find(strcmp(finalConfigName, 'CONFIG_PressureCheckTimeAscent_seconds'));
+                              finalConfigValue(idConfParam, :) = finalConfigValue(idF3, :);
+                              idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE005'));
+                              finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                                 [{'<short_sensor_name>'} {sensorNameOut} ...
+                                 {'<cycle_phase_name>'} {phaseName} ...
+                                 {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                              finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                           end
+                        case 'TimeInterval'
+                           idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE005'));
+                           finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                              [{'<short_sensor_name>'} {sensorNameOut} ...
+                              {'<cycle_phase_name>'} {phaseName} ...
+                              {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                           finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                        case 'NumberOfSamples'
+                           idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE006'));
+                           finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                              [{'<short_sensor_name>'} {sensorNameOut} ...
+                              {'<cycle_phase_name>'} {phaseName} ...
+                              {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                           finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                        otherwise
+                           fprintf('WARNING: Float #%d: Configuration parameter (*%s) not managed yet for decoderId #%d\n', ...
+                              g_decArgo_floatNum, ...
+                              finalConfigName{idConfParam}(idFUs(end)+1:end), ...
+                              a_decoderId);
+                     end                     
                   end
                   
                elseif (strcmp(finalConfigName{idConfParam}(1:idFUs(2)-1), 'CONFIG_PROFILE'))
@@ -352,5 +441,185 @@ o_ncConfig.NUMBER = finalConfigNum;
 o_ncConfig.NAMES = finalConfigName;
 o_ncConfig.IDS = finalConfigId;
 o_ncConfig.VALUES = finalConfigValue;
+
+return
+
+% ------------------------------------------------------------------------------
+% Merge duplicated PT and PTS SAMPLE configurations.
+%
+% SYNTAX :
+%  [o_configName, o_configValue] = merge_pt_pts_config(a_configName, a_configValue)
+%
+% INPUT PARAMETERS :
+%    a_configName  : input configuration names
+%    a_configValue : input configuration values
+%
+% OUTPUT PARAMETERS :
+%    o_configName  : output configuration names
+%    o_configValue : output configuration values
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   12/06/2022 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_configName, o_configValue] = merge_pt_pts_config(a_configName, a_configValue)
+
+% output parameters initialization
+o_configName = a_configName;
+o_configValue = a_configValue;
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+
+% we have previously checked that all configuration names have at least 13
+% characters
+idF1 = find(cellfun(@(x) strcmp(x(end-12:end), 'NumberOfZones') & strcmp(x(1:13), 'CONFIG_SAMPLE'), o_configName));
+if (~isempty(idF1))
+   idF2 = find(cellfun(@(x) strcmp(x(end-16:end), '_PT_NumberOfZones'), o_configName(idF1)));
+   if (~isempty(idF2))
+
+      % look for duplicated configuration and store the sample phase
+      duplicateList = [];
+      for id = idF2'
+         label = o_configName{idF1(id)};
+         label = regexprep(label, '_PT_', '_PTS_');
+         idF2 = find(cellfun(@(x) strcmp(x, label), o_configName(idF1)));
+         if (~isempty(idF2))
+            duplicateList{end+1} = label;
+         end
+      end
+
+      % merge the configurations for each duplicated sample phase
+      for id = 1:length(duplicateList)
+         label = duplicateList{id};
+         idF3 = strfind(label, '_PTS_');
+         baseName = label(1:idF3-1);
+         ptsNZ = a_configValue(strcmp(duplicateList{id}, o_configName), :);
+         ptNZ = a_configValue(strcmp([baseName '_PT_NumberOfZones'], o_configName), :);
+         ptsConfig = nan(4*max([ptsNZ ptNZ])+1, size(a_configValue, 2));
+
+         idDel = [];
+
+         % initialize new configuration with PTS configuration
+         label = [baseName '_PTS_NumberOfZones'];
+         idD = find(strcmp(label, o_configName));
+         idDel = [idDel idD];
+         ptsConfig(1, :) = a_configValue(idD, :);
+         for idZ = 1:max(ptsNZ)
+            label = [baseName '_PTS_' num2str(idZ) '_StartPressure'];
+            idD = find(strcmp(label, o_configName));
+            idDel = [idDel idD];
+            ptsConfig(idZ+1+(idZ-1)*3, :) = a_configValue(idD, :);
+
+            label = [baseName '_PTS_' num2str(idZ) '_StopPressure'];
+            idD = find(strcmp(label, o_configName));
+            idDel = [idDel idD];
+            ptsConfig(idZ+2+(idZ-1)*3, :) = a_configValue(idD, :);
+
+            label = [baseName '_PTS_' num2str(idZ) '_DepthInterval'];
+            idD = find(strcmp(label, o_configName));
+            idDel = [idDel idD];
+            ptsConfig(idZ+3+(idZ-1)*3, :) = a_configValue(idD, :);
+
+            label = [baseName '_PTS_' num2str(idZ) '_NumberOfSamples'];
+            idD = find(strcmp(label, o_configName));
+            idDel = [idDel idD];
+            ptsConfig(idZ+4+(idZ-1)*3, :) = a_configValue(idD, :);
+         end
+
+         % add PT configuration
+         label = [baseName '_PT_NumberOfZones'];
+         idD = find(strcmp(label, o_configName));
+         idDel = [idDel idD];
+         ptNbZone = a_configValue(idD, :);
+         idNoNan = find(~isnan(ptsConfig(1, :)) & ~isnan(ptNbZone));
+         if (any(ptsConfig(1, idNoNan) ~= ptNbZone(idNoNan)))
+            fprintf('ERROR: Float #%d: PTS and PT configuration are not consistent - PTS used in merged configuration\n', ...
+               g_decArgo_floatNum);
+         end
+         idGo = find(isnan(ptsConfig(1, :)) & ~isnan(ptNbZone));
+         ptsConfig(1, idGo) = ptNbZone(idGo);
+         for idZ = 1:max(ptNZ)
+            label = [baseName '_PT_' num2str(idZ) '_StartPressure'];
+            idD = find(strcmp(label, o_configName));
+            idDel = [idDel idD];
+            ptStartPres = a_configValue(idD, :);
+            idNoNan = find(~isnan(ptsConfig(idZ+1+(idZ-1)*3, :)) & ~isnan(ptStartPres));
+            if (any(ptsConfig(idZ+1+(idZ-1)*3, idNoNan) ~= ptStartPres(idNoNan)))
+               fprintf('ERROR: Float #%d: PTS and PT configuration are not consistent - PTS used in merged configuration\n', ...
+                  g_decArgo_floatNum);
+            end
+            idGo = find(isnan(ptsConfig(idZ+1+(idZ-1)*3, :)) & ~isnan(ptStartPres));
+            ptsConfig(idZ+1+(idZ-1)*3, idGo) = ptStartPres(idGo);
+
+            label = [baseName '_PT_' num2str(idZ) '_StopPressure'];
+            idD = find(strcmp(label, o_configName));
+            idDel = [idDel idD];
+            ptStopPres = a_configValue(idD, :);
+            idNoNan = find(~isnan(ptsConfig(idZ+2+(idZ-1)*3, :)) & ~isnan(ptStopPres));
+            if (any(ptsConfig(idZ+2+(idZ-1)*3, idNoNan) ~= ptStopPres(idNoNan)))
+               fprintf('ERROR: Float #%d: PTS and PT configuration are not consistent - PTS used in merged configuration\n', ...
+                  g_decArgo_floatNum);
+            end
+            idGo = find(isnan(ptsConfig(idZ+2+(idZ-1)*3, :)) & ~isnan(ptStopPres));
+            ptsConfig(idZ+2+(idZ-1)*3, idGo) = ptStopPres(idGo);
+
+            label = [baseName '_PT_' num2str(idZ) '_DepthInterval'];
+            idD = find(strcmp(label, o_configName));
+            idDel = [idDel idD];
+            ptDepthInt = a_configValue(idD, :);
+            idNoNan = find(~isnan(ptsConfig(idZ+3+(idZ-1)*3, :)) & ~isnan(ptDepthInt));
+            if (any(ptsConfig(idZ+3+(idZ-1)*3, idNoNan) ~= ptDepthInt(idNoNan)))
+               fprintf('ERROR: Float #%d: PTS and PT configuration are not consistent - PTS used in merged configuration\n', ...
+                  g_decArgo_floatNum);
+            end
+            idGo = find(isnan(ptsConfig(idZ+3+(idZ-1)*3, :)) & ~isnan(ptDepthInt));
+            ptsConfig(idZ+3+(idZ-1)*3, idGo) = ptDepthInt(idGo);
+
+            label = [baseName '_PT_' num2str(idZ) '_NumberOfSamples'];
+            idD = find(strcmp(label, o_configName));
+            idDel = [idDel idD];
+            ptNumOfSamp = a_configValue(idD, :);
+            idNoNan = find(~isnan(ptsConfig(idZ+4+(idZ-1)*3, :)) & ~isnan(ptNumOfSamp));
+            if (any(ptsConfig(idZ+4+(idZ-1)*3, idNoNan) ~= ptNumOfSamp(idNoNan)))
+               fprintf('ERROR: Float #%d: PTS and PT configuration are not consistent - PTS used in merged configuration\n', ...
+                  g_decArgo_floatNum);
+            end
+            idGo = find(isnan(ptsConfig(idZ+4+(idZ-1)*3, :)) & ~isnan(ptNumOfSamp));
+            ptsConfig(idZ+4+(idZ-1)*3, idGo) = ptNumOfSamp(idGo);
+         end
+
+         % remove existing configurations
+         o_configName(idDel) = [];
+         o_configValue(idDel, :) = [];
+
+         % store new configuration labels
+         newConfigName = cell(size(ptsConfig, 1), 1);
+         newConfigName{1} = [baseName '_PTS_NumberOfZones'];
+         for idZ = 1:(size(ptsConfig, 1)-1)/4
+            label = [baseName '_PTS_' num2str(idZ) '_StartPressure'];
+            newConfigName{idZ+1+(idZ-1)*3} = label;
+
+            label = [baseName '_PTS_' num2str(idZ) '_StopPressure'];
+            newConfigName{idZ+2+(idZ-1)*3} = label;
+
+            label = [baseName '_PTS_' num2str(idZ) '_DepthInterval'];
+            newConfigName{idZ+3+(idZ-1)*3} = label;
+
+            label = [baseName '_PTS_' num2str(idZ) '_NumberOfSamples'];
+            newConfigName{idZ+4+(idZ-1)*3} = label;
+         end
+
+         % add new configuration
+         o_configName = cat(1, o_configName, newConfigName);
+         o_configValue = cat(1, o_configValue, ptsConfig);
+      end
+   end
+end
 
 return

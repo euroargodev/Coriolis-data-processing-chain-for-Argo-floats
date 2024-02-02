@@ -43,6 +43,9 @@ function nc_create_synthetic_profile_( ...
 % current float and cycle identification
 global g_cocs_floatNum;
 
+% to add PRES_CORE variable in the generated S-PROF file
+global g_cocs_addPresCoreFlag;
+
 
 floatWmoStr = num2str(g_cocs_floatNum);
 
@@ -83,6 +86,10 @@ if (a_createOnlyMultiProfFlag == 0)
    
    % create S-PROF file
    if (~isempty(syntProfDataStruct))
+      % add PRES_CORE data in the data structure
+      if (g_cocs_addPresCoreFlag == 1)
+         syntProfDataStruct = add_pres_core_data(syntProfDataStruct, profDataStruct);
+      end
       create_synthetic_mono_profile_file(g_cocs_floatNum, syntProfDataStruct, tmpDirName, a_outputDir, a_monoProfRefFile);
    end
 end
@@ -1419,6 +1426,64 @@ end
 return
 
 % ------------------------------------------------------------------------------
+% Add PRES_CORE data in the synthetic profile data structure.
+%
+% SYNTAX :
+% [o_syntProfData] = add_pres_core_data(a_syntProfData, a_profData)
+%
+% INPUT PARAMETERS :
+%   a_syntProfData : input synthetic profile data
+%   a_profData     : data retrieved from PROF file(s)
+%
+% OUTPUT PARAMETERS :
+%   o_syntProfData : output synthetic profile data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/13/2023 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_syntProfData] = add_pres_core_data(a_syntProfData, a_profData)
+
+% output parameters initialization
+o_syntProfData = a_syntProfData;
+
+% initialize PRES_CORE data
+presCoreData = zeros(size(a_syntProfData.paramData, 1), 1);
+
+% retrieve the primary profile Id
+idPrimary = find(strncmp({a_profData.verticalSamplingScheme}, 'Primary sampling:', length('Primary sampling:')));
+if (~isempty(idPrimary))
+
+   primaryProfile = a_profData(idPrimary);
+   corePresData = primaryProfile.presData;
+
+   idPres = find(strcmp(a_syntProfData.paramList, 'PRES'));
+   if (~isempty(idPres))
+
+      presInfo = get_netcdf_param_attributes('PRES');
+
+      sPresData = a_syntProfData.paramData(:, idPres);
+      sPresData = round_argo(sPresData, 'PRES');
+
+      corePresData = corePresData(corePresData ~= presInfo.fillValue);
+      corePresData = round_argo(corePresData, 'PRES');
+
+      for idL = 1:length(corePresData)
+         idF = find(sPresData == corePresData(idL));
+         presCoreData(idF) = 1;
+      end
+   end
+end
+
+o_syntProfData.PRES_CORE = presCoreData;
+
+return
+
+% ------------------------------------------------------------------------------
 % Get the dedicated structure to store synthetic profile information.
 %
 % SYNTAX :
@@ -1672,6 +1737,9 @@ global g_cocs_ncCreateSyntheticProfileVersion;
 % generate NetCDF-4 flag
 global g_cocs_netCDF4FlagForMonoProf;
 
+% to add PRES_CORE variable in the generated S-PROF file
+global g_cocs_addPresCoreFlag;
+
 % deflate levels
 DEFLATE_LEVEL = 4;
 
@@ -1726,6 +1794,7 @@ netcdf.putAtt(fCdf, globalVarId, 'references', 'http://www.argodatamgt.org/Docum
 netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '1.0');
 netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
 netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectoryProfile');
+netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
 
 % fill specific attributes
 netcdf.putAtt(fCdf, netcdf.inqVarID(fCdf, 'JULD'), 'resolution', a_profData.juldResolution);
@@ -2007,6 +2076,22 @@ for idParam = 1:length(paramList)
    end
 end
 
+% add PRES_CORE variable in the file
+if (g_cocs_addPresCoreFlag == 1)
+   presCoreVarId = netcdf.defVar(fCdf, 'PRES_CORE', 'NC_BYTE', fliplr([nProfDimId nLevelsDimId]));
+   if (g_cocs_netCDF4FlagForMonoProf)
+      netcdf.defVarDeflate(fCdf, presCoreVarId, SHUFFLE_FLAG, true, DEFLATE_LEVEL);
+   end
+      
+   netcdf.putAtt(fCdf, presCoreVarId, 'valid_min', int8(0));
+   netcdf.putAtt(fCdf, presCoreVarId, 'valid_max', int8(1));
+   netcdf.putAtt(fCdf, presCoreVarId, 'flag_values', int8([0, 1]));
+   netcdf.putAtt(fCdf, presCoreVarId, 'flag_meanings', 'not_pressure_from_core_profile pressure_from_core_profile');
+   netcdf.putAtt(fCdf, presCoreVarId, '_FillValue', int8(-127));
+   netcdf.putAtt(fCdf, presCoreVarId, 'long_name', 'Indicator of pressure level from core profile');
+   netcdf.putAtt(fCdf, presCoreVarId, 'coordinates', 'TIME LATITUDE LONGITUDE PRES TRAJECTORY');
+end
+
 netcdf.endDef(fCdf);
 
 % fill misc variable data
@@ -2152,6 +2237,12 @@ for idParam = 1:length(paramList)
    netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramAdjName), fliplr([0 0]), fliplr([1 length(paramDataAdj)]), paramDataAdj);
    netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramAdjQcName), fliplr([0 0]), fliplr([1 length(paramDataAdj)]), paramDataAdjQc);
    netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramAdjErrName), fliplr([0 0]), fliplr([1 length(paramDataAdjErr)]), paramDataAdjErr);
+end
+
+% fill PRES_CORE variable data
+if (g_cocs_addPresCoreFlag == 1)
+   presCoreData = a_profData.PRES_CORE;
+   netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PRES_CORE'), fliplr([0 0]), fliplr([1 length(presCoreData)]), presCoreData);
 end
 
 % fill SCIENTIFIC_CALIB_* variable data
@@ -2765,6 +2856,7 @@ netcdf.putAtt(fCdf, globalVarId, 'references', 'http://www.argodatamgt.org/Docum
 netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '1.0');
 netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
 netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectoryProfile');
+netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
 
 % fill specific attributes
 netcdf.putAtt(fCdf, netcdf.inqVarID(fCdf, 'JULD'), 'resolution', a_profData(1).juldResolution);
@@ -3139,5 +3231,63 @@ end
 
 % close NetCDF file
 netcdf.close(fCdf);
+
+return
+
+% ------------------------------------------------------------------------------
+% Round parameter measurement to a precision associated to each parameter
+%
+% SYNTAX :
+% [o_values] = round_argo(a_values, a_paramName)
+%
+% INPUT PARAMETERS :
+%   a_values    : input data
+%   a_paramName : parameter name
+%
+% OUTPUT PARAMETERS :
+%   o_values : output rounded data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   09/20/2023 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_values] = round_argo(a_values, a_paramName)
+
+o_values = double(a_values);
+
+paramName = regexprep(a_paramName, '_ADJUSTED', '');
+
+switch (paramName)
+   case {'PRES'}
+      res = 1e-3;
+   case {'TEMP'}
+      res = 1e-3;
+   case {'PSAL'}
+      res = 1e-4;
+   case {'DOXY'}
+      res = 1e-3;
+   case {'CHLA', 'CHLA_FLUORESCENCE'}
+      res = 1e-4;
+   case {'NITRATE'}
+      res = 1e-3;
+   case {'PH_IN_SITU_TOTAL'}
+      res = 1e-4;
+   case {'BBP470', 'BBP532', 'BBP700'}
+      res = 1e-7;
+   otherwise
+      res = 1e-7;
+end
+
+paramInfo = get_netcdf_param_attributes(paramName);
+if (~isempty(paramInfo))
+   idNoDef = find(a_values ~= paramInfo.fillValue);
+else
+   idNoDef = 1:length(a_values);
+end
+o_values(idNoDef) = round(double(a_values(idNoDef))/res)*res;
 
 return

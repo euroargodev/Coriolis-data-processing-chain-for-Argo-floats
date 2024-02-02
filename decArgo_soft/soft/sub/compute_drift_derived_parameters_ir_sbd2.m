@@ -222,6 +222,19 @@ for idP = 1:length(paramToDeriveList)
       a_driftFlbb.dataQc(:, end+1) = chlaQc;
       
       a_driftFlbb.paramList = [a_driftFlbb.paramList derivedParam];
+
+      % duplicate CHLA profile as CHLA_FLUORESCENCE one
+      a_driftFlbb.data(:, end+1) = chla;
+      if (isempty(a_driftFlbb.dataQc))
+         a_driftFlbb.dataQc = ones(size(a_driftFlbb.data, 1), length(a_driftFlbb.paramList))*g_decArgo_qcDef;
+      end
+      chlaFluoQc = ones(size(a_driftFlbb.data, 1), 1)*g_decArgo_qcDef;
+      chlaFluoQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_driftFlbb.dataQc(:, end+1) = chlaFluoQc;
+      
+      chlaFluoParam = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
+
+      a_driftFlbb.paramList = [a_driftFlbb.paramList chlaFluoParam];
    end
 end
 
@@ -369,6 +382,19 @@ for idP = 1:length(paramToDeriveList)
       a_driftFlntu.dataQc(:, end+1) = chlaQc;
       
       a_driftFlntu.paramList = [a_driftFlntu.paramList derivedParam];
+
+      % duplicate CHLA profile as CHLA_FLUORESCENCE one
+      a_driftFlntu.data(:, end+1) = chla;
+      if (isempty(a_driftFlntu.dataQc))
+         a_driftFlntu.dataQc = ones(size(a_driftFlntu.data, 1), length(a_driftFlntu.paramList))*g_decArgo_qcDef;
+      end
+      chlaFluoQc = ones(size(a_driftFlntu.data, 1), 1)*g_decArgo_qcDef;
+      chlaFluoQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_driftFlntu.dataQc(:, end+1) = chlaFluoQc;
+
+      chlaFluoParam = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
+
+      a_driftFlntu.paramList = [a_driftFlntu.paramList chlaFluoParam];
    end
 end
 
@@ -466,6 +492,19 @@ for idP = 1:length(paramToDeriveList)
       a_driftCyc.dataQc(:, end+1) = chlaQc;
       
       a_driftCyc.paramList = [a_driftCyc.paramList derivedParam];
+
+      % duplicate CHLA profile as CHLA_FLUORESCENCE one
+      a_driftCyc.data(:, end+1) = chla;
+      if (isempty(a_driftCyc.dataQc))
+         a_driftCyc.dataQc = ones(size(a_driftCyc.data, 1), length(a_driftCyc.paramList))*g_decArgo_qcDef;
+      end
+      chlaFluoQc = ones(size(a_driftCyc.data, 1), 1)*g_decArgo_qcDef;
+      chlaFluoQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_driftCyc.dataQc(:, end+1) = chlaFluoQc;
+
+      chlaFluoParam = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
+
+      a_driftCyc.paramList = [a_driftCyc.paramList chlaFluoParam];
    end
 end
 

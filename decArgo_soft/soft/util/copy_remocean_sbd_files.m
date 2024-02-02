@@ -100,6 +100,11 @@ for idFloat = 1:nbFloats
       mkdir(floatOutputDirName);
    end
    
+   unusedDirName = [floatOutputDirName '/unused_files/']; % to store files that shold not be used (they need to be deleted from the rudics server)
+   if ~(exist(unusedDirName, 'dir') == 7)
+      mkdir(unusedDirName);
+   end
+
    sbdFile = [dir([inputDirName '/' logName '/' sprintf('*_%s_*.b64', logName)]); ...
       dir([inputDirName '/' logName '/' sprintf('*_%s_*.bin', logName)])];
 
@@ -125,6 +130,19 @@ for idFloat = 1:nbFloats
          fprintf('%s => copy\n', sbdFileName);
       end
    end
+
+   % specific
+   switch(floatNum)
+      case 6902902
+         % files transmitted in 2023 should be ignored (bad cycle number and
+         % dates due to emergency ascent)
+         delFile = dir([floatOutputDirName '/230113_*.b64']);
+         for idF = 1:length(delFile)
+            move_file([floatOutputDirName '/' delFile(idF).name], unusedDirName);
+            fprintf('MISC: %s - not used\n', delFile(idF).name);
+         end
+   end
+
 end
 
 return

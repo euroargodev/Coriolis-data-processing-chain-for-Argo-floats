@@ -421,24 +421,26 @@ switch (a_engName)
       o_techData.value = a_engValue;
       o_techData.cyNum = g_decArgo_cycleNum;
    case 'ParkDescentP'
-      o_techInfo = get_apx_misc_data_init_struct('Tech', a_engRecordNum, [], []);
-      o_techInfo.label = 'ParkDescentPCnt';
-      o_techInfo.value = num2str(length(a_engValue));
-      o_techInfo.format = '%s';
+      if (~isempty(a_engValue{1}))
+         o_techInfo = get_apx_misc_data_init_struct('Tech', a_engRecordNum, [], []);
+         o_techInfo.label = 'ParkDescentPCnt';
+         o_techInfo.value = num2str(length(a_engValue));
+         o_techInfo.format = '%s';
 
-      % process P marks
-      % create the parameters
-      paramPres = get_netcdf_param_attributes('PRES');
-      paramPres.resolution = single(10);
-            
-      % store P marks data
-      o_pMarkData = get_apx_profile_data_init_struct;
-      
-      % add parameter variables to the data structure
-      o_pMarkData.paramList = paramPres;
-      
-      % add parameter data to the data structure
-      o_pMarkData.data = cellfun(@str2num, a_engValue)'*10;      
+         % process P marks
+         % create the parameters
+         paramPres = get_netcdf_param_attributes('PRES');
+         paramPres.resolution = single(10);
+
+         % store P marks data
+         o_pMarkData = get_apx_profile_data_init_struct;
+
+         % add parameter variables to the data structure
+         o_pMarkData.paramList = paramPres;
+
+         % add parameter data to the data structure
+         o_pMarkData.data = cellfun(@str2num, a_engValue)'*10;
+      end
    case 'ParkObs'
       o_parkData = process_apx_ir_rudics_single_obs(a_engValue, a_decoderId, 0);
    case 'ParkPistonPosition'

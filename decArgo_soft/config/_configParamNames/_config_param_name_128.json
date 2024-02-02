@@ -1857,93 +1857,101 @@
    },
    "CONF_PARAM_233" :
    {
+      "CONF_PARAM_DEC_ID" : "409",
+      "CONF_PARAM_TYPE" : "META_AUX",
+      "CONF_PARAM_MSG_LABEL" : "YYY.nn (year and number)",
+      "CONF_PARAM_NAME" : "META_AUX_UVP_FIRMWARE_VERSION",
+      "CONF_PARAM_DESCRIPTION" : "Firmware version of the UVP sensor"
+   },
+   "CONF_PARAM_234" :
+   {
       "CONF_PARAM_DEC_ID" : "319",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "HW_CONF",
       "CONF_PARAM_NAME" : "META_AUX_UVP_HW_CONF_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP HW_CONF configuration parameters: Camera_ref, Acquisition_mode, Default_acquisition_configuration, Delay_after_power_up_on_time_mode, Light_ref, Correction_table_activation, Time_between_lighting_power_up_and_trigger, Time_between_lighting_trigger_and_acquisition, Pressure_sensor_ref, Pressure offset, Storage_capacity, Minimum_remaining_memory_for_thumbnail_saving, Baud_Rate, IP_adress, Black_level, Shutter, Gain, Threshold, Aa, Exp, Pixel_Size, Image_volume, Calibration_date, Last_parameters_modification, Operator_email, 18 parameters defining the lower bounds (in µM ESD) of the 18 classes of particles sizes."
+      "CONF_PARAM_DESCRIPTION" : "See detailed description in: Camille Catalano, Catherine Schmechtig, Edouard Leymarie, Laura Picheral and Marc Picheral (2019). Processing Bio-Argo particles and plankton at the DAC Level. http://dx.doi.org/xxx."
    },
-   "CONF_PARAM_234" :
+   "CONF_PARAM_235" :
    {
       "CONF_PARAM_DEC_ID" : "320",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_01",
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_0_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_0 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_DESCRIPTION" : "See detailed description in: Camille Catalano, Catherine Schmechtig, Edouard Leymarie, Laura Picheral and Marc Picheral (2019). Processing Bio-Argo particles and plankton at the DAC Level. http://dx.doi.org/xxx."
    },
-   "CONF_PARAM_235" :
+   "CONF_PARAM_236" :
    {
       "CONF_PARAM_DEC_ID" : "321",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_02",
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_1_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_1 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_DESCRIPTION" : "See detailed description in: Camille Catalano, Catherine Schmechtig, Edouard Leymarie, Laura Picheral and Marc Picheral (2019). Processing Bio-Argo particles and plankton at the DAC Level. http://dx.doi.org/xxx."
    },
-   "CONF_PARAM_236" :
+   "CONF_PARAM_237" :
    {
       "CONF_PARAM_DEC_ID" : "322",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_03",
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_2_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_2 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_DESCRIPTION" : "See detailed description in: Camille Catalano, Catherine Schmechtig, Edouard Leymarie, Laura Picheral and Marc Picheral (2019). Processing Bio-Argo particles and plankton at the DAC Level. http://dx.doi.org/xxx."
    },
-   "CONF_PARAM_237" :
+   "CONF_PARAM_238" :
    {
       "CONF_PARAM_DEC_ID" : "323",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_04",
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_3_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_3 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_DESCRIPTION" : "See detailed description in: Camille Catalano, Catherine Schmechtig, Edouard Leymarie, Laura Picheral and Marc Picheral (2019). Processing Bio-Argo particles and plankton at the DAC Level. http://dx.doi.org/xxx."
    },
-   "CONF_PARAM_238" :
+   "CONF_PARAM_239" :
    {
       "CONF_PARAM_DEC_ID" : "324",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_05",
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_4_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_4 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_DESCRIPTION" : "See detailed description in: Camille Catalano, Catherine Schmechtig, Edouard Leymarie, Laura Picheral and Marc Picheral (2019). Processing Bio-Argo particles and plankton at the DAC Level. http://dx.doi.org/xxx."
    },
-   "CONF_PARAM_239" :
+   "CONF_PARAM_240" :
    {
       "CONF_PARAM_DEC_ID" : "325",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_06",
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_5_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_5 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_DESCRIPTION" : "See detailed description in: Camille Catalano, Catherine Schmechtig, Edouard Leymarie, Laura Picheral and Marc Picheral (2019). Processing Bio-Argo particles and plankton at the DAC Level. http://dx.doi.org/xxx."
    },
-   "CONF_PARAM_240" :
+   "CONF_PARAM_241" :
    {
       "CONF_PARAM_DEC_ID" : "326",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_07",
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_6_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_6 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_DESCRIPTION" : "See detailed description in: Camille Catalano, Catherine Schmechtig, Edouard Leymarie, Laura Picheral and Marc Picheral (2019). Processing Bio-Argo particles and plankton at the DAC Level. http://dx.doi.org/xxx."
    },
-   "CONF_PARAM_241" :
+   "CONF_PARAM_242" :
    {
       "CONF_PARAM_DEC_ID" : "327",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_08",
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_7_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_7 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_DESCRIPTION" : "See detailed description in: Camille Catalano, Catherine Schmechtig, Edouard Leymarie, Laura Picheral and Marc Picheral (2019). Processing Bio-Argo particles and plankton at the DAC Level. http://dx.doi.org/xxx."
    },
-   "CONF_PARAM_242" :
+   "CONF_PARAM_243" :
    {
       "CONF_PARAM_DEC_ID" : "328",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_09",
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_8_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_8 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_DESCRIPTION" : "See detailed description in: Camille Catalano, Catherine Schmechtig, Edouard Leymarie, Laura Picheral and Marc Picheral (2019). Processing Bio-Argo particles and plankton at the DAC Level. http://dx.doi.org/xxx."
    },
-   "CONF_PARAM_243" :
+   "CONF_PARAM_244" :
    {
       "CONF_PARAM_DEC_ID" : "329",
       "CONF_PARAM_TYPE" : "META_AUX",
       "CONF_PARAM_MSG_LABEL" : "ACQ_CONF_10",
       "CONF_PARAM_NAME" : "META_AUX_UVP_ACQ_CONF_9_PARAMETERS",
-      "CONF_PARAM_DESCRIPTION" : "UVP ACQ_CONF_9 configuration parameters: Configuration_name, PT_mode, Acquisition_frequency, Frames_per_bloc, Blocs_per_PT, Pressure_for_auto_start, Pressure_difference_for_auto_stop, Result_sending, Save_synthetic_data_for_delayed_request, Limit_lpm_detection_size, Save_images, Vignetting_lower_limit_size, Appendices_ratio, Interval_for_mesuring_background_noise, Image_nb_for_smoothing, Analog_output_activation, Gain_for_analog_out, Minimum_object_number, Maximal_internal_temperature, Operator_email, 0, SD card remaining memory (Mbytes)."
+      "CONF_PARAM_DESCRIPTION" : "See detailed description in: Camille Catalano, Catherine Schmechtig, Edouard Leymarie, Laura Picheral and Marc Picheral (2019). Processing Bio-Argo particles and plankton at the DAC Level. http://dx.doi.org/xxx."
    },
-   "CONF_PARAM_244" :
+   "CONF_PARAM_245" :
    {
       "CONF_PARAM_DEC_ID" : "334",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1951,7 +1959,7 @@
       "CONF_PARAM_NAME" : "META_AUX_OPUS_FIRMWARE_VERSION",
       "CONF_PARAM_DESCRIPTION" : "Firmware version of the OPUS sensor"
    },
-   "CONF_PARAM_245" :
+   "CONF_PARAM_246" :
    {
       "CONF_PARAM_DEC_ID" : "335",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1959,7 +1967,7 @@
       "CONF_PARAM_NAME" : "META_AUX_OPUS_SENSOR_LAMP_SERIAL_NO",
       "CONF_PARAM_DESCRIPTION" : "Serial number of the OPUS sensor lamp module"
    },
-   "CONF_PARAM_246" :
+   "CONF_PARAM_247" :
    {
       "CONF_PARAM_DEC_ID" : "336",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1967,7 +1975,7 @@
       "CONF_PARAM_NAME" : "META_AUX_OPUS_WATERBASE_LENGTH",
       "CONF_PARAM_DESCRIPTION" : "Length of the OPUS Lamp spectrum"
    },
-   "CONF_PARAM_247" :
+   "CONF_PARAM_248" :
    {
       "CONF_PARAM_DEC_ID" : "337",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1975,7 +1983,7 @@
       "CONF_PARAM_NAME" : "META_AUX_OPUS_WATERBASE_INTENSITIES",
       "CONF_PARAM_DESCRIPTION" : "Intensities of the OPUS Lamp spectrum"
    },
-   "CONF_PARAM_248" :
+   "CONF_PARAM_249" :
    {
       "CONF_PARAM_DEC_ID" : "338",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1983,7 +1991,7 @@
       "CONF_PARAM_NAME" : "META_AUX_OPUS_WATERBASE_WAVELENGTHS",
       "CONF_PARAM_DESCRIPTION" : "Wavelengths of the OPUS Lamp spectrum"
    },
-   "CONF_PARAM_249" :
+   "CONF_PARAM_250" :
    {
       "CONF_PARAM_DEC_ID" : "341",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1991,7 +1999,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_ACQUISITION_AVERAGE",
       "CONF_PARAM_DESCRIPTION" : "The number of internal optical sensor measurements that are averaged to generate a reported data point from the MPE optical sensor."
    },
-   "CONF_PARAM_250" :
+   "CONF_PARAM_251" :
    {
       "CONF_PARAM_DEC_ID" : "342",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -1999,7 +2007,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_ACQUISITION_RATE",
       "CONF_PARAM_DESCRIPTION" : "The rate in Hz at which the internal optical sensor is making measurements. The Rate parameter combined with the Average parameter sets the effective output rate of reported data points from the MPE sensor (If Average = 123, and Rate = 125, then MPE output rate is approximately 1Hz)."
    },
-   "CONF_PARAM_251" :
+   "CONF_PARAM_252" :
    {
       "CONF_PARAM_DEC_ID" : "343",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -2007,7 +2015,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_W",
       "CONF_PARAM_DESCRIPTION" : "The responsivity in raw MPE output per calibrated units for the optical sensor in Water.  To calibrate data collected in water, divide the MPE optical sensor output by ResponsivityW."
    },
-   "CONF_PARAM_252" :
+   "CONF_PARAM_253" :
    {
       "CONF_PARAM_DEC_ID" : "344",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -2015,7 +2023,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_PHOTODETECTOR_RESPONSIVITY_A",
       "CONF_PARAM_DESCRIPTION" : "The responsivity in raw MPE output per calibrated units for the optical sensor in Air. To calibrate data collected in air, divide the MPE optical sensor output by ResponsivityA."
    },
-   "CONF_PARAM_253" :
+   "CONF_PARAM_254" :
    {
       "CONF_PARAM_DEC_ID" : "345",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -2023,7 +2031,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_MICRORADIOMETER_GAIN_HM",
       "CONF_PARAM_DESCRIPTION" : "The ratio of gains between the High and Medium stages of the MPE optical sensor electronics. For data traceability only. Not necessary for data processing. "
    },
-   "CONF_PARAM_254" :
+   "CONF_PARAM_255" :
    {
       "CONF_PARAM_DEC_ID" : "346",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -2031,7 +2039,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_MICRORADIOMETER_GAIN_ML",
       "CONF_PARAM_DESCRIPTION" : "The ratio of gains between the Medium and Low stages of the MPE optical sensor electronics. For data traceability only. Not necessary for data processing. "
    },
-   "CONF_PARAM_255" :
+   "CONF_PARAM_256" :
    {
       "CONF_PARAM_DEC_ID" : "347",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -2039,7 +2047,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_MICRORADIOMETER_OFFSET_H",
       "CONF_PARAM_DESCRIPTION" : "The High gain stage offset internally applied in the MPE optical sensor electronics. For data traceability only. Not necessary for data processing."
    },
-   "CONF_PARAM_256" :
+   "CONF_PARAM_257" :
    {
       "CONF_PARAM_DEC_ID" : "348",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -2047,7 +2055,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_MICRORADIOMETER_OFFSET_M",
       "CONF_PARAM_DESCRIPTION" : "The Medium gain stage offset internally applied in the MPE optical sensor electronics. For data traceability only. Not necessary for data processing."
    },
-   "CONF_PARAM_257" :
+   "CONF_PARAM_258" :
    {
       "CONF_PARAM_DEC_ID" : "349",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -2055,7 +2063,7 @@
       "CONF_PARAM_NAME" : "META_AUX_MPE_MICRORADIOMETER_OFFSET_L",
       "CONF_PARAM_DESCRIPTION" : "The Low gain stage offset internally applied in the MPE optical sensor electronics. For data traceability only. Not necessary for data processing."
    },
-   "CONF_PARAM_258" :
+   "CONF_PARAM_259" :
    {
       "CONF_PARAM_DEC_ID" : "351",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -2063,7 +2071,7 @@
       "CONF_PARAM_NAME" : "META_AUX_HYDROC_SERIAL_NO",
       "CONF_PARAM_DESCRIPTION" : "Serial number of the HYDROC sensor"
    },
-   "CONF_PARAM_259" :
+   "CONF_PARAM_260" :
    {
       "CONF_PARAM_DEC_ID" : "352",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -2071,7 +2079,7 @@
       "CONF_PARAM_NAME" : "META_AUX_HYDROC_FIRMWARE_VERSION",
       "CONF_PARAM_DESCRIPTION" : "Firmware version of the HYDROC sensor"
    },
-   "CONF_PARAM_260" :
+   "CONF_PARAM_261" :
    {
       "CONF_PARAM_DEC_ID" : "353",
       "CONF_PARAM_TYPE" : "META_AUX",
@@ -2079,7 +2087,7 @@
       "CONF_PARAM_NAME" : "META_AUX_HYDROC_HARDWARE_VERSION",
       "CONF_PARAM_DESCRIPTION" : "Hardware version of the HYDROC sensor"
    },
-   "CONF_PARAM_261" :
+   "CONF_PARAM_262" :
    {
       "CONF_PARAM_DEC_ID" : "116003",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2087,7 +2095,7 @@
       "CONF_PARAM_NAME" : "CONFIG_SunaApfFrameOutputPixelBegin_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "The Apf frame definition allows for a variable number of spectrometer pixels (also called channels) to be included in the frame. The two pixel values are configured indirectly via the wavelength range of the spectrum to be output (Suna Hardware Manual, section 4.2.3, input/output configuration parameters, data wavelength low/high.) The firmware converts the wavelength values to spectrometer pixels."
    },
-   "CONF_PARAM_262" :
+   "CONF_PARAM_263" :
    {
       "CONF_PARAM_DEC_ID" : "116004",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2095,7 +2103,7 @@
       "CONF_PARAM_NAME" : "CONFIG_SunaApfFrameOutputPixelEnd_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "The Apf frame definition allows for a variable number of spectrometer pixels (also called channels) to be included in the frame. The two pixel values are configured indirectly via the wavelength range of the spectrum to be output (Suna Hardware Manual, section 4.2.3, input/output configuration parameters, data wavelength low/high.) The firmware converts the wavelength values to spectrometer pixels."
    },
-   "CONF_PARAM_263" :
+   "CONF_PARAM_264" :
    {
       "CONF_PARAM_DEC_ID" : "113002",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2103,7 +2111,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoBetaAngle_angularDeg",
       "CONF_PARAM_DESCRIPTION" : "Angle of Beta measurements  (in degrees) "
    },
-   "CONF_PARAM_264" :
+   "CONF_PARAM_265" :
    {
       "CONF_PARAM_DEC_ID" : "133011",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2111,7 +2119,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoBetaBandwidth1_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of EcoBeta  #1measurements (in nanometer)."
    },
-   "CONF_PARAM_265" :
+   "CONF_PARAM_266" :
    {
       "CONF_PARAM_DEC_ID" : "133010",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2119,7 +2127,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoBetaWavelength1_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco Beta  #1 measurements (in nanometer)."
    },
-   "CONF_PARAM_266" :
+   "CONF_PARAM_267" :
    {
       "CONF_PARAM_DEC_ID" : "123103",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2127,7 +2135,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceEmissionBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for emission of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_267" :
+   "CONF_PARAM_268" :
    {
       "CONF_PARAM_DEC_ID" : "123101",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2135,7 +2143,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceEmissionWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for emission of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_268" :
+   "CONF_PARAM_269" :
    {
       "CONF_PARAM_DEC_ID" : "123102",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2143,7 +2151,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceExcitationBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for excitation of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_269" :
+   "CONF_PARAM_270" :
    {
       "CONF_PARAM_DEC_ID" : "123100",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2151,7 +2159,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoCdomFluorescenceExcitationWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for excitation of Cdom fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_270" :
+   "CONF_PARAM_271" :
    {
       "CONF_PARAM_DEC_ID" : "123003",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2159,7 +2167,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceEmissionBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for emission of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_271" :
+   "CONF_PARAM_272" :
    {
       "CONF_PARAM_DEC_ID" : "123001",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2167,7 +2175,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceEmissionWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for emission of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_272" :
+   "CONF_PARAM_273" :
    {
       "CONF_PARAM_DEC_ID" : "123002",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2175,7 +2183,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceExcitationBandwidth_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Eco for excitation of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_273" :
+   "CONF_PARAM_274" :
    {
       "CONF_PARAM_DEC_ID" : "123000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2183,7 +2191,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoChlaFluorescenceExcitationWavelength_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Eco for excitation of Chla fluorescence measurements (in nanometer)"
    },
-   "CONF_PARAM_274" :
+   "CONF_PARAM_275" :
    {
       "CONF_PARAM_DEC_ID" : "113000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2191,7 +2199,7 @@
       "CONF_PARAM_NAME" : "CONFIG_EcoVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_275" :
+   "CONF_PARAM_276" :
    {
       "CONF_PARAM_DEC_ID" : "132013",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2199,7 +2207,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrBandwidth1_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Ocr DownIrr #1 measurements (in nanometer)."
    },
-   "CONF_PARAM_276" :
+   "CONF_PARAM_277" :
    {
       "CONF_PARAM_DEC_ID" : "132023",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2207,7 +2215,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrBandwidth2_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Ocr DownIrr #2 measurements (in nanometer)."
    },
-   "CONF_PARAM_277" :
+   "CONF_PARAM_278" :
    {
       "CONF_PARAM_DEC_ID" : "132033",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2215,7 +2223,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrBandwidth3_nm",
       "CONF_PARAM_DESCRIPTION" : "Bandwidth of Ocr DownIrr #3 measurements (in nanometer)."
    },
-   "CONF_PARAM_278" :
+   "CONF_PARAM_279" :
    {
       "CONF_PARAM_DEC_ID" : "132012",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2223,7 +2231,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength1_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #1measurements (in nanometer)."
    },
-   "CONF_PARAM_279" :
+   "CONF_PARAM_280" :
    {
       "CONF_PARAM_DEC_ID" : "132022",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2231,7 +2239,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength2_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #2 measurements (in nanometer)."
    },
-   "CONF_PARAM_280" :
+   "CONF_PARAM_281" :
    {
       "CONF_PARAM_DEC_ID" : "132032",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2239,7 +2247,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrDownIrrWavelength3_nm",
       "CONF_PARAM_DESCRIPTION" : "Wavelength of Ocr DownIrr #3 measurements (in nanometer)."
    },
-   "CONF_PARAM_281" :
+   "CONF_PARAM_282" :
    {
       "CONF_PARAM_DEC_ID" : "112000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2247,7 +2255,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OcrVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_282" :
+   "CONF_PARAM_283" :
    {
       "CONF_PARAM_DEC_ID" : "111000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2255,7 +2263,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_283" :
+   "CONF_PARAM_284" :
    {
       "CONF_PARAM_DEC_ID" : "111007",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2263,7 +2271,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeMeasurementsInAir_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Sensors can be mounted on a stick to perform measurements in Air. Values: Yes = 1, No = 0"
    },
-   "CONF_PARAM_284" :
+   "CONF_PARAM_285" :
    {
       "CONF_PARAM_DEC_ID" : "111008",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2271,7 +2279,7 @@
       "CONF_PARAM_NAME" : "CONFIG_OptodeTimePressureOffset_seconds",
       "CONF_PARAM_DESCRIPTION" : "Time interval between  optode and pressure measurements due to the fact that the optode answer is not simultaneous with the CTD/pressure answer"
    },
-   "CONF_PARAM_285" :
+   "CONF_PARAM_286" :
    {
       "CONF_PARAM_DEC_ID" : "116000",
       "CONF_PARAM_TYPE" : "CONFIG",
@@ -2279,7 +2287,7 @@
       "CONF_PARAM_NAME" : "CONFIG_SunaVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
    },
-   "CONF_PARAM_286" :
+   "CONF_PARAM_287" :
    {
       "CONF_PARAM_DEC_ID" : "116005",
       "CONF_PARAM_TYPE" : "CONFIG",

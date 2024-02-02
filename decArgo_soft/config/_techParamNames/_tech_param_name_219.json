@@ -59,9 +59,9 @@
    {
       "TECH_PARAM_DEC_ID" : "107",
       "TECH_PARAM_MSG_ID" : "12",
-      "TECH_PARAM_MSG_LABEL" : "Number of pump actions in descent",
-      "TECH_PARAM_NAME" : "NUMBER_PumpActionsDuringDescentToPark_COUNT",
-      "TECH_PARAM_DESCRIPTION" : "number of pump actions between the crossing  of the gap threshold and the end of descent at park pressure"
+      "TECH_PARAM_MSG_LABEL" : "Number of pump actions in ascent",
+      "TECH_PARAM_NAME" : "NUMBER_PumpActionsDuringAscentToSurface_COUNT",
+      "TECH_PARAM_DESCRIPTION" : "number of pump actions between start and end of ascent "
    },
    "TECH_PARAM_9" :
    {

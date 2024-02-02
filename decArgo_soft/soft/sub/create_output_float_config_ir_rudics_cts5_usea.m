@@ -371,6 +371,14 @@ idSinglePark = find(~isnan(finalConfigValue(confId, :)));
 % for each multi parking configuration
 for idSP = 1:length(idSinglePark)
 
+   % set CONFIG_APMT_TECHNICAL_P23 and APMT_TECHNICAL_P24 to Nan
+   confName = 'CONFIG_APMT_TECHNICAL_P23';
+   confId = find(strcmp(confName, finalConfigName), 1);
+   finalConfigValue(confId, idSinglePark(idSP)) = nan;
+   confName = 'CONFIG_APMT_TECHNICAL_P24';
+   confId = find(strcmp(confName, finalConfigName), 1);
+   finalConfigValue(confId, idSinglePark(idSP)) = nan;
+
    % set CONFIG_APMT_TECHNICAL_P23_XX and APMT_TECHNICAL_P24_XX to Nan
    for idPark = 1:5
       confName = sprintf('CONFIG_APMT_TECHNICAL_P23_%02d', idPark);
@@ -424,6 +432,11 @@ notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_02_P08';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_03_P08';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_04_P08';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_05_P08';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_06_P08';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_07_P08';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_08_P08';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_09_P08';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_10_P08';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_END_OF_LIFE_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SURFACE_APPROACH_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_ICE_P00';
@@ -510,6 +523,7 @@ o_ncConfig.DYNAMIC_NC.NAMES = finalConfigName;
 o_ncConfig.DYNAMIC_NC.IDS = finalConfigId;
 o_ncConfig.DYNAMIC_NC.VALUES = finalConfigValue;
 
+% a=1
 % tmp = [];
 % tmp.STATIC_NC.NAMES_DEC = staticConfigNameBefore;
 % tmp.STATIC_NC.NAMES = staticConfigName;

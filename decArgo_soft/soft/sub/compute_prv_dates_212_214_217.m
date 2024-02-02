@@ -18,7 +18,7 @@
 %    o_eolStartDate, ...
 %    o_firstEmergencyAscentDate, o_firstEmergencyAscentPres, ...
 %    o_iceDetected] = ...
-%    compute_prv_dates_212_214_217(a_tabTech1, a_tabTech2, a_deepCycle, a_iceDelayedCycleFlag, a_refDay)
+%    compute_prv_dates_212_214_217(a_tabTech1, a_tabTech2, a_deepCycle, a_iceDelayedCycleFlag, a_refDay, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_tabTech1            : decoded data of technical msg #1
@@ -26,6 +26,7 @@
 %   a_deepCycle           : deep cycle flag
 %   a_iceDelayedCycleFlag : Ice delayed cycle flag
 %   a_refDay              : reference day
+%   a_decoderId           : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_cycleStartDate           : cycle start date
@@ -76,7 +77,7 @@ function [o_cycleStartDate, ...
    o_eolStartDate, ...
    o_firstEmergencyAscentDate, o_firstEmergencyAscentPres, ...
    o_iceDetected] = ...
-   compute_prv_dates_212_214_217(a_tabTech1, a_tabTech2, a_deepCycle, a_iceDelayedCycleFlag, a_refDay)
+   compute_prv_dates_212_214_217(a_tabTech1, a_tabTech2, a_deepCycle, a_iceDelayedCycleFlag, a_refDay, a_decoderId)
 
 % output parameters initialization
 o_cycleStartDate = [];
@@ -110,25 +111,6 @@ global g_decArgo_cycleNum;
 global g_decArgo_janFirst1950InMatlab;
 global g_decArgo_dateDef;
 
-% list of cycle numbers and ice detection flag
-global g_decArgo_cycleNumListForIce;
-global g_decArgo_cycleNumListIceDetected;
-
-% date of last ICE detection
-global g_decArgo_lastDetectionDate;
-
-% float configuration
-global g_decArgo_floatConfig;
-
-
-if ((a_deepCycle == 1) || (a_iceDelayedCycleFlag == 1))
-   idFCy = find(g_decArgo_cycleNumListForIce == g_decArgo_cycleNum);
-   if (isempty(idFCy))
-      idFCy = length(g_decArgo_cycleNumListForIce) + 1;
-   end
-   g_decArgo_cycleNumListForIce(idFCy) = g_decArgo_cycleNum;
-   g_decArgo_cycleNumListIceDetected(idFCy) = 0;
-end
 
 if (isempty(a_tabTech1) && isempty(a_tabTech2))
    return
@@ -139,120 +121,7 @@ ID_OFFSET = 1;
 cycleStartDateDay = g_decArgo_dateDef;
 
 % ice detection determination
-% technical message #1
-id1 = [];
-if (~isempty(a_tabTech1))
-   idF1 = find(a_tabTech1(:, 1) == 0);
-   if (length(idF1) == 1)
-      id1 = idF1(1);
-   end
-end
-% technical message #2
-id2 = [];
-if (~isempty(a_tabTech2))
-   idF2 = find(a_tabTech2(:, 1) == 4);
-   if (length(idF2) == 1)
-      id2 = idF2(1);
-   end
-end
-if (~isempty(id1) && ~isempty(id2))
-   gpsDate = a_tabTech1(id1, end-3); % float time at the creation of the TECH packet
-   iceDetectionFlag = a_tabTech2(id2, 59+ID_OFFSET);
-   if (iceDetectionFlag ~= 0)
-      % ice has been detected by the float
-      if (isempty(g_decArgo_lastDetectionDate) || (g_decArgo_lastDetectionDate < gpsDate))
-         g_decArgo_lastDetectionDate = gpsDate;
-      end
-      o_iceDetected = 1;
-   end
-   
-   % retrieve the IC0 configuration parameter
-   if (o_iceDetected == -1)
-      configNames = [];
-      if (a_deepCycle == 1)
-         [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
-         ic0Value = get_config_value('CONFIG_IC00_', configNames, configValues);
-         if (~isempty(ic0Value))
-            if (gpsDate < g_decArgo_lastDetectionDate + ic0Value)
-               o_iceDetected = 2;
-            else
-               o_iceDetected = 0;
-            end
-         end
-      elseif (a_iceDelayedCycleFlag == 1) % there is no configuration for such cycle, look for the previous one
-         cyNum = g_decArgo_cycleNum - 1;
-         while (cyNum >= 0)
-            if (any(g_decArgo_floatConfig.USE.CYCLE == cyNum))
-               [configNames, configValues] = get_float_config_ir_sbd(cyNum);
-               break
-            end
-            cyNum = cyNum - 1;
-         end
-         if (isempty(configNames))
-            % there is no configuration assigned yet
-            % retrieve the last temporary one
-            configNames = g_decArgo_floatConfig.DYNAMIC_TMP.NAMES;
-            configValues = g_decArgo_floatConfig.DYNAMIC_TMP.VALUES(:, end);
-         end
-         ic0Value = get_config_value('CONFIG_IC00_', configNames, configValues);
-         if (~isempty(ic0Value))
-            if (gpsDate < g_decArgo_lastDetectionDate + ic0Value)
-               o_iceDetected = 2;
-            else
-               o_iceDetected = 0;
-            end
-         end
-      end
-   end
-   
-   % check consitency with other information
-   gpsValidFix = a_tabTech1(id1, 61+ID_OFFSET);
-   gpsSessionDuration = a_tabTech1(id1, 62+ID_OFFSET);
-   if ((gpsValidFix == 255) && (gpsSessionDuration == 0))
-      if (o_iceDetected == 0)
-         fprintf('INFO: Float #%d cycle #%d: the float did not try to reach the surface (still in the IC0 days period) (Ice detection flag: %d, GPS valid fix: %d, GPS session duration: %d)\n', ...
-            g_decArgo_floatNum, g_decArgo_cycleNum, ...
-            iceDetectionFlag, gpsValidFix, gpsSessionDuration);
-      end
-   end
-elseif (~isempty(id1))
-   gpsDate = a_tabTech1(id1, end-3); % float time at the creation of the TECH packet
-   if (~isempty(g_decArgo_lastDetectionDate))
-      % retrieve the IC0 configuration parameter
-      [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
-      ic0Value = get_config_value('CONFIG_IC00_', configNames, configValues);
-      if (~isempty(ic0Value))
-         if (gpsDate < g_decArgo_lastDetectionDate + ic0Value)
-            o_iceDetected = 2;
-         else
-            o_iceDetected = 0;
-         end
-      end
-   end
-   
-   % check consitency with other information
-   gpsValidFix = a_tabTech1(id1, 61+ID_OFFSET);
-   gpsSessionDuration = a_tabTech1(id1, 62+ID_OFFSET);
-   if ((gpsValidFix == 255) && (gpsSessionDuration == 0))
-      if (o_iceDetected == 0)
-         fprintf('ERROR: Float #%d cycle #%d: ice detection information not consistent with TECH information (Ice detection: %d, GPS valid fix: %d, GPS session duration: %d)\n', ...
-            g_decArgo_floatNum, g_decArgo_cycleNum, ...
-            o_iceDetected, gpsValidFix, gpsSessionDuration);
-      end
-   end
-elseif (~isempty(id2))
-   iceDetectionFlag = a_tabTech2(id2, 59+ID_OFFSET);
-   if (iceDetectionFlag ~= 0)
-      % ice has been detected by the float
-      o_iceDetected = 1;
-   end
-end
-
-% transmission session aborted during this cycle
-if (o_iceDetected ~= 0)
-   idFCy = find(g_decArgo_cycleNumListForIce == g_decArgo_cycleNum);
-   g_decArgo_cycleNumListIceDetected(idFCy) = 1;
-end
+o_iceDetected = compute_ascent_aborted_flag(a_tabTech1, a_tabTech2, a_decoderId);
 
 % technical message #1
 idF1 = [];

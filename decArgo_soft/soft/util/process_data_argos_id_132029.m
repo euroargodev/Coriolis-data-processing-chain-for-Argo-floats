@@ -20,8 +20,8 @@
 function process_data_argos_id_132029(varargin)
 
 % input and output directories
-DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\IN\tmp\132029';
-DIR_OUTPUT = 'C:\Users\jprannou\_DATA\IN\tmp\OUT';
+DIR_INPUT_ARGOS_FILES = 'C:\Users\jprannou\_DATA\TMP\IN';
+DIR_OUTPUT = 'C:\Users\jprannou\_DATA\TMP\OUT';
 
 % directory to store the log files
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -475,6 +475,15 @@ end
 % input and output directories
 DIR_INPUT_ARGOS_FILES = varargin{1};
 DIR_OUTPUT_ARGOS_FILES = varargin{2};
+
+% float launch information
+global g_decArgo_floatLaunchLon;
+global g_decArgo_floatLaunchLat;
+
+g_decArgo_floatLaunchLon = 6.479;
+g_decArgo_floatLaunchLat = 37.989;
+g_decArgo_floatLaunchLon = -15.187;
+g_decArgo_floatLaunchLat = 5.995;
 
 
 % create output directories
@@ -1072,6 +1081,9 @@ global g_util_lastMsgDate;
 global g_decArgo_realtimeFlag;
 global g_decArgo_delayedModeFlag;
 
+% json meta-data
+global g_decArgo_jsonMetaData;
+
 
 % configuration parameters
 configVar = [];
@@ -1117,7 +1129,18 @@ for idFloat = 1:nbFloats
       continue
    end
    floatArgosId = str2num(listArgosId{idF});
-   
+
+   % read the json meta-data file for this float
+   jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
+
+   if ~(exist(jsonInputFileName, 'file') == 2)
+      fprintf('ERROR: Json meta-data file not found: %s - nothing done\n', jsonInputFileName);
+      continue
+   end
+
+   % read meta-data file
+   g_decArgo_jsonMetaData = loadjson(jsonInputFileName);
+
    % select and sort the Argos files of the float
    argosFileNames = [];
    argosFileFirstMsgDate = [];

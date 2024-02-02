@@ -37,9 +37,12 @@ global g_decArgo_cycleNumListIceDetected;
 % output NetCDF technical parameter Ids
 global g_decArgo_outputNcParamId;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 
 % add ICE detected flag
-if (ismember(a_decoderId, [212, 222, 214, 217, 218, 221, 223, 224, 225]))
+if (ismember(a_decoderId, [212, 222, 214, 217, 218, 221, 223, 224, 225, 226]))
    if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
       
       % ICE mode is activated
@@ -63,6 +66,16 @@ elseif (ismember(a_decoderId, [216]))
       o_tabNcTechIndex = [o_tabNcTechIndex;
          cycleNumber 233];
       o_tabNcTechVal{end+1} = iceDetectedBitValue;
+   end
+end
+
+% remove TechId #129 from tecnical data if no Optode is mounted on the Arvor
+% Deep float
+if (ismember(a_decoderId, [221]))
+   if (~ismember('OPTODE', g_decArgo_sensorMountedOnFloat))
+      idDel = find(o_tabNcTechIndex(:, 2) == 129);
+      o_tabNcTechIndex(idDel, :) = [];
+      o_tabNcTechVal(idDel) = [];
    end
 end
 

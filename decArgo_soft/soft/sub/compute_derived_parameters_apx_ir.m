@@ -1768,6 +1768,7 @@ end
 
 paramFluorescenceChla = get_netcdf_param_attributes('FLUORESCENCE_CHLA');
 paramChla = get_netcdf_param_attributes('CHLA');
+paramChlaFluo = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
 
 if (iscell(o_outputData))
    for idS = 1:length(o_outputData)
@@ -1784,38 +1785,21 @@ if (iscell(o_outputData))
          dataStruct.paramList = [dataStruct.paramList paramChla];
          dataStruct.data = [dataStruct.data chla];
          
+         % duplicate CHLA profile as CHLA_FLUORESCENCE one
+         dataStruct.paramList = [dataStruct.paramList paramChlaFluo];
+         dataStruct.data = [dataStruct.data chla];
+
          % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
          % Hamburg"
-         % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
-         % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
-         % the calculation for the adjustment must involve the parameter itself
-         % (e.g., with an offset or slope). If a different parameter used for
-         % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
-         % transitions onto the parameter itself and does not put it into mode
-         % 'A'. The <PARAM> field is always calculated with other parameters in
-         % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
-         % "real"  parameter  adjustment  as  defined above.  A calculation
-         % without  a  "real"  parameter  adjustment  but  involving  other
-         % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
-         % recorded in the BGC-Argofiles.
-         
          % there is no need to compute derived parameters with PRES_ADJUSTED
-         
-         %          if (~isempty(dataStruct.dataAdj))
-         %             % compute CHLA
-         %             chla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
-         %                dataStruct.dataAdj(:, idFluorescenceChla), ...
-         %                paramFluorescenceChla.fillValue, paramChla.fillValue);
-         %
-         %             % add CHLA to the data structure
-         %             dataStruct.dataAdj = [dataStruct.dataAdj chla];
-         %          end
-         
          % but we should have the same number of columns in
          % dataStruct.data and dataStruct.dataAdj
          if (~isempty(dataStruct.dataAdj))
-            dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
-            dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramChla.fillValue];
+            dataStruct.paramDataMode = [dataStruct.paramDataMode '  '];
+            dataStruct.dataAdj = [dataStruct.dataAdj ...
+               ones(size(dataStruct.dataAdj, 1), 1)*paramChla.fillValue ...
+               ones(size(dataStruct.dataAdj, 1), 1)*paramChlaFluo.fillValue ...
+               ];
          end
       end
       
@@ -1835,37 +1819,21 @@ else
       dataStruct.paramList = [dataStruct.paramList paramChla];
       dataStruct.data = [dataStruct.data chla];
       
+      % duplicate CHLA profile as CHLA_FLUORESCENCE one
+      dataStruct.paramList = [dataStruct.paramList paramChlaFluo];
+      dataStruct.data = [dataStruct.data chla];
+      
       % from "Minutes of the 6th BGC-Argo meeting 27, 28 November 2017,
       % Hamburg"
-      % http://www.argodatamgt.org/content/download/30911/209493/file/minutes_BGC6_ADMT18.pdf
-      % -For a parameter to pass to mode 'A' (i.e., adjusted in real-time),
-      % the calculation for the adjustment must involve the parameter itself
-      % (e.g., with an offset or slope). If a different parameter used for
-      % the calculations is in mode 'A' (e.g., PSAL_ADJUSTED), this does not
-      % transitions onto the parameter itself and does not put it into mode
-      % 'A'. The <PARAM> field is always calculated with other parameters in
-      % 'R' mode (e.g., PSAL). <PARAM>_ADJUSTED  is  only  populated  with  a
-      % "real"  parameter  adjustment  as  defined above.  A calculation
-      % without  a  "real"  parameter  adjustment  but  involving  other
-      % adjusted  parameters (e.g., PSAL_ADJUSTED) is not performed/not
-      % recorded in the BGC-Argofiles.
-      
       % there is no need to compute derived parameters with PRES_ADJUSTED
-      %       if (~isempty(dataStruct.dataAdj))
-      %          % compute CHLA
-      %          chla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
-      %             dataStruct.dataAdj(:, idFluorescenceChla), ...
-      %             paramFluorescenceChla.fillValue, paramChla.fillValue);
-      %
-      %          % add CHLA to the data structure
-      %          dataStruct.dataAdj = [dataStruct.dataAdj chla];
-      %       end
-      
       % but we should have the same number of columns in
       % dataStruct.data and dataStruct.dataAdj
       if (~isempty(dataStruct.dataAdj))
-         dataStruct.paramDataMode = [dataStruct.paramDataMode ' '];
-         dataStruct.dataAdj = [dataStruct.dataAdj ones(size(dataStruct.dataAdj, 1), 1)*paramChla.fillValue];
+         dataStruct.paramDataMode = [dataStruct.paramDataMode '  '];
+         dataStruct.dataAdj = [dataStruct.dataAdj ...
+            ones(size(dataStruct.dataAdj, 1), 1)*paramChla.fillValue ...
+            ones(size(dataStruct.dataAdj, 1), 1)*paramChlaFluo.fillValue ...
+            ];
       end
    end
    

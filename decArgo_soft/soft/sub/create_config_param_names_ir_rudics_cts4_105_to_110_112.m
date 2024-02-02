@@ -32,6 +32,13 @@ global g_decArgo_outputNcConfParamId;
 % output NetCDF configuration parameter labels
 global g_decArgo_outputNcConfParamLabel;
 
+% max index for misc configuration parameters (CONFIG_PX)
+global g_decArgo_configPxMaxT;
+global g_decArgo_configPxMaxS;
+global g_decArgo_configPxMaxP;
+global g_decArgo_configPxMaxI;
+global g_decArgo_configPxMaxK;
+
 
 % sensor names
 sensor = [ ...
@@ -181,12 +188,16 @@ for idS = 0:6
       ncConfNames{end+1} = paramName;
    end
 end
-for idT = 0:3
-   for idS = 0:7
-      for idP = 0:1
-         for idI = 0:3
-            for idK = 0:8
-               paramNum = 100000 + idK + idI*10 + idP*100 + idS*1000 + idT*10000;
+for idT = 0:g_decArgo_configPxMaxT
+   for idS = 0:g_decArgo_configPxMaxS
+      for idP = 0:g_decArgo_configPxMaxP
+         for idI = 0:g_decArgo_configPxMaxI
+            for idK = 0:g_decArgo_configPxMaxK
+               if (idS < 10)
+                  paramNum = 100000 + idK + idI*10 + idP*100 + idS*1000 + idT*10000;
+               else
+                  paramNum = 1000000 + idK + idI*10 + idP*100 + idS*1000 + idT*100000;
+               end
                idParamName = find(g_decArgo_outputNcConfParamId == paramNum);
                if (~isempty(idParamName))
                   decConfNames{end+1} = sprintf('CONFIG_PX_%d_%d_%d_%d_%d', idT, idS, idP, idI, idK);

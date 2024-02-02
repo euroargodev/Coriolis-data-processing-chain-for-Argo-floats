@@ -3,12 +3,13 @@
 %
 % SYNTAX :
 %  [o_tabTrajIndex, o_tabTrajData] = collect_trajectory_data_cts5_usea( ...
-%    a_tabProfiles, a_tabDrift, a_tabDesc2Prof, a_tabSurf, a_tabTech, a_subSurfaceMeas)
+%    a_tabProfiles, a_tabDrift, a_tabDesc2Prof, a_tabDeepDrift, a_tabSurf, a_tabTech, a_subSurfaceMeas)
 %
 % INPUT PARAMETERS :
 %   a_tabProfiles    : profile data
 %   a_tabDrift       : drift measurement data
 %   a_tabDesc2Prof   : descent 2 prof measurement data
+%   a_tabDeepDrift   : deep drift measurement data
 %   a_tabSurf        : surface measurement data
 %   a_tabTech        : float technical data
 %   a_subSurfaceMeas : unique sub surface measurement
@@ -26,7 +27,7 @@
 %   09/22/2020 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_tabTrajIndex, o_tabTrajData] = collect_trajectory_data_cts5_usea( ...
-   a_tabProfiles, a_tabDrift, a_tabDesc2Prof, a_tabSurf, a_tabTech, a_subSurfaceMeas)
+   a_tabProfiles, a_tabDrift, a_tabDesc2Prof, a_tabDeepDrift, a_tabSurf, a_tabTech, a_subSurfaceMeas)
 
 % output parameters initialization
 o_tabTrajIndex = [];
@@ -41,6 +42,7 @@ global g_MC_DescProf;
 global g_MC_DescProfDeepestBin;
 global g_MC_DriftAtPark;
 global g_MC_Desc2Prof;
+global g_MC_DriftAtProf;
 global g_MC_AscProfDeepestBin;
 global g_MC_AscProf;
 global g_MC_LastAscPumpedCtd;
@@ -361,6 +363,30 @@ for idDesc2P = 1:length(a_tabDesc2Prof)
    
    o_tabTrajIndex = [o_tabTrajIndex;
       g_MC_Desc2Prof  desc2P.cycleNumber desc2P.profileNumber desc2P.phaseNumber];
+   o_tabTrajData = [o_tabTrajData; {{datedMeasStruct}}];
+end
+
+for idDrift = 1:length(a_tabDeepDrift)
+   
+   drift = a_tabDeepDrift(idDrift);
+   
+   datedMeasStruct = get_dated_meas_init_struct(drift.cycleNumber, ...
+      drift.profileNumber, drift.phaseNumber);
+   
+   datedMeasStruct.paramList = drift.paramList;
+   datedMeasStruct.paramDataMode = drift.paramDataMode;
+   datedMeasStruct.paramNumberWithSubLevels = drift.paramNumberWithSubLevels;
+   datedMeasStruct.paramNumberOfSubLevels = drift.paramNumberOfSubLevels;
+   datedMeasStruct.dateList = drift.dateList;
+   datedMeasStruct.dates = drift.dates;
+   datedMeasStruct.datesAdj = drift.datesAdj;
+   datedMeasStruct.data = drift.data;
+   datedMeasStruct.dataAdj = drift.dataAdj;
+   datedMeasStruct.ptsForDoxy = drift.ptsForDoxy;
+   datedMeasStruct.sensorNumber = drift.sensorNumber;
+   
+   o_tabTrajIndex = [o_tabTrajIndex;
+      g_MC_DriftAtProf  drift.cycleNumber drift.profileNumber drift.phaseNumber];
    o_tabTrajData = [o_tabTrajData; {{datedMeasStruct}}];
 end
 

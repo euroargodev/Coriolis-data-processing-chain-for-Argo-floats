@@ -29,7 +29,7 @@ o_fortranFormat = [];
 
 switch (a_decoderId)
    
-   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131}
+   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133}
       % PROVOR CTS5
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}
@@ -47,7 +47,7 @@ switch (a_decoderId)
             o_fortranFormat = 'F8.2';
       end
       
-   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1321, 1322, 1323}
+   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1321, 1322, 1323}
       % Apex APF11 Iridium
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}

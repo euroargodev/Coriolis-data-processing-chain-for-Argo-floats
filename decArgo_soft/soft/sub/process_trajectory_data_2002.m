@@ -205,6 +205,7 @@ if (a_deepCycle == 1)
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
    surfaceLocData = [];
+   surfaceLocDataType = [];
    
    % unpack GPS data
    gpsLocCycleNum = a_gpsData{1};
@@ -236,6 +237,7 @@ if (a_deepCycle == 1)
       end
       
       surfaceLocData = [surfaceLocData; measStruct];
+      surfaceLocDataType = [surfaceLocDataType; 0];
    end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,6 +260,7 @@ if (a_deepCycle == 1)
                ' ', ...
                clockDriftKnown);
             surfaceLocData = [surfaceLocData; measStruct];
+            surfaceLocDataType = [surfaceLocDataType; 1];
          end
       end
    end
@@ -271,17 +274,24 @@ if (a_deepCycle == 1)
       end
       [surfaceLocDates, idSort] = sort(surfaceLocDates);
       surfaceLocData = surfaceLocData(idSort);
+      surfaceLocDataType = surfaceLocDataType(idSort);
       
       % store the data
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; surfaceLocData];
       
       trajNCycleStruct.juldFirstLocation = surfaceLocDates(1);
-      trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_4;
+      if (surfaceLocDataType(1) == 0)
+         trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_2;
+      else
+         trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_4;
+      end
       
       trajNCycleStruct.juldLastLocation = surfaceLocDates(end);
-      trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_4;
-      
-      surfaceLocData = [];
+      if (surfaceLocDataType(end) == 0)
+         trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_2;
+      else
+         trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_4;
+      end
    end
    
    % Last Message Time
@@ -874,6 +884,7 @@ else
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
    surfaceLocData = [];
+   surfaceLocDataType = [];
    
    % unpack GPS data
    gpsLocCycleNum = a_gpsData{1};
@@ -920,6 +931,7 @@ else
       end
       
       surfaceLocData = [surfaceLocData; measStruct];
+      surfaceLocDataType = [surfaceLocDataType; 0];
    end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -942,6 +954,7 @@ else
                ' ', ...
                clockDriftKnown);
             surfaceLocData = [surfaceLocData; measStruct];
+            surfaceLocDataType = [surfaceLocDataType; 1];
          end
       end
    end
@@ -955,17 +968,24 @@ else
       end
       [surfaceLocDates, idSort] = sort(surfaceLocDates);
       surfaceLocData = surfaceLocData(idSort);
+      surfaceLocDataType = surfaceLocDataType(idSort);
       
       % store the data
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; surfaceLocData];
       
       trajNCycleStruct.juldFirstLocation = surfaceLocDates(1);
-      trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_4;
+      if (surfaceLocDataType(1) == 0)
+         trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_2;
+      else
+         trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_4;
+      end
       
       trajNCycleStruct.juldLastLocation = surfaceLocDates(end);
-      trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_4;
-      
-      surfaceLocData = [];
+      if (surfaceLocDataType(end) == 0)
+         trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_2;
+      else
+         trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_4;
+      end      
    end
    
    % Last Message Time

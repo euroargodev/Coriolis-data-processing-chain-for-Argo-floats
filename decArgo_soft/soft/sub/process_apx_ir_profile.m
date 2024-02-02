@@ -420,9 +420,12 @@ idPresHr = find(strcmp('PRES', {a_profHrStruct.paramList.name}));
 idPresLr = find(strcmp('PRES', {a_profLrStruct.paramList.name}));
 
 if (~isempty(idPresHr) && ~isempty(idPresLr))
-   
+
    mergedData = a_profHrStruct.data(:, paramListIdHr);
-   mergedDataAdj = a_profHrStruct.dataAdj(:, paramListIdHr);
+   mergedDataAdj = [];
+   if (~isempty(a_profHrStruct.dataAdj))
+      mergedDataAdj = a_profHrStruct.dataAdj(:, paramListIdHr);
+   end
       
    presHr = a_profHrStruct.data(:, idPresHr);
    presLr = a_profLrStruct.data(:, idPresLr);
@@ -436,7 +439,9 @@ if (~isempty(idPresHr) && ~isempty(idPresLr))
       idFLastLrDeep = idFLastLrDeep(end);
       
       mergedData = cat(1, a_profLrStruct.data(1:idFLastLrDeep, paramListIdLr), mergedData);
-      mergedDataAdj = cat(1, a_profLrStruct.dataAdj(1:idFLastLrDeep, paramListIdLr), mergedDataAdj);
+      if (~isempty(a_profLrStruct.dataAdj))
+         mergedDataAdj = cat(1, a_profLrStruct.dataAdj(1:idFLastLrDeep, paramListIdLr), mergedDataAdj);
+      end
    end
    
    idFFistLrShallow = find(presLr < presHrShallowest);

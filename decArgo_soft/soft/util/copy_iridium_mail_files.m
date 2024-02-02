@@ -79,6 +79,7 @@ for idFloat = 1:nbFloats
    % find the imei of the float
    [imei] = find_login_name(floatNum, numWmo, tabImei);
    if (isempty(imei))
+      fprintf('ERROR: IMEI directory not found for float %s\n', floatNumStr);
       return
    end
    

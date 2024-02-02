@@ -21,7 +21,9 @@
 function get_meta_data_from_data_base_bis()
 
 % meta-data file exported from Coriolis data base
-dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\dbExport_7.16_6990503.txt';
+dataBaseFileName = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\new_apex_meta_apf11_2.16.0.txt';
+dataBaseFileName = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB\new_rem_meta.txt';
+dataBaseFileName = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\APEX_APF11_2.17.4.R\DBexport_Apex2.17.4.R.txt';
 
 
 % list of concerned floats

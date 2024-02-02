@@ -2,7 +2,7 @@
 % Create the OCR profiles of CTS5-USEA decoded data.
 %
 % SYNTAX :
-%  [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf] = ...
+%  [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabDeepDrift, o_tabSurf] = ...
 %    process_profile_ir_rudics_cts5_usea_ocr(a_ocrData, a_timeData, a_gpsData, a_decoderId)
 %
 % INPUT PARAMETERS :
@@ -15,6 +15,7 @@
 %   o_tabProfiles  : created output profiles
 %   o_tabDrift     : created output drift measurement profiles
 %   o_tabDesc2Prof : created output descent 2 prof measurement profiles
+%   o_tabDeepDrift : created output deep drift measurement profiles
 %   o_tabSurf      : created output surface measurement profiles
 %
 % EXAMPLES :
@@ -25,13 +26,14 @@
 % RELEASES :
 %   10/31/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf] = ...
+function [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabDeepDrift, o_tabSurf] = ...
    process_profile_ir_rudics_cts5_usea_ocr(a_ocrData, a_timeData, a_gpsData, a_decoderId)
 
 % output parameters initialization
 o_tabProfiles = [];
 o_tabDrift = [];
 o_tabDesc2Prof = [];
+o_tabDeepDrift = [];
 o_tabSurf = [];
 
 % current float WMO number
@@ -50,12 +52,15 @@ if (isempty(a_ocrData))
 end
 
 switch (a_decoderId)
-   case {126, 127, 128, 129, 131}
-      [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf] = ...
-         process_profile_ir_rudics_cts5_usea_ocr_126_to_129_131(a_ocrData, a_timeData, a_gpsData);
+   case {126, 127, 128, 129, 131, 132}
+      [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabDeepDrift, o_tabSurf] = ...
+         process_profile_ir_rudics_cts5_usea_ocr_126_to_129_131_132(a_ocrData, a_timeData, a_gpsData);
    case {130}
-      [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabSurf] = ...
+      [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabDeepDrift, o_tabSurf] = ...
          process_profile_ir_rudics_cts5_usea_ocr_130(a_ocrData, a_timeData, a_gpsData);
+   case {133}
+      [o_tabProfiles, o_tabDrift, o_tabDesc2Prof, o_tabDeepDrift, o_tabSurf] = ...
+         process_profile_ir_rudics_cts5_usea_ocr_133(a_ocrData, a_timeData, a_gpsData);
    otherwise
       fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Nothing done yet to process OCR profiles for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

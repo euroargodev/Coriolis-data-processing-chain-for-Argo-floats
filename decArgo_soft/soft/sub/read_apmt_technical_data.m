@@ -2,9 +2,10 @@
 % Parse APMT technical files.
 %
 % SYNTAX :
-%  read_apmt_technical(a_cyclePatternNumFloat, a_filePrefix, a_decoderId, a_clockOffsetOnlyFlag)
+%  read_apmt_technical_data(a_cycleNumFloat, a_cyclePatternNumFloat, a_filePrefix, a_decoderId, a_clockOffsetOnlyFlag)
 %
 % INPUT PARAMETERS :
+%   a_cycleNumFloat        : cycle numbers
 %   a_cyclePatternNumFloat : cycle and pattern numbers
 %   a_filePrefix           : prefix of float transmitted files
 %   a_decoderId            : float decoder Id
@@ -20,7 +21,7 @@
 % RELEASES :
 %   02/01/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function read_apmt_technical_data(a_cyclePatternNumFloat, a_filePrefix, a_decoderId, a_clockOffsetOnlyFlag)
+function read_apmt_technical_data(a_cycleNumFloat, a_cyclePatternNumFloat, a_filePrefix, a_decoderId, a_clockOffsetOnlyFlag)
 
 % type of files to consider
 global g_decArgo_fileTypeListCts5;
@@ -36,13 +37,11 @@ g_decArgo_useaTechData = [];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % process TECH files (without pattern #)
 
-uCycleList = unique(a_cyclePatternNumFloat(:, 1));
-for idCy = 1:length(uCycleList)
-   floatCyNum = uCycleList(idCy);
+for idCy = 1:length(a_cycleNumFloat)
+   floatCyNum = a_cycleNumFloat(idCy);
 
    % '_%03d_autotest_*.txt'
-   % '_%03d_%02d_default_*.txt'
-   for idType = [3 5]
+   for idType = [3]
       idFL = find([g_decArgo_fileTypeListCts5{:, 1}] == idType);
       pattern = g_decArgo_fileTypeListCts5{idFL, 5};
       inputFiles = dir([g_decArgo_archiveDirectory '/' a_filePrefix sprintf(pattern, floatCyNum)]);
@@ -64,7 +63,8 @@ for idCyPat = 1:size(a_cyclePatternNumFloat, 1)
    floatPtnNum = a_cyclePatternNumFloat(idCyPat, 2);
 
    % '_%03d_%02d_technical*.txt'
-   for idType = [4]
+   % '_%03d_%02d_default_*.txt'
+   for idType = [4 5]
       idFL = find([g_decArgo_fileTypeListCts5{:, 1}] == idType);
       pattern = g_decArgo_fileTypeListCts5{idFL, 5};
       inputFiles = dir([g_decArgo_archiveDirectory '/' a_filePrefix sprintf(pattern, floatCyNum, floatPtnNum)]);

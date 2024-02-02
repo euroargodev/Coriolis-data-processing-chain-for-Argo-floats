@@ -27,7 +27,8 @@ FLOAT_LIST_FILE_NAME = '';
 
 % top directory of NetCDF files to check
 % (expected path to NetCDF files: DIR_INPUT_OUTPUT_NC_FILES\dac_name\wmo_number)
-DIR_INPUT_OUTPUT_NC_FILES = 'D:\202209-ArgoData\';
+DIR_INPUT_OUTPUT_NC_FILES = 'D:\202211-ArgoData\';
+DIR_INPUT_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -82,6 +83,9 @@ dacDir = dir(DIR_INPUT_OUTPUT_NC_FILES);
 for idDir = 1:length(dacDir)
 
    dacDirName = dacDir(idDir).name;
+   if (~strcmp(dacDirName, 'coriolis'))
+      continue
+   end
    dacDirPathName = [DIR_INPUT_OUTPUT_NC_FILES '/' dacDirName];
    if ((exist(dacDirPathName, 'dir') == 7) && ~strcmp(dacDirName, '.') && ~strcmp(dacDirName, '..'))
 
@@ -130,6 +134,8 @@ fclose(fidOut);
 
 ellapsedTime = toc;
 fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
+
+diary off;
 
 return
 

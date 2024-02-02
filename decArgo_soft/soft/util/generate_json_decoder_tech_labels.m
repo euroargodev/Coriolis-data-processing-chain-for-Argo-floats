@@ -36,7 +36,8 @@ function generate_json_decoder_tech_labels()
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_126.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_127.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_128.csv';
-decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_129.csv';
+% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_129.csv';
+% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_132.csv';
 
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_201.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_203.csv';
@@ -78,7 +79,7 @@ decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1110.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1201.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1314.csv';
-% decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1321.csv';
+decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_1321.csv';
 
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_2001.csv';
 % decoderTechLabelsFileName = 'C:\Users\jprannou\_RNU\DecArgo_info\_techParamNames\_tech_param_name_2002.csv';
@@ -183,7 +184,7 @@ else
       case {105}
          decIdList = [105, 106, 107, 109, 110, 112];
       case {111}
-         decIdList = [111, 113, 114, 115];
+         decIdList = [111, 113, 114, 115, 116];
       case {121}
          decIdList = [121];
       case {122}
@@ -197,7 +198,9 @@ else
       case {128}
          decIdList = [128];
       case {129}
-         decIdList = [129 130 131];
+         decIdList = [129, 130, 131];
+      case {132}
+         decIdList = [132, 133];
 
       case {201}
          decIdList = [201, 202];
@@ -228,7 +231,7 @@ else
       case {222}
          decIdList = [222, 223, 225];
       case {224}
-         decIdList = [224];
+         decIdList = [224 226];
          
       case {301}
          decIdList = [301];
@@ -279,7 +282,7 @@ else
          decIdList = [1314];
          
       case {1321}
-         decIdList = [1121:1128, 1321, 1322, 1323];
+         decIdList = [1121:1130, 1321, 1322, 1323];
 
       case {1201}
          decIdList = [1201];

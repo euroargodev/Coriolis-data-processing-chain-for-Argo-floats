@@ -100,7 +100,7 @@ end
 
 % manage alternated profile pressure
 if (floatParam(42) ~= 1)
-   
+
    % check cycle number VS PT16
    % be careful !!! we should substract 1 to floatParam(9) in the mod because we
    % have added 1 to float internal cycle number

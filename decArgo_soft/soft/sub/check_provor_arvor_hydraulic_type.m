@@ -26,7 +26,7 @@ global g_decArgo_provorArvorHydraulicTypeCheckFlag;
 
 
 decIdListProvorWithHydraulicTypeInfo = [213, 214, 225];
-decIdListArvorWithHydraulicTypeInfo = [210:212, 217, 222:224];
+decIdListArvorWithHydraulicTypeInfo = [210:212, 217, 222:224, 226];
 
 if ((ismember(a_decoderId, decIdListProvorWithHydraulicTypeInfo) && (a_hydraulicType == 0)) || ...
       (ismember(a_decoderId, decIdListArvorWithHydraulicTypeInfo) && (a_hydraulicType == 1)))

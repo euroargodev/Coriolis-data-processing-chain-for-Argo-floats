@@ -250,6 +250,48 @@ for idFloat = 1:nbFloats
             fprintf('MISC: %s renamed %s\n', fileNameIn, fileNameOut);
          end
 
+      case 6904139
+         % file: 520d_049_autotest_00001.txt not be kept
+         delFile = dir([floatOutputDirName '/520d_049_autotest_00001_*.txt']);
+         for idF = 1:length(delFile)
+            move_file([floatOutputDirName '/' delFile(idF).name], unusedDirName);
+            fprintf('MISC: %s - not used\n', delFile(idF).name);
+         end
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {5906972, 6903093}
+         % CTS5 floats with Iridium location email
+         mailFiles = dir([inputDirName '/' loginName '/co_*_*_*_*_*.txt']);
+         for idFile = 1:length(mailFiles)
+            mailFileName = mailFiles(idFile).name;
+            mailFilePathName = [inputDirName '/' loginName '/' mailFileName];
+
+            mailFilePathNameOut = [floatOutputDirName '/' mailFileName];
+            if (exist(mailFilePathNameOut, 'file') == 2)
+               % when the file already exists, check (with its date) if it needs to be
+               % updated
+               mailFileOut = dir(mailFilePathNameOut);
+               if (~strcmp(mailFiles(idFile).date, mailFileOut.date))
+                  copy_file(mailFilePathName, floatOutputDirName);
+                  fprintf('%s => copy\n', mailFileName);
+               else
+                  fprintf('%s => unchanged\n', mailFileName);
+               end
+            else
+               % copy the file if it doesn't exist
+               copy_file(mailFilePathName, floatOutputDirName);
+               fprintf('%s => copy\n', mailFileName);
+            end
+         end
+
+      case 3902471
+         % files: 5609_042_01_apmt#01.ini and 5609_042_01_apmt#02.ini should not
+         % be kept
+         delFile = dir([floatOutputDirName '/5609_042_01_apmt#*.ini']);
+         for idF = 1:length(delFile)
+            move_file([floatOutputDirName '/' delFile(idF).name], unusedDirName);
+            fprintf('MISC: %s - not used\n', delFile(idF).name);
+         end
    end
 end
 

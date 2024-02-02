@@ -112,23 +112,25 @@ while (currentByte <= lastByteNum)
    % look for a new treatment header
    if (inputData(currentByte) == '(')
       for idTreat = 1:length(treatList)
-         if (isempty(treatList{idTreat}))
-            continue
-         end
          treatName = treatList{idTreat};
-         if (strcmp(char(inputData(currentByte:currentByte+length(treatName)-1))', treatName))
-            newTreatNum = idTreat;
-            currentByte = currentByte + length(treatName);
-            break
+         if (~isempty(treatName))
+            if (strcmp(char(inputData(currentByte:currentByte+length(treatName)-1))', treatName))
+               newTreatNum = idTreat;
+               currentByte = currentByte + length(treatName);
+               break
+            end
          end
       end
    end
-   
-   % the treatment type of PARK, SHORT_PARK and SURFACE measurements is always
-   % RAW (NKE personal communication)
-   if (ismember(newPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
-      newTreatNum = g_decArgo_cts5Treat_RW;
-   end
+
+   % BE CAREFULL : the '(RW)' pattern is present in these data, thus detected in
+   % the previous and consequently theres is no need to set newTreatNum => in
+   % the following code
+   %    % the treatment type of PARK, SHORT_PARK and SURFACE measurements is always
+   %    % RAW (NKE personal communication)
+   %    if (ismember(newPhaseNum, [g_decArgo_cts5PhasePark g_decArgo_cts5PhaseShortPark g_decArgo_cts5PhaseSurface]))
+   %       newTreatNum = g_decArgo_cts5Treat_RW;
+   %    end
    
    % consider modification of phase or treatment
    if ((newPhaseNum ~= -1) || (newTreatNum ~= -1))
