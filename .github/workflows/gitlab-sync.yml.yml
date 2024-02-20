@@ -2,7 +2,7 @@ name: GitlabSync
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "feature/lfs" ]
 
 jobs:
   sync:
