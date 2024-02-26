@@ -1,0 +1,67 @@
+version: "3.9"
+
+services:
+  # Upload runtime environment
+  runtime-matlab:
+    container_name: argo-runtime-matlab
+    image: ${RUNTIME_IMAGE}:${RUNTIME_IMAGE_TAG}
+    volumes:
+      - runtime_volume:${RUNTIME_CONTAINER_PATH}:rw
+  # Decode float WMO 6904101
+  decode-float-6904101:
+    container_name: decode-floatwmo-6904101
+    image: ${DECODER_IMAGE}:${DECODER_IMAGE_TAG}
+    user: ${USER_ID}:${GROUP_ID}
+    env_file:
+      - .env
+    volumes:
+      - ${DECODER_RUNTIME_DIR}:/mnt/runtime:ro
+      - ${DECODER_DATA_INPUT}:/mnt/data/rsync:rw
+      - ${DECODER_DATA_CONF}:/mnt/data/config:ro
+      - ${DECODER_DATA_OUTPUT}:/mnt/data/output:rw
+    command: /mnt/runtime 'rsynclog' 'all' 'configfile' '/app/config/_argo_decoder_conf_ir_sbd.json' 'configfile' '/app/config/_argo_decoder_conf_ir_sbd_rem.json' 'xmlreport' 'co041404_20240124T112515Z_458271.xml' 'floatwmo' '6904101' 'PROCESS_REMAINING_BUFFERS' '1'
+    group_add:
+      - gbatch
+    depends_on:
+      runtime-matlab:
+        condition: service_started
+  # Decode float Arvor 6903014
+  # decode-float-6903014:
+  #   container_name: decode-floatwmo-6903014
+  #   image: ${DECODER_IMAGE}:${DECODER_IMAGE_TAG}
+  #   user: ${USER_ID}:${GROUP_ID}
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ${DECODER_RUNTIME_DIR}:/mnt/runtime:ro
+  #     - ${DECODER_DATA_INPUT}:/mnt/data/rsync:rw
+  #     - ${DECODER_DATA_CONF}:/mnt/data/config:ro
+  #     - ${DECODER_DATA_OUTPUT}:/mnt/data/output:rw
+  #   command: /mnt/runtime 'rsynclog' 'all' 'configfile' '/app/config/_argo_decoder_conf_ir_sbd.json' 'configfile' '/app/config/_argo_decoder_conf_ir_sbd_rem.json' 'xmlreport' 'co041404_20240124T112515Z_458271.xml' 'floatwmo' '6903014' 'PROCESS_REMAINING_BUFFERS' '1'
+  #   group_add:
+  #     - gbatch
+  #   depends_on:
+  #     runtime-matlab:
+  #       condition: service_started
+  # # Decode float Arvor Deep 6902892
+  # decode-float-6902892:
+  #   container_name: decode-floatwmo-6902892
+  #   image: ${DECODER_IMAGE}:${DECODER_IMAGE_TAG}
+  #   user: ${USER_ID}:${GROUP_ID}
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ${DECODER_RUNTIME_DIR}:/mnt/runtime:ro
+  #     - ${DECODER_DATA_INPUT}:/mnt/data/rsync:rw
+  #     - ${DECODER_DATA_CONF}:/mnt/data/config:ro
+  #     - ${DECODER_DATA_OUTPUT}:/mnt/data/output:rw
+  #   command: /mnt/runtime 'rsynclog' 'all' 'configfile' '/app/config/_argo_decoder_conf_ir_sbd.json' 'configfile' '/app/config/_argo_decoder_conf_ir_sbd_rem.json' 'xmlreport' 'co041404_20240124T112515Z_458271.xml' 'floatwmo' '6902892' 'PROCESS_REMAINING_BUFFERS' '1'
+  #   group_add:
+  #     - gbatch
+  #   depends_on:
+  #     runtime-matlab:
+  #       condition: service_started
+
+volumes:
+  runtime_volume:
+    external: false
