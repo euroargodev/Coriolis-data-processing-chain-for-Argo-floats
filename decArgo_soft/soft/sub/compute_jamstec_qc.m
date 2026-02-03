@@ -1,7 +1,7 @@
 % ------------------------------------------------------------------------------
 % Compute the JAMSTEC QC test for a surface trajectory.
-% (see Nakamura et al (2008), ìQuality control method of Argo float position
-%  dataî, JAMSTEC Report of Research and Development, Vol. 7, 11-18).
+% (see Nakamura et al (2008), ‚ÄúQuality control method of Argo float position
+%  data‚Äù, JAMSTEC Report of Research and Development, Vol. 7, 11-18).
 %
 % SYNTAX :
 %  [o_argosLocQc] = compute_jamstec_qc( ...
@@ -26,7 +26,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/11/2012 - RNU - creation

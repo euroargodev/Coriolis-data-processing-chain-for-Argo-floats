@@ -4,26 +4,27 @@
 %
 % SYNTAX :
 %  generate_json_float_meta_apx_ir_rudics_( ...
-%    a_floatMetaFileName, a_floatListFileName, a_outputDirName)
+%    a_floatMetaFileName, a_floatListFileName, a_outputDirName, a_rtVersionFlag)
 %
 % INPUT PARAMETERS :
 %   a_floatMetaFileName : meta-data file exported from Coriolis data base
 %   a_floatListFileName : list of concerned floats
 %   a_outputDirName     : directory of individual json float meta-data files
+%   a_rtVersionFlag     : 1 if it is the RT version of the tool, 0 otherwise
 %
 % OUTPUT PARAMETERS :
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
 %   09/01/2017 - RNU - RT version added
 % ------------------------------------------------------------------------------
 function generate_json_float_meta_apx_ir_rudics_( ...
-   a_floatMetaFileName, a_floatListFileName, a_outputDirName)
+   a_floatMetaFileName, a_floatListFileName, a_outputDirName, a_rtVersionFlag)
 
 % report information structure
 global g_cogj_reportData;
@@ -172,7 +173,7 @@ for idFloat = 1:length(floatList)
          {'012811'} {'020212'} {'060612'} {'062813.1'} ...
          {'030512'} ...
          {'062813.2'} {'062813.3'} {'110216'} {'051216'} ...
-         {'073014'} {'073014_2'} ...
+         {'073014'} {'073014_2'} {'073014_3'} ...
          {'061113'}]))
       fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
          floatNum, dacFormatId);
@@ -200,6 +201,7 @@ for idFloat = 1:length(floatList)
       {'SENSOR_MAKER'} ...
       {'SENSOR_MODEL'} ...
       {'SENSOR_SERIAL_NO'} ...
+      {'SENSOR_FIRMWARE_VERSION'} ...
       ];
    [metaStruct] = add_multi_dim_data( ...
       itemList, ...
@@ -441,7 +443,7 @@ for idFloat = 1:length(floatList)
             metaStruct.CALIBRATION_COEFFICIENT.FLBB = calibDataDb;
          end
          
-      case {'062813.1', '110216'}
+      case {'062813.1', '110216', '073014_3'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
@@ -459,6 +461,28 @@ for idFloat = 1:length(floatList)
          end
          if (~isempty(calibDataDb))
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
+         end
+
+         idF = find((strncmp(metaData(idForWmo, 5), 'FLBB_Chlorophyll', length('FLBB_Chlorophyll')) == 1) | ...
+            (strncmp(metaData(idForWmo, 5), 'FLBB_Backscattering', length('FLBB_Backscattering')) == 1));
+         calibDataDb = [];
+         for id = 1:length(idF)
+            calibName = metaData{idForWmo(idF(id)), 5};
+            if (strcmp(calibName, 'FLBB_ChlorophyllScaleFactor'))
+               fieldName = 'ScaleFactChloroA';
+            elseif (strcmp(calibName, 'FLBB_ChlorophyllDarkCount'))
+               fieldName = 'DarkCountChloroA';
+            elseif (strcmp(calibName, 'FLBB_BackscatteringScaleFactor'))
+               fieldName = 'ScaleFactBackscatter700';
+            elseif (strcmp(calibName, 'FLBB_BackscatteringDarkCount'))
+               fieldName = 'DarkCountBackscatter700';
+            elseif (strcmp(calibName, 'FLBB_BackscatteringKhiCoef'))
+               fieldName = 'KhiCoefBackscatter';
+            end
+            calibDataDb.(fieldName) = metaData{idForWmo(idF(id)), 4};
+         end
+         if (~isempty(calibDataDb))
+            metaStruct.CALIBRATION_COEFFICIENT.FLBB = calibDataDb;
          end
          
       case {'102815'}
@@ -695,7 +719,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -875,7 +899,7 @@ switch (a_dacFormatId)
          'CONFIG_DEBUG_LogVerbosity', '', ...
          'CONFIG_DPF_DeepProfileFirstFloat', '', ...
          'CONFIG_DIR_ProfilingDirection', '');
-   case {'073014', '073014_2'}
+   case {'073014', '073014_2', '073014_3'}
       o_configStruct = struct( ...
          'CONFIG_ASCEND_AscentTimeOut', '', ...
          'CONFIG_NUDGE_AscentBuoyancyNudge', '', ...
@@ -968,7 +992,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -1148,7 +1172,7 @@ switch (a_dacFormatId)
          'CONFIG_DEBUG_LogVerbosity', 'PRCFG_Verbosity', ...
          'CONFIG_DPF_DeepProfileFirstFloat', 'DEEP_PROFILE_FIRST', ...
          'CONFIG_DIR_ProfilingDirection', 'DIRECTION');
-   case {'073014', '073014_2'}
+   case {'073014', '073014_2', '073014_3'}
       o_configStruct = struct( ...
          'CONFIG_ASCEND_AscentTimeOut', 'MissionCfgAscentTimeoutPeriod', ...
          'CONFIG_NUDGE_AscentBuoyancyNudge', 'MissionCfgBuoyancyNudge', ...
@@ -1239,7 +1263,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -1277,6 +1301,7 @@ o_metaStruct = struct( ...
    'CONTROLLER_BOARD_SERIAL_NO_PRIMARY', 'CONTROLLER_BOARD_SERIAL_NO_PRIMA', ...
    'CONTROLLER_BOARD_SERIAL_NO_SECONDARY', 'CONTROLLER_BOARD_SERIAL_NO_SECON', ...
    'SPECIAL_FEATURES', 'SPECIAL_FEATURES', ...
+   'PROGRAM_NAME', 'PROGRAM_NAME', ...
    'FLOAT_OWNER', 'FLOAT_OWNER', ...
    'OPERATING_INSTITUTION', 'OPERATING_INSTITUTION', ...
    'CUSTOMISATION', 'CUSTOMISATION', ...

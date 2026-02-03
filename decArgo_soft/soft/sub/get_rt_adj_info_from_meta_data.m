@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/15/2018 - RNU - creation
@@ -153,11 +153,23 @@ if (isfield(a_metaData, 'RT_OFFSET'))
             % are not necessarily the same
             % look for current PARAM number in CALIB_RT_PARAMETER => paramNum2
             paramNum2 = '';
-            fieldNames2 = fields(a_metaData.CALIB_RT_PARAMETER);
-            for id = 1:length(fieldNames2)
-               if (strcmp(a_metaData.CALIB_RT_PARAMETER.(['CALIB_RT_PARAMETER_' num2str(id)]), param))
-                  paramNum2 = id;
-                  break
+            if (length(find(strcmp(struct2cell(a_metaData.CALIB_RT_PARAMETER), param))) == 1)
+               fieldNames2 = fields(a_metaData.CALIB_RT_PARAMETER);
+               for id = 1:length(fieldNames2)
+                  if (strcmp(a_metaData.CALIB_RT_PARAMETER.(['CALIB_RT_PARAMETER_' num2str(id)]), param))
+                     paramNum2 = id;
+                     break
+                  end
+               end
+            else
+               fieldNames3 = [{'SLOPE'}, {'VALUE'}, {'DRIFT'}, {'INCLINE'}];
+               for id = 1:length(fieldNames3)
+                  idF = cellfun(@(x) strfind(struct2cell(a_metaData.CALIB_RT_COEFFICIENT), x), {rtData.(fieldNames3{id}).([fieldNames3{id} '_' paramNum])}, 'UniformOutput', 0);
+                  idF = find(~cellfun(@isempty, idF{:}) == 1);
+                  if (length(idF) == 1)
+                     paramNum2 = idF;
+                     break
+                  end
                end
             end
             tabEquation = [tabEquation {a_metaData.CALIB_RT_EQUATION.(['CALIB_RT_EQUATION_' num2str(paramNum2)])}];

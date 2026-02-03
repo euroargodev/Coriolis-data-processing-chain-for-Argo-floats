@@ -22,7 +22,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/22/2013 - RNU - creation
@@ -66,14 +66,14 @@ global g_decArgo_addParamListCtd;
 
 % get the pressure cut-off for CTD ascending profile (from the CTD technical
 % data)
-presCutOffProfFromTech = [];
+presCutOffProfFromTech = '';
 if (~isempty(a_sensorTechCTD) && ...
       ~isempty(a_sensorTechCTD{17}) && ~isempty(a_sensorTechCTD{18}) && ~isempty(a_sensorTechCTD{19}))
-   
+
    a_sensorTechCTDSubPres = a_sensorTechCTD{17};
    a_sensorTechCTDSubTemp = a_sensorTechCTD{18};
    a_sensorTechCTDSubSal = a_sensorTechCTD{19};
-   
+
    idDel = [];
    for idP = 1:size(a_sensorTechCTDSubPres, 1)
       if  ~(any([a_sensorTechCTDSubPres(idP, 3) ...
@@ -108,45 +108,63 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
    cycleNum = cycleProfPhaseList(idCyPrPh, 1);
    profNum = cycleProfPhaseList(idCyPrPh, 2);
    phaseNum = cycleProfPhaseList(idCyPrPh, 3);
-   
+
    if ((phaseNum == g_decArgo_phaseDsc2Prk) || ...
          (phaseNum == g_decArgo_phaseParkDrift) || ...
          (phaseNum == g_decArgo_phaseAscProf))
-      
+
       profStruct = get_profile_init_struct(cycleNum, profNum, phaseNum, -1);
       profStruct.sensorNumber = 0;
-      
+
       if (phaseNum == g_decArgo_phaseAscProf)
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         % PROFILE CTD CUT OFF PRESSURE DETERMINATION
+
+         % retrieve the last pumped PRES from the tech data
+         subSurfacePres = '';
+         presCutOffProf = g_decArgo_presDef;
+         fromConfigFlag = 0;
          if (~isempty(presCutOffProfFromTech))
             if (size(presCutOffProfFromTech, 2) == 3)
                idPresCutOffProf = find((presCutOffProfFromTech(:, 1) == cycleNum) & ...
                   (presCutOffProfFromTech(:, 2) == profNum));
                if (~isempty(idPresCutOffProf))
-                  profStruct.presCutOffProf = presCutOffProfFromTech(idPresCutOffProf(1), 3);
-                  profStruct.subSurfMeasReceived = 1;
+                  subSurfacePres = presCutOffProfFromTech(idPresCutOffProf(1), 3);
+                  presCutOffProf = subSurfacePres;
                end
             end
          end
-         if (profStruct.presCutOffProf == g_decArgo_presDef)
-            % get the pressure cut-off for CTD ascending profile (from the
-            % configuration)
-            [configPC0113] = config_get_value_ir_rudics_sbd2(cycleNum, profNum, 'CONFIG_PC_0_1_13');
-            if (~isempty(configPC0113) && ~isnan(configPC0113))
-               profStruct.presCutOffProf = configPC0113;
-               
-               fprintf('DEC_WARNING: Float #%d Cycle #%d Profile #%d: PRES_CUT_OFF_PROF parameter is missing in the tech data - value retrieved from the configuration\n', ...
-                  g_decArgo_floatNum, ...
-                  cycleNum, ...
-                  profNum);
+         if (isempty(subSurfacePres))
+            % retrieve the CTD pump cut-off pressure from the configuration
+            [presCutOffProfCfg] = config_get_value_ir_rudics_sbd2(cycleNum, profNum, 'CONFIG_PC_0_1_4');
+            if (~isempty(presCutOffProfCfg) && ~isnan(presCutOffProfCfg))
+               % CONFIG_PC_0_1_4 is CTD pump cut-off pressure we should add
+               % Poverlap = 0.5 dbar if it is not situated in a raw treatment
+               % type zone
+
+               % retrieve the treatment type associated to presCutOffProfCfg
+               treatType = config_get_treatment_type_ir_rudics_cts4( ...
+                  cycleNum, profNum, presCutOffProfCfg);
+               if (~isempty(treatType) && (treatType == 0))
+                  presCutOffProfConfig = presCutOffProfCfg;
+               else
+                  presCutOffProfConfig = presCutOffProfCfg + 0.5;
+               end
+               presCutOffProf = presCutOffProfConfig;
+               fromConfigFlag = 1;
             else
-               fprintf('ERROR: Float #%d Cycle #%d Profile #%d: PRES_CUT_OFF_PROF parameter is missing in the configuration - CTD profile not split\n', ...
+               fprintf('ERROR: Float #%d Cycle #%d Profile #%d: subsurface meas is missing in the tech data and PRES_CUT_OFF_PROF parameter is missing in the configuration - CTD profile not split\n', ...
                   g_decArgo_floatNum, ...
                   cycleNum, ...
                   profNum);
             end
          end
+         profStruct.presCutOffProf = presCutOffProf;
+         profStruct.presCutOffProfConfig = fromConfigFlag;
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       end
-      
+
       % select the data (according to cycleNum, profNum and phaseNum)
       idDataMean = find((a_dataCTDMeanDate(:, 1) == cycleNum) & ...
          (a_dataCTDMeanDate(:, 2) == profNum) & ...
@@ -157,13 +175,13 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
             (a_dataCTDStdMedDate(:, 2) == profNum) & ...
             (a_dataCTDStdMedDate(:, 3) == phaseNum));
       end
-      
+
       if (isempty(idDataMean) && isempty(idDataStdMed))
          continue
       end
-      
+
       if (isempty(idDataStdMed))
-         
+
          % mean data only
          dataMean = [];
          for idL = 1:length(idDataMean)
@@ -175,51 +193,51 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
          end
          idDel = find((dataMean(:, 2) == 0) & (dataMean(:, 3) == 0) & (dataMean(:, 4) == 0));
          dataMean(idDel, :) = [];
-         
+
          if (~isempty(dataMean))
-            
+
             % create parameters
             paramJuld = get_netcdf_param_attributes('JULD');
             paramPres = get_netcdf_param_attributes('PRES');
             paramTemp = get_netcdf_param_attributes('TEMP');
             paramSal = get_netcdf_param_attributes('PSAL');
-            
+
             % convert counts to values
             dataMean(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(dataMean(:, 2), a_decoderId);
             dataMean(:, 3) = sensor_2_value_for_temperature_ir_rudics_sbd2(dataMean(:, 3));
             dataMean(:, 4) = sensor_2_value_for_salinity_ir_rudics_sbd2(dataMean(:, 4));
-            
+
             % convert decoder default values to netCDF fill values
             dataMean(find(dataMean(:, 1) == g_decArgo_dateDef), 1) = paramJuld.fillValue;
             dataMean(find(dataMean(:, 2) == g_decArgo_presDef), 2) = paramPres.fillValue;
             dataMean(find(dataMean(:, 3) == g_decArgo_tempDef), 3) = paramTemp.fillValue;
             dataMean(find(dataMean(:, 4) == g_decArgo_salDef), 4) = paramSal.fillValue;
-            
+
             profStruct.paramList = [paramPres paramTemp paramSal];
             profStruct.dateList = paramJuld;
-            
+
             profStruct.data = dataMean(:, 2:end);
             profStruct.dates = dataMean(:, 1);
-            
+
             % measurement dates
             dates = dataMean(:, 1);
             dates(find(dates == paramJuld.fillValue)) = [];
             profStruct.minMeasDate = min(dates);
             profStruct.maxMeasDate = max(dates);
-            
+
             % treatment type
             profStruct.treatType = g_decArgo_treatAverage;
          end
-         
+
       else
-         
+
          if (isempty(idDataMean))
             fprintf('WARNING: Float #%d Cycle #%d: CTD standard deviation and median data without associated mean data\n', ...
                g_decArgo_floatNum, g_decArgo_cycleNum);
          else
-            
+
             % mean and stdMed data
-            
+
             % merge the data
             dataMean = [];
             for idL = 1:length(idDataMean)
@@ -231,7 +249,7 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
             end
             idDel = find((dataMean(:, 2) == 0) & (dataMean(:, 3) == 0) & (dataMean(:, 4) == 0));
             dataMean(idDel, :) = [];
-            
+
             dataStdMed = [];
             for idL = 1:length(idDataStdMed)
                dataStdMed = cat(1, dataStdMed, ...
@@ -246,14 +264,14 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                (dataStdMed(:, 3) == 0) & (dataStdMed(:, 4) == 0) & ...
                (dataStdMed(:, 5) == 0) & (dataStdMed(:, 6) == 0));
             dataStdMed(idDel, :) = [];
-            
+
             data = cat(2, dataMean, ...
                ones(size(dataMean, 1), 1)*g_decArgo_tempCountsDef, ...
                ones(size(dataMean, 1), 1)*g_decArgo_salCountsDef, ...
                ones(size(dataMean, 1), 1)*g_decArgo_presCountsDef, ...
                ones(size(dataMean, 1), 1)*g_decArgo_tempCountsDef, ...
                ones(size(dataMean, 1), 1)*g_decArgo_salCountsDef);
-            
+
             for idL = 1:size(dataStdMed, 1)
                idOk = find(data(:, 2) == dataStdMed(idL, 1));
                if (~isempty(idOk))
@@ -273,9 +291,9 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                      g_decArgo_floatNum, g_decArgo_cycleNum);
                end
             end
-            
+
             if (~isempty(data))
-               
+
                % create parameters
                paramJuld = get_netcdf_param_attributes('JULD');
                paramPres = get_netcdf_param_attributes('PRES');
@@ -286,7 +304,7 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                paramPresMed = get_netcdf_param_attributes('PRES_MED');
                paramTempMed = get_netcdf_param_attributes('TEMP_MED');
                paramSalMed = get_netcdf_param_attributes('PSAL_MED');
-               
+
                % convert counts to values
                data(:, 2) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 2), a_decoderId);
                data(:, 3) = sensor_2_value_for_temperature_ir_rudics_sbd2(data(:, 3));
@@ -296,7 +314,7 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                data(:, 7) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 7), a_decoderId);
                data(:, 8) = sensor_2_value_for_temperature_ir_rudics_sbd2(data(:, 8));
                data(:, 9) = sensor_2_value_for_salinity_ir_rudics_sbd2(data(:, 9));
-               
+
                % convert decoder default values to netCDF fill values
                data(find(data(:, 1) == g_decArgo_dateDef), 1) = paramJuld.fillValue;
                data(find(data(:, 2) == g_decArgo_presDef), 2) = paramPres.fillValue;
@@ -307,21 +325,21 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
                data(find(data(:, 7) == g_decArgo_presDef), 7) = paramPresMed.fillValue;
                data(find(data(:, 8) == g_decArgo_tempDef), 8) = paramTempMed.fillValue;
                data(find(data(:, 9) == g_decArgo_salDef), 9) = paramSalMed.fillValue;
-               
+
                profStruct.paramList = [paramPres paramTemp paramSal ...
                   paramTempStDev paramSalStDev ...
                   paramPresMed paramTempMed paramSalMed];
                profStruct.dateList = paramJuld;
-               
+
                profStruct.data = data(:, 2:end);
                profStruct.dates = data(:, 1);
-               
+
                % measurement dates
                dates = data(:, 1);
                dates(find(dates == paramJuld.fillValue)) = [];
                profStruct.minMeasDate = min(dates);
                profStruct.maxMeasDate = max(dates);
-               
+
                % treatment type
                profStruct.treatType = g_decArgo_treatAverageAndStDev;
 
@@ -335,37 +353,37 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
             end
          end
       end
-      
+
       if (~isempty(profStruct.paramList))
-         
+
          % profile direction
          if (phaseNum == g_decArgo_phaseDsc2Prk)
             profStruct.direction = 'D';
          end
-         
+
          % add number of measurements in each zone
          [profStruct] = add_profile_nb_meas_ir_rudics_sbd2(profStruct, a_sensorTechCTD);
-         
+
          % add profile additional information
          if (phaseNum ~= g_decArgo_phaseParkDrift)
-            
+
             % positioning system
             profStruct.posSystem = 'GPS';
-            
+
             % profile date and location information
             [profStruct] = add_profile_date_and_location_ir_rudics_cts4( ...
                profStruct, ...
                a_descentToParkStartDate, a_ascentEndDate, ...
                a_gpsData);
-            
+
             o_tabProfiles = [o_tabProfiles profStruct];
-            
+
          else
-            
+
             % drift data is always 'raw' (even if transmitted through
             % 'mean' float packets) (NKE personal communication)
             profStruct.treatType = g_decArgo_treatRaw;
-            
+
             o_tabDrift = [o_tabDrift profStruct];
          end
       end

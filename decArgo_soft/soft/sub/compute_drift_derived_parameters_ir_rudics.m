@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/10/2014 - RNU - creation
@@ -39,9 +39,9 @@ global g_decArgo_decoderIdListNkeCts5Usea;
 % collect information on drift measurement profiles
 driftInfo = [];
 for idDrift = 1:length(a_tabDrift)
-   
+
    profile = a_tabDrift(idDrift);
-   
+
    driftInfo = [driftInfo;
       idDrift profile.sensorNumber profile.derived profile.cycleNumber profile.profileNumber];
 end
@@ -54,7 +54,7 @@ if (~isempty(driftInfo))
    idSensor1 = find((driftInfo(:, 2) == 1) & (driftInfo(:, 3) == 0));
    for idD = 1:length(idSensor1)
       driftOptode = a_tabDrift(driftInfo(idSensor1(idD), 1));
-      
+
       % look for the associated CTD drift measurements
       driftCtd = [];
       idF = find((driftInfo(:, 2) == 0) & ...
@@ -86,14 +86,14 @@ if (~isempty(driftInfo))
    for idP = 1:length(idSensor2)
       a_tabDrift(driftInfo(idSensor2(idP), 1)) = compute_drift_derived_parameters_for_OCR(a_tabDrift(driftInfo(idSensor2(idP), 1)));
    end
-   
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % compute CROVER derived parameters
    idSensor5 = find((driftInfo(:, 2) == 5) & (driftInfo(:, 3) == 0));
    for idP = 1:length(idSensor5)
       a_tabDrift(driftInfo(idSensor5(idP), 1)) = compute_drift_derived_parameters_for_CROVER(a_tabDrift(driftInfo(idSensor5(idP), 1)));
    end
-   
+
    if (ismember('ECO2', g_decArgo_sensorMountedOnFloat))
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,7 +101,7 @@ if (~isempty(driftInfo))
       idSensor3 = find((driftInfo(:, 2) == 3) & (driftInfo(:, 3) == 0));
       for idP = 1:length(idSensor3)
          profEco2 = a_tabDrift(driftInfo(idSensor3(idP), 1));
-         
+
          % look for the associated CTD profile
          driftCtd = [];
          idF = find((driftInfo(:, 2) == 0) & ...
@@ -126,7 +126,7 @@ if (~isempty(driftInfo))
          a_tabDrift(driftInfo(idSensor3(idP), 1)) = compute_drift_derived_parameters_for_ECO2( ...
             profEco2, driftCtd);
       end
-      
+
    elseif (ismember('ECO3', g_decArgo_sensorMountedOnFloat))
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,7 +140,7 @@ if (~isempty(driftInfo))
       idSensor3or104 = find(((driftInfo(:, 2) == 3) | (driftInfo(:, 2) == 104)) & (driftInfo(:, 3) == 0));
       for idP = 1:length(idSensor3or104)
          profEco3 = a_tabDrift(driftInfo(idSensor3or104(idP), 1));
-         
+
          % look for the associated CTD profile
          driftCtd = [];
          idF = find((driftInfo(:, 2) == 0) & ...
@@ -165,6 +165,16 @@ if (~isempty(driftInfo))
          a_tabDrift(driftInfo(idSensor3or104(idP), 1)) = compute_drift_derived_parameters_for_ECO3( ...
             profEco3, driftCtd);
       end
+
+   elseif (ismember('ECO_FLNTU', g_decArgo_sensorMountedOnFloat))
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % compute ECO_FLNTU derived parameters
+      idSensor3 = find((driftInfo(:, 2) == 3) & (driftInfo(:, 3) == 0));
+      for idP = 1:length(idSensor3)
+         a_tabDrift(driftInfo(idSensor3(idP), 1)) = ...
+            compute_drift_derived_parameters_for_ECO_FLNTU(a_tabDrift(driftInfo(idSensor3(idP), 1)));
+      end
    end
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,7 +183,7 @@ if (~isempty(driftInfo))
    for idD = 1:length(idSensor6)
       driftCtd = [];
       driftSuna = a_tabDrift(driftInfo(idSensor6(idD), 1));
-      
+
       % FOR PROVOR CTS4 and CTS5_USEA
       % associated PTS values are provided with the NITRATE data when in "APF
       % frame"; however we use the PTS profile of the CTD sensor (better
@@ -240,7 +250,7 @@ if (~isempty(driftInfo))
                   driftSuna.profileNumber, ...
                   length(idF));
             end
-            
+
             % look for the SUNA associated CTD driftprofile
             idF = find((driftInfo(:, 2) == 6) & ...
                (driftInfo(:, 4) == driftSuna.cycleNumber) & ...
@@ -279,7 +289,7 @@ if (~isempty(driftInfo))
    end
    for idD = 1:length(idSensorPh)
       driftTransPh = a_tabDrift(driftInfo(idSensorPh(idD), 1));
-      
+
       % look for the associated CTD drift measurements
       driftCtd = [];
       idF = find((driftInfo(:, 2) == 0) & ...
@@ -319,6 +329,51 @@ if (~isempty(driftInfo))
    for idP = 1:length(idSensor110)
       a_tabDrift(driftInfo(idSensor110(idP), 1)) = compute_drift_derived_parameters_for_MPE(a_tabDrift(driftInfo(idSensor110(idP), 1)));
    end
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % compute RAMSES_ACC derived parameters
+   idSensor109 = find((driftInfo(:, 2) == 109) & (driftInfo(:, 3) == 0));
+   for idP = 1:length(idSensor109)
+      a_tabDrift(driftInfo(idSensor109(idP), 1)) = compute_drift_derived_parameters_for_RAMSES_ACC(a_tabDrift(driftInfo(idSensor109(idP), 1)));
+   end
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % compute RAMSES_ARC derived parameters
+   idSensor112 = find((driftInfo(:, 2) == 112) & (driftInfo(:, 3) == 0));
+   for idP = 1:length(idSensor112)
+      a_tabDrift(driftInfo(idSensor112(idP), 1)) = compute_drift_derived_parameters_for_RAMSES_ARC(a_tabDrift(driftInfo(idSensor112(idP), 1)));
+   end
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % compute TRIDENTE derived parameters
+   idSensor114 = find((driftInfo(:, 2) == 114) & (driftInfo(:, 3) == 0));
+   for idP = 1:length(idSensor114)
+      profTridente = a_tabDrift(driftInfo(idSensor114(idP), 1));
+
+      % look for the associated CTD profile
+      profCtd = [];
+      idF = find((driftInfo(:, 2) == 0) & ...
+         (driftInfo(:, 4) == profTridente.cycleNumber) & ...
+         (driftInfo(:, 5) == profTridente.profileNumber));
+      if (length(idF) == 1)
+         profCtd = a_tabDrift(driftInfo(idF, 1));
+      else
+         if (isempty(idF))
+            fprintf('WARNING: Float #%d Cycle #%d Profile #%d: unable to find the associated CTD drift measurement profile to compute BBP drift measurements of TRIDENTE sensor - BBP drift measurements set to fill value\n', ...
+               g_decArgo_floatNum, ...
+               profTridente.cycleNumber, ...
+               profTridente.profileNumber);
+         else
+            fprintf('WARNING: Float #%d Cycle #%d Profile #%d: %d associated CTD drift measurement profiles have been found to compute BBP drift measurements of TRIDENTE sensor - BBP data set to fill value\n', ...
+               g_decArgo_floatNum, ...
+               profTridente.cycleNumber, ...
+               profTridente.profileNumber, ...
+               length(idF));
+         end
+      end
+      a_tabDrift(driftInfo(idSensor114(idP), 1)) = compute_drift_derived_parameters_for_TRIDENTE( ...
+         profTridente, profCtd);
+   end
 end
 
 % update output parameters
@@ -341,7 +396,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/16/2014 - RNU - creation
@@ -371,11 +426,11 @@ for idP = 1:length(paramToDeriveList)
    if (~isempty(idF))
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_112_121_to_133( ...
+
+      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_112_121_to_133_135_to_141( ...
          a_driftOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
-      
+
       a_driftOcr.data(:, end+1) = downIrr380;
       if (isempty(a_driftOcr.dataQc))
          a_driftOcr.dataQc = ones(size(a_driftOcr.data, 1), length(a_driftOcr.paramList))*g_decArgo_qcDef;
@@ -391,7 +446,7 @@ for idP = 1:length(paramToDeriveList)
          end
          a_driftOcr.dataAdjQc(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
       end
-      
+
       a_driftOcr.paramList = [a_driftOcr.paramList derivedParam];
       if (~isempty(a_driftOcr.paramDataMode))
          a_driftOcr.paramDataMode = [a_driftOcr.paramDataMode ' '];
@@ -411,11 +466,11 @@ for idP = 1:length(paramToDeriveList)
    if (~isempty(idF))
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_112_121_to_132( ...
+
+      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_112_121_to_132_135_to_137_141( ...
          a_driftOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
-      
+
       a_driftOcr.data(:, end+1) = downIrr412;
       if (isempty(a_driftOcr.dataQc))
          a_driftOcr.dataQc = ones(size(a_driftOcr.data, 1), length(a_driftOcr.paramList))*g_decArgo_qcDef;
@@ -431,7 +486,7 @@ for idP = 1:length(paramToDeriveList)
          end
          a_driftOcr.dataAdjQc(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
       end
-      
+
       a_driftOcr.paramList = [a_driftOcr.paramList derivedParam];
       if (~isempty(a_driftOcr.paramDataMode))
          a_driftOcr.paramDataMode = [a_driftOcr.paramDataMode ' '];
@@ -451,11 +506,11 @@ for idP = 1:length(paramToDeriveList)
    if (~isempty(idF))
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      downIrr443 = compute_DOWN_IRRADIANCE443_130_133( ...
+
+      downIrr443 = compute_DOWN_IRRADIANCE443_130_133_138_to_140( ...
          a_driftOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
-      
+
       a_driftOcr.data(:, end+1) = downIrr443;
       if (isempty(a_driftOcr.dataQc))
          a_driftOcr.dataQc = ones(size(a_driftOcr.data, 1), length(a_driftOcr.paramList))*g_decArgo_qcDef;
@@ -471,7 +526,7 @@ for idP = 1:length(paramToDeriveList)
          end
          a_driftOcr.dataAdjQc(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
       end
-      
+
       a_driftOcr.paramList = [a_driftOcr.paramList derivedParam];
       if (~isempty(a_driftOcr.paramDataMode))
          a_driftOcr.paramDataMode = [a_driftOcr.paramDataMode ' '];
@@ -491,11 +546,11 @@ for idP = 1:length(paramToDeriveList)
    if (~isempty(idF))
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_112_121_to_133( ...
+
+      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_112_121_to_133_135_to_141( ...
          a_driftOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
-      
+
       a_driftOcr.data(:, end+1) = downIrr490;
       if (isempty(a_driftOcr.dataQc))
          a_driftOcr.dataQc = ones(size(a_driftOcr.data, 1), length(a_driftOcr.paramList))*g_decArgo_qcDef;
@@ -503,7 +558,7 @@ for idP = 1:length(paramToDeriveList)
       downIrr490Qc = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
       downIrr490Qc(find(downIrr490 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_driftOcr.dataQc(:, end+1) = downIrr490Qc;
-      
+
       if (~isempty(a_driftOcr.dataAdj))
          a_driftOcr.dataAdj(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*derivedParam.fillValue;
          if (isempty(a_driftOcr.dataAdjQc))
@@ -511,7 +566,7 @@ for idP = 1:length(paramToDeriveList)
          end
          a_driftOcr.dataAdjQc(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
       end
-      
+
       a_driftOcr.paramList = [a_driftOcr.paramList derivedParam];
       if (~isempty(a_driftOcr.paramDataMode))
          a_driftOcr.paramDataMode = [a_driftOcr.paramDataMode ' '];
@@ -531,11 +586,11 @@ for idP = 1:length(paramToDeriveList)
    if (~isempty(idF))
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      downIrr555 = compute_DOWN_IRRADIANCE555_133( ...
+
+      downIrr555 = compute_DOWN_IRRADIANCE555_133_138_to_140( ...
          a_driftOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
-      
+
       a_driftOcr.data(:, end+1) = downIrr555;
       if (isempty(a_driftOcr.dataQc))
          a_driftOcr.dataQc = ones(size(a_driftOcr.data, 1), length(a_driftOcr.paramList))*g_decArgo_qcDef;
@@ -543,7 +598,7 @@ for idP = 1:length(paramToDeriveList)
       downIrr555Qc = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
       downIrr555Qc(find(downIrr555 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_driftOcr.dataQc(:, end+1) = downIrr555Qc;
-      
+
       if (~isempty(a_driftOcr.dataAdj))
          a_driftOcr.dataAdj(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*derivedParam.fillValue;
          if (isempty(a_driftOcr.dataAdjQc))
@@ -551,7 +606,7 @@ for idP = 1:length(paramToDeriveList)
          end
          a_driftOcr.dataAdjQc(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
       end
-      
+
       a_driftOcr.paramList = [a_driftOcr.paramList derivedParam];
       if (~isempty(a_driftOcr.paramDataMode))
          a_driftOcr.paramDataMode = [a_driftOcr.paramDataMode ' '];
@@ -571,11 +626,11 @@ for idP = 1:length(paramToDeriveList)
    if (~isempty(idF))
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
+
       downIrr665 = compute_DOWN_IRRADIANCE665_130( ...
          a_driftOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
-      
+
       a_driftOcr.data(:, end+1) = downIrr665;
       if (isempty(a_driftOcr.dataQc))
          a_driftOcr.dataQc = ones(size(a_driftOcr.data, 1), length(a_driftOcr.paramList))*g_decArgo_qcDef;
@@ -583,7 +638,7 @@ for idP = 1:length(paramToDeriveList)
       downIrr665Qc = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
       downIrr665Qc(find(downIrr665 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_driftOcr.dataQc(:, end+1) = downIrr665Qc;
-      
+
       if (~isempty(a_driftOcr.dataAdj))
          a_driftOcr.dataAdj(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*derivedParam.fillValue;
          if (isempty(a_driftOcr.dataAdjQc))
@@ -591,7 +646,7 @@ for idP = 1:length(paramToDeriveList)
          end
          a_driftOcr.dataAdjQc(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
       end
-      
+
       a_driftOcr.paramList = [a_driftOcr.paramList derivedParam];
       if (~isempty(a_driftOcr.paramDataMode))
          a_driftOcr.paramDataMode = [a_driftOcr.paramDataMode ' '];
@@ -611,11 +666,11 @@ for idP = 1:length(paramToDeriveList)
    if (~isempty(idF))
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      downPar = compute_DOWNWELLING_PAR_105_to_112_121_to_129_132( ...
+
+      downPar = compute_DOWNWELLING_PAR_1xx_5_to_12_21_to_29_32_35_to_37_41( ...
          a_driftOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
-      
+
       a_driftOcr.data(:, end+1) = downPar;
       if (isempty(a_driftOcr.dataQc))
          a_driftOcr.dataQc = ones(size(a_driftOcr.data, 1), length(a_driftOcr.paramList))*g_decArgo_qcDef;
@@ -623,7 +678,7 @@ for idP = 1:length(paramToDeriveList)
       downParQc = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
       downParQc(find(downPar ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_driftOcr.dataQc(:, end+1) = downParQc;
-      
+
       if (~isempty(a_driftOcr.dataAdj))
          a_driftOcr.dataAdj(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*derivedParam.fillValue;
          if (isempty(a_driftOcr.dataAdjQc))
@@ -631,7 +686,7 @@ for idP = 1:length(paramToDeriveList)
          end
          a_driftOcr.dataAdjQc(:, end+1) = ones(size(a_driftOcr.data, 1), 1)*g_decArgo_qcDef;
       end
-      
+
       a_driftOcr.paramList = [a_driftOcr.paramList derivedParam];
       if (~isempty(a_driftOcr.paramDataMode))
          a_driftOcr.paramDataMode = [a_driftOcr.paramDataMode ' '];
@@ -660,7 +715,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/07/2023 - RNU - creation
@@ -690,14 +745,14 @@ for idP = 1:length(paramToDeriveList)
    if (~isempty(idF))
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
+
       cp660 = compute_CP660( ...
          a_driftCrover.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
-      
+
       % for CTS5 floats the derived parameter could be already in the list of
       % parameters => we should first look for it
-      
+
       idFDerivedParam = find(strcmp({a_driftCrover.paramList.name}, derivedParamList{idP}), 1);
       if (isempty(idFDerivedParam))
          a_driftCrover.data(:, end+1) = ones(size(a_driftCrover.data, 1), 1)*derivedParam.fillValue;
@@ -707,11 +762,14 @@ for idP = 1:length(paramToDeriveList)
             a_driftCrover.dataQc(:, end+1) = ones(size(a_driftCrover.data, 1), 1)*g_decArgo_qcDef;
          end
          a_driftCrover.paramList = [a_driftCrover.paramList derivedParam];
+         if (~isempty(a_driftCrover.paramDataMode))
+            a_driftCrover.paramDataMode = [a_driftCrover.paramDataMode ' '];
+         end
          derivedParamId = size(a_driftCrover.data, 2);
       else
          derivedParamId = idFDerivedParam;
       end
-      
+
       a_driftCrover.data(:, derivedParamId) = cp660;
       cp660Qc = ones(size(a_driftCrover.data, 1), 1)*g_decArgo_qcDef;
       cp660Qc(find(cp660 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
@@ -737,12 +795,12 @@ return
 %   a_driftCtd  : input CTD drift profile structure
 %
 % OUTPUT PARAMETERS :
-%   o_driftEco2 : output ECO3 drift profile structure
+%   o_driftEco2 : output ECO2 drift profile structure
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/06/2018 - RNU - creation
@@ -773,11 +831,11 @@ for idP = 1:length(paramToDeriveList)
    if (~isempty(idF))
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      chla = compute_CHLA_105_to_112_121_to_133_1121_to_28_1322_1323( ...
+
+      chla = compute_CHLA_1xx_and_1121_to_1132_1322_1323( ...
          a_driftEco2.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
-      
+
       a_driftEco2.data(:, end+1) = chla;
       if (isempty(a_driftEco2.dataQc))
          a_driftEco2.dataQc = ones(size(a_driftEco2.data, 1), length(a_driftEco2.paramList))*g_decArgo_qcDef;
@@ -785,7 +843,7 @@ for idP = 1:length(paramToDeriveList)
       chlaQc = ones(size(a_driftEco2.data, 1), 1)*g_decArgo_qcDef;
       chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_driftEco2.dataQc(:, end+1) = chlaQc;
-      
+
       if (~isempty(a_driftEco2.dataAdj))
          a_driftEco2.dataAdj(:, end+1) = ones(size(a_driftEco2.data, 1), 1)*derivedParam.fillValue;
          if (isempty(a_driftEco2.dataAdjQc))
@@ -793,7 +851,7 @@ for idP = 1:length(paramToDeriveList)
          end
          a_driftEco2.dataAdjQc(:, end+1) = ones(size(a_driftEco2.data, 1), 1)*g_decArgo_qcDef;
       end
-      
+
       a_driftEco2.paramList = [a_driftEco2.paramList derivedParam];
       if (~isempty(a_driftEco2.paramDataMode))
          a_driftEco2.paramDataMode = [a_driftEco2.paramDataMode ' '];
@@ -807,7 +865,7 @@ for idP = 1:length(paramToDeriveList)
       chlaFluoQc = ones(size(a_driftEco2.data, 1), 1)*g_decArgo_qcDef;
       chlaFluoQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
       a_driftEco2.dataQc(:, end+1) = chlaFluoQc;
-      
+
       chlaFluoParam = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
 
       if (~isempty(a_driftEco2.dataAdj))
@@ -826,7 +884,7 @@ for idP = 1:length(paramToDeriveList)
 end
 
 if (isempty(a_driftCtd))
-   
+
    % we have not been able to retrieve the associated CTD profile
    paramToDeriveList = [ ...
       {'BETA_BACKSCATTERING700'} ...
@@ -851,16 +909,16 @@ if (isempty(a_driftCtd))
                a_driftEco2.dataAdjQc(:, end+1) = ones(size(a_driftEco2.data, 1), 1)*g_decArgo_qcDef;
             end
          end
-         
+
          a_driftEco2.paramList = [a_driftEco2.paramList derivedParam];
          if (~isempty(a_driftEco2.paramDataMode))
             a_driftEco2.paramDataMode = [a_driftEco2.paramDataMode ' '];
          end
       end
    end
-   
+
 else
-   
+
    % retrieve measured CTD data
    paramNameListCtd = {a_driftCtd.paramList.name};
    presId = find(strcmp('PRES', paramNameListCtd) == 1, 1);
@@ -868,7 +926,7 @@ else
    psalId = find(strcmp('PSAL', paramNameListCtd) == 1, 1);
    ctdMeasDates = a_driftCtd.dates;
    ctdMeasData = a_driftCtd.data(:, [presId tempId psalId]);
-   
+
    % compute BBP700 data and add them in the profile structure
    paramToDeriveList = [ ...
       {'BETA_BACKSCATTERING700'} ...
@@ -884,9 +942,9 @@ else
       if (~isempty(idF))
          paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
          derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-         
+
          % compute BBP700 values
-         bbp700 = compute_drift_BBP( ...
+         bbp700 = compute_drift_BBP_ECO( ...
             a_driftEco2.data(:, idF), ...
             paramToDerive.fillValue, ...
             derivedParam.fillValue, ...
@@ -897,7 +955,7 @@ else
             paramTemp.fillValue, ...
             paramPsal.fillValue, ...
             a_driftEco2);
-         
+
          if (~isempty(bbp700))
             a_driftEco2.data(:, end+1) = bbp700;
             if (isempty(a_driftEco2.dataQc))
@@ -933,7 +991,7 @@ else
          end
       end
    end
-   
+
    % compute BBP532 data and add them in the profile structure
    paramToDeriveList = [ ...
       {'BETA_BACKSCATTERING532'} ...
@@ -946,9 +1004,9 @@ else
       if (~isempty(idF))
          paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
          derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-         
+
          % compute BBP532 values
-         bbp532 = compute_drift_BBP( ...
+         bbp532 = compute_drift_BBP_ECO( ...
             a_driftEco2.data(:, idF), ...
             paramToDerive.fillValue, ...
             derivedParam.fillValue, ...
@@ -959,7 +1017,7 @@ else
             paramTemp.fillValue, ...
             paramPsal.fillValue, ...
             a_driftEco2);
-         
+
          if (~isempty(bbp532))
             a_driftEco2.data(:, end+1) = bbp532;
             if (isempty(a_driftEco2.dataQc))
@@ -1020,7 +1078,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/08/2014 - RNU - creation
@@ -1051,8 +1109,8 @@ for idP = 1:length(paramToDeriveList)
    if (~isempty(idF))
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      chla = compute_CHLA_105_to_112_121_to_133_1121_to_28_1322_1323( ...
+
+      chla = compute_CHLA_1xx_and_1121_to_1132_1322_1323( ...
          a_driftEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
 
@@ -1113,8 +1171,8 @@ for idP = 1:length(paramToDeriveList)
    if (~isempty(idF))
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      chla435 = compute_CHLA435_131_132( ...
+
+      chla435 = compute_CHLA435_131_132_137( ...
          a_driftEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
 
@@ -1141,7 +1199,7 @@ for idP = 1:length(paramToDeriveList)
 end
 
 if (isempty(a_driftCtd))
-   
+
    % we have not been able to retrieve the associated CTD profile
    paramToDeriveList = [ ...
       {'BETA_BACKSCATTERING700'} ...
@@ -1173,9 +1231,9 @@ if (isempty(a_driftCtd))
          end
       end
    end
-   
+
 else
-   
+
    % retrieve measured CTD data
    paramNameListCtd = {a_driftCtd.paramList.name};
    presId = find(strcmp('PRES', paramNameListCtd) == 1, 1);
@@ -1183,7 +1241,7 @@ else
    psalId = find(strcmp('PSAL', paramNameListCtd) == 1, 1);
    ctdMeasDates = a_driftCtd.dates;
    ctdMeasData = a_driftCtd.data(:, [presId tempId psalId]);
-   
+
    % compute BBP700 data and add them in the profile structure
    paramToDeriveList = [ ...
       {'BETA_BACKSCATTERING700'} ...
@@ -1199,9 +1257,9 @@ else
       if (~isempty(idF))
          paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
          derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-         
+
          % compute BBP700 values
-         bbp700 = compute_drift_BBP( ...
+         bbp700 = compute_drift_BBP_ECO( ...
             a_driftEco3.data(:, idF), ...
             paramToDerive.fillValue, ...
             derivedParam.fillValue, ...
@@ -1212,7 +1270,7 @@ else
             paramTemp.fillValue, ...
             paramPsal.fillValue, ...
             a_driftEco3);
-         
+
          if (~isempty(bbp700))
             a_driftEco3.data(:, end+1) = bbp700;
             if (isempty(a_driftEco3.dataQc))
@@ -1248,7 +1306,7 @@ else
          end
       end
    end
-   
+
    % compute BBP532 data and add them in the profile structure
    paramToDeriveList = [ ...
       {'BETA_BACKSCATTERING532'} ...
@@ -1261,9 +1319,9 @@ else
       if (~isempty(idF))
          paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
          derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-         
+
          % compute BBP532 values
-         bbp532 = compute_drift_BBP( ...
+         bbp532 = compute_drift_BBP_ECO( ...
             a_driftEco3.data(:, idF), ...
             paramToDerive.fillValue, ...
             derivedParam.fillValue, ...
@@ -1274,7 +1332,7 @@ else
             paramTemp.fillValue, ...
             paramPsal.fillValue, ...
             a_driftEco3);
-         
+
          if (~isempty(bbp532))
             a_driftEco3.data(:, end+1) = bbp532;
             if (isempty(a_driftEco3.dataQc))
@@ -1324,11 +1382,11 @@ for idP = 1:length(paramToDeriveList)
    if (~isempty(idF))
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      cdom = compute_CDOM_105_to_107_110_112_121_to_133_1121_to_28_1322_1323( ...
+
+      cdom = compute_CDOM( ...
          a_driftEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
-      
+
       a_driftEco3.data(:, end+1) = cdom;
       if (isempty(a_driftEco3.dataQc))
          a_driftEco3.dataQc = ones(size(a_driftEco3.data, 1), length(a_driftEco3.paramList))*g_decArgo_qcDef;
@@ -1359,10 +1417,158 @@ o_driftEco3 = a_driftEco3;
 return
 
 % ------------------------------------------------------------------------------
+% Compute derived parameters for the ECO_FLNTU sensor.
+%
+% SYNTAX :
+%  [o_driftEcoFlntu] = compute_drift_derived_parameters_for_ECO_FLNTU(a_driftEcoFlntu)
+%
+% INPUT PARAMETERS :
+%   a_driftEcoFlntu : input ECO_FLNTU drift profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_driftEcoFlntu : output ECO_FLNTU drift profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   12/12/2025 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_driftEcoFlntu] = compute_drift_derived_parameters_for_ECO_FLNTU( ...
+   a_driftEcoFlntu, a_driftCtd)
+
+% output parameters initialization
+o_driftEcoFlntu = [];
+
+% global default values
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+
+% list of parameters of the profile
+paramNameList = {a_driftEcoFlntu.paramList.name};
+
+% compute CHLA data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'FLUORESCENCE_CHLA'} ...
+   ];
+derivedParamList = [ ...
+   {'CHLA'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+
+      chla = compute_CHLA_1xx_and_1121_to_1132_1322_1323( ...
+         a_driftEcoFlntu.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+
+      a_driftEcoFlntu.data(:, end+1) = chla;
+      if (isempty(a_driftEcoFlntu.dataQc))
+         a_driftEcoFlntu.dataQc = ones(size(a_driftEcoFlntu.data, 1), length(a_driftEcoFlntu.paramList))*g_decArgo_qcDef;
+      end
+      chlaQc = ones(size(a_driftEcoFlntu.data, 1), 1)*g_decArgo_qcDef;
+      chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_driftEcoFlntu.dataQc(:, end+1) = chlaQc;
+
+      if (~isempty(a_driftEcoFlntu.dataAdj))
+         a_driftEcoFlntu.dataAdj(:, end+1) = ones(size(a_driftEcoFlntu.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_driftEcoFlntu.dataAdjQc))
+            a_driftEcoFlntu.dataAdjQc = ones(size(a_driftEcoFlntu.data, 1), length(a_driftEcoFlntu.paramList))*g_decArgo_qcDef;
+         end
+         a_driftEcoFlntu.dataAdjQc(:, end+1) = ones(size(a_driftEcoFlntu.data, 1), 1)*g_decArgo_qcDef;
+      end
+
+      a_driftEcoFlntu.paramList = [a_driftEcoFlntu.paramList derivedParam];
+      if (~isempty(a_driftEcoFlntu.paramDataMode))
+         a_driftEcoFlntu.paramDataMode = [a_driftEcoFlntu.paramDataMode ' '];
+      end
+
+      % duplicate CHLA profile as CHLA_FLUORESCENCE one
+      a_driftEcoFlntu.data(:, end+1) = chla;
+      if (isempty(a_driftEcoFlntu.dataQc))
+         a_driftEcoFlntu.dataQc = ones(size(a_driftEcoFlntu.data, 1), length(a_driftEcoFlntu.paramList))*g_decArgo_qcDef;
+      end
+      chlaFluoQc = ones(size(a_driftEcoFlntu.data, 1), 1)*g_decArgo_qcDef;
+      chlaFluoQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_driftEcoFlntu.dataQc(:, end+1) = chlaFluoQc;
+
+      chlaFluoParam = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
+
+      if (~isempty(a_driftEcoFlntu.dataAdj))
+         a_driftEcoFlntu.dataAdj(:, end+1) = ones(size(a_driftEcoFlntu.data, 1), 1)*chlaFluoParam.fillValue;
+         if (isempty(a_driftEcoFlntu.dataAdjQc))
+            a_driftEcoFlntu.dataAdjQc = ones(size(a_driftEcoFlntu.data, 1), length(a_driftEcoFlntu.paramList))*g_decArgo_qcDef;
+         end
+         a_driftEcoFlntu.dataAdjQc(:, end+1) = ones(size(a_driftEcoFlntu.data, 1), 1)*g_decArgo_qcDef;
+      end
+
+      a_driftEcoFlntu.paramList = [a_driftEcoFlntu.paramList chlaFluoParam];
+      if (~isempty(a_driftEcoFlntu.paramDataMode))
+         a_driftEcoFlntu.paramDataMode = [a_driftEcoFlntu.paramDataMode ' '];
+      end
+   end
+end
+
+% compute TURBIDITY data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'SIDE_SCATTERING_TURBIDITY'} ...
+   ];
+derivedParamList = [ ...
+   {'TURBIDITY'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      turbi = compute_TURBIDITY_cts5_usea_and_302_303_1014( ...
+         a_driftEcoFlntu.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      % for CTS5 floats the derived parameter could be already in the list of
+      % parameters => we should first look for it
+      
+      idFDerivedParam = find(strcmp({a_driftEcoFlntu.paramList.name}, derivedParamList{idP}), 1);
+      if (isempty(idFDerivedParam))
+         a_driftEcoFlntu.data(:, end+1) = ones(size(a_driftEcoFlntu.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_driftEcoFlntu.dataQc))
+            a_driftEcoFlntu.dataQc = ones(size(a_driftEcoFlntu.data, 1), length(a_driftEcoFlntu.paramList))*g_decArgo_qcDef;
+         else
+            a_driftEcoFlntu.dataQc(:, end+1) = ones(size(a_driftEcoFlntu.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_driftEcoFlntu.paramList = [a_driftEcoFlntu.paramList derivedParam];
+         if (~isempty(a_driftEcoFlntu.paramDataMode))
+            a_driftEcoFlntu.paramDataMode = [a_driftEcoFlntu.paramDataMode ' '];
+         end
+         derivedParamId = size(a_driftEcoFlntu.data, 2);
+      else
+         derivedParamId = idFDerivedParam;
+      end
+      
+      a_driftEcoFlntu.data(:, derivedParamId) = turbi;
+      turbiQc = ones(size(a_driftEcoFlntu.data, 1), 1)*g_decArgo_qcDef;
+      turbiQc(find(turbi ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_driftEcoFlntu.dataQc(:, derivedParamId) = turbiQc;
+   end
+end
+
+% update output parameters
+a_driftEcoFlntu.derived = 1;
+o_driftEcoFlntu = a_driftEcoFlntu;
+
+return
+
+% ------------------------------------------------------------------------------
 % Compute BBP from the data provided by the ECO3 sensor.
 %
 % SYNTAX :
-%  [o_BBP] = compute_drift_BBP( ...
+%  [o_BBP] = compute_drift_BBP_ECO( ...
 %    a_BETA_BACKSCATTERING, a_BETA_BACKSCATTERING_fillValue, ...
 %    a_BBP_fillValue, ...
 %    a_BBP_dates, ...
@@ -1391,12 +1597,12 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/08/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_BBP] = compute_drift_BBP( ...
+function [o_BBP] = compute_drift_BBP_ECO( ...
    a_BETA_BACKSCATTERING, a_BETA_BACKSCATTERING_fillValue, ...
    a_BBP_fillValue, ...
    a_BBP_dates, ...
@@ -1415,9 +1621,9 @@ o_BBP = ones(length(a_BETA_BACKSCATTERING), 1)*a_BBP_fillValue;
 % assign the CTD data to the OPTODE measurements (timely closest association)
 ctdLinkData = assign_CTD_measurements(a_ctdDates, a_ctdData, a_BBP_dates);
 if (~isempty(ctdLinkData))
-   
+
    if (a_lambda == 700)
-      o_BBP = compute_BBP700_105_to_112_121_to_133_1121_to_28_1322_1323( ...
+      o_BBP = compute_BBP700_others_dec_id( ...
          a_BETA_BACKSCATTERING, ...
          a_BETA_BACKSCATTERING_fillValue, ...
          a_BBP_fillValue, ...
@@ -1441,7 +1647,7 @@ if (~isempty(ctdLinkData))
          a_driftEco3.profileNumber, ...
          a_lambda);
    end
-   
+
 end
 
 return
@@ -1463,7 +1669,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/01/2014 - RNU - creation
@@ -1505,8 +1711,8 @@ end
 % if the fitlm Matlab function is available, compute NITRATE data from
 % transmitted spectrum and add them in the profile structure
 if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
-   if (~ismember(a_decoderId, [110, 113, 127]))
-      
+   if (~ismember(a_decoderId, [110, 113, 127, 134, 136, 137, 141]))
+
       % compute NITRATE
       paramToDeriveList = [ ...
          {'UV_INTENSITY_NITRATE'} {'UV_INTENSITY_DARK_NITRATE'} ...
@@ -1524,8 +1730,8 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             paramToDerive1 = get_netcdf_param_attributes(paramToDeriveList{idP, 1});
             paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idP, 2});
             derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-            
-            nitrate = compute_drift_NITRATE_1xx_5_to_9_11_12_14_15_21_to_26_28_to_33( ...
+
+            nitrate = compute_drift_NITRATE( ...
                a_driftSuna.data(:, idF1:idF1+a_driftSuna.paramNumberOfSubLevels-1), ...
                a_driftSuna.data(:, idF2), ...
                paramToDerive1.fillValue, ...
@@ -1536,7 +1742,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
                paramTemp.fillValue, ...
                paramPsal.fillValue, ...
                a_driftSuna, a_decoderId);
-            
+
             % store NITRATE
             a_driftSuna.data(:, end+1) = nitrate;
             if (isempty(a_driftSuna.dataQc))
@@ -1561,7 +1767,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
          end
       end
    else
-      
+
       % compute NITRATE and BISULFIDE
       paramToDeriveList = [ ...
          {'UV_INTENSITY_NITRATE'} {'UV_INTENSITY_DARK_NITRATE'} ...
@@ -1580,8 +1786,8 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idP, 2});
             derivedParam1 = get_netcdf_param_attributes(derivedParamList{idP, 1});
             derivedParam2 = get_netcdf_param_attributes(derivedParamList{idP, 2});
-            
-            [nitrate, bisulfide] = compute_drift_NITRATE_BISULFIDE_from_spectrum_110_113_127( ...
+
+            [nitrate, bisulfide] = compute_drift_NITRATE_BISULFIDE_110_113_127_134_136_137_141( ...
                a_driftSuna.data(:, idF1:idF1+a_driftSuna.paramNumberOfSubLevels-1), ...
                a_driftSuna.data(:, idF2), ...
                paramToDerive1.fillValue, ...
@@ -1593,7 +1799,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
                paramTemp.fillValue, ...
                paramPsal.fillValue, ...
                a_driftSuna);
-            
+
             % store NITRATE
             a_driftSuna.data(:, end+1) = nitrate;
             if (isempty(a_driftSuna.dataQc))
@@ -1610,12 +1816,12 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
                end
                a_driftSuna.dataAdjQc(:, end+1) = ones(size(a_driftSuna.data, 1), 1)*g_decArgo_qcDef;
             end
-            
+
             a_driftSuna.paramList = [a_driftSuna.paramList derivedParam1];
             if (~isempty(a_driftSuna.paramDataMode))
                a_driftSuna.paramDataMode = [a_driftSuna.paramDataMode ' '];
             end
-            
+
             % store BISULFIDE
             a_driftSuna.data(:, end+1) = bisulfide;
             if (isempty(a_driftSuna.dataQc))
@@ -1632,7 +1838,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
                end
                a_driftSuna.dataAdjQc(:, end+1) = ones(size(a_driftSuna.data, 1), 1)*g_decArgo_qcDef;
             end
-            
+
             a_driftSuna.paramList = [a_driftSuna.paramList derivedParam2];
             if (~isempty(a_driftSuna.paramDataMode))
                a_driftSuna.paramDataMode = [a_driftSuna.paramDataMode ' '];
@@ -1641,9 +1847,9 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
       end
    end
 else
-   
+
    if (~ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
-      
+
       % if the fitlm Matlab function is not available, compute NITRATE data from
       % transmitted MOLAR_NITRATE and add them in the profile structure
       paramToDeriveList = [ ...
@@ -1660,8 +1866,8 @@ else
          if (~isempty(idF))
             paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idD});
             derivedParam = get_netcdf_param_attributes(derivedParamList{idD});
-            
-            nitrate = compute_drift_NITRATE_1xx_5_to_9_11_12_14_15_21_to_25( ...
+
+            nitrate = compute_drift_NITRATE_from_MOLAR( ...
                a_driftSuna.data(:, idF), ...
                paramToDerive.fillValue, derivedParam.fillValue, ...
                a_driftSuna.dates, ctdMeasDates, ctdMeasData, ...
@@ -1669,7 +1875,7 @@ else
                paramTemp.fillValue, ...
                paramPsal.fillValue, ...
                a_driftSuna);
-            
+
             a_driftSuna.data(:, end+1) = nitrate;
             if (isempty(a_driftSuna.dataQc))
                a_driftSuna.dataQc = ones(size(a_driftSuna.data, 1), length(a_driftSuna.paramList))*g_decArgo_qcDef;
@@ -1685,7 +1891,7 @@ else
                end
                a_driftSuna.dataAdjQc(:, end+1) = ones(size(a_driftSuna.data, 1), 1)*g_decArgo_qcDef;
             end
-            
+
             a_driftSuna.paramList = [a_driftSuna.paramList derivedParam];
             if (~isempty(a_driftSuna.paramDataMode))
                a_driftSuna.paramDataMode = [a_driftSuna.paramDataMode ' '];
@@ -1719,7 +1925,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/24/2014 - RNU - creation
@@ -1739,7 +1945,7 @@ global g_decArgo_qcNoQc;
 paramNameList = {a_driftOptode.paramList.name};
 
 if (isempty(a_driftCtd))
-   
+
    % we have not been able to retrieve the associated CTD profile
    if (ismember('C1PHASE_DOXY', paramNameList) && ...
          ismember('C2PHASE_DOXY', paramNameList) && ...
@@ -1766,7 +1972,7 @@ if (isempty(a_driftCtd))
       end
    end
 else
-   
+
    % retrieve measured CTD data
    paramNameListCtd = {a_driftCtd.paramList.name};
    presId = find(strcmp('PRES', paramNameListCtd) == 1, 1);
@@ -1774,7 +1980,7 @@ else
    psalId = find(strcmp('PSAL', paramNameListCtd) == 1, 1);
    ctdMeasDates = a_driftCtd.dates;
    ctdMeasData = a_driftCtd.data(:, [presId tempId psalId]);
-   
+
    % compute DOXY data and add them in the profile structure
    paramToDeriveList = [ ...
       {'C1PHASE_DOXY'} {'C2PHASE_DOXY'} {'TEMP_DOXY'} ...
@@ -1794,7 +2000,7 @@ else
          paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idD, 2});
          paramToDerive3 = get_netcdf_param_attributes(paramToDeriveList{idD, 3});
          derivedParam = get_netcdf_param_attributes(derivedParamList{idD});
-         
+
          % compute DOXY values
          [doxy, ptsForDoxy] = compute_drift_DOXY( ...
             a_driftOptode.data(:, idF1), ...
@@ -1810,7 +2016,7 @@ else
             paramTemp.fillValue, ...
             paramPsal.fillValue, ...
             a_driftOptode, a_decoderId);
-         
+
          a_driftOptode.data(:, end+1) = doxy;
          if (isempty(a_driftOptode.dataQc))
             a_driftOptode.dataQc = ones(size(a_driftOptode.data, 1), length(a_driftOptode.paramList))*g_decArgo_qcDef;
@@ -1828,7 +2034,7 @@ else
          end
 
          a_driftOptode.ptsForDoxy = ptsForDoxy;
-         
+
          a_driftOptode.paramList = [a_driftOptode.paramList derivedParam];
          if (~isempty(a_driftOptode.paramDataMode))
             a_driftOptode.paramDataMode = [a_driftOptode.paramDataMode ' '];
@@ -1880,7 +2086,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/24/2014 - RNU - creation
@@ -1905,11 +2111,11 @@ global g_decArgo_floatNum;
 % assign the CTD data to the OPTODE measurements (timely closest association)
 ctdLinkData = assign_CTD_measurements(a_ctdDates, a_ctdData, a_DOXY_dates);
 if (~isempty(ctdLinkData))
-   
+
    switch (a_decoderId)
-      
+
       case {106}
-         
+
          % compute DOXY values using the Aanderaa standard calibration method
          o_DOXY = compute_DOXY_106_301( ...
             a_C1PHASE_DOXY, ...
@@ -1928,10 +2134,11 @@ if (~isempty(ctdLinkData))
             a_driftOptode);
          o_ptsForDoxy = ctdLinkData;
 
-      case {107, 109, 110, 111, 113, 114, 115, 116, 121, 122, 124, 126, 127, 128, 129, 130, 131, 132, 133}
-         
+      case {107, 109, 110, 111, 113, 114, 115, 116, ...
+            121, 122, 124, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
+
          % compute DOXY values using the Stern-Volmer equation
-         o_DOXY = compute_DOXY_1xx_7_9_to_11_13_to_16_21_22_24_26_to_33( ...
+         o_DOXY = compute_DOXY_1xx_7_9_to_11_13_to_16_21_22_24_26_to_41( ...
             a_C1PHASE_DOXY, ...
             a_C2PHASE_DOXY, ...
             a_TEMP_DOXY, ...
@@ -1949,7 +2156,7 @@ if (~isempty(ctdLinkData))
          o_ptsForDoxy = ctdLinkData;
 
       case {112, 123, 125}
-         
+
          % compute DOXY values using the Aanderaa standard calibration method
          % + an additional two-point adjustment
          o_DOXY(idNoNan) = compute_DOXY_112_123_125( ...
@@ -1975,7 +2182,7 @@ if (~isempty(ctdLinkData))
             a_driftOptode.cycleNumber, ...
             a_driftOptode.profileNumber, ...
             a_decoderId);
-         
+
    end
 end
 
@@ -1998,7 +2205,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/11/2019 - RNU - creation
@@ -2018,7 +2225,7 @@ global g_decArgo_qcNoQc;
 paramNameList = {a_driftTRansPh.paramList.name};
 
 if (isempty(a_driftCtd))
-   
+
    % we have not been able to retrieve the associated CTD profile
    if (ismember('VRS_PH', paramNameList))
       derivedParamList = [ ...
@@ -2045,9 +2252,9 @@ if (isempty(a_driftCtd))
          end
       end
    end
-   
+
 else
-   
+
    % retrieve measured CTD data
    paramNameListCtd = {a_driftCtd.paramList.name};
    presId = find(strcmp('PRES', paramNameListCtd) == 1, 1);
@@ -2074,7 +2281,7 @@ else
          paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
          derivedParam1 = get_netcdf_param_attributes(derivedParamList{idP, 1});
          derivedParam2 = get_netcdf_param_attributes(derivedParamList{idP, 2});
-         
+
          % compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL values
          [phInSituFree, phInSituTotal] = compute_drift_PH( ...
             a_driftTRansPh.data(:, idF), ...
@@ -2087,10 +2294,10 @@ else
             paramTemp.fillValue, ...
             paramPsal.fillValue, ...
             a_driftTRansPh);
-         
+
          % for CTS5 floats the derived parameter could be already in the list of
          % parameters => we should first look for it
-         
+
          idFDerivedParam1 = find(strcmp({a_driftTRansPh.paramList.name}, derivedParamList{idP, 1}), 1);
          if (isempty(idFDerivedParam1))
             a_driftTRansPh.data(:, end+1) = ones(size(a_driftTRansPh.data, 1), 1)*derivedParam1.fillValue;
@@ -2107,7 +2314,7 @@ else
                end
                a_driftTRansPh.dataAdjQc(:, end+1) = ones(size(a_driftTRansPh.data, 1), 1)*g_decArgo_qcDef;
             end
-            
+
             a_driftTRansPh.paramList = [a_driftTRansPh.paramList derivedParam1];
             if (~isempty(a_driftTRansPh.paramDataMode))
                a_driftTRansPh.paramDataMode = [a_driftTRansPh.paramDataMode ' '];
@@ -2125,7 +2332,7 @@ else
                end
             end
          end
-         
+
          idFDerivedParam2 = find(strcmp({a_driftTRansPh.paramList.name}, derivedParamList{idP, 2}), 1);
          if (isempty(idFDerivedParam2))
             a_driftTRansPh.data(:, end+1) = ones(size(a_driftTRansPh.data, 1), 1)*derivedParam2.fillValue;
@@ -2160,14 +2367,14 @@ else
                end
             end
          end
-         
+
          if (~isempty(phInSituFree))
             a_driftTRansPh.data(:, derivedParam1Id) = phInSituFree;
             phInSituFreeQc = ones(size(a_driftTRansPh.data, 1), 1)*g_decArgo_qcDef;
             phInSituFreeQc(find(phInSituFree ~= derivedParam1.fillValue)) = g_decArgo_qcNoQc;
             a_driftTRansPh.dataQc(:, derivedParam1Id) = phInSituFreeQc;
          end
-         
+
          if (~isempty(phInSituTotal))
             a_driftTRansPh.data(:, derivedParam2Id) = phInSituTotal;
             phInSituFreeQc = ones(size(a_driftTRansPh.data, 1), 1)*g_decArgo_qcDef;
@@ -2218,7 +2425,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/11/2019 - RNU - creation
@@ -2240,9 +2447,9 @@ o_PH_IN_SITU_TOTAL = ones(length(a_VRS_PH), 1)*a_PH_IN_SITU_TOTAL_fillValue;
 % assign the CTD data to the OPTODE measurements (timely closest association)
 ctdLinkData = assign_CTD_measurements(a_ctdDates, a_ctdData, a_VRS_PH_dates);
 if (~isempty(ctdLinkData))
-   
+
    % compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL values
-   [o_PH_IN_SITU_FREE, o_PH_IN_SITU_TOTAL] = compute_PH_111_113_to_116_123( ...
+   [o_PH_IN_SITU_FREE, o_PH_IN_SITU_TOTAL] = compute_PH_provor_arvor( ...
       a_VRS_PH, ...
       a_VRS_PH_fillValue, ...
       ctdLinkData(:, 1), ...
@@ -2272,7 +2479,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/14/2023 - RNU - creation
@@ -2295,7 +2502,7 @@ global g_decArgo_calibInfo;
 % list of parameters of the profile
 paramNameList = {a_driftUvp.paramList.name};
 
-% compute CONCENTRATION_LPMCONCENTRATION_LPM data and add them in the profile structure
+% compute CONCENTRATION_LPM data and add them in the profile structure
 % for 2022.01 version of UVP
 if (any(strcmp('NB_IMAGE_PARTICLES', paramNameList)) && ...
       any(strcmp('NB_SIZE_SPECTRA_PARTICLES', paramNameList)))
@@ -2323,7 +2530,7 @@ if (any(strcmp('NB_IMAGE_PARTICLES', paramNameList)) && ...
    paramNbImPart = get_netcdf_param_attributes('NB_IMAGE_PARTICLES');
    paramNbSizeSpecPart = get_netcdf_param_attributes('NB_SIZE_SPECTRA_PARTICLES');
    paramConcLpm = get_netcdf_param_attributes('CONCENTRATION_LPM');
-   
+
    [~, nbImPartFirstCol, nbImPartLastCol] = get_param_data_index(a_driftUvp, 'NB_IMAGE_PARTICLES');
    [~, nbSizeSpecPartFirstCol, nbSizeSpecPartLastCol] = get_param_data_index(a_driftUvp, 'NB_SIZE_SPECTRA_PARTICLES');
 
@@ -2334,8 +2541,12 @@ if (any(strcmp('NB_IMAGE_PARTICLES', paramNameList)) && ...
 
    dataConcLpm = dataNbSizeSpecPart./(imageVolume*dataNbImPart);
    dataConcLpm(isnan(dataConcLpm)) = paramConcLpm.fillValue;
+   dataConcLpm(isinf(abs(dataConcLpm))) = paramConcLpm.fillValue;
 
    a_driftUvp.paramList = [a_driftUvp.paramList paramConcLpm];
+   if (~isempty(a_driftUvp.paramDataMode))
+      a_driftUvp.paramDataMode = [a_driftUvp.paramDataMode ' '];
+   end
    a_driftUvp.paramNumberWithSubLevels = [a_driftUvp.paramNumberWithSubLevels length(a_driftUvp.paramList)];
    a_driftUvp.paramNumberOfSubLevels = [a_driftUvp.paramNumberOfSubLevels size(dataConcLpm, 2)];
 
@@ -2377,8 +2588,12 @@ if (any(strcmp('NB_SIZE_SPECTRA_PARTICLES_PER_IMAGE', paramNameList)))
 
    dataConcLpm = dataNbSizeSpecPartPerIm/imageVolume;
    dataConcLpm(isnan(dataConcLpm)) = paramConcLpm.fillValue;
+   dataConcLpm(isinf(abs(dataConcLpm))) = paramConcLpm.fillValue;
 
    a_driftUvp.paramList = [a_driftUvp.paramList paramConcLpm];
+   if (~isempty(a_driftUvp.paramDataMode))
+      a_driftUvp.paramDataMode = [a_driftUvp.paramDataMode ' '];
+   end
    a_driftUvp.paramNumberWithSubLevels = [a_driftUvp.paramNumberWithSubLevels length(a_driftUvp.paramList)];
    a_driftUvp.paramNumberOfSubLevels = [a_driftUvp.paramNumberOfSubLevels size(dataConcLpm, 2)];
 
@@ -2432,17 +2647,24 @@ if (any(strcmp('NB_IMAGE_CATEGORY', paramNameList)) && ...
 
    dataConcCat = dataNbObjCat./(imageVolume*dataNbImCat);
    dataConcCat(isnan(dataConcCat)) = paramConcCat.fillValue;
+   dataConcCat(isinf(abs(dataConcCat))) = paramConcCat.fillValue;
 
    a_driftUvp.paramList = [a_driftUvp.paramList paramConcCat];
+   if (~isempty(a_driftUvp.paramDataMode))
+      a_driftUvp.paramDataMode = [a_driftUvp.paramDataMode ' '];
+   end
    a_driftUvp.paramNumberWithSubLevels = [a_driftUvp.paramNumberWithSubLevels length(a_driftUvp.paramList)];
    a_driftUvp.paramNumberOfSubLevels = [a_driftUvp.paramNumberOfSubLevels size(dataConcCat, 2)];
 
    a_driftUvp.data(:, end+1:end+size(dataConcCat, 2)) = dataConcCat;
 
-   dataBioVolCat = dataConcCat.*(dataObjMeanVolCat*pixelSize*pixelSize*pixelSize*1000);
+   dataBioVolCat = dataConcCat.*(dataObjMeanVolCat*pixelSize*pixelSize*pixelSize)/1000;
    dataBioVolCat(isnan(dataBioVolCat)) = paramBioVolCat.fillValue;
 
    a_driftUvp.paramList = [a_driftUvp.paramList paramBioVolCat];
+   if (~isempty(a_driftUvp.paramDataMode))
+      a_driftUvp.paramDataMode = [a_driftUvp.paramDataMode ' '];
+   end
    a_driftUvp.paramNumberWithSubLevels = [a_driftUvp.paramNumberWithSubLevels length(a_driftUvp.paramList)];
    a_driftUvp.paramNumberOfSubLevels = [a_driftUvp.paramNumberOfSubLevels size(dataBioVolCat, 2)];
 
@@ -2464,6 +2686,9 @@ if (any(strcmp('PRES', paramNameList)) && ...
       a_driftUvp.cycleNumber, a_driftUvp.profileNumber);
 
    a_driftUvp.paramList = [a_driftUvp.paramList paramEcoCatId];
+   if (~isempty(a_driftUvp.paramDataMode))
+      a_driftUvp.paramDataMode = [a_driftUvp.paramDataMode ' '];
+   end
    a_driftUvp.paramNumberWithSubLevels = [a_driftUvp.paramNumberWithSubLevels length(a_driftUvp.paramList)];
    a_driftUvp.paramNumberOfSubLevels = [a_driftUvp.paramNumberOfSubLevels size(dataEcotaxaCatId, 2)];
 
@@ -2499,7 +2724,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/03/2024 - RNU - creation
@@ -2614,7 +2839,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/18/2021 - RNU - creation
@@ -2637,18 +2862,18 @@ paramToDeriveList = [ ...
    {'VOLTAGE_DOWNWELLING_PAR'} ...
    ];
 derivedParamList = [ ...
-   {'DOWNWELLING_PAR2'} ...
+   {'DOWNWELLING_PAR_2'} ...
    ];
 for idP = 1:length(paramToDeriveList)
    idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
    if (~isempty(idF))
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
-      
-      downPar = compute_DOWNWELLING_PAR_mpe_128_to_133( ...
+
+      downPar = compute_DOWNWELLING_PAR_mpe_128_to_133_137( ...
          a_driftMpe.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
-      
+
       a_driftMpe.data(:, end+1) = downPar;
       if (isempty(a_driftMpe.dataQc))
          a_driftMpe.dataQc = ones(size(a_driftMpe.data, 1), length(a_driftMpe.paramList))*g_decArgo_qcDef;
@@ -2664,7 +2889,7 @@ for idP = 1:length(paramToDeriveList)
          end
          a_driftMpe.dataAdjQc(:, end+1) = ones(size(a_driftMpe.data, 1), 1)*g_decArgo_qcDef;
       end
-      
+
       a_driftMpe.paramList = [a_driftMpe.paramList derivedParam];
       if (~isempty(a_driftMpe.paramDataMode))
          a_driftMpe.paramDataMode = [a_driftMpe.paramDataMode ' '];
@@ -2675,5 +2900,528 @@ end
 % update output parameters
 a_driftMpe.derived = 1;
 o_driftMpe = a_driftMpe;
+
+return
+
+% ------------------------------------------------------------------------------
+% Compute derived parameters for the RAMSES_ACC sensor.
+%
+% SYNTAX :
+%  [o_driftRamsesAcc] = compute_drift_derived_parameters_for_RAMSES_ACC(a_driftRamsesAcc)
+%
+% INPUT PARAMETERS :
+%   a_driftRamsesAcc : input RAMSES_ACC drift profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_driftRamsesAcc : output RAMSES_ACC drift profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   02/19/2025 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_driftRamsesAcc] = compute_drift_derived_parameters_for_RAMSES_ACC(a_driftRamsesAcc)
+
+% output parameters initialization
+o_driftRamsesAcc = a_driftRamsesAcc;
+
+% global default values
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+
+% list of parameters of the drift profile
+paramNameList = {o_driftRamsesAcc.paramList.name};
+
+% compute DOWN_IRRADIANCE_SPECTRUM and DOWN_IRRADIANCE_SPECTRUM_WAVELENGTHS
+% data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'RADIOMETER_DOWN_IRR_INTEGRATION_TIME'} ...
+   {'RADIOMETER_DOWN_IRR_DARK_AVERAGE'} ...
+   {'RAW_DOWNWELLING_IRRADIANCE'} ...
+   ];
+derivedParamList = [ ...
+   {'DOWN_IRRADIANCE_SPECTRUM'} ...
+   {'DOWN_IRRADIANCE_SPECTRUM_WAVELENGTHS'} ...
+   ];
+
+for idP = 1:size(paramToDeriveList, 1)
+   idF1 = find(strcmp(paramToDeriveList{idP, 1}, paramNameList) == 1, 1);
+   idF2 = find(strcmp(paramToDeriveList{idP, 2}, paramNameList) == 1, 1);
+   idF3 = find(strcmp(paramToDeriveList{idP, 3}, paramNameList) == 1, 1);
+   if (~isempty(idF1) && ~isempty(idF2) && ~isempty(idF3))
+      paramToDerive1 = get_netcdf_param_attributes(paramToDeriveList{idP, 1});
+      paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idP, 2});
+      paramToDerive3 = get_netcdf_param_attributes(paramToDeriveList{idP, 3});
+      derivedParam1 = get_netcdf_param_attributes(derivedParamList{idP, 1});
+      derivedParam2 = get_netcdf_param_attributes(derivedParamList{idP, 2});
+
+      [downIrrSpectrum, downIrrSpectrumWavelengths] = compute_DOWN_IRRADIANCE_SPECTRUM( ...
+         o_driftRamsesAcc.data(:, idF1), ...
+         o_driftRamsesAcc.data(:, idF2), ...
+         o_driftRamsesAcc.data(:, idF3:idF3+o_driftRamsesAcc.paramNumberOfSubLevels-1), ...
+         paramToDerive1.fillValue, ...
+         paramToDerive2.fillValue, ...
+         paramToDerive3.fillValue, ...
+         derivedParam1.fillValue, ...
+         derivedParam2.fillValue, ...
+         o_driftRamsesAcc);
+
+      % store DOWN_IRRADIANCE_SPECTRUM
+      o_driftRamsesAcc.data(:, end+1:end+size(downIrrSpectrum, 2)) = downIrrSpectrum;
+      if (isempty(o_driftRamsesAcc.dataQc))
+         o_driftRamsesAcc.dataQc = ones(size(o_driftRamsesAcc.data, 1), length(o_driftRamsesAcc.paramList))*g_decArgo_qcDef;
+      end
+      downIrrSpectrumQc = ones(size(o_driftRamsesAcc.data, 1), 1)*g_decArgo_qcDef;
+      idDef = [];
+      for idL = 1:size(downIrrSpectrum, 1)
+         data = downIrrSpectrum(idL, :);
+         if ((length(unique(data)) == 1) && (unique(data) == derivedParam1.fillValue))
+            idDef = [idDef; idL];
+         end
+      end
+      idNoDef = setdiff(1:size(o_driftRamsesAcc.data, 1), idDef);
+      downIrrSpectrumQc(idNoDef) = g_decArgo_qcNoQc;
+      o_driftRamsesAcc.dataQc(:, end+1) = downIrrSpectrumQc;
+
+      o_driftRamsesAcc.paramList = [o_driftRamsesAcc.paramList derivedParam1];
+      if (~isempty(o_driftRamsesAcc.paramDataMode))
+         o_driftRamsesAcc.paramDataMode = [o_driftRamsesAcc.paramDataMode ' '];
+      end
+      o_driftRamsesAcc.paramNumberWithSubLevels = [o_driftRamsesAcc.paramNumberWithSubLevels length(o_driftRamsesAcc.paramList)];
+      o_driftRamsesAcc.paramNumberOfSubLevels = [o_driftRamsesAcc.paramNumberOfSubLevels size(downIrrSpectrum, 2)];
+
+      % store DOWN_IRRADIANCE_SPECTRUM_WAVELENGTHS
+      o_driftRamsesAcc.data(:, end+1:end+size(downIrrSpectrumWavelengths, 2)) = downIrrSpectrumWavelengths;
+      if (isempty(o_driftRamsesAcc.dataQc))
+         o_driftRamsesAcc.dataQc = ones(size(o_driftRamsesAcc.data, 1), length(o_driftRamsesAcc.paramList))*g_decArgo_qcDef;
+      end
+      downIrrSpectrumWavelengthsQc = ones(size(o_driftRamsesAcc.data, 1), 1)*g_decArgo_qcDef;
+      idDef = [];
+      for idL = 1:size(downIrrSpectrumWavelengths, 1)
+         data = downIrrSpectrumWavelengths(idL, :);
+         if ((length(unique(data)) == 1) && (unique(data) == derivedParam2.fillValue))
+            idDef = [idDef; idL];
+         end
+      end
+      idNoDef = setdiff(1:size(o_driftRamsesAcc.data, 1), idDef);
+      downIrrSpectrumWavelengthsQc(idNoDef) = g_decArgo_qcNoQc;
+      o_driftRamsesAcc.dataQc(:, end+1) = downIrrSpectrumWavelengthsQc;
+
+      o_driftRamsesAcc.paramList = [o_driftRamsesAcc.paramList derivedParam2];
+      if (~isempty(o_driftRamsesAcc.paramDataMode))
+         o_driftRamsesAcc.paramDataMode = [o_driftRamsesAcc.paramDataMode ' '];
+      end
+      o_driftRamsesAcc.paramNumberWithSubLevels = [o_driftRamsesAcc.paramNumberWithSubLevels length(o_driftRamsesAcc.paramList)];
+      o_driftRamsesAcc.paramNumberOfSubLevels = [o_driftRamsesAcc.paramNumberOfSubLevels size(downIrrSpectrumWavelengths, 2)];
+   end
+end
+
+% update output parameters
+o_driftRamsesAcc.derived = 1;
+
+return
+
+% ------------------------------------------------------------------------------
+% Compute derived parameters for the RAMSES_ARC sensor.
+%
+% SYNTAX :
+%  [o_driftRamsesArc] = compute_drift_derived_parameters_for_RAMSES_ARC(a_driftRamsesArc)
+%
+% INPUT PARAMETERS :
+%   a_driftRamsesArc : input RAMSES_ARC profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_driftRamsesArc : output RAMSES_ARC profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   02/21/2025 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_driftRamsesArc] = compute_drift_derived_parameters_for_RAMSES_ARC(a_driftRamsesArc)
+
+% output parameters initialization
+o_driftRamsesArc = a_driftRamsesArc;
+
+% global default values
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+
+% list of parameters of the profile
+paramNameList = {o_driftRamsesArc.paramList.name};
+
+% compute UP_RADIANCE_SPECTRUM and UP_RADIANCE_SPECTRUM_WAVELENGTHS
+% data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'RADIOMETER_UP_RAD_INTEGRATION_TIME'} ...
+   {'RADIOMETER_UP_RAD_DARK_AVERAGE'} ...
+   {'RAW_UPWELLING_RADIANCE'} ...
+   ];
+derivedParamList = [ ...
+   {'UP_RADIANCE_SPECTRUM'} ...
+   {'UP_RADIANCE_SPECTRUM_WAVELENGTHS'} ...
+   ];
+
+for idP = 1:size(paramToDeriveList, 1)
+   idF1 = find(strcmp(paramToDeriveList{idP, 1}, paramNameList) == 1, 1);
+   idF2 = find(strcmp(paramToDeriveList{idP, 2}, paramNameList) == 1, 1);
+   idF3 = find(strcmp(paramToDeriveList{idP, 3}, paramNameList) == 1, 1);
+   if (~isempty(idF1) && ~isempty(idF2) && ~isempty(idF3))
+      paramToDerive1 = get_netcdf_param_attributes(paramToDeriveList{idP, 1});
+      paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idP, 2});
+      paramToDerive3 = get_netcdf_param_attributes(paramToDeriveList{idP, 3});
+      derivedParam1 = get_netcdf_param_attributes(derivedParamList{idP, 1});
+      derivedParam2 = get_netcdf_param_attributes(derivedParamList{idP, 2});
+
+      [upRadSpectrum, upRadSpectrumWavelengths] = compute_UP_RADIANCE_SPECTRUM( ...
+         o_driftRamsesArc.data(:, idF1), ...
+         o_driftRamsesArc.data(:, idF2), ...
+         o_driftRamsesArc.data(:, idF3:idF3+o_driftRamsesArc.paramNumberOfSubLevels-1), ...
+         paramToDerive1.fillValue, ...
+         paramToDerive2.fillValue, ...
+         paramToDerive3.fillValue, ...
+         derivedParam1.fillValue, ...
+         derivedParam2.fillValue, ...
+         o_driftRamsesArc);
+
+      % store UP_RADIANCE_SPECTRUM
+      o_driftRamsesArc.data(:, end+1:end+size(upRadSpectrum, 2)) = upRadSpectrum;
+      if (isempty(o_driftRamsesArc.dataQc))
+         o_driftRamsesArc.dataQc = ones(size(o_driftRamsesArc.data, 1), length(o_driftRamsesArc.paramList))*g_decArgo_qcDef;
+      end
+      upRadSpectrumQc = ones(size(o_driftRamsesArc.data, 1), 1)*g_decArgo_qcDef;
+      idDef = [];
+      for idL = 1:size(upRadSpectrum, 1)
+         data = upRadSpectrum(idL, :);
+         if ((length(unique(data)) == 1) && (unique(data) == derivedParam1.fillValue))
+            idDef = [idDef; idL];
+         end
+      end
+      idNoDef = setdiff(1:size(o_driftRamsesArc.data, 1), idDef);
+      upRadSpectrumQc(idNoDef) = g_decArgo_qcNoQc;
+      o_driftRamsesArc.dataQc(:, end+1) = upRadSpectrumQc;
+
+      o_driftRamsesArc.paramList = [o_driftRamsesArc.paramList derivedParam1];
+      if (~isempty(o_driftRamsesArc.paramDataMode))
+         o_driftRamsesArc.paramDataMode = [o_driftRamsesArc.paramDataMode ' '];
+      end
+      o_driftRamsesArc.paramNumberWithSubLevels = [o_driftRamsesArc.paramNumberWithSubLevels length(o_driftRamsesArc.paramList)];
+      o_driftRamsesArc.paramNumberOfSubLevels = [o_driftRamsesArc.paramNumberOfSubLevels size(upRadSpectrum, 2)];
+
+      % store UP_RADIANCE_SPECTRUM_WAVELENGTHS
+      o_driftRamsesArc.data(:, end+1:end+size(upRadSpectrumWavelengths, 2)) = upRadSpectrumWavelengths;
+      if (isempty(o_driftRamsesArc.dataQc))
+         o_driftRamsesArc.dataQc = ones(size(o_driftRamsesArc.data, 1), length(o_driftRamsesArc.paramList))*g_decArgo_qcDef;
+      end
+      upRadSpectrumWavelengthsQc = ones(size(o_driftRamsesArc.data, 1), 1)*g_decArgo_qcDef;
+      idDef = [];
+      for idL = 1:size(upRadSpectrumWavelengths, 1)
+         data = upRadSpectrumWavelengths(idL, :);
+         if ((length(unique(data)) == 1) && (unique(data) == derivedParam2.fillValue))
+            idDef = [idDef; idL];
+         end
+      end
+      idNoDef = setdiff(1:size(o_driftRamsesArc.data, 1), idDef);
+      upRadSpectrumWavelengthsQc(idNoDef) = g_decArgo_qcNoQc;
+      o_driftRamsesArc.dataQc(:, end+1) = upRadSpectrumWavelengthsQc;
+
+      o_driftRamsesArc.paramList = [o_driftRamsesArc.paramList derivedParam2];
+      if (~isempty(o_driftRamsesArc.paramDataMode))
+         o_driftRamsesArc.paramDataMode = [o_driftRamsesArc.paramDataMode ' '];
+      end
+      o_driftRamsesArc.paramNumberWithSubLevels = [o_driftRamsesArc.paramNumberWithSubLevels length(o_driftRamsesArc.paramList)];
+      o_driftRamsesArc.paramNumberOfSubLevels = [o_driftRamsesArc.paramNumberOfSubLevels size(upRadSpectrumWavelengths, 2)];
+   end
+end
+
+% update output parameters
+o_driftRamsesArc.derived = 1;
+
+return
+
+% ------------------------------------------------------------------------------
+% Compute derived parameters for the TRIDENTE sensor.
+%
+% SYNTAX :
+%  [o_driftTridente] = compute_drift_derived_parameters_for_TRIDENTE( ...
+%    a_driftTridente, a_driftCtd)
+%
+% INPUT PARAMETERS :
+%   a_driftTridente : input TRIDENTE drift profile structure
+%   a_driftCtd      : input CTD drift profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_driftTridente : output TRIDENTE drift profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   08/21/2025 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_driftTridente] = compute_drift_derived_parameters_for_TRIDENTE( ...
+   a_driftTridente, a_driftCtd)
+
+% output parameters initialization
+o_driftTridente = [];
+
+% global default values
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
+
+% list of parameters of the profile
+paramNameList = {a_driftTridente.paramList.name};
+
+if (isempty(a_driftCtd))
+
+   % we have not been able to retrieve the associated CTD profile
+   if (ismember('TRIDENTE', g_decArgo_sensorMountedOnFloat))
+      paramToDeriveList = [ ...
+         {'BETA_BACKSCATTERING700_SCALED'} ...
+         {'BETA_BACKSCATTERING700_SCALED_MED'} ...
+         {'BETA_BACKSCATTERING700_SCALED_STD'} ...
+         ];
+      derivedParamList = [ ...
+         {'BBP700'} ...
+         {'BBP700_MED'} ...
+         {'BBP700_STD'} ...
+         ];
+   elseif (ismember('TRIDENTE2', g_decArgo_sensorMountedOnFloat))
+      paramToDeriveList = [ ...
+         {'BETA_BACKSCATTERING700_SCALED'} ...
+         {'BETA_BACKSCATTERING700_SCALED_2'} ...
+         {'BETA_BACKSCATTERING700_SCALED_MED'} ...
+         {'BETA_BACKSCATTERING700_SCALED_2_MED'} ...
+         {'BETA_BACKSCATTERING700_SCALED_STD'} ...
+         {'BETA_BACKSCATTERING700_SCALED_2_STD'} ...
+         ];
+      derivedParamList = [ ...
+         {'BBP700_2'} ...
+         {'BBP700_3'} ...
+         {'BBP700_2_MED'} ...
+         {'BBP700_3_MED'} ...
+         {'BBP700_2_STD'} ...
+         {'BBP700_3_STD'} ...
+         ];
+   end   
+   for idP = 1:length(paramToDeriveList)
+      idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+      if (~isempty(idF))
+         derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+         a_driftTridente.data(:, end+1) = ones(size(a_driftTridente.data, 1), 1)*derivedParam.fillValue;
+         if (~isempty(a_driftTridente.dataQc))
+            a_driftTridente.dataQc(:, end+1) = ones(size(a_driftTridente.data, 1), 1)*g_decArgo_qcDef;
+         end
+
+         if (~isempty(a_driftTridente.dataAdj))
+            a_driftTridente.dataAdj(:, end+1) = ones(size(a_driftTridente.data, 1), 1)*derivedParam.fillValue;
+            if (~isempty(a_driftTridente.dataAdjQc))
+               a_driftTridente.dataAdjQc(:, end+1) = ones(size(a_driftTridente.data, 1), 1)*g_decArgo_qcDef;
+            end
+         end
+
+         a_driftTridente.paramList = [a_driftTridente.paramList derivedParam];
+         if (~isempty(a_driftTridente.paramDataMode))
+            a_driftTridente.paramDataMode = [a_driftTridente.paramDataMode ' '];
+         end
+      end
+   end
+
+else
+
+   % retrieve measured CTD data
+   paramNameListCtd = {a_driftCtd.paramList.name};
+   presId = find(strcmp('PRES', paramNameListCtd) == 1, 1);
+   tempId = find(strcmp('TEMP', paramNameListCtd) == 1, 1);
+   psalId = find(strcmp('PSAL', paramNameListCtd) == 1, 1);
+   ctdMeasDates = a_driftCtd.dates;
+   ctdMeasData = a_driftCtd.data(:, [presId tempId psalId]);
+
+   % compute BBP700 data and add them in the profile structure
+   if (ismember('TRIDENTE', g_decArgo_sensorMountedOnFloat))
+      paramToDeriveList = [ ...
+         {'BETA_BACKSCATTERING700_SCALED'} ...
+         {'BETA_BACKSCATTERING700_SCALED_MED'} ...
+         {'BETA_BACKSCATTERING700_SCALED_STD'} ...
+         ];
+      derivedParamList = [ ...
+         {'BBP700'} ...
+         {'BBP700_MED'} ...
+         {'BBP700_STD'} ...
+         ];
+   elseif (ismember('TRIDENTE2', g_decArgo_sensorMountedOnFloat))
+      paramToDeriveList = [ ...
+         {'BETA_BACKSCATTERING700_SCALED'} ...
+         {'BETA_BACKSCATTERING700_SCALED_2'} ...
+         {'BETA_BACKSCATTERING700_SCALED_MED'} ...
+         {'BETA_BACKSCATTERING700_SCALED_2_MED'} ...
+         {'BETA_BACKSCATTERING700_SCALED_STD'} ...
+         {'BETA_BACKSCATTERING700_SCALED_2_STD'} ...
+         ];
+      derivedParamList = [ ...
+         {'BBP700_2'} ...
+         {'BBP700_3'} ...
+         {'BBP700_2_MED'} ...
+         {'BBP700_3_MED'} ...
+         {'BBP700_2_STD'} ...
+         {'BBP700_3_STD'} ...
+         ];
+   end
+   paramPres = get_netcdf_param_attributes('PRES');
+   paramTemp = get_netcdf_param_attributes('TEMP');
+   paramPsal = get_netcdf_param_attributes('PSAL');
+   for idP = 1:length(paramToDeriveList)
+      idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+      if (~isempty(idF))
+         paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+         derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+
+         % compute BBP700 values
+         bbp700 = compute_drift_BBP_TRIDENTE( ...
+            a_driftTridente.data(:, idF), ...
+            paramToDerive.fillValue, ...
+            derivedParam.fillValue, ...
+            a_driftTridente.dates, ...
+            700, ...
+            ctdMeasDates, ctdMeasData, ...
+            paramPres.fillValue, ...
+            paramTemp.fillValue, ...
+            paramPsal.fillValue, ...
+            a_driftTridente);
+
+         if (~isempty(bbp700))
+            a_driftTridente.data(:, end+1) = bbp700;
+            if (isempty(a_driftTridente.dataQc))
+               a_driftTridente.dataQc = ones(size(a_driftTridente.data, 1), length(a_driftTridente.paramList))*g_decArgo_qcDef;
+            end
+            bbp700Qc = ones(size(a_driftTridente.data, 1), 1)*g_decArgo_qcDef;
+            bbp700Qc(find(bbp700 ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+            a_driftTridente.dataQc(:, end+1) = bbp700Qc;
+
+            if (~isempty(a_driftTridente.dataAdj))
+               a_driftTridente.dataAdj(:, end+1) = ones(size(a_driftTridente.data, 1), 1)*derivedParam.fillValue;
+               if (isempty(a_driftTridente.dataAdjQc))
+                  a_driftTridente.dataAdjQc = ones(size(a_driftTridente.data, 1), length(a_driftTridente.paramList))*g_decArgo_qcDef;
+               end
+               a_driftTridente.dataAdjQc(:, end+1) = ones(size(a_driftTridente.data, 1), 1)*g_decArgo_qcDef;
+            end
+         else
+            a_driftTridente.data(:, end+1) = ones(size(a_driftTridente.data, 1), 1)*derivedParam.fillValue;
+            if (~isempty(a_driftTridente.dataQc))
+               a_driftTridente.dataQc(:, end+1) = ones(size(a_driftTridente.data, 1), 1)*g_decArgo_qcDef;
+            end
+
+            if (~isempty(a_driftTridente.dataAdj))
+               a_driftTridente.dataAdj(:, end+1) = ones(size(a_driftTridente.data, 1), 1)*derivedParam.fillValue;
+               if (~isempty(a_driftTridente.dataAdjQc))
+                  a_driftTridente.dataAdjQc(:, end+1) = ones(size(a_driftTridente.data, 1), 1)*g_decArgo_qcDef;
+               end
+            end
+         end
+         a_driftTridente.paramList = [a_driftTridente.paramList derivedParam];
+         if (~isempty(a_driftTridente.paramDataMode))
+            a_driftTridente.paramDataMode = [a_driftTridente.paramDataMode ' '];
+         end
+      end
+   end
+end
+
+% update output parameters
+a_driftTridente.derived = 1;
+o_driftTridente = a_driftTridente;
+
+return
+
+% ------------------------------------------------------------------------------
+% Compute BBP from the data provided by the TRIDENTE sensor.
+%
+% SYNTAX :
+%  [o_BBP] = compute_drift_BBP_TRIDENTE( ...
+%    a_BETA_BACKSCATTERING_SCALED, a_BETA_BACKSCATTERING_SCALED_fillValue, ...
+%    a_BBP_fillValue, ...
+%    a_BBP_dates, ...
+%    a_lambda, ...
+%    a_ctdDates, a_ctdData, ...
+%    a_PRES_fillValue, a_TEMP_fillValue, a_PSAL_fillValue, ...
+%    a_driftTridente)
+%
+% INPUT PARAMETERS :
+%   a_BETA_BACKSCATTERING_SCALED           : input BETA_BACKSCATTERING_SCALED
+%                                            data
+%   a_BETA_BACKSCATTERING_SCALED_fillValue : fill value for input
+%                                            BETA_BACKSCATTERING_SCALED data
+%   a_BBP_fillValue                        : fill value for output BBP data
+%   a_BBP_dates                            : dates of BBP data
+%   a_lambda                               : wavelength of the ECO3
+%   a_ctdDates                             : dates of ascociated CTD (P, T, S) data
+%   a_ctdData                              : ascociated CTD (P, T, S) data
+%   a_PRES_fillValue                       : fill value for input PRES data
+%   a_TEMP_fillValue                       : fill value for input TEMP data
+%   a_PSAL_fillValue                       : fill value for input PSAL data
+%   a_driftTridente                        : input TRIDENTE drift profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_BBP : output BBP data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   08/21/2025 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_BBP] = compute_drift_BBP_TRIDENTE( ...
+   a_BETA_BACKSCATTERING_SCALED, a_BETA_BACKSCATTERING_SCALED_fillValue, ...
+   a_BBP_fillValue, ...
+   a_BBP_dates, ...
+   a_lambda, ...
+   a_ctdDates, a_ctdData, ...
+   a_PRES_fillValue, a_TEMP_fillValue, a_PSAL_fillValue, ...
+   a_driftTridente)
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% output parameters initialization
+o_BBP = ones(length(a_BETA_BACKSCATTERING_SCALED), 1)*a_BBP_fillValue;
+
+
+% assign the CTD data to the OPTODE measurements (timely closest association)
+ctdLinkData = assign_CTD_measurements(a_ctdDates, a_ctdData, a_BBP_dates);
+if (~isempty(ctdLinkData))
+
+   if (a_lambda == 700)
+      o_BBP = compute_BBP700_tridente( ...
+         a_BETA_BACKSCATTERING_SCALED, ...
+         a_BETA_BACKSCATTERING_SCALED_fillValue, ...
+         a_BBP_fillValue, ...
+         ctdLinkData, ...
+         a_PRES_fillValue, ...
+         a_TEMP_fillValue, ...
+         a_PSAL_fillValue);
+   else
+      fprintf('WARNING: Float #%d Cycle #%d Profile #%d: BBP processing not implemented yet for lambda = %g - BBP drift measurements set to fill value\n', ...
+         g_decArgo_floatNum, ...
+         a_driftTridente.cycleNumber, ...
+         a_driftTridente.profileNumber, ...
+         a_lambda);
+   end
+
+end
 
 return

@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/11/2016 - RNU - creation
@@ -49,10 +49,12 @@ global g_decArgo_rtqcTest26;
 global g_decArgo_rtqcTest56;
 global g_decArgo_rtqcTest57;
 global g_decArgo_rtqcTest59;
+global g_decArgo_rtqcTest60;
+global g_decArgo_rtqcTest61;
 global g_decArgo_rtqcTest62;
 global g_decArgo_rtqcTest63;
 global g_decArgo_rtqcGebcoFile;
-global g_decArgo_rtqcGreyList;
+global g_decArgo_rtqcExclusionList;
 
 % arrays to store decoded calibration coefficient
 global g_decArgo_calibInfo;
@@ -63,6 +65,12 @@ global g_decArgo_generateNcTraj31;
 global g_decArgo_generateNcTraj32;
 global g_decArgo_dirOutputTraj31NetcdfFile;
 global g_decArgo_dirOutputTraj32NetcdfFile;
+
+% mode processing flags
+global g_decArgo_realtimeFlag;
+
+% list of NetCDF files to move at the end of the run
+global g_decArgo_filesToMove;
 
 % temporary trajectory data
 global g_rtqc_trajData;
@@ -89,7 +97,7 @@ testToPerformList = [ ...
    {'TEST012_DIGIT_ROLLOVER'} {g_decArgo_rtqcTest12} ...
    {'TEST013_STUCK_VALUE'} {g_decArgo_rtqcTest13} ...
    {'TEST014_DENSITY_INVERSION'} {g_decArgo_rtqcTest14} ...
-   {'TEST015_GREY_LIST'} {g_decArgo_rtqcTest15} ...
+   {'TEST015_EXCLUSION_LIST'} {g_decArgo_rtqcTest15} ...
    {'TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT'} {g_decArgo_rtqcTest16} ...
    {'TEST018_FROZEN_PRESSURE'} {g_decArgo_rtqcTest18} ...
    {'TEST019_DEEPEST_PRESSURE'} {g_decArgo_rtqcTest19} ...
@@ -103,6 +111,8 @@ testToPerformList = [ ...
    {'TEST056_PH'} {g_decArgo_rtqcTest56} ...
    {'TEST057_DOXY'} {g_decArgo_rtqcTest57} ...
    {'TEST059_NITRATE'} {g_decArgo_rtqcTest59} ...
+   {'TEST060_PAR'} {g_decArgo_rtqcTest60} ...
+   {'TEST061_IRRADIANCE'} {g_decArgo_rtqcTest61} ...
    {'TEST062_BBP'} {g_decArgo_rtqcTest62} ...
    {'TEST063_CHLA'} {g_decArgo_rtqcTest63} ...
    ];
@@ -112,7 +122,7 @@ testMetaData = [ ...
    {'TEST000_FLOAT_DECODER_ID'} {a_decoderId} ...
    {'TEST004_GEBCO_FILE'} {g_decArgo_rtqcGebcoFile} ...
    {'TEST013_METADA_DATA_FILE'} {''} ...
-   {'TEST015_GREY_LIST_FILE'} {g_decArgo_rtqcGreyList} ...
+   {'TEST015_EXCLUSION_LIST_FILE'} {g_decArgo_rtqcExclusionList} ...
    {'TEST019_METADA_DATA_FILE'} {''} ...
    {'TEST021_METADA_DATA_FILE'} {''} ...
    {'TEST024_METADA_DATA_FILE'} {''} ...
@@ -131,7 +141,18 @@ if (test_to_perform('TEST013_STUCK_VALUE', testToPerformList) == 1)
    
    % add meta file path name
    ncMetaFileName = sprintf('%d_meta.nc', floatNum);
-   ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
+   ncMetaFilePathName = '';
+   if (g_decArgo_realtimeFlag == 1)
+      if (~isempty(g_decArgo_filesToMove))
+         idF = find(strcmp(ncMetaFileName, g_decArgo_filesToMove(:, 1)));
+         if (~isempty(idF))
+            ncMetaFilePathName = g_decArgo_filesToMove{idF, 2};
+         end
+      end
+   end
+   if (isempty(ncMetaFilePathName))
+      ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
+   end
    if ~(exist(ncMetaFilePathName, 'file') == 2)
       fprintf('RTQC_WARNING: TEST013: Float #%d: No meta file to perform test#13\n', floatNum);
    else
@@ -146,7 +167,18 @@ if (test_to_perform('TEST019_DEEPEST_PRESSURE', testToPerformList) == 1)
    
    % add meta file path name
    ncMetaFileName = sprintf('%d_meta.nc', floatNum);
-   ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
+   ncMetaFilePathName = '';
+   if (g_decArgo_realtimeFlag == 1)
+      if (~isempty(g_decArgo_filesToMove))
+         idF = find(strcmp(ncMetaFileName, g_decArgo_filesToMove(:, 1)));
+         if (~isempty(idF))
+            ncMetaFilePathName = g_decArgo_filesToMove{idF, 2};
+         end
+      end
+   end
+   if (isempty(ncMetaFilePathName))
+      ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
+   end
    if ~(exist(ncMetaFilePathName, 'file') == 2)
       fprintf('RTQC_WARNING: TEST019: Float #%d: No meta file to perform test#19\n', floatNum);
    else
@@ -161,7 +193,18 @@ if (test_to_perform('TEST021_NS_UNPUMPED_SALINITY', testToPerformList) == 1)
    
    % add meta file path name
    ncMetaFileName = sprintf('%d_meta.nc', floatNum);
-   ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
+   ncMetaFilePathName = '';
+   if (g_decArgo_realtimeFlag == 1)
+      if (~isempty(g_decArgo_filesToMove))
+         idF = find(strcmp(ncMetaFileName, g_decArgo_filesToMove(:, 1)));
+         if (~isempty(idF))
+            ncMetaFilePathName = g_decArgo_filesToMove{idF, 2};
+         end
+      end
+   end
+   if (isempty(ncMetaFilePathName))
+      ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
+   end
    if ~(exist(ncMetaFilePathName, 'file') == 2)
       fprintf('RTQC_WARNING: TEST021: Float #%d: No meta file to perform test#21\n', floatNum);
    else
@@ -176,7 +219,18 @@ if (test_to_perform('TEST024_RBR_FLOAT', testToPerformList) == 1)
    
    % add meta file path name
    ncMetaFileName = sprintf('%d_meta.nc', floatNum);
-   ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
+   ncMetaFilePathName = '';
+   if (g_decArgo_realtimeFlag == 1)
+      if (~isempty(g_decArgo_filesToMove))
+         idF = find(strcmp(ncMetaFileName, g_decArgo_filesToMove(:, 1)));
+         if (~isempty(idF))
+            ncMetaFilePathName = g_decArgo_filesToMove{idF, 2};
+         end
+      end
+   end
+   if (isempty(ncMetaFilePathName))
+      ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
+   end
    if ~(exist(ncMetaFilePathName, 'file') == 2)
       fprintf('RTQC_WARNING: TEST024: Float #%d: No meta file to perform test#24\n', floatNum);
    else
@@ -191,7 +245,18 @@ if (test_to_perform('TEST057_DOXY', testToPerformList) == 1)
    
    % add meta file path name
    ncMetaFileName = sprintf('%d_meta.nc', floatNum);
-   ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
+   ncMetaFilePathName = '';
+   if (g_decArgo_realtimeFlag == 1)
+      if (~isempty(g_decArgo_filesToMove))
+         idF = find(strcmp(ncMetaFileName, g_decArgo_filesToMove(:, 1)));
+         if (~isempty(idF))
+            ncMetaFilePathName = g_decArgo_filesToMove{idF, 2};
+         end
+      end
+   end
+   if (isempty(ncMetaFilePathName))
+      ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
+   end
    if ~(exist(ncMetaFilePathName, 'file') == 2)
       fprintf('RTQC_WARNING: TEST057: Float #%d: No meta file to perform test#57\n', floatNum);
    else
@@ -206,7 +271,18 @@ if (test_to_perform('TEST062_BBP', testToPerformList) == 1)
    
    % add meta file path name
    ncMetaFileName = sprintf('%d_meta.nc', floatNum);
-   ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
+   ncMetaFilePathName = '';
+   if (g_decArgo_realtimeFlag == 1)
+      if (~isempty(g_decArgo_filesToMove))
+         idF = find(strcmp(ncMetaFileName, g_decArgo_filesToMove(:, 1)));
+         if (~isempty(idF))
+            ncMetaFilePathName = g_decArgo_filesToMove{idF, 2};
+         end
+      end
+   end
+   if (isempty(ncMetaFilePathName))
+      ncMetaFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMetaFileName];
+   end
    if ~(exist(ncMetaFilePathName, 'file') == 2)
       fprintf('RTQC_WARNING: TEST062: Float #%d: No meta file to perform parking hook test in test#62\n', floatNum);
    else
@@ -232,6 +308,15 @@ if (test_to_perform('TEST063_CHLA', testToPerformList) == 1)
             darKCountChla = double(g_decArgo_calibInfo.ECO2.DarkCountChloroA);
          else
             fprintf('RTQC_ERROR: Float #%d: inconsistent ECO2 sensor calibration information\n', ...
+               floatNum);
+         end
+      elseif (isfield(g_decArgo_calibInfo, 'ECO_FLNTU'))
+         if ((isfield(g_decArgo_calibInfo.ECO_FLNTU, 'ScaleFactChloroA')) && ...
+               (isfield(g_decArgo_calibInfo.ECO_FLNTU, 'DarkCountChloroA')))
+            scaleFactorChla = double(g_decArgo_calibInfo.ECO_FLNTU.ScaleFactChloroA);
+            darKCountChla = double(g_decArgo_calibInfo.ECO_FLNTU.DarkCountChloroA);
+         else
+            fprintf('RTQC_ERROR: Float #%d: inconsistent ECO_FLNTU sensor calibration information\n', ...
                floatNum);
          end
       elseif (isfield(g_decArgo_calibInfo, 'ECO3'))
@@ -284,15 +369,25 @@ end
 g_rtqc_trajData = [];
 
 % retrieve the traj c file path name
-trajFilePathName = '';
 trajFileName = sprintf('%d_Rtraj.nc', floatNum);
-if (g_decArgo_generateNcTraj32 ~= 0)
-   trajFilePathName = [g_decArgo_dirOutputTraj32NetcdfFile '/' floatNumStr '/' trajFileName];
-elseif (g_decArgo_generateNcTraj31 ~= 0)
-   trajFilePathName = [g_decArgo_dirOutputTraj31NetcdfFile '/' floatNumStr '/' trajFileName];
+ncTrajFilePathName = '';
+if (g_decArgo_realtimeFlag == 1)
+   if (~isempty(g_decArgo_filesToMove))
+      idF = find(strcmp(trajFileName, g_decArgo_filesToMove(:, 1)));
+      if (~isempty(idF))
+         ncTrajFilePathName = g_decArgo_filesToMove{idF, 2};
+      end
+   end
 end
-if (~isempty(trajFilePathName))
-   if (exist(trajFilePathName, 'file') == 2)
+if (isempty(ncTrajFilePathName))
+   if (g_decArgo_generateNcTraj32 ~= 0)
+      ncTrajFilePathName = [g_decArgo_dirOutputTraj32NetcdfFile '/' floatNumStr '/' trajFileName];
+   elseif (g_decArgo_generateNcTraj31 ~= 0)
+      ncTrajFilePathName = [g_decArgo_dirOutputTraj31NetcdfFile '/' floatNumStr '/' trajFileName];
+   end
+end
+if (~isempty(ncTrajFilePathName))
+   if (exist(ncTrajFilePathName, 'file') == 2)
       % define the tests to perform on trajectory data
       testToPerformList2 = [ ...
          {'TEST002_IMPOSSIBLE_DATE'} {1} ...
@@ -304,7 +399,7 @@ if (~isempty(trajFilePathName))
       % perform RTQC on trajectory data (to fill JULD_QC, JULD_ADJUSTED_QC
       % and POSITION_QC)
       add_rtqc_to_trajectory_file(floatNum, ...
-         trajFilePathName, [], ...
+         ncTrajFilePathName, '', ...
          testToPerformList2, testMetaData, 1, 0, 1);
    end
 end
@@ -351,15 +446,25 @@ for idFile = 1:length(monoProfList)
 end
 
 % create the multi prof c file path name
-ncMultiProfFilePathName = '';
-reportMultiProfFile = a_reportStruct.outputMultiProfFiles;
 ncMultiProfFileName = sprintf('%d_prof.nc', floatNum);
-if (~isempty(reportMultiProfFile))
-   idF = find(~isempty(strfind(reportMultiProfFile, ncMultiProfFileName)), 1);
-   ncMultiProfFilePathName = reportMultiProfFile{idF};
+ncMultiProfFilePathName = '';
+if (g_decArgo_realtimeFlag == 1)
+   if (~isempty(g_decArgo_filesToMove))
+      idF = find(strcmp(ncMultiProfFileName, g_decArgo_filesToMove(:, 1)));
+      if (~isempty(idF))
+         ncMultiProfFilePathName = g_decArgo_filesToMove{idF, 2};
+      end
+   end
 end
 if (isempty(ncMultiProfFilePathName))
-   ncMultiProfFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMultiProfFileName];
+   reportMultiProfFile = a_reportStruct.outputMultiProfFiles;
+   if (~isempty(reportMultiProfFile))
+      idF = find(~isempty(strfind(reportMultiProfFile, ncMultiProfFileName)), 1);
+      ncMultiProfFilePathName = reportMultiProfFile{idF};
+   end
+   if (isempty(ncMultiProfFilePathName))
+      ncMultiProfFilePathName = [g_decArgo_dirOutputNetcdfFile '/' floatNumStr '/' ncMultiProfFileName];
+   end
 end
 
 % process the files
@@ -367,7 +472,18 @@ for idFile = 1:length(monoProfList)
    
    fprintf('Applying RTQC to file %s\n', monoProfList{idFile});
    
-   monoProfInputFilePathName = [monoProfPath '/' monoProfList{idFile}];
+   monoProfInputFilePathName = '';
+   if (g_decArgo_realtimeFlag == 1)
+      if (~isempty(g_decArgo_filesToMove))
+         idF = find(strcmp(monoProfList{idFile}, g_decArgo_filesToMove(:, 1)));
+         if (~isempty(idF))
+            monoProfInputFilePathName = g_decArgo_filesToMove{idF, 2};
+         end
+      end
+   end
+   if (isempty(monoProfInputFilePathName))
+      monoProfInputFilePathName = [monoProfPath '/' monoProfList{idFile}];
+   end
    monoProfOutputFilePathName = '';
 
    multiProfInputFilePathName = ncMultiProfFilePathName;
@@ -384,32 +500,37 @@ end
 % RTQC ON TRAJECTORY FILE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if (g_decArgo_generateNcTraj31 ~= 0)
-   trajFilePathName = [g_decArgo_dirOutputTraj31NetcdfFile '/' floatNumStr '/' trajFileName];
-
-   if (exist(trajFilePathName, 'file') == 2)
-
-      [~, fileName, fileExt] = fileparts(trajFilePathName);
-      fprintf('Applying RTQC to file (V3.1) %s\n', [fileName fileExt]);
-
-      % perform RTQC on trajectory data
-      add_rtqc_to_trajectory_file(floatNum, ...
-         trajFilePathName, '', ...
-         testToPerformList, testMetaData, 0, 1, 1);
+trajFileName = sprintf('%d_Rtraj.nc', floatNum);
+ncTrajFilePathName = '';
+if (g_decArgo_realtimeFlag == 1)
+   if (~isempty(g_decArgo_filesToMove))
+      idF = find(strcmp(trajFileName, g_decArgo_filesToMove(:, 1)));
+      if (~isempty(idF))
+         ncTrajFilePathName = g_decArgo_filesToMove{idF, 2};
+      end
+   end
+end
+if (isempty(ncTrajFilePathName))
+   if (g_decArgo_generateNcTraj32 ~= 0)
+      ncTrajFilePathName = [g_decArgo_dirOutputTraj32NetcdfFile '/' floatNumStr '/' trajFileName];
+   elseif (g_decArgo_generateNcTraj31 ~= 0)
+      ncTrajFilePathName = [g_decArgo_dirOutputTraj31NetcdfFile '/' floatNumStr '/' trajFileName];
    end
 end
 
-if (g_decArgo_generateNcTraj32 ~= 0)
-   trajFilePathName = [g_decArgo_dirOutputTraj32NetcdfFile '/' floatNumStr '/' trajFileName];
-   
-   if (exist(trajFilePathName, 'file') == 2)
+if (~isempty(ncTrajFilePathName))
+   if (exist(ncTrajFilePathName, 'file') == 2)
 
-      [~, fileName, fileExt] = fileparts(trajFilePathName);
-      fprintf('Applying RTQC to file (V3.2) %s\n', [fileName fileExt]);
+      [~, fileName, fileExt] = fileparts(ncTrajFilePathName);
+      if (g_decArgo_generateNcTraj32 ~= 0)
+         fprintf('Applying RTQC to file (V3.2) %s\n', [fileName fileExt]);
+      elseif (g_decArgo_generateNcTraj31 ~= 0)
+         fprintf('Applying RTQC to file (V3.1) %s\n', [fileName fileExt]);
+      end
 
       % perform RTQC on trajectory data
       add_rtqc_to_trajectory_file(floatNum, ...
-         trajFilePathName, '', ...
+         ncTrajFilePathName, '', ...
          testToPerformList, testMetaData, 0, 1, 1);
    end
 end
@@ -433,7 +554,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/21/2015 - RNU - creation

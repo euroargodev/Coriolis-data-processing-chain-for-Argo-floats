@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/27/2018 - RNU - creation
@@ -115,13 +115,14 @@ if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
 end
 
 % store the sensor list
-g_decArgo_sensorMountedOnFloat = [];
 if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
    jSensorNames = struct2cell(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT);
    g_decArgo_sensorMountedOnFloat = jSensorNames';
 end
    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % create the tabDoxyCoef array
+
 if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
    if (any(strcmp(struct2cell(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT), 'OPTODE')))
       if (isfield(g_decArgo_calibInfo, 'OPTODE'))
@@ -152,7 +153,77 @@ if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
    end
 end
 
-% create the tabDoxyCoef array
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% create the RAMSES_ACC calibration arrays
+
+if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
+   if (any(strcmp(struct2cell(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT), 'RAMSES')))
+      if (isfield(g_decArgo_calibInfo, 'RAMSES'))
+
+         calibData = g_decArgo_calibInfo.RAMSES;
+         wavelength = nan(255, 1);
+         back1 = nan(255, 1);
+         back2 = nan(255, 1);
+         calAq = nan(255, 1);
+         cisCoef = [];
+         cisCoef.c0s = str2double(calibData.c0s);
+         cisCoef.c1s = str2double(calibData.c1s);
+         cisCoef.c2s = str2double(calibData.c2s);
+         cisCoef.c3s = str2double(calibData.c3s);
+         cisCoef.c4s = str2double(calibData.c4s);
+
+         for id = 1:255
+            fieldName = ['WAVELENGTH_' num2str(id)];
+            if (isfield(calibData, fieldName))
+               wavelength(id) = str2double(calibData.(fieldName));
+            else
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ACC sensor\n', g_decArgo_floatNum);
+               return
+            end
+            fieldName = ['BACK1_' num2str(id)];
+            if (isfield(calibData, fieldName))
+               back1(id) = str2double(calibData.(fieldName));
+            else
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ACC sensor\n', g_decArgo_floatNum);
+               return
+            end
+            fieldName = ['BACK2_' num2str(id)];
+            if (isfield(calibData, fieldName))
+               back2(id) = str2double(calibData.(fieldName));
+            else
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ACC sensor\n', g_decArgo_floatNum);
+               return
+            end
+            fieldName = ['CAL_AQ_' num2str(id)];
+            if (isfield(calibData, fieldName))
+               calAq(id) = str2double(calibData.(fieldName));
+            else
+               fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ACC sensor\n', g_decArgo_floatNum);
+               return
+            end
+         end
+
+         g_decArgo_calibInfo.RAMSES_ACC.CisCoef = cisCoef;
+         g_decArgo_calibInfo.RAMSES_ACC.Wavelength = wavelength;
+         g_decArgo_calibInfo.RAMSES_ACC.Back1 = back1;
+         g_decArgo_calibInfo.RAMSES_ACC.Back2 = back2;
+         g_decArgo_calibInfo.RAMSES_ACC.CalAq = calAq;
+
+         g_decArgo_calibInfo.RAMSES_ACC.RamsesAccVerticalOffset = get_config_value_from_json('CONFIG_PX_1_11_0_0_0', g_decArgo_jsonMetaData);
+         ramsesAccDarkPixelBegin = get_config_value_from_json('CONFIG_PX_1_11_0_0_1', g_decArgo_jsonMetaData);
+         ramsesAccDarkPixelEnd = get_config_value_from_json('CONFIG_PX_1_11_0_0_2', g_decArgo_jsonMetaData);
+         g_decArgo_calibInfo.RAMSES_ACC.RamsesAccDarkPixelBegin = ramsesAccDarkPixelBegin;
+         g_decArgo_calibInfo.RAMSES_ACC.RamsesAccDarkPixelEnd = ramsesAccDarkPixelEnd;
+
+      else
+         fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ACC sensor\n', g_decArgo_floatNum);
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% add RAFOS information
+
 if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
    if (any(strcmp(struct2cell(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT), 'RAFOS')))
       % if RAFOS field already exists it has been recovered from the json

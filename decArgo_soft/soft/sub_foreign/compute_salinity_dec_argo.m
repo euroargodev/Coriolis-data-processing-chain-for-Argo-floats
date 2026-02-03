@@ -1,6 +1,6 @@
 % ------------------------------------------------------------------------------
-% Détermination de la salinité à partir de la pression, température et
-% conductivité (formule fournie par P.BRANNELEC (le 25/02/2009)).
+% DÃ©termination de la salinitÃ© Ã  partir de la pression, tempÃ©rature et
+% conductivitÃ© (formule fournie par P.BRANNELEC (le 25/02/2009)).
 %
 % ************************************************************
 % * METHODE 1 : CALCUL DE LA SALINITE A PARTIR DE ( P T C )
@@ -16,25 +16,25 @@
 %                changement de la valeur de CN068
 %
 % Les calculs sont faits en IPTS68.
-% Si la température est données dans l'échelle IPTS90 (ce qui est le cas pour
-% les flotteurs Argo), il faut la transformer en température donnée dans
-% l'échelle IPTS68.
+% Si la tempÃ©rature est donnÃ©es dans l'Ã©chelle IPTS90 (ce qui est le cas pour
+% les flotteurs Argo), il faut la transformer en tempÃ©rature donnÃ©e dans
+% l'Ã©chelle IPTS68.
 %
 % SYNTAX :
 %   [o_salinity] = compute_salinity_dec_argo(a_pressure, a_temperature, a_conductivity)
 %
 % INPUT PARAMETERS :
 %   a_pressure     : pression
-%   a_temperature  : température
-%   a_conductivity : conductivité
+%   a_temperature  : tempÃ©rature
+%   a_conductivity : conductivitÃ©
 %
 % OUTPUT PARAMETERS :
-%   o_salinity : salinité calculée
+%   o_salinity : salinitÃ© calculÃ©e
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/03/2009 - RNU - creation
@@ -44,7 +44,7 @@ function [o_salinity] = compute_salinity_dec_argo(a_pressure, a_temperature, a_c
 o_salinity = [];
 
 P = a_pressure;
-T = a_temperature*1.00024; % température IPST90 transformée en IPTS68
+T = a_temperature*1.00024; % tempÃ©rature IPST90 transformÃ©e en IPTS68
 % T = a_temperature;
 C = a_conductivity;
 

@@ -28,7 +28,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/31/2020 - RNU - creation
@@ -182,7 +182,7 @@ if (g_decArgo_realtimeFlag)
    duplicate_files_ir_nemo(a_floatNum, g_decArgo_rsyncFloatSbdFileList(fileIdList), g_decArgo_dirInputRsyncData, floatIriDirName);
       
    % create list of cycles to decode
-   [a_cycleList, ~] = get_float_cycle_list(a_floatNum, num2str(a_floatRudicsId), a_floatLaunchDate, a_decoderId);
+   [a_cycleList, ~] = get_float_cycle_list(a_floatNum, num2str(a_floatRudicsId), a_floatLaunchDate, a_floatEndDate, a_decoderId);
    
    % initialize data structure to store report information
    g_decArgo_reportStruct = get_report_init_struct(a_floatNum, a_cycleList);

@@ -524,7 +524,7 @@
       "CONF_PARAM_DEC_ID" : "IC12",
       "CONF_PARAM_LABEL" : "Delay before ascent blocking detection",
       "CONF_PARAM_DEFINITION" : "TBD",
-      "CONF_PARAM_NAME" : "CONFIG_IceDetectionNoVerticalMotionTimeOut_csec",
+      "CONF_PARAM_NAME" : "CONFIG_IceDetectionNoVerticalMotionTimeOut_minutes",
       "CONF_PARAM_DESCRIPTION" : "When the float is in ice detection mode if, despite of pump actions, no vertical motion is detected during this delay, the cycle is aborted."
    },
    "CONF_PARAM_67" :

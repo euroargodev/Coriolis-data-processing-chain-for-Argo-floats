@@ -61,7 +61,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/03/2014 - RNU - creation
@@ -571,7 +571,7 @@ if (a_deepCycle == 1)
    
    % the unpumped part of the profile should not be duplicated in the TRAJ file
    % anymore (whatever the value of CONFIG_OptodeMeasurementsInAir_LOGICAL is)
-   % see specification in "NOTE ON ìNEAR SURFACEî AND ìIN AIRî DATA PROCESSING IN
+   % see specification in "NOTE ON ‚ÄúNEAR SURFACE‚Äù AND ‚ÄúIN AIR‚Äù DATA PROCESSING IN
    % THE CORIOLIS MATLAB DECODER" (V1.0 dated 29/06/2018)
    
    %    for idProf = 1:length(a_tabProfiles)
@@ -833,8 +833,8 @@ if (a_deepCycle == 1)
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       % last pumped CTD measurement
-      pres = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(tabTech2(10));
-      temp = sensor_2_value_for_temperature_201_to_203_215_216_218_221(tabTech2(11));
+      pres = sensor_2_value_for_pressure_2xx_2_10_to_14_17_22_to_27_31_32(tabTech2(10));
+      temp = sensor_2_value_for_temp_2xx_1_to_3_15_16_18_21_28_29_30(tabTech2(11));
       psal = tabTech2(12)/1000;
       if (any([pres temp psal] ~= 0))
          measStruct = get_traj_one_meas_init_struct();

@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/28/2020 - RNU - creation
@@ -49,7 +49,7 @@ switch (a_decoderId)
          g_decArgo_decIdCheckFlag = 1;
       end
    case {222, 223, 225}
-      % decId = 222 or 223 => firmware is 5900A05
+      % decId = 222 or 223 or 225 => firmware is 5900A05
       % expected checksum:
       % for 5900A05: hex2dec('2C97') = 11415
       if (a_checkSum ~= 11415)
@@ -68,11 +68,32 @@ switch (a_decoderId)
       else
          g_decArgo_decIdCheckFlag = 1;
       end
-   case {226}
+   case {226, 231}
       % decId = 226 => firmware is 5900A07
+      % decId = 231 => firmware is 5900A07
       % expected checksum:
       % for 5900A07: hex2dec('a847') = 43079
       if (a_checkSum ~= 43079)
+         fprintf('ERROR: Float #%d: A wrong decoder (#%d) seems to be used for this float\n', ...
+            a_floatNum, a_decoderId);
+      else
+         g_decArgo_decIdCheckFlag = 1;
+      end
+   case {227}
+      % decId = 227 => firmware is 5900A08
+      % expected checksum:
+      % for 5900A08: hex2dec('FC75') = 64629
+      if (a_checkSum ~= 64629)
+         fprintf('ERROR: Float #%d: A wrong decoder (#%d) seems to be used for this float\n', ...
+            a_floatNum, a_decoderId);
+      else
+         g_decArgo_decIdCheckFlag = 1;
+      end
+   case {232}
+      % decId = 232 => firmware is 5900A05B
+      % expected checksum:
+      % for 5900A05B: hex2dec('3630') = 13872
+      if (a_checkSum ~= 13872)
          fprintf('ERROR: Float #%d: A wrong decoder (#%d) seems to be used for this float\n', ...
             a_floatNum, a_decoderId);
       else

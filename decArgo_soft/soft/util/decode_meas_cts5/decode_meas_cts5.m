@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/09/2022 - RNU - creation: V1.0 based on '050c' decoder version
@@ -215,7 +215,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -716,7 +716,7 @@ for typeNum = typeOrderList
                % '*_ramses2*.hex'
 
                fprintf('   - %s (%d)\n', fileNamesForType{idFile}, length(fileNameInfo{2}));
-               [apmtRamsesDec, apmtRamses2Dec] = decode_apmt_ramses(fileNameInfo);
+               [apmtRamsesDec, apmtRamses2Dec, apmtRamsesV2Dec, apmtRamses2V2Dec] = decode_apmt_ramses(fileNameInfo);
                if (isempty(apmtRamsesDec) && isempty(apmtRamses2Dec))
                   continue
                end
@@ -861,10 +861,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesCtd, tabDriftCtd, tabDesc2ProfCtd, tabSurfCtd, o_subSurfaceMeas] = ...
-         process_profile_ir_rudics_cts5_usea_ctd(apmtCtd, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_ctd(apmtCtd, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesCtd] = merge_profile_meas_ir_rudics_cts5_usea_ctd(tabProfilesCtd);
+      [tabProfilesCtd] = merge_profile_cts5_usea_ctd(tabProfilesCtd);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesCtd] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_ctd(tabProfilesCtd);
@@ -880,10 +880,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesDo, tabDriftDo, tabDesc2ProfDo, tabSurfDo] = ...
-         process_profile_ir_rudics_cts5_usea_do(apmtDo, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_do(apmtDo, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesDo] = merge_profile_meas_ir_rudics_cts5_usea_do(tabProfilesDo);
+      [tabProfilesDo] = merge_profile_cts5_usea_do(tabProfilesDo);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesDo] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesDo);
@@ -899,10 +899,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesOcr, tabDriftOcr, tabDesc2ProfOcr, tabSurfOcr] = ...
-         process_profile_ir_rudics_cts5_usea_ocr(apmtOcr, apmtTimeFromTech, g_decArgo_gpsData, a_decoderId);
+         process_profile_cts5_usea_ocr(apmtOcr, apmtTimeFromTech, g_decArgo_gpsData, a_decoderId);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesOcr] = merge_profile_meas_ir_rudics_cts5_usea_ocr(tabProfilesOcr, a_decoderId);
+      [tabProfilesOcr] = merge_profile_cts5_usea_ocr(tabProfilesOcr, a_decoderId);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesOcr] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesOcr);
@@ -918,10 +918,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesEco, tabDriftEco, tabDesc2ProfEco, tabSurfEco] = ...
-         process_profile_ir_rudics_cts5_usea_eco(apmtEco, apmtTimeFromTech, g_decArgo_gpsData, a_decoderId);
+         process_profile_cts5_usea_eco(apmtEco, apmtTimeFromTech, g_decArgo_gpsData, a_decoderId);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesEco] = merge_profile_meas_ir_rudics_cts5_usea_eco(tabProfilesEco, a_decoderId);
+      [tabProfilesEco] = merge_profile_cts5_usea_eco(tabProfilesEco, a_decoderId);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesEco] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesEco);
@@ -937,10 +937,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesSbeph, tabDriftSbeph, tabDesc2ProfSbeph, tabSurfSbeph] = ...
-         process_profile_ir_rudics_cts5_usea_sbeph(apmtSbeph, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_sbeph(apmtSbeph, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesSbeph] = merge_profile_meas_ir_rudics_cts5_usea_sbeph(tabProfilesSbeph);
+      [tabProfilesSbeph] = merge_profile_cts5_usea_sbeph(tabProfilesSbeph);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesSbeph] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesSbeph);
@@ -956,10 +956,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesCrover, tabDriftCrover, tabDesc2ProfCrover, tabSurfCrover] = ...
-         process_profile_ir_rudics_cts5_usea_crover(apmtCrover, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_crover(apmtCrover, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesCrover] = merge_profile_meas_ir_rudics_cts5_usea_crover(tabProfilesCrover);
+      [tabProfilesCrover] = merge_profile_cts5_usea_crover(tabProfilesCrover);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesCrover] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesCrover);
@@ -975,10 +975,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesSuna, tabDriftSuna, tabDesc2ProfSuna, tabSurfSuna] = ...
-         process_profile_ir_rudics_cts5_usea_suna(apmtSuna, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_suna(apmtSuna, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesSuna] = merge_profile_meas_ir_rudics_cts5_usea_suna(tabProfilesSuna);
+      [tabProfilesSuna] = merge_profile_cts5_usea_suna(tabProfilesSuna);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesSuna] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesSuna);
@@ -994,10 +994,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesUvpLpm, tabDriftUvpLpm, tabDesc2ProfUvpLpm, tabSurfUvpLpm] = ...
-         process_profile_ir_rudics_cts5_usea_uvp_lpm(apmtUvpLpm, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_uvp_lpm(apmtUvpLpm, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesUvpLpm] = merge_profile_meas_ir_rudics_cts5_usea_uvp_lpm(tabProfilesUvpLpm);
+      [tabProfilesUvpLpm] = merge_profile_cts5_usea_uvp_lpm(tabProfilesUvpLpm);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesUvpLpm] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesUvpLpm);
@@ -1013,10 +1013,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesUvpLpmV2, tabDriftUvpLpmV2, tabDesc2ProfUvpLpmV2, tabSurfUvpLpmV2] = ...
-         process_profile_ir_rudics_cts5_usea_uvp_lpm_v2(apmtUvpLpmV2, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_uvp_lpm_v2(apmtUvpLpmV2, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesUvpLpmV2] = merge_profile_meas_ir_rudics_cts5_usea_uvp_lpm_v2(tabProfilesUvpLpmV2);
+      [tabProfilesUvpLpmV2] = merge_profile_cts5_usea_uvp_lpm_v2(tabProfilesUvpLpmV2);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesUvpLpmV2] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesUvpLpmV2);
@@ -1032,10 +1032,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesUvpBlack, tabDriftUvpBlack, tabDesc2ProfUvpBlack, tabSurfUvpBlack] = ...
-         process_profile_ir_rudics_cts5_usea_uvp_black(apmtUvpBlack, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_uvp_black(apmtUvpBlack, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesUvpBlack] = merge_profile_meas_ir_rudics_cts5_usea_uvp_black(tabProfilesUvpBlack);
+      [tabProfilesUvpBlack] = merge_profile_cts5_usea_uvp_black(tabProfilesUvpBlack);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesUvpBlack] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesUvpBlack);
@@ -1051,10 +1051,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesUvpBlackV2, tabDriftUvpBlackV2, tabDesc2ProfUvpBlackV2, tabSurfUvpBlackV2] = ...
-         process_profile_ir_rudics_cts5_usea_uvp_black_v2(apmtUvpBlackV2, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_uvp_black_v2(apmtUvpBlackV2, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesUvpBlackV2] = merge_profile_meas_ir_rudics_cts5_usea_uvp_black_v2(tabProfilesUvpBlackV2);
+      [tabProfilesUvpBlackV2] = merge_profile_cts5_usea_uvp_black_v2(tabProfilesUvpBlackV2);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesUvpBlackV2] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesUvpBlackV2);
@@ -1070,10 +1070,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesUvpTaxoV2, tabDriftUvpTaxoV2, tabDesc2ProfUvpTaxoV2, tabSurfUvpTaxoV2] = ...
-         process_profile_ir_rudics_cts5_usea_uvp_taxo_v2(apmtUvpTaxoV2, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_uvp_taxo_v2(apmtUvpTaxoV2, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesUvpTaxoV2] = merge_profile_meas_ir_rudics_cts5_usea_uvp_taxo_v2(tabProfilesUvpTaxoV2);
+      [tabProfilesUvpTaxoV2] = merge_profile_cts5_usea_uvp_taxo_v2(tabProfilesUvpTaxoV2);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesUvpTaxoV2] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesUvpTaxoV2);
@@ -1089,10 +1089,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesOpusLight, tabDriftOpusLight, tabDesc2ProfOpusLight, tabSurfOpusLight] = ...
-         process_profile_ir_rudics_cts5_usea_opus_light(apmtOpusLight, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_opus_light(apmtOpusLight, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesOpusLight] = merge_profile_meas_ir_rudics_cts5_usea_opus_light(tabProfilesOpusLight);
+      [tabProfilesOpusLight] = merge_profile_cts5_usea_opus_light(tabProfilesOpusLight);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesOpusLight] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesOpusLight);
@@ -1108,10 +1108,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesOpusBlack, tabDriftOpusBlack, tabDesc2ProfOpusBlack, tabSurfOpusBlack] = ...
-         process_profile_ir_rudics_cts5_usea_opus_black(apmtOpusBlack, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_opus_black(apmtOpusBlack, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesOpusBlack] = merge_profile_meas_ir_rudics_cts5_usea_opus_black(tabProfilesOpusBlack);
+      [tabProfilesOpusBlack] = merge_profile_cts5_usea_opus_black(tabProfilesOpusBlack);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesOpusBlack] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesOpusBlack);
@@ -1127,10 +1127,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesRamses, tabDriftRamses, tabDesc2ProfRamses, tabSurfRamses] = ...
-         process_profile_ir_rudics_cts5_usea_ramses(apmtRamses, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_ramses(apmtRamses, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesRamses] = merge_profile_meas_ir_rudics_cts5_usea_ramses(tabProfilesRamses);
+      [tabProfilesRamses] = merge_profile_cts5_usea_ramses(tabProfilesRamses);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesRamses] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesRamses);
@@ -1146,10 +1146,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesRamses2, tabDriftRamses2, tabDesc2ProfRamses2, tabSurfRamses2] = ...
-         process_profile_ir_rudics_cts5_usea_ramses2(apmtRamses2, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_ramses2(apmtRamses2, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesRamses2] = merge_profile_meas_ir_rudics_cts5_usea_ramses2(tabProfilesRamses2);
+      [tabProfilesRamses2] = merge_profile_cts5_usea_ramses2(tabProfilesRamses2);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesRamses2] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesRamses2);
@@ -1165,10 +1165,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesMpe, tabDriftMpe, tabDesc2ProfMpe, tabSurfMpe] = ...
-         process_profile_ir_rudics_cts5_usea_mpe(apmtMpe, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_mpe(apmtMpe, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesMpe] = merge_profile_meas_ir_rudics_cts5_usea_mpe(tabProfilesMpe);
+      [tabProfilesMpe] = merge_profile_cts5_usea_mpe(tabProfilesMpe);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesMpe] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesMpe);
@@ -1184,10 +1184,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesHydroc, tabDriftHydroc, tabDesc2ProfHydroc, tabSurfHydroc] = ...
-         process_profile_ir_rudics_cts5_usea_hydroc(apmtHydrocM, apmtHydrocC, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_hydroc(apmtHydrocM, apmtHydrocC, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesHydroc] = merge_profile_meas_ir_rudics_cts5_usea_hydroc(tabProfilesHydroc);
+      [tabProfilesHydroc] = merge_profile_cts5_usea_hydroc(tabProfilesHydroc);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesHydroc] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesHydroc);
@@ -1203,10 +1203,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesImuRaw, tabDriftImuRaw, tabDesc2ProfImuRaw, tabSurfImuRaw] = ...
-         process_profile_ir_rudics_cts5_usea_imu_raw(apmtImuRaw, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_imu_raw(apmtImuRaw, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesImuRaw] = merge_profile_meas_ir_rudics_cts5_usea_imu_raw(tabProfilesImuRaw);
+      [tabProfilesImuRaw] = merge_profile_cts5_usea_imu_raw(tabProfilesImuRaw);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesImuRaw] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesImuRaw);
@@ -1222,10 +1222,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesImuTiltHeading, tabDriftImuTiltHeading, tabDesc2ProfImuTiltHeading, tabSurfImuTiltHeading] = ...
-         process_profile_ir_rudics_cts5_usea_imu_tilt_heading(apmtImuTiltHeading, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_imu_tilt_heading(apmtImuTiltHeading, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesImuTiltHeading] = merge_profile_meas_ir_rudics_cts5_usea_imu_tilt_heading(tabProfilesImuTiltHeading);
+      [tabProfilesImuTiltHeading] = merge_profile_cts5_usea_imu_tilt_heading(tabProfilesImuTiltHeading);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesImuTiltHeading] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesImuTiltHeading);
@@ -1241,10 +1241,10 @@ if (isempty(g_decArgo_outputCsvFileId))
 
       % create profiles (as they are transmitted)
       [tabProfilesImuWave, tabDriftImuWave, tabDesc2ProfImuWave, tabSurfImuWave] = ...
-         process_profile_ir_rudics_cts5_usea_imu_wave(apmtImuWave, apmtTimeFromTech, g_decArgo_gpsData);
+         process_profile_cts5_usea_imu_wave(apmtImuWave, apmtTimeFromTech, g_decArgo_gpsData);
 
       % merge profiles (all data from a given sensor together)
-      [tabProfilesImuWave] = merge_profile_meas_ir_rudics_cts5_usea_imu_wave(tabProfilesImuWave);
+      [tabProfilesImuWave] = merge_profile_cts5_usea_imu_wave(tabProfilesImuWave);
 
       % add the vertical sampling scheme from configuration information
       [tabProfilesImuWave] = add_vertical_sampling_scheme_ir_rudics_cts5_usea_bgc(tabProfilesImuWave);

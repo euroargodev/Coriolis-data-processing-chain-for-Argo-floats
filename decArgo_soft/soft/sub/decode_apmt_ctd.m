@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -59,7 +59,7 @@ try
       case {1}
          o_ctdData = decode_apmt_ctd_extended(data, lastByteNum, a_decoderId, inputFilePathName);
       case {2}
-         o_ctdData = decode_apmt_ctd_standard(data, lastByteNum, a_decoderId, inputFilePathName);
+         o_ctdData = decode_apmt_ctd_standard(data, lastByteNum, inputFilePathName);
       otherwise
          fprintf('ERROR: Unexpected file type byte in file: %s\n', inputFilePathName);
    end

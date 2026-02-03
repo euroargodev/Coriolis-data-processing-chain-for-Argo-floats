@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/18/2013 - RNU - creation
@@ -108,13 +108,20 @@ end
 [floatWmo, floatLoginName, ...
    floatDecVersion, floatDecId, ...
    floatFrameLen, ...
-   floatCycleTime, floatDriftSamplingPeriod, floatDelay, ...
+   floatCycleTime, floatDriftSamplingPeriod, floatImei, ...
    floatLaunchDate, floatLaunchLon, floatLaunchLat, ...
    floatRefDay, floatDmFlag] = get_one_float_info(floatWmo, []);
 if (isempty(floatLoginName))
    fprintf('ERROR: no information on float #%d - exit\n', floatWmo);
    o_inputError = 1;
    return
+end
+
+% for MEDS CTS4 float #4902679 IMEI number replaces the login name in the input
+% .bin file name
+floatImeiStr = num2str(floatImei);
+if ~((length(floatImeiStr) == 15) && ~any(isletter(floatImeiStr))) % be sure it is an IMEI number
+   floatImeiStr = '';
 end
 
 % g_decArgo_dirInputRsyncLog depends on decoder version
@@ -198,11 +205,11 @@ for idFile = 1:length(ryncLogList)
       switch (floatDecId)
          case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116}
             % CTS4 Iridium RUDICS floats
-            floatFiles = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile}, floatLoginName);
+            floatFiles = parse_rsync_log_ir_rudics_cts4(ryncLogList{idFile}, floatLoginName, floatImeiStr);
          case {121, 122, 123, 124, 125}
             % CTS5-OSEAN Iridium RUDICS floats (rsync to Villefranche global server)
             floatFiles = parse_rsync_log_ir_rudics_cts5(ryncLogList{idFile}, floatLoginName);
-         case {126, 127, 128, 129, 130, 131, 132, 133}
+         case {126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
             % CTS5-USEA Iridium RUDICS floats
             floatFiles = parse_rsync_log_ir_rudics_cts5_usea(ryncLogList{idFile}, floatLoginName);
          otherwise

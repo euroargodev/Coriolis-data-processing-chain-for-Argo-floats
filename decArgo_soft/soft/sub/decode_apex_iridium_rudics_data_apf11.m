@@ -31,7 +31,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/06/2018 - RNU - creation
@@ -127,15 +127,9 @@ g_decArgo_generateNcFlag = 1; % since there is no buffer we can process the data
 global g_decArgo_rsyncLogFileUnderProcessList;
 global g_decArgo_rsyncLogFileUsedList;
 
-% list of cycle numbers and ice detection flag
-global g_decArgo_cycleNumListForIce;
-global g_decArgo_cycleNumListIceDetected;
-g_decArgo_cycleNumListForIce = [];
-g_decArgo_cycleNumListIceDetected = [];
-
-% ice float flag
-global g_decArgo_iceFloat;
-g_decArgo_iceFloat = 0;
+% to store ICE data used to simulate ICE algorithm
+global g_decArgo_iceData;
+g_decArgo_iceData = [];
 
 % TRAJ 3.2 file generation flag
 global g_decArgo_generateNcTraj32;
@@ -216,7 +210,7 @@ if (g_decArgo_realtimeFlag == 1)
    end
    
    % create list of cycles to decode
-   [a_cycleList, ~] = get_float_cycle_list(a_floatNum, a_floatRudicsId, a_floatLaunchDate, a_decoderId);
+   [a_cycleList, ~] = get_float_cycle_list(a_floatNum, a_floatRudicsId, a_floatLaunchDate, a_floatEndDate, a_decoderId);
    
    % initialize data structure to store report information
    g_decArgo_reportStruct = get_report_init_struct(a_floatNum, a_cycleList);
@@ -233,7 +227,7 @@ for idFile = 1:length(cycleFileNameList)
    floatFileName = [g_decArgo_archiveDirectory cycleFileNameList{idFile}];
    fileInfo = dir(floatFileName);
    if (fileInfo(1).bytes == 0)
-      fprintf('ERROR: Float #%d: Empty file: %s - ignored\n', ...
+      fprintf('WARNING: Float #%d: Empty file: %s - ignored\n', ...
          g_decArgo_floatNum, ...
          floatFileName);
       continue
@@ -241,7 +235,7 @@ for idFile = 1:length(cycleFileNameList)
    try
       gunzip(floatFileName, g_decArgo_archiveFloatFilesDirectory);
    catch infos
-      fprintf('ERROR: Float #%d: Failed while uncompressing file: %s (%s) - ignored\n', ...
+      fprintf('WARNING: Float #%d: Failed while uncompressing file: %s (%s) - ignored\n', ...
          g_decArgo_floatNum, ...
          floatFileName, ...
          infos.message);
@@ -279,9 +273,10 @@ for idCy = 1:length(a_cycleList)
       a_floatRudicsId, cycleNum, g_decArgo_archiveFloatFilesDirectory);
    
    % decode the files of the current cycle
-   if (ismember(a_decoderId, [1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130]))
+   if (ismember(a_decoderId, [1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, ...
+         1129, 1130, 1131, 1132]))
       % 2.11.3.R, 2.13.1.R & 2.13.1.1.R, 2.12.3.R, 2.14.3.R, 2.15.0.R, 2.10.4.R,
-      % 2.12.2.1.R, 2.15.2.R, 2.15.5.R, 2.16.0.R, 2.17.4.R
+      % 2.12.2.1.R, 2.15.2.R, 2.15.5.R, 2.16.0.R, 2.17.4.R, 2.18.1.R, 2.19.1.R
          
       [miscInfoSci, miscInfoSys, miscEvtsSys, ...
          metaData, missionCfg, sampleCfg, ...
@@ -323,11 +318,10 @@ for idCy = 1:length(a_cycleList)
          grounding, iceDetection, buoyancy, cycleTimeData, g_decArgo_presOffsetData);
       
       % compute derived parameters
-      [profDo, ...
-         profCtdPtsh, profCtdCpH, profFlbb, profFlbbCd, profRafos] = ...
+      [profDo, profCtdPtsh, profCtdCpH, profFlbb, profFlbbCd, profRamses, profRafos] = ...
          compute_derived_parameters_apx_apf11_ir( ...
          profCtdPts, profCtdCp, profDo, ...
-         profCtdPtsh, profCtdCpH, profFlbb, profFlbbCd, ...
+         profCtdPtsh, profCtdCpH, profFlbb, profFlbbCd, profRamses, ...
          profRafos, ...
          cycleTimeData, a_decoderId);
       
@@ -350,6 +344,9 @@ for idCy = 1:length(a_cycleList)
          vitalsData, ...
          cycleTimeData, ...
          g_decArgo_clockOffset);
+
+      % store ICE information
+      store_ice_information_apf11_rudics(iceDetection, cycleTimeData);
       
       if (~isempty(g_decArgo_outputCsvFileId))
          
@@ -486,7 +483,7 @@ for idCy = 1:length(a_cycleList)
          
          % create time series of technical data
          [tabTechNMeas, tabTechAuxNMeas] = create_technical_time_series_apx_apf11_ir( ...
-            vitalsData, cycleTimeData, iceDetection, g_decArgo_cycleNum);
+            vitalsData, cycleTimeData, g_decArgo_cycleNum);
          
          if (~isempty(tabTechNMeas))
             o_tabTechNMeas = [o_tabTechNMeas; tabTechNMeas];

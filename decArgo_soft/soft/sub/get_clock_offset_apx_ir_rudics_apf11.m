@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/06/2018 - RNU - creation
@@ -71,8 +71,12 @@ for idFile = 1:length(logFileList)
    end
 end
 
-[tabJuldUtc, idSort] = sort([tabRtcOffset.clockOffsetJuldUtc]);
-o_clockOffset.clockOffsetJuldUtc = tabJuldUtc;
-o_clockOffset.clockOffsetValue = [tabRtcOffset(idSort).clockOffsetValue];
+o_clockOffset.clockOffsetJuldUtc = [];
+o_clockOffset.clockOffsetValue = [];
+if (~isempty(tabRtcOffset))
+   [tabJuldUtc, idSort] = sort([tabRtcOffset.clockOffsetJuldUtc]);
+   o_clockOffset.clockOffsetJuldUtc = tabJuldUtc;
+   o_clockOffset.clockOffsetValue = [tabRtcOffset(idSort).clockOffsetValue];
+end
 
 return

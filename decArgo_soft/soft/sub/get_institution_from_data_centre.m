@@ -14,14 +14,14 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_institution] = get_institution_from_data_centre(a_dataCentre, a_printWarningFlag)
 
-o_institution = ' ';
+o_institution = '';
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -54,7 +54,7 @@ switch (a_dataCentre)
    case 'KM'
       o_institution = 'KMA';
    case 'KO'
-      o_institution = 'KORDI';
+      o_institution = 'KIOST';
    case 'MB'
       o_institution = 'MBARI';
    case 'ME'

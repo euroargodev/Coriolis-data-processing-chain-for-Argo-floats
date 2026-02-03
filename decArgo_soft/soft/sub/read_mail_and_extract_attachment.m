@@ -17,7 +17,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/14/2014 - RNU - creation
@@ -192,6 +192,11 @@ if (~isempty(mailContents.unitLocation))
    else
       o_mailContents.unitLocationLat = str2num(mailContents.unitLocation(posLat+length('Lat ='):posLon-1));
       o_mailContents.unitLocationLon = str2num(mailContents.unitLocation(posLon+length('Long ='):end));
+      if ((~isempty(o_mailContents.unitLocationLat) && isnan(o_mailContents.unitLocationLat)) || ...
+            (~isempty(o_mailContents.unitLocationLon) && isnan(o_mailContents.unitLocationLon)))
+         % see co_20240109T200543Z_300534060901620_000000_000000_30480.txt
+         o_mailContents.cepRadius = 0; % to ignore the Iridium location
+      end
    end
 end
 

@@ -19,7 +19,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -66,7 +66,9 @@ end
 [driftData] = parse_apx_ir_drift_data(driftMeasDataStr, a_floatDecId);
 [gpsLocDate, gpsLocLon, gpsLocLat, ...
    gpsLocNbSat, gpsLocAcqTime, ...
-   gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_gps_fix(gpsFixDataStr);
+   gpsLocFailedAcqTime, ...
+   gpsLocFailedIceEvasion, gpsLocFailedIceCap, gpsLocFailedIceBreakup] = ...
+   parse_apx_ir_gps_fix(gpsFixDataStr);
 
 dates = [];
 if (~isempty(profInfo) && isfield(profInfo, 'ProfTime'))

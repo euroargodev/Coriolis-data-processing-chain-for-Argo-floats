@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -96,7 +96,7 @@ if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
             sensorList = [sensorList 2];
          case 'OCR'
             sensorList = [sensorList 3];
-         case {'ECO3', 'ECO2'}
+         case {'ECO3', 'ECO2', 'ECO_FLNTU'}
             sensorList = [sensorList 4];
          case 'TRANSISTOR_PH'
             sensorList = [sensorList 5];
@@ -118,6 +118,13 @@ if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT'))
             sensorList = [sensorList 20];
          case 'RAMSES_ARC'
             sensorList = [sensorList 21];
+         case 'PAL'
+            sensorList = [sensorList 23];
+         case 'TRIDENTE'
+            sensorList = [sensorList 24];
+         case 'TRIDENTE2'
+            sensorList = [sensorList 24];
+
          otherwise
             fprintf('ERROR: Float #%d: Unknown sensor name %s\n', ...
                g_decArgo_floatNum, ...
@@ -160,7 +167,7 @@ end
 % create static configuration names
 configNames1 = [];
 switch (a_decoderId)
-   case {126, 127, 128, 129, 130, 131, 132, 133}
+   case {126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
       configInfoList = [ ...
          {'SYSTEM'} {[0:4 7 9:12]} {[]}; ...
          {'TECHNICAL'} {[0:1 8:15 17 18 20]} {[]}; ...
@@ -186,6 +193,8 @@ switch (a_decoderId)
          {'UVP6'} {0} {[]}; ...
          {'MPE'} {0} {[]}; ...
          {'HYDROC'} {0} {[]}; ...
+         {'TRIDENTE'} {0} {[]}; ...
+         {'PAL'} {0} {[]}; ...
          ];
    otherwise
       fprintf('ERROR: Static configuration parameters not defined yet for deciId #%d\n', ...
@@ -253,15 +262,19 @@ configNames1 = [configNames1 ...
    {'CONFIG_PX_1_11_0_0_0'} ... % CONFIG_AUX_RamsesAccVerticalPressureOffset_dbar / RAMSES_ACC_VERTICAL_PRES_OFFSET
    {'CONFIG_PX_1_12_0_0_0'} ... % CONFIG_AUX_RamsesArcVerticalPressureOffset_dbar / RAMSES_ARC_VERTICAL_PRES_OFFSET
    {'CONFIG_PX_1_13_0_0_0'} ... % CONFIG_AUX_MpeVerticalPressureOffset_dbar / MPE_VERTICAL_PRES_OFFSET
+   {'CONFIG_PX_1_11_0_0_1'} ... % CONFIG_AUX_RamsesAccDarkPixelBegin_NUMBER / RAMSES_ACC_DARK_PIXEL_BEGIN
+   {'CONFIG_PX_1_11_0_0_2'} ... % CONFIG_AUX_RamsesAccDarkPixelEnd_NUMBER / RAMSES_ACC_DARK_PIXEL_END
+   {'CONFIG_PX_1_12_0_0_1'} ... % CONFIG_AUX_RamsesArcDarkPixelBegin_NUMBER / RAMSES_ARC_DARK_PIXEL_BEGIN
+   {'CONFIG_PX_1_12_0_0_2'} ... % CONFIG_AUX_RamsesArcDarkPixelEnd_NUMBER / RAMSES_ARC_DARK_PIXEL_END
    ];
 
 % create dynamic configuration names
 configNames2 = [];
 switch (a_decoderId)
-   case {126, 127, 128, 129, 130, 131, 132, 133}
+   case {126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
       configInfoList = [ ...
          {'SYSTEM'} {[5 6 8]} {[]}; ...
-         {'TECHNICAL'} {[2:7 16 19 21 22 23 24]} {[]}; ...
+         {'TECHNICAL'} {[2:7 16 19 21 22 23 24 25:30]} {[]}; ...
          {'PATTERN_'} {[0:8 99]} {[]}; ...
          {'ALARM'} {[0:5 9 10 16 21]} {[]}; ...
          {'TEMPORIZATION'} {0:3} {[]}; ...
@@ -272,7 +285,11 @@ switch (a_decoderId)
          {'CYCLE'} {0:2} {[]}; ...
          {'ICE_AVOIDANCE'} {0:4} {[]}; ...
          {'ISA'} {0:4} {[]}; ...
-         {'IRIDIUM_RUDICS'} {4:8} {[]}; ...
+         {'EVENT_DRIVEN'} {0:1} {[]}; ...
+         {'EVENT_RAIN'} {0:12} {[]}; ...
+         {'EVENT_WIND'} {0:12} {[]}; ...
+         {'IRIDIUM_RUDICS'} {4:9} {[]}; ...
+         {'MOTOR'} {2:3} {[]}; ...
          {'GPS'} {3:4} {[]}; ...
          {'SENSOR_'} {[1:7 9]} {[46:53 60]}; ...
          {'SPECIAL'} {0:1} {[]}; ...
@@ -340,6 +357,14 @@ for idConfig = 1:length(configInfoList)
             end
          elseif (sensorNum == 21)
             for miscNum = 54:56
+               configNames2{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, miscNum);
+            end
+         elseif (sensorNum == 23)
+            for miscNum = [54:58 61:68]
+               configNames2{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, miscNum);
+            end
+         elseif (sensorNum == 24)
+            for miscNum = 54
                configNames2{end+1} = sprintf('CONFIG_APMT_%s%02d_P%02d', section, sensorNum, miscNum);
             end
          end
@@ -432,6 +457,7 @@ if (~isempty(g_decArgo_jsonMetaData.CONFIG_PARAMETER_NAME) && ~isempty(g_decArgo
       
       jConfValue = jConfValues{id};
       if (~isempty(jConfValue))
+
          % look for this configuration parameter in the dynamic list
          idPos = find(strcmp(jConfName, configNames2) == 1, 1);
          if (~isempty(idPos))
@@ -619,9 +645,10 @@ if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
          g_decArgo_calibInfo.(fieldNames{idF}) = g_decArgo_jsonMetaData.CALIBRATION_COEFFICIENT.(fieldNames{idF});
       end
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % create the tabDoxyCoef array
       switch (a_decoderId)
-         case {126, 127, 128, 129, 130, 131, 132, 133}
+         case {126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
             if (any(strcmp(g_decArgo_sensorMountedOnFloat, 'OPTODE')))
                if (isfield(g_decArgo_calibInfo, 'OPTODE'))
                   calibData = g_decArgo_calibInfo.OPTODE;
@@ -650,15 +677,16 @@ if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
                end
             end
       end
-      
-      % create the NITRATE calibration arrays
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % create the SUNA calibration arrays
       if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
          if (ismember(7, g_decArgo_sensorList))
             if (isfield(g_decArgo_calibInfo, 'SUNA'))
                
                switch (a_decoderId)
                   
-                  case {126, 128, 129, 130, 131, 132, 133}
+                  case {126, 128, 129, 130, 131, 132, 133, 135, 138, 139, 140}
                      calibData = g_decArgo_calibInfo.SUNA;
                      tabOpticalWavelengthUv = [];
                      tabENitrate = [];
@@ -703,7 +731,7 @@ if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
                      g_decArgo_calibInfo.SUNA.FloatPixelBegin = get_config_value_from_json('CONFIG_PX_1_6_0_0_3', g_decArgo_jsonMetaData);
                      g_decArgo_calibInfo.SUNA.FloatPixelEnd = get_config_value_from_json('CONFIG_PX_1_6_0_0_4', g_decArgo_jsonMetaData);
                      
-                  case {127}
+                  case {127, 134, 136, 137, 141}
                      calibData = g_decArgo_calibInfo.SUNA;
                      tabOpticalWavelengthUv = [];
                      tabENitrate = [];
@@ -760,6 +788,140 @@ if (isfield(g_decArgo_jsonMetaData, 'CALIBRATION_COEFFICIENT'))
             else
                fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for SUNA sensor\n', g_decArgo_floatNum);
             end
+         end
+      end
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % create the RAMSES_ACC calibration arrays
+      if (ismember(14, g_decArgo_sensorList))
+         if (isfield(g_decArgo_calibInfo, 'RAMSES'))
+
+            calibData = g_decArgo_calibInfo.RAMSES;
+            wavelength = nan(255, 1);
+            back1 = nan(255, 1);
+            back2 = nan(255, 1);
+            calAq = nan(255, 1);
+            cisCoef = [];
+            cisCoef.c0s = str2double(calibData.c0s);
+            cisCoef.c1s = str2double(calibData.c1s);
+            cisCoef.c2s = str2double(calibData.c2s);
+            cisCoef.c3s = str2double(calibData.c3s);
+            cisCoef.c4s = str2double(calibData.c4s);
+
+            for id = 1:255
+               fieldName = ['WAVELENGTH_' num2str(id)];
+               if (isfield(calibData, fieldName))
+                  wavelength(id) = str2double(calibData.(fieldName));
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ACC sensor\n', g_decArgo_floatNum);
+                  return
+               end
+               fieldName = ['BACK1_' num2str(id)];
+               if (isfield(calibData, fieldName))
+                  back1(id) = str2double(calibData.(fieldName));
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ACC sensor\n', g_decArgo_floatNum);
+                  return
+               end
+               fieldName = ['BACK2_' num2str(id)];
+               if (isfield(calibData, fieldName))
+                  back2(id) = str2double(calibData.(fieldName));
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ACC sensor\n', g_decArgo_floatNum);
+                  return
+               end
+               fieldName = ['CAL_AQ_' num2str(id)];
+               if (isfield(calibData, fieldName))
+                  calAq(id) = str2double(calibData.(fieldName));
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ACC sensor\n', g_decArgo_floatNum);
+                  return
+               end
+            end
+
+            g_decArgo_calibInfo.RAMSES_ACC.CisCoef = cisCoef;
+            g_decArgo_calibInfo.RAMSES_ACC.Wavelength = wavelength;
+            g_decArgo_calibInfo.RAMSES_ACC.Back1 = back1;
+            g_decArgo_calibInfo.RAMSES_ACC.Back2 = back2;
+            ramsesAccDarkPixelBegin = get_config_value_from_json('CONFIG_PX_1_11_0_0_1', g_decArgo_jsonMetaData);
+            ramsesAccDarkPixelEnd = get_config_value_from_json('CONFIG_PX_1_11_0_0_2', g_decArgo_jsonMetaData);
+            g_decArgo_calibInfo.RAMSES_ACC.Back1Dark = mean(back1(ramsesAccDarkPixelBegin:ramsesAccDarkPixelEnd));
+            g_decArgo_calibInfo.RAMSES_ACC.Back2Dark = mean(back2(ramsesAccDarkPixelBegin:ramsesAccDarkPixelEnd));
+            g_decArgo_calibInfo.RAMSES_ACC.CalAq = calAq;
+
+            g_decArgo_calibInfo.RAMSES_ACC.RamsesAccVerticalOffset = get_config_value_from_json('CONFIG_PX_1_11_0_0_0', g_decArgo_jsonMetaData);
+            g_decArgo_calibInfo.RAMSES_ACC.RamsesAccDarkPixelBegin = ramsesAccDarkPixelBegin;
+            g_decArgo_calibInfo.RAMSES_ACC.RamsesAccDarkPixelEnd = ramsesAccDarkPixelEnd;
+
+         else
+            fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ACC sensor\n', g_decArgo_floatNum);
+         end
+      end
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % create the RAMSES_ARC calibration arrays
+      if (ismember(21, g_decArgo_sensorList))
+         if (isfield(g_decArgo_calibInfo, 'RAMSES_ARC'))
+
+            calibData = g_decArgo_calibInfo.RAMSES_ARC;
+            wavelength = nan(255, 1);
+            back1 = nan(255, 1);
+            back2 = nan(255, 1);
+            calAq = nan(255, 1);
+            cisCoef = [];
+            cisCoef.c0s = str2double(calibData.c0s);
+            cisCoef.c1s = str2double(calibData.c1s);
+            cisCoef.c2s = str2double(calibData.c2s);
+            cisCoef.c3s = str2double(calibData.c3s);
+            cisCoef.c4s = str2double(calibData.c4s);
+
+            for id = 1:255
+               fieldName = ['WAVELENGTH_' num2str(id)];
+               if (isfield(calibData, fieldName))
+                  wavelength(id) = str2double(calibData.(fieldName));
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ARC sensor\n', g_decArgo_floatNum);
+                  return
+               end
+               fieldName = ['BACK1_' num2str(id)];
+               if (isfield(calibData, fieldName))
+                  back1(id) = str2double(calibData.(fieldName));
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ARC sensor\n', g_decArgo_floatNum);
+                  return
+               end
+               fieldName = ['BACK2_' num2str(id)];
+               if (isfield(calibData, fieldName))
+                  back2(id) = str2double(calibData.(fieldName));
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ARC sensor\n', g_decArgo_floatNum);
+                  return
+               end
+               fieldName = ['CAL_AQ_' num2str(id)];
+               if (isfield(calibData, fieldName))
+                  calAq(id) = str2double(calibData.(fieldName));
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ARC sensor\n', g_decArgo_floatNum);
+                  return
+               end
+            end
+
+            g_decArgo_calibInfo.RAMSES_ARC.CisCoef = cisCoef;
+            g_decArgo_calibInfo.RAMSES_ARC.Wavelength = wavelength;
+            g_decArgo_calibInfo.RAMSES_ARC.Back1 = back1;
+            g_decArgo_calibInfo.RAMSES_ARC.Back2 = back2;
+            ramsesArcDarkPixelBegin = get_config_value_from_json('CONFIG_PX_1_12_0_0_1', g_decArgo_jsonMetaData);
+            ramsesArcDarkPixelEnd = get_config_value_from_json('CONFIG_PX_1_12_0_0_2', g_decArgo_jsonMetaData);
+            g_decArgo_calibInfo.RAMSES_ARC.Back1Dark = mean(back1(ramsesArcDarkPixelBegin:ramsesArcDarkPixelEnd));
+            g_decArgo_calibInfo.RAMSES_ARC.Back2Dark = mean(back2(ramsesArcDarkPixelBegin:ramsesArcDarkPixelEnd));
+            g_decArgo_calibInfo.RAMSES_ARC.CalAq = calAq;
+
+            g_decArgo_calibInfo.RAMSES_ARC.RamsesArcVerticalOffset = get_config_value_from_json('CONFIG_PX_1_12_0_0_0', g_decArgo_jsonMetaData);
+            g_decArgo_calibInfo.RAMSES_ARC.RamsesArcDarkPixelBegin = ramsesArcDarkPixelBegin;
+            g_decArgo_calibInfo.RAMSES_ARC.RamsesArcDarkPixelEnd = ramsesArcDarkPixelEnd;
+
+         else
+            fprintf('ERROR: Float #%d: inconsistent CALIBRATION_COEFFICIENT information for RAMSES_ACC sensor\n', g_decArgo_floatNum);
          end
       end
    end

@@ -3,7 +3,7 @@
    {
       "TECH_PARAM_DEC_ID" : "100",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "NumÈro de pattern.",
+      "TECH_PARAM_MSG_LABEL" : "Num√©ro de pattern.",
       "TECH_PARAM_NAME" : "NUMBER_SubCycle_NUMBER",
       "TECH_PARAM_DESCRIPTION" : "NUMBER_SubCycle_NUMBER"
    },
@@ -11,7 +11,7 @@
    {
       "TECH_PARAM_DEC_ID" : "101",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "NumÈro de cycle (flotteur).",
+      "TECH_PARAM_MSG_LABEL" : "Num√©ro de cycle (flotteur).",
       "TECH_PARAM_NAME" : "NUMBER_InternalCycle_NUMBER",
       "TECH_PARAM_DESCRIPTION" : "NUMBER_InternalCycle_NUMBER"
    },
@@ -35,7 +35,7 @@
    {
       "TECH_PARAM_DEC_ID" : "104",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Tension batterie ‡ vide",
+      "TECH_PARAM_MSG_LABEL" : "Tension batterie √† vide",
       "TECH_PARAM_NAME" : "VOLTAGE_BatterySurfaceNoLoad_volts",
       "TECH_PARAM_DESCRIPTION" : "battery voltage during inactive surface phase"
    },
@@ -83,7 +83,7 @@
    {
       "TECH_PARAM_DEC_ID" : "106",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Volume huile transfÈrÈ",
+      "TECH_PARAM_MSG_LABEL" : "Volume huile transf√©r√©",
       "TECH_PARAM_NAME" : "VOLUME_OilVolumeTransferredAtSurfaceDuringDescent_cm^3",
       "TECH_PARAM_DESCRIPTION" : "Oil volume transferred from the external bladder during the descent to park (between the surface and the second threshold of the buoyancy reduction phase). This is the oil volume tranferred  during the NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT valve actions."
    },
@@ -91,7 +91,7 @@
    {
       "TECH_PARAM_DEC_ID" : "107",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. actions Èlectrovanne",
+      "TECH_PARAM_MSG_LABEL" : "Nb. actions √©lectrovanne",
       "TECH_PARAM_NAME" : "NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of solenoid valve actions at the surface until the crossing of the GAP threshold"
    },
@@ -99,7 +99,7 @@
    {
       "TECH_PARAM_DEC_ID" : "108",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Volume huile transfÈrÈ",
+      "TECH_PARAM_MSG_LABEL" : "Volume huile transf√©r√©",
       "TECH_PARAM_NAME" : "VOLUME_OilVolumeTransferredDuringDescentToPark_cm^3",
       "TECH_PARAM_DESCRIPTION" : "Oil volume transferred from the external bladder during the descent to park (between the second threshold of the buoyancy reduction phase and the end of the descent to park). This is the oil volume tranferred  during the NUMBER_ValveActionsDuringDescentToPark_COUNT valve actions."
    },
@@ -107,7 +107,7 @@
    {
       "TECH_PARAM_DEC_ID" : "109",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. actions Èlectrovanne",
+      "TECH_PARAM_MSG_LABEL" : "Nb. actions √©lectrovanne",
       "TECH_PARAM_NAME" : "NUMBER_ValveActionsDuringDescentToPark_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of valve actions between the crossing  of the gap threshold and the end of descent at park pressure"
    },
@@ -123,15 +123,15 @@
    {
       "TECH_PARAM_DEC_ID" : "111",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Volume huile transfÈrÈ",
+      "TECH_PARAM_MSG_LABEL" : "Volume huile transf√©r√©",
       "TECH_PARAM_NAME" : "VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3",
-      "TECH_PARAM_DESCRIPTION" : "Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded."
+      "TECH_PARAM_DESCRIPTION" : "Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded. "
    },
    "TECH_PARAM_17" :
    {
       "TECH_PARAM_DEC_ID" : "112",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. actions Èlectrovanne",
+      "TECH_PARAM_MSG_LABEL" : "Nb. actions √©lectrovanne",
       "TECH_PARAM_NAME" : "NUMBER_ValveActionsDuringPark_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of valve actions during park phase"
    },
@@ -147,7 +147,7 @@
    {
       "TECH_PARAM_DEC_ID" : "114",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. rentrÈes consigne",
+      "TECH_PARAM_MSG_LABEL" : "Nb. rentr√©es consigne",
       "TECH_PARAM_NAME" : "NUMBER_ParkDriftEntriesInParkMargin_COUNT",
       "TECH_PARAM_DESCRIPTION" : "drift at park pressure: number of entries in margin around park pressure target - specifically, how many times the float enters the band of pressure surrounding the target park pressure (generally +/- 30db)"
    },
@@ -179,7 +179,7 @@
    {
       "TECH_PARAM_DEC_ID" : "116",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Volume huile transfÈrÈ",
+      "TECH_PARAM_MSG_LABEL" : "Volume huile transf√©r√©",
       "TECH_PARAM_NAME" : "VOLUME_OilVolumeTransferredDuringDescentToProfile_cm^3",
       "TECH_PARAM_DESCRIPTION" : "Oil volume transferred from the external bladder during the descent to start profile pressure. This is the oil volume tranferred  during the NUMBER_ValveActionsDuringDescentToProfile_COUNT valve actions."
    },
@@ -187,7 +187,7 @@
    {
       "TECH_PARAM_DEC_ID" : "117",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. actions Èlectrovanne",
+      "TECH_PARAM_MSG_LABEL" : "Nb. actions √©lectrovanne",
       "TECH_PARAM_NAME" : "NUMBER_ValveActionsDuringDescentToProfile_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of valve actions during descent to start profile pressure"
    },
@@ -195,7 +195,7 @@
    {
       "TECH_PARAM_DEC_ID" : "186",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. actions Èlectrovanne",
+      "TECH_PARAM_MSG_LABEL" : "Nb. actions √©lectrovanne",
       "TECH_PARAM_NAME" : "NUMBER_ValveActionsDuringProfileDrift_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of valve actions while drifting at profile depth"
    },
@@ -211,7 +211,7 @@
    {
       "TECH_PARAM_DEC_ID" : "188",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. rentrÈes consigne",
+      "TECH_PARAM_MSG_LABEL" : "Nb. rentr√©es consigne",
       "TECH_PARAM_NAME" : "NUMBER_DescentToProfileEntriesInProfileMargin_COUNT",
       "TECH_PARAM_DESCRIPTION" : "descent to profile pressure: number of entries in margin around profile pressure target  - specifically, how many times the float enters the band of pressure surrounding the target profile pressure (generally +/- 30db)"
    },
@@ -227,7 +227,7 @@
    {
       "TECH_PARAM_DEC_ID" : "118",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Volume huile transfÈrÈ",
+      "TECH_PARAM_MSG_LABEL" : "Volume huile transf√©r√©",
       "TECH_PARAM_NAME" : "VOLUME_OilVolumeTransferredDuringAscentToSurface_cm^3",
       "TECH_PARAM_DESCRIPTION" : "Oil volume transferred to the external bladder during the ascent to surface This is the oil volume tranferred  during the NUMBER_PumpActionsDuringAscentToSurface_COUNT pump actions."
    },
@@ -243,7 +243,7 @@
    {
       "TECH_PARAM_DEC_ID" : "120",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. actions pour dÈcollage",
+      "TECH_PARAM_MSG_LABEL" : "Nb. actions pour d√©collage",
       "TECH_PARAM_NAME" : "NUMBER_PumpActionsToStartAscent_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of pump actions needed to start the ascent."
    },
@@ -251,7 +251,7 @@
    {
       "TECH_PARAM_DEC_ID" : "121",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Date/heure de dÈbut",
+      "TECH_PARAM_MSG_LABEL" : "Date/heure de d√©but",
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_SlowAscentStart_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Slow ascent start time (the upper part of the ascent can be performed with a lower vertical speed)."
    },
@@ -259,7 +259,7 @@
    {
       "TECH_PARAM_DEC_ID" : "122",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Volume huile transfÈrÈ",
+      "TECH_PARAM_MSG_LABEL" : "Volume huile transf√©r√©",
       "TECH_PARAM_NAME" : "TECH_AUX_VOLUME_OilVolumeTransferredDuringSlowAscentToSurface_cm^3",
       "TECH_PARAM_DESCRIPTION" : "Oil volume transferred to the external bladder during the slow ascent to surface. This is the oil volume tranferred  during the NUMBER_PumpActionsDuringSlowAscentToSurface_COUNT pump actions."
    },
@@ -275,7 +275,7 @@
    {
       "TECH_PARAM_DEC_ID" : "124",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Date/heure de dÈbut",
+      "TECH_PARAM_MSG_LABEL" : "Date/heure de d√©but",
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_ResumedAscentStart_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Resumed ascent start time (the float can stop the ascent to perform a ice cover detection and resume the profile if no ice is detected)."
    },
@@ -283,7 +283,7 @@
    {
       "TECH_PARAM_DEC_ID" : "125",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Volume huile transfÈrÈ",
+      "TECH_PARAM_MSG_LABEL" : "Volume huile transf√©r√©",
       "TECH_PARAM_NAME" : "TECH_AUX_VOLUME_OilVolumeTransferredDuringResumedAscentToSurface_cm^3",
       "TECH_PARAM_DESCRIPTION" : "Oil volume transferred to the external bladder during the resumed ascent to surface. This is the oil volume tranferred  during the NUMBER_PumpActionsDuringResumedAscentToSurface_COUNT pump actions."
    },
@@ -299,7 +299,7 @@
    {
       "TECH_PARAM_DEC_ID" : "190",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Date/heure de dÈbut",
+      "TECH_PARAM_MSG_LABEL" : "Date/heure de d√©but",
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_Hanging_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Hanging start time (time when the float is hanged during ascent)."
    },
@@ -323,7 +323,7 @@
    {
       "TECH_PARAM_DEC_ID" : "127",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. actions Èlectrovanne",
+      "TECH_PARAM_MSG_LABEL" : "Nb. actions √©lectrovanne",
       "TECH_PARAM_NAME" : "NUMBER_ValveActionsDuringPark_COUNT",
       "TECH_PARAM_DESCRIPTION" : "number of valve actions during park phase"
    },
@@ -339,7 +339,7 @@
    {
       "TECH_PARAM_DEC_ID" : "129",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. rentrÈes consigne",
+      "TECH_PARAM_MSG_LABEL" : "Nb. rentr√©es consigne",
       "TECH_PARAM_NAME" : "NUMBER_ParkDriftEntriesInParkMargin_COUNT",
       "TECH_PARAM_DESCRIPTION" : "drift at park pressure: number of entries in margin around park pressure target - specifically, how many times the float enters the band of pressure surrounding the target park pressure (generally +/- 30db)"
    },
@@ -363,7 +363,7 @@
    {
       "TECH_PARAM_DEC_ID" : "193",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Date/heure de dÈbut",
+      "TECH_PARAM_MSG_LABEL" : "Date/heure de d√©but",
       "TECH_PARAM_NAME" : "CLOCK_DateOfEmergencyAscent_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "date of emergency ascent"
    },
@@ -371,7 +371,7 @@
    {
       "TECH_PARAM_DEC_ID" : "132",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Taille totale donnÈes",
+      "TECH_PARAM_MSG_LABEL" : "Taille totale donn√©es",
       "TECH_PARAM_NAME" : "TECH_AUX_SIZE_FileSizeSentPreviousSession_kbyte",
       "TECH_PARAM_DESCRIPTION" : "Total size of the files sent during the previous Iridium RUDICS session."
    },
@@ -387,7 +387,7 @@
    {
       "TECH_PARAM_DEC_ID" : "134",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "DÈbit moyen",
+      "TECH_PARAM_MSG_LABEL" : "D√©bit moyen",
       "TECH_PARAM_NAME" : "TECH_AUX_RATE_FlowRateFileSentPreviousSession_kbyte/minute",
       "TECH_PARAM_DESCRIPTION" : "Mean output flow rate to send files of the previous Iridium RUDICS session."
    },
@@ -403,7 +403,7 @@
    {
       "TECH_PARAM_DEC_ID" : "136",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. acceptÈes",
+      "TECH_PARAM_MSG_LABEL" : "Nb. accept√©es",
       "TECH_PARAM_NAME" : "NUMBER_RemoteControlCommandOK_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of remote control commands successfully considered."
    },
@@ -411,7 +411,7 @@
    {
       "TECH_PARAM_DEC_ID" : "137",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. refusÈes",
+      "TECH_PARAM_MSG_LABEL" : "Nb. refus√©es",
       "TECH_PARAM_NAME" : "NUMBER_RemoteControlCommandKO_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of remote control commands rejected by the float."
    },
@@ -427,7 +427,7 @@
    {
       "TECH_PARAM_DEC_ID" : "139",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "RÈception configuration Payload",
+      "TECH_PARAM_MSG_LABEL" : "R√©ception configuration Payload",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_SensorBoardConfigurationReceived_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "A new configuration for the sensor board has been received."
    },
@@ -435,7 +435,7 @@
    {
       "TECH_PARAM_DEC_ID" : "140",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "RÈception script",
+      "TECH_PARAM_MSG_LABEL" : "R√©ception script",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_ConfigurationScriptReceived_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "A new configuration script file has been received."
    },
@@ -443,7 +443,7 @@
    {
       "TECH_PARAM_DEC_ID" : "194",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Nombre de fichiers associÈs au motif (**)",
+      "TECH_PARAM_MSG_LABEL" : "Nombre de fichiers associ√©s au motif (**)",
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_FileSent_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of files sent during the current Iridium RUDICS session."
    },
@@ -459,7 +459,7 @@
    {
       "TECH_PARAM_DEC_ID" : "196",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. dÈrive parking",
+      "TECH_PARAM_MSG_LABEL" : "Nb. d√©rive parking",
       "TECH_PARAM_NAME" : "NUMBER_CTDParkSamples_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of samples acquired by <short_sensor_name> during the drift at parking depth."
    },
@@ -475,7 +475,7 @@
    {
       "TECH_PARAM_DEC_ID" : "198",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. dÈrive mesure",
+      "TECH_PARAM_MSG_LABEL" : "Nb. d√©rive mesure",
       "TECH_PARAM_NAME" : "NUMBER_CTDProfileDriftSamples_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of samples acquired by <short_sensor_name> during the drift at profile depth."
    },
@@ -483,7 +483,7 @@
    {
       "TECH_PARAM_DEC_ID" : "199",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Nb. remontÈe",
+      "TECH_PARAM_MSG_LABEL" : "Nb. remont√©e",
       "TECH_PARAM_NAME" : "NUMBER_AscendingCTDSamplesInternalCounter_COUNT",
       "TECH_PARAM_DESCRIPTION" : "total number of slices of the ascending profile after reduction"
    },
@@ -499,7 +499,7 @@
    {
       "TECH_PARAM_DEC_ID" : "141",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "DurÈe du motif",
+      "TECH_PARAM_MSG_LABEL" : "Dur√©e du motif",
       "TECH_PARAM_NAME" : "TECH_AUX_TIME_CycleDuration_minutes",
       "TECH_PARAM_DESCRIPTION" : "Duration of the cycle."
    },
@@ -539,7 +539,7 @@
    {
       "TECH_PARAM_DEC_ID" : "146",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Cumul activation modem (du motif/cycle prÈcÈdent)",
+      "TECH_PARAM_MSG_LABEL" : "Cumul activation modem (du motif/cycle pr√©c√©dent)",
       "TECH_PARAM_NAME" : "TIME_PreviousIridiumSession_minutes",
       "TECH_PARAM_DESCRIPTION" : "duration of the previous iridium session"
    },
@@ -579,7 +579,7 @@
    {
       "TECH_PARAM_DEC_ID" : "151",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Flotteur trop lÈger",
+      "TECH_PARAM_MSG_LABEL" : "Flotteur trop l√©ger",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_LightFloatAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float doesn't sink even with valve actions."
    },
@@ -595,7 +595,7 @@
    {
       "TECH_PARAM_DEC_ID" : "153",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Report des ÈlÈments en dÈfaut.",
+      "TECH_PARAM_MSG_LABEL" : "Report des √©l√©ments en d√©faut.",
       "TECH_PARAM_NAME" : "TECH_AUX_DIAGNOSTIC_BitMaskInitialCheckFailed_NUMBER",
       "TECH_PARAM_DESCRIPTION" : "The failed flag bits (1 if failed, 0 otherwise) set during the initial check are provided in reverse order for: FRAM, FLASH, RTC, Vbatt, Pi, Pe, SBE41-Cutoff, SBE41-Offset, GPS, Payload, Sensor, Transmitter (see float manual for details)."
    },
@@ -603,7 +603,7 @@
    {
       "TECH_PARAM_DEC_ID" : "154",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Tension batterie ‡ vide faible",
+      "TECH_PARAM_MSG_LABEL" : "Tension batterie √† vide faible",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_LowBatteryNoLoadAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when a low level of the battery is detected (the check is done without any load on the battery)."
    },
@@ -659,7 +659,7 @@
    {
       "TECH_PARAM_DEC_ID" : "160",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "PrÈsence díeau",
+      "TECH_PARAM_MSG_LABEL" : "Pr√©sence d‚Äôeau",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_WaterInsideAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm when water is detected inside one of the sensors."
    },
@@ -667,7 +667,7 @@
    {
       "TECH_PARAM_DEC_ID" : "161",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Accrochage ‡ la remontÈe",
+      "TECH_PARAM_MSG_LABEL" : "Accrochage √† la remont√©e",
       "TECH_PARAM_NAME" : "TECH_AUX_PRES_HangingAlarm_dbar",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float is hanged during ascent."
    },
@@ -675,7 +675,7 @@
    {
       "TECH_PARAM_DEC_ID" : "162",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Freinage ‡ la descente",
+      "TECH_PARAM_MSG_LABEL" : "Freinage √† la descente",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_BrakingDuringDescentAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the descent speed is too high and the float brakes."
    },
@@ -683,7 +683,7 @@
    {
       "TECH_PARAM_DEC_ID" : "163",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "DÈfaut systËme",
+      "TECH_PARAM_MSG_LABEL" : "D√©faut syst√®me",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_SystemFailureAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the system fails."
    },
@@ -691,7 +691,7 @@
    {
       "TECH_PARAM_DEC_ID" : "164",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "DÈfaut carte Payload",
+      "TECH_PARAM_MSG_LABEL" : "D√©faut carte Payload",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_PayloadFailureAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the payload card fails."
    },
@@ -699,7 +699,7 @@
    {
       "TECH_PARAM_DEC_ID" : "165",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "DÈfaut GPS",
+      "TECH_PARAM_MSG_LABEL" : "D√©faut GPS",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_GPSFailureAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the GPS fails."
    },
@@ -707,7 +707,7 @@
    {
       "TECH_PARAM_DEC_ID" : "166",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "DÈfaut hydraulique",
+      "TECH_PARAM_MSG_LABEL" : "D√©faut hydraulique",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_HydraulicFailureAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the hydraulic engine fails."
    },
@@ -715,7 +715,7 @@
    {
       "TECH_PARAM_DEC_ID" : "167",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "DÈfaut ADC",
+      "TECH_PARAM_MSG_LABEL" : "D√©faut ADC",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_ADCFailureAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the Analog to Digital Converter fails."
    },
@@ -723,7 +723,7 @@
    {
       "TECH_PARAM_DEC_ID" : "168",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "DÈfaut de fichier",
+      "TECH_PARAM_MSG_LABEL" : "D√©faut de fichier",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_FileFailureAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when a file cannot be transmitted."
    },
@@ -731,7 +731,7 @@
    {
       "TECH_PARAM_DEC_ID" : "169",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "DÈfaut RTC",
+      "TECH_PARAM_MSG_LABEL" : "D√©faut RTC",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_RTCFailureAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the Real Time Clock fails."
    },
@@ -739,7 +739,7 @@
    {
       "TECH_PARAM_DEC_ID" : "170",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "DÈfaut pressostat",
+      "TECH_PARAM_MSG_LABEL" : "D√©faut pressostat",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_PressureSwitchFailureAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the pressure switch fails."
    },
@@ -755,7 +755,7 @@
    {
       "TECH_PARAM_DEC_ID" : "202",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Source xxx parmi ´ Pi high, Pe broken, Pe high, Vbatt low, Vbatt peak low, Water inside, Flotation (heavy), Flotation (light) ª",
+      "TECH_PARAM_MSG_LABEL" : "Source xxx parmi ¬´ Pi high, Pe broken, Pe high, Vbatt low, Vbatt peak low, Water inside, Flotation (heavy), Flotation (light) ¬ª",
       "TECH_PARAM_NAME" : "TECH_AUX_STRING_EndOfLifeCause",
       "TECH_PARAM_DESCRIPTION" : "Name of the alarm responsible for the End Of Life."
    },
@@ -763,7 +763,7 @@
    {
       "TECH_PARAM_DEC_ID" : "172",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "ProcÈdure de survie",
+      "TECH_PARAM_MSG_LABEL" : "Proc√©dure de survie",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_EmergencyAscentAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised the float ascends in an emergency mode."
    },
@@ -771,7 +771,7 @@
    {
       "TECH_PARAM_DEC_ID" : "173",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "RÈtroactions : ",
+      "TECH_PARAM_MSG_LABEL" : "R√©troactions : ",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_FeedbackAlarm_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when a feedback occurs."
    },
@@ -779,7 +779,7 @@
    {
       "TECH_PARAM_DEC_ID" : "203",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Type xxx parmi ´ Early profile, Early surface, Abort profile, Abort cycle 0, Abort cycle 1, Go to deep, Standard speed, Lower speedî",
+      "TECH_PARAM_MSG_LABEL" : "Type xxx parmi ¬´ Early profile, Early surface, Abort profile, Abort cycle 0, Abort cycle 1, Go to deep, Standard speed, Lower speed‚Äù",
       "TECH_PARAM_NAME" : "TECH_AUX_STRING_FeedbackType",
       "TECH_PARAM_DESCRIPTION" : "Type of the feedback."
    },
@@ -787,7 +787,7 @@
    {
       "TECH_PARAM_DEC_ID" : "204",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Nb. acceptÈes",
+      "TECH_PARAM_MSG_LABEL" : "Nb. accept√©es",
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_FeedbackAccepted_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of accepted feedbacks."
    },
@@ -795,7 +795,7 @@
    {
       "TECH_PARAM_DEC_ID" : "205",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Nb. refusÈes",
+      "TECH_PARAM_MSG_LABEL" : "Nb. refus√©es",
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_FeedbackRefused_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of refused feedbacks."
    },
@@ -803,7 +803,7 @@
    {
       "TECH_PARAM_DEC_ID" : "174",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Accrochage ‡ la remontÈe",
+      "TECH_PARAM_MSG_LABEL" : "Accrochage √† la remont√©e",
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_HangingAlarm_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float is hanged during ascent."
    },
@@ -811,7 +811,7 @@
    {
       "TECH_PARAM_DEC_ID" : "175",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Accrochage ‡ la remontÈe",
+      "TECH_PARAM_MSG_LABEL" : "Accrochage √† la remont√©e",
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_HangingEscapeAlarm_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float escaped from hanging during ascent."
    },
@@ -819,7 +819,7 @@
    {
       "TECH_PARAM_DEC_ID" : "176",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "RemontÈe d'urgence",
+      "TECH_PARAM_MSG_LABEL" : "Remont√©e d'urgence",
       "TECH_PARAM_NAME" : "CLOCK_DateOfEmergencyAscent_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "date of emergency ascent"
    },
@@ -827,7 +827,7 @@
    {
       "TECH_PARAM_DEC_ID" : "177",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Pression mesurÈe en surface",
+      "TECH_PARAM_MSG_LABEL" : "Pression mesur√©e en surface",
       "TECH_PARAM_NAME" : "PRES_Now_dbar",
       "TECH_PARAM_DESCRIPTION" : "test message data reporting pressure at the surface during drift - cycle 0"
    },
@@ -878,5 +878,101 @@
       "TECH_PARAM_MSG_LABEL" : "End of life",
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_EndOfLifeAlarm_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float switches to the End Of Life mode. When reported as a NUMBER, it provides the reason of the End Of Life (see float manual for details)."
+   },
+   "TECH_PARAM_111" :
+   {
+      "TECH_PARAM_DEC_ID" : "211",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceAlgorithmActivated_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Was the Ice Algorithm (ISA or AC1) activated or not for this particular cycle? 0 = no, 1 = yes"
+   },
+   "TECH_PARAM_112" :
+   {
+      "TECH_PARAM_DEC_ID" : "212",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceIsaAlgorithmActivated_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Was the Ice ISA Algorithm  activated or not for this particular cycle? 0 = no, 1 = yes"
+   },
+   "TECH_PARAM_113" :
+   {
+      "TECH_PARAM_DEC_ID" : "213",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceAc1Activated_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Was the Ice AC1  activated or not for this particular cycle? 0 = no, 1 = yes"
+   },
+   "TECH_PARAM_114" :
+   {
+      "TECH_PARAM_DEC_ID" : "214",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceIsaDetectionAlarm_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when Ice has been detected with ISA algorithm."
+   },
+   "TECH_PARAM_115" :
+   {
+      "TECH_PARAM_DEC_ID" : "215",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "ICE_D_DATE in payload data",
+      "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_IceIsaDetectionAlarm_YYYYMMDDHHMMSS",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when Ice has been detected with ISA algorithm."
+   },
+   "TECH_PARAM_116" :
+   {
+      "TECH_PARAM_DEC_ID" : "216",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceNoSurfacePeriod_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float is still not surfacing (even without Ice detection) due to Ice advoidance algorithm."
+   },
+   "TECH_PARAM_117" :
+   {
+      "TECH_PARAM_DEC_ID" : "217",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceFeedbackCmdAccepted_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Was the float configured to accept profile abortion command for this particular cycle? 0 = no, 1 = yes"
+   },
+   "TECH_PARAM_118" :
+   {
+      "TECH_PARAM_DEC_ID" : "218",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceProfileAbortAlarm_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when the profile has been aborted by Ice detection."
+   },
+   "TECH_PARAM_119" :
+   {
+      "TECH_PARAM_DEC_ID" : "221",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_IceProfileAbortAlarm_YYYYMMDDHHMMSS",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when the profile has been aborted by Ice detection."
+   },
+   "TECH_PARAM_120" :
+   {
+      "TECH_PARAM_DEC_ID" : "222",
+      "TECH_PARAM_MSG_ID" : "TECH",
+      "TECH_PARAM_MSG_LABEL" : "Abort pressure",
+      "TECH_PARAM_NAME" : "PRES_IceAvoidance_dbar",
+      "TECH_PARAM_DESCRIPTION" : "Pressure when float avoids ice"
+   },
+   "TECH_PARAM_121" :
+   {
+      "TECH_PARAM_DEC_ID" : "219",
+      "TECH_PARAM_MSG_ID" : "TECH",
+      "TECH_PARAM_MSG_LABEL" : "Last 8 profiles aborted flags",
+      "TECH_PARAM_NAME" : "FLAG_IceDetected_bit",
+      "TECH_PARAM_DESCRIPTION" : "aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit."
+   },
+   "TECH_PARAM_122" :
+   {
+      "TECH_PARAM_DEC_ID" : "220",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "Digest of ICE information",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceAlgorithmStatus_bit",
+      "TECH_PARAM_DESCRIPTION" : "ICE information digest: 11 bits information with, from LSB to MSB: bit#1: Transmission flag (the float succeeded to reach the GPS or Iridium satellites), #2: ICE algorithm activated flag (the ICE algorithm is enabled and switched on), #3: ICE surface avoidance flag (the ICE algorithm is able to act on float behavior), #4: Aborted profile flag (the ICE algorithm aborted the ascending profile), #5: ISA flag (the result of ISA check), #6: Breakup period flag (the ascending profile occured during the breakup period), #7: Hanging flag (the ICE algorithm detected a float hanging), #8: Satellite mask flag (the ICE algorithm detected that the float tried but failed to reach the GPS or Iridium satellites constellations), #9: Forced ascent flag (the ascending profile was forced to try to reach the surface), #10: AC1 activated flag (the AC1 (PROVOR_IV float) feature is activated), #11: ICE cycle performed flag (the (Apex APF11) float used at least one ICE cycle after the ascending profile)."
    }
 }

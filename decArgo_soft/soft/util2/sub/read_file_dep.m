@@ -13,12 +13,12 @@
 %   a_depFileName : nom du fichier DEP
 %
 % OUTPUT PARAMETERS :
-%   données de chaque colonne
+%   donnÃ©es de chaque colonne
 %
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/03/2012 - RNU - creation
@@ -62,7 +62,7 @@ if (fId == -1)
    return
 end
 
-% lecture et stockage des données du fichier DEP
+% lecture et stockage des donnÃ©es du fichier DEP
 dataDep = textscan(fId, '%u %d %u %f %u %s %s %u %f %f %u %c %c %f %u %f %u %f %u %u %u %s %d');
 
 o_depNumWmo = dataDep{1}(:);

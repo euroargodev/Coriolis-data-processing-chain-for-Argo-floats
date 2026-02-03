@@ -5,14 +5,15 @@
 %  [o_miscInfo, o_configInfo, ...
 %    o_surfData, ...
 %    o_gpsData, o_gpsInfo, ...
-%    o_pMarkData, o_timeData, ...
+%    o_pMarkData, o_timeData, o_iceDetection, ...
 %    o_sbe63ParseIssueData, ...
-%    o_presOffsetData] = ...
-%    decode_log_apx_ir(a_logFileList, a_presOffsetData, a_decoderId)
+%    o_presOffsetData, o_techData] = ...
+%    decode_log_apx_ir(a_logFileList, a_presOffsetData, a_techData, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_logFileList    : list of log file names
 %   a_presOffsetData : input pressure offset information
+%   a_techData       : input TECH data
 %   a_decoderId      : float decoder Id
 %
 % OUTPUT PARAMETERS :
@@ -24,13 +25,15 @@
 %   o_pMarkData           : P marks
 %   o_parkData            : park data
 %   o_timeData            : cycle timings
+%   o_iceDetection        : ice detection data
 %   o_sbe63ParseIssueData : SBE 63 data lost because of parse issue (for Navis)
 %   o_presOffsetData      : updated pressure offset information
+%   o_techData            : updated TECH data
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -38,10 +41,10 @@
 function [o_miscInfo, o_configInfo, ...
    o_surfData, ...
    o_gpsData, o_gpsInfo, ...
-   o_pMarkData, o_timeData, ...
+   o_pMarkData, o_timeData, o_iceDetection, ...
    o_sbe63ParseIssueData, ...
-   o_presOffsetData] = ...
-   decode_log_apx_ir(a_logFileList, a_presOffsetData, a_decoderId)
+   o_presOffsetData, o_techData] = ...
+   decode_log_apx_ir(a_logFileList, a_presOffsetData, a_techData, a_decoderId)
 
 % output parameters initialization
 o_miscInfo = [];
@@ -50,9 +53,11 @@ o_surfData = [];
 o_gpsData = [];
 o_gpsInfo = [];
 o_pMarkData = [];
-o_sbe63ParseIssueData = [];
 o_timeData = [];
+o_iceDetection = [];
+o_sbe63ParseIssueData = [];
 o_presOffsetData = a_presOffsetData;
+o_techData = a_techData;
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -98,7 +103,7 @@ for idFile = 1:length(a_logFileList)
       end
    end
    
-   if (any(strcmp({events.cmd}, 'GetSurfaceObs()')))
+   if (any(strcmp({events.cmd}, 'GetSurfaceObs()')) || any(strcmp({events.cmd}, 'TelemetryInit()')))
       idEvts = find(strcmp({events.cmd}, 'GetSurfaceObs()') | strcmp({events.cmd}, 'TelemetryInit()'));
       o_surfData = process_apx_ir_surf_data_evts(events(idEvts), a_decoderId); % i.e. only the one of the last log file is used
    end
@@ -126,7 +131,12 @@ for idFile = 1:length(a_logFileList)
       idEvts = find(strcmp({events.cmd}, 'Descent()'));
       o_pMarkData = parse_apx_ir_pmark_data_evts(events(idEvts)); % i.e. only the one of the last log file is used
    end
-   
+
+   if (any(strcmp({events.cmd}, 'IceDetect()')) || any(strcmp({events.cmd}, 'IceEvade()')))
+      idEvts = find(strcmp({events.cmd}, 'IceDetect()') | strcmp({events.cmd}, 'IceEvade()'));
+      [o_iceDetection, o_techData, o_miscInfo] = parse_apx_ir_ice_data_evts(events(idEvts), o_techData, o_miscInfo);
+   end
+
    o_timeData = process_apx_ir_time_data_evts(events, a_decoderId); % i.e. only the one of the last log file is used
    % retrieve and store surface pressure measurement in the dedicated
    % structure
@@ -135,8 +145,7 @@ for idFile = 1:length(a_logFileList)
          o_presOffsetData.cycleNum(end+1) = g_decArgo_cycleNum;
          o_presOffsetData.cyclePresOffset(end+1) = o_timeData.ascentEndSurfPres;
       end
-   end
-       
+   end   
    % for navis floats, retrieve SBE63 data lost because of parsing issue
    if (a_decoderId == 1201)
       if (any(strcmp({events.cmd}, 'Sbe63Sample()')))

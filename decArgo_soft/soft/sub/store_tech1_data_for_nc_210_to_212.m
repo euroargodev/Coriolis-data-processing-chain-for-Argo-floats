@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/04/2016 - RNU - creation
@@ -48,32 +48,32 @@ tabTech1 = a_tabTech1(idF1(end), :);
 
 ID_OFFSET = 1;
 
+g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+   g_decArgo_cycleNum 100];
+g_decArgo_outputNcParamValue{end+1} = sprintf('%04d%02d%02d', ...
+   tabTech1(7+ID_OFFSET)+2000, tabTech1(6+ID_OFFSET), tabTech1(5+ID_OFFSET));
+
+g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+   g_decArgo_cycleNum 101];
+g_decArgo_outputNcParamValue{end+1} = tabTech1(8+ID_OFFSET);
+
+g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+   g_decArgo_cycleNum 102];
+g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(tabTech1(9+ID_OFFSET)/60);
+
+g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+   g_decArgo_cycleNum 103];
+g_decArgo_outputNcParamValue{end+1} = tabTech1(10+ID_OFFSET);
+
+g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+   g_decArgo_cycleNum 104];
+g_decArgo_outputNcParamValue{end+1} = tabTech1(11+ID_OFFSET);
+
+g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+   g_decArgo_cycleNum 105];
+g_decArgo_outputNcParamValue{end+1} = tabTech1(12+ID_OFFSET);
+
 if (a_deepCycle == 1)
-   
-   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 100];
-   g_decArgo_outputNcParamValue{end+1} = sprintf('%04d%02d%02d', ...
-      tabTech1(7+ID_OFFSET)+2000, tabTech1(6+ID_OFFSET), tabTech1(5+ID_OFFSET));
-   
-   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 101];
-   g_decArgo_outputNcParamValue{end+1} = tabTech1(8+ID_OFFSET);
-   
-   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 102];
-   g_decArgo_outputNcParamValue{end+1} = format_time_hhmm_dec_argo(tabTech1(9+ID_OFFSET)/60);
-
-   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 103];
-   g_decArgo_outputNcParamValue{end+1} = tabTech1(10+ID_OFFSET);
-
-   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 104];
-   g_decArgo_outputNcParamValue{end+1} = tabTech1(11+ID_OFFSET);
-
-   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-      g_decArgo_cycleNum 105];
-   g_decArgo_outputNcParamValue{end+1} = tabTech1(12+ID_OFFSET);
 
    g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
       g_decArgo_cycleNum 106];

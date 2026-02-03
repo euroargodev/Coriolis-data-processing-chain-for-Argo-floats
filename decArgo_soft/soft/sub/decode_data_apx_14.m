@@ -34,7 +34,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/04/2016 - RNU - creation
@@ -634,7 +634,7 @@ for idL = 1:size(a_sensorData, 1)
       dataStruct.rawFormat = '%d';
       dataStruct.value = sensor_2_value_for_apex_apf9_temperature(decData(5), g_decArgo_tempDef);
       dataStruct.format = '%.3f';
-      dataStruct.unit = '캜';
+      dataStruct.unit = '째C';
       o_miscInfo{end+1} = dataStruct;
       
       dataStruct = get_apx_traj_data_init_struct(msgRed);
@@ -666,7 +666,7 @@ for idL = 1:size(a_sensorData, 1)
       dataStruct.rawFormat = '%d';
       dataStruct.value = sensor_2_value_for_apex_apf9_temperature(decData(7), g_decArgo_tempDef);
       dataStruct.format = '%.3f';
-      dataStruct.unit = '캜';
+      dataStruct.unit = '째C';
       o_miscInfo{end+1} = dataStruct;
       
       dataStruct = get_apx_traj_data_init_struct(msgRed);
@@ -714,7 +714,7 @@ for idL = 1:size(a_sensorData, 1)
       dataStruct.rawFormat = '%d';
       dataStruct.value = sensor_2_value_for_apex_apf9_temperature(decData(9), g_decArgo_tempDef);
       dataStruct.format = '%.3f';
-      dataStruct.unit = '캜';
+      dataStruct.unit = '째C';
       o_miscInfo{end+1} = dataStruct;
       
       dataStruct = get_apx_traj_data_init_struct(msgRed);
@@ -764,7 +764,7 @@ for idL = 1:size(a_sensorData, 1)
       dataStruct.rawFormat = '%d';
       dataStruct.value = sensor_2_value_for_apex_apf9_temperature(decData(11), g_decArgo_tempDef);
       dataStruct.format = '%.3f';
-      dataStruct.unit = '캜';
+      dataStruct.unit = '째C';
       o_miscInfo{end+1} = dataStruct;
       
       dataStruct = get_apx_traj_data_init_struct(msgRed);
@@ -924,7 +924,7 @@ for idL = 1:size(a_sensorData, 1)
       surfChlaFluo = surfChla;
 
       % compute TURBIDITY
-      surfTurbidity = compute_TURBIDITY_302_303_1014( ...
+      surfTurbidity = compute_TURBIDITY_cts5_usea_and_302_303_1014( ...
          surfSideScatteringTurbidity, ...
          g_decArgo_sideScatteringTurbidityDef, g_decArgo_turbiDef);
       
@@ -985,7 +985,7 @@ for idL = 1:size(a_sensorData, 1)
       parkChlaFluo = parkChla;
 
       % compute TURBIDITY
-      parkTurbidity = compute_TURBIDITY_302_303_1014( ...
+      parkTurbidity = compute_TURBIDITY_cts5_usea_and_302_303_1014( ...
          parkSideScatteringTurbidity, ...
          g_decArgo_sideScatteringTurbidityDef, g_decArgo_turbiDef);      
 
@@ -1316,7 +1316,7 @@ if (nbLev > 0)
    profChlaFluoRed = profFluorescenceChlaRed;
 
    % compute TURBIDITY
-   profTurbidity = compute_TURBIDITY_302_303_1014( ...
+   profTurbidity = compute_TURBIDITY_cts5_usea_and_302_303_1014( ...
       profSideScatteringTurbidity, ...
       g_decArgo_sideScatteringTurbidityDef, g_decArgo_turbiDef);
    

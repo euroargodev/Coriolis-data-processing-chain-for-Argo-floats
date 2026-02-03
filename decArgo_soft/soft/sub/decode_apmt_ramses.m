@@ -2,28 +2,33 @@
 % Decode RAMSES data transmitted by a CTS5-USEA float.
 %
 % SYNTAX :
-%  [o_ramsesData, o_ramses2Data] = decode_apmt_ramses(a_fileNameInfo)
+%  [o_ramsesData, o_ramses2Data, o_ramsesV2Data, o_ramses2V2Data] = decode_apmt_ramses(a_fileNameInfo)
 %
 % INPUT PARAMETERS :
 %   a_fileNameInfo : information on APMT RAMSES file to decode
 %
 % OUTPUT PARAMETERS :
-%   o_ramsesData  : RAMSES decoded data
-%   o_ramses2Data : RAMSES V2 decoded data
+%   o_ramsesData    : RAMSES decoded data
+%   o_ramses2Data   : RAMSES2 decoded data
+%   o_ramsesV2Data  : RAMSES V2 decoded data
+%   o_ramses2V2Data : RAMSES2 V2 decoded data
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/22/2022 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_ramsesData, o_ramses2Data] = decode_apmt_ramses(a_fileNameInfo)
+function [o_ramsesData, o_ramses2Data, o_ramsesV2Data, o_ramses2V2Data] = ...
+   decode_apmt_ramses(a_fileNameInfo)
 
 % output parameters initialization
 o_ramsesData = [];
 o_ramses2Data = [];
+o_ramsesV2Data = [];
+o_ramses2V2Data = [];
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -61,6 +66,10 @@ try
          o_ramsesData = decode_apmt_ramses_data(data, lastByteNum, inputFilePathName);
       case {32}
          o_ramses2Data = decode_apmt_ramses_data(data, lastByteNum, inputFilePathName);
+      case {40}
+         o_ramsesV2Data = decode_apmt_ramsesV2_data(data, lastByteNum, inputFilePathName);
+      case {41}
+         o_ramses2V2Data = decode_apmt_ramsesV2_data(data, lastByteNum, inputFilePathName);
       otherwise
          fprintf('ERROR: Unexpected file type byte (%d) in file: %s\n', data(1), inputFilePathName);
    end

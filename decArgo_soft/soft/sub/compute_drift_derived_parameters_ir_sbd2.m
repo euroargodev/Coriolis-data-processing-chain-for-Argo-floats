@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/01/2014 - RNU - creation
@@ -126,31 +126,29 @@ if (~isempty(driftInfo))
          end
          
          % compute CYCLOPS derived parameters
-         fprintf('INFO: Float #%d Cycle #%d Profile #%d: drift CHLA measurements not computed for CYCLOPS sensor\n', ...
-            g_decArgo_floatNum, ...
-            profFlntu.cycleNumber, ...
-            profFlntu.profileNumber);
-         if (0)
-            idSensor7 = find((driftInfo(:, 2) == 7) & (driftInfo(:, 3) == 0));
-            for idP = 1:length(idSensor7)
-               profCyc = a_tabDrift(driftInfo(idSensor7(idP), 1));
-               a_tabDrift(driftInfo(idSensor7(idP), 1)) = ...
-                  compute_drift_derived_parameters_for_CYCLOPS(profCyc);
-            end
+         idSensor7 = find((driftInfo(:, 2) == 7) & (driftInfo(:, 3) == 0));
+         for idP = 1:length(idSensor7)
+            profCyc = a_tabDrift(driftInfo(idSensor7(idP), 1));
+            fprintf('INFO: Float #%d Cycle #%d Profile #%d: drift CHLA measurements not computed for CYCLOPS sensor\n', ...
+               g_decArgo_floatNum, ...
+               profCyc.cycleNumber, ...
+               profCyc.profileNumber);
+
+            % a_tabDrift(driftInfo(idSensor7(idP), 1)) = ...
+            %    compute_drift_derived_parameters_for_CYCLOPS(profCyc);
          end
          
          % compute SEAPOINT derived parameters
-         fprintf('INFO: Float #%d Cycle #%d Profile #%d: drift TURBIDITY measurements not computed for SEAPOINT sensor\n', ...
-            g_decArgo_floatNum, ...
-            profFlntu.cycleNumber, ...
-            profFlntu.profileNumber);
-         if (0)
-            idSensor8 = find((driftInfo(:, 2) == 8) & (driftInfo(:, 3) == 0));
-            for idP = 1:length(idSensor8)
-               profStm = a_tabDrift(driftInfo(idSensor8(idP), 1));
-               a_tabDrift(driftInfo(idSensor8(idP), 1)) = ...
-                  compute_drift_derived_parameters_for_SEAPOINT(profStm);
-            end
+         idSensor8 = find((driftInfo(:, 2) == 8) & (driftInfo(:, 3) == 0));
+         for idP = 1:length(idSensor8)
+            profStm = a_tabDrift(driftInfo(idSensor8(idP), 1));
+            fprintf('INFO: Float #%d Cycle #%d Profile #%d: drift TURBIDITY measurements not computed for SEAPOINT sensor\n', ...
+               g_decArgo_floatNum, ...
+               profStm.cycleNumber, ...
+               profStm.profileNumber);
+
+            % a_tabDrift(driftInfo(idSensor8(idP), 1)) = ...
+            %    compute_drift_derived_parameters_for_SEAPOINT(profStm);
          end
    end
 end
@@ -177,7 +175,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/01/2014 - RNU - creation
@@ -209,7 +207,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      chla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
+      chla = compute_CHLA_301_1015_1101_1105_1110_1111_1112_1114_1115( ...
          a_driftFlbb.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -338,7 +336,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/18/2015 - RNU - creation
@@ -411,7 +409,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      turbi = compute_TURBIDITY_302_303_1014( ...
+      turbi = compute_TURBIDITY_cts5_usea_and_302_303_1014( ...
          a_driftFlntu.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -448,7 +446,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/25/2015 - RNU - creation
@@ -471,7 +469,7 @@ paramToDeriveList = [ ...
    {'FLUORESCENCE_VOLTAGE_CHLA'} ...
    ];
 derivedParamList = [ ...
-   {'CHLA2'} ...
+   {'CHLA_2'} ...
    ];
 for idP = 1:length(paramToDeriveList)
    idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
@@ -529,7 +527,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/25/2015 - RNU - creation
@@ -552,7 +550,7 @@ paramToDeriveList = [ ...
    {'VOLTAGE_TURBIDITY'} ...
    ];
 derivedParamList = [ ...
-   {'TURBIDITY2'} ...
+   {'TURBIDITY_2'} ...
    ];
 for idP = 1:length(paramToDeriveList)
    idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
@@ -615,7 +613,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/01/2014 - RNU - creation
@@ -641,7 +639,7 @@ ctdLinkData = assign_CTD_measurements(a_ctdDates, a_ctdData, a_BBP_dates);
 if (~isempty(ctdLinkData))   
       
    if (a_lambda == 700)
-      o_BBP = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
+      o_BBP = compute_BBP700_301_1015_1101_1105_1110_1111_1112_1114_1115( ...
          a_BETA_BACKSCATTERING, ...
          a_BETA_BACKSCATTERING_fillValue, ...
          a_BBP_fillValue, ...
@@ -679,7 +677,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/01/2014 - RNU - creation
@@ -889,7 +887,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/01/2014 - RNU - creation
@@ -984,7 +982,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/18/2015 - RNU - creation

@@ -1,0 +1,43 @@
+% ------------------------------------------------------------------------------
+% Get the basic structure to store Provor PFV2 traj data.
+%
+% SYNTAX :
+% [o_dataStruct] = get_pfv2_traj_data_init_struct(a_fileType, a_missNum, a_cyNum)
+%
+% INPUT PARAMETERS :
+%   a_fileType : file type (1: self test, 2: tech #1, 3: tech #2, 4: EOL)
+%   a_missNum  : mission number
+%   a_cyNum    : cycle number
+%
+% OUTPUT PARAMETERS :
+%   o_dataStruct : data initialized structure
+%
+% EXAMPLES :
+%
+% SEE ALSO : 
+% AUTHORS  : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   06/13/2024 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_dataStruct] = get_pfv2_traj_data_init_struct(a_fileType, a_missNum, a_cyNum)
+
+% output parameters initialization
+o_dataStruct = struct( ...
+   'fileType', a_fileType, ... % 1: self test, 2: tech #1, 3: tech #2, 4: EOL
+   'missNum', a_missNum, ...
+   'cyNum', a_cyNum, ...
+   'label', '', ...
+   'techId', '', ... % not realy used, set only to link Excel file
+   'measCode', '',  ...
+   'julD', nan,  ...
+   'julDAdj', nan,  ...
+   'pres', '',  ...
+   'temp', '',  ...
+   'psal', '',  ...
+   'value', '',  ...
+   'lat', '',  ...
+   'lon', ''  ...
+   );
+
+return

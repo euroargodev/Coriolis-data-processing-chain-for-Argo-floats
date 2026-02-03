@@ -35,7 +35,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2018 - RNU - creation
@@ -448,8 +448,12 @@ if (~isempty(a_cycleTimeData))
          if (isempty(a_cycleTimeData.iceDescentStartPresSci(idT)))
             allTabPres = [allTabPres g_decArgo_presDef];
          end
-         allTabPresAdj = [allTabPresAdj a_cycleTimeData.iceDescentStartAdjPresSci(idT)];
-         if (isempty(a_cycleTimeData.iceDescentStartAdjPresSci(idT)))
+         if (~isempty(a_cycleTimeData.iceDescentStartAdjPresSci))
+            allTabPresAdj = [allTabPresAdj a_cycleTimeData.iceDescentStartAdjPresSci(idT)];
+            if (isempty(a_cycleTimeData.iceDescentStartAdjPresSci(idT)))
+               allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
+            end
+         else
             allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
          end
          allTabLabel = [allTabLabel {sprintf('ICE_DESCENT_START_DATE_%d (science_log)', idT)}];
@@ -480,8 +484,12 @@ if (~isempty(a_cycleTimeData))
          if (isempty(a_cycleTimeData.iceAscentStartPresSci(idT)))
             allTabPres = [allTabPres g_decArgo_presDef];
          end
-         allTabPresAdj = [allTabPresAdj a_cycleTimeData.iceAscentStartAdjPresSci(idT)];
-         if (isempty(a_cycleTimeData.iceAscentStartAdjPresSci(idT)))
+         if (~isempty(a_cycleTimeData.iceAscentStartAdjPresSci))
+            allTabPresAdj = [allTabPresAdj a_cycleTimeData.iceAscentStartAdjPresSci(idT)];
+            if (isempty(a_cycleTimeData.iceAscentStartAdjPresSci(idT)))
+               allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
+            end
+         else
             allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
          end
          allTabLabel = [allTabLabel {sprintf('ICE_ASCENT_START_DATE_%d (science_log)', idT)}];
@@ -512,8 +520,12 @@ if (~isempty(a_cycleTimeData))
          if (isempty(a_cycleTimeData.iceAscentEndPresSci(idT)))
             allTabPres = [allTabPres g_decArgo_presDef];
          end
-         allTabPresAdj = [allTabPresAdj a_cycleTimeData.iceAscentEndAdjPresSci(idT)];
-         if (isempty(a_cycleTimeData.iceAscentEndAdjPresSci(idT)))
+         if (~isempty(a_cycleTimeData.iceAscentEndAdjPresSci))
+            allTabPresAdj = [allTabPresAdj a_cycleTimeData.iceAscentEndAdjPresSci(idT)];
+            if (isempty(a_cycleTimeData.iceAscentEndAdjPresSci(idT)))
+               allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
+            end
+         else
             allTabPresAdj = [allTabPresAdj g_decArgo_presDef];
          end
          allTabLabel = [allTabLabel {sprintf('ICE_ASCENT_END_DATE_%d (science_log)', idT)}];
@@ -713,7 +725,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2018 - RNU - creation

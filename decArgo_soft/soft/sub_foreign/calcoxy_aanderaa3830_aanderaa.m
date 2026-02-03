@@ -10,7 +10,7 @@
 % INPUT PARAMETERS :
 %   a_dPhaseDoxy : DPHASE_DOXY sensor measurements
 %   a_pres       : pressure in dbar
-%   a_temp       : temperature from the CTD in °C
+%   a_temp       : temperature from the CTD in Â°C
 %   a_tabCoef    : calibration coefficients
 %                  size(tabDoxyCoef) = 5 4 and tabDoxyCoef(i,j) = Cij.
 %   a_pCoef1      : additional coefficient value

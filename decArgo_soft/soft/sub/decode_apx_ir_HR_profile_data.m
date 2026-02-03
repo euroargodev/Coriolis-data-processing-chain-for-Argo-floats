@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -46,12 +46,12 @@ switch (a_decoderId)
       [o_profHrData, o_profHrInfo] = ...
          decode_apx_ir_HR_profile_data_1(a_profHighResMeasDataStr);
       
-   case {1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1314}
+   case {1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1115, 1314}
       % 120210 & 012811 & 020212 & 030512 & 060612 & 062813_1 & 062813_2 &
-      % 062813_3 & 092813 & 073014 & 102815 & 110216 & 073014_2 & 090215
+      % 062813_3 & 092813 & 073014 & 102815 & 110216 & 073014_2 & 073014_3 & 090215
       
       [o_profHrData, o_profHrInfo] = ...
-         decode_apx_ir_HR_profile_data_2_to_14(a_profHighResMeasDataStr);
+         decode_apx_ir_HR_profile_data_2_to_15(a_profHighResMeasDataStr);
             
    case {1201} % 061113
       
@@ -85,7 +85,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -259,7 +259,7 @@ return
 %
 % SYNTAX :
 %  [o_profHrData, o_profHrInfo] = ...
-%    decode_apx_ir_HR_profile_data_2_to_14(a_profHighResMeasDataStr)
+%    decode_apx_ir_HR_profile_data_2_to_15(a_profHighResMeasDataStr)
 %
 % INPUT PARAMETERS :
 %   a_profHighResMeasDataStr : input ASCII HR profile data
@@ -271,13 +271,13 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_profHrData, o_profHrInfo] = ...
-   decode_apx_ir_HR_profile_data_2_to_14(a_profHighResMeasDataStr)
+   decode_apx_ir_HR_profile_data_2_to_15(a_profHighResMeasDataStr)
 
 % output parameters initialization
 o_profHrData = [];
@@ -442,7 +442,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation

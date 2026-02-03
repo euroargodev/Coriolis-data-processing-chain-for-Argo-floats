@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/17/2019 - RNU - creation
@@ -44,10 +44,12 @@ diary(logFileName);
 fprintf('Log file: %s\n', logFileName);
 
 % generate JSON meta-data files
+rtVersionFlag = 0;
 generate_json_float_meta_arvor_c_ir_sbd_(...
    FLOAT_META_FILE_NAME, ...
    FLOAT_LIST_FILE_NAME, ...
-   OUTPUT_DIR_NAME);
+   OUTPUT_DIR_NAME, ...
+   rtVersionFlag);
 
 diary off;
 

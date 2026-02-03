@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/08/2015 - RNU - creation
@@ -21,8 +21,9 @@ function nc_prof_adj_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_test\coriolis\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rt\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\ONE_ARGO_BGC\IN\multiS\coriolis\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\Desktop\NAVIS_US_BGC_DATA\GDAC\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TRAJ_DM_2024\snapshot-202401_nke_in_andro\';
 
 % default list of floats to convert
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
@@ -115,7 +116,7 @@ for idFloat = 1:nbFloats
             outputFileName = [ncFileName(1:end-3) '.csv'];
             outputFilePathName = [ncFileDir outputFileName];
             if (ncFileName(1) == 'S')
-               nc_prof_adj_2_csv_file_s(ncFilePathName, outputFilePathName, floatNum, COMPARISON_MODE);
+               % nc_prof_adj_2_csv_file_s(ncFilePathName, outputFilePathName, floatNum, COMPARISON_MODE);
             else
                cFileFlag = 1;
                if (ncFileName(1) == 'B')
@@ -179,7 +180,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/27/2014 - RNU - creation
@@ -209,883 +210,892 @@ if (isempty(fCdf))
    return
 end
 
-% create CSV file
-fidOut = fopen(a_outputPathFileName, 'wt');
-if (fidOut == -1)
-   fprintf('ERROR: Unable to create output file: %s\n', a_outputPathFileName);
-   return
-end
+try
 
-% dimensions
-nProf = -1;
-nParam = -1;
-nHistory = -1;
-nCalib = -1;
-dimList = [ ...
-   {'N_PROF'} ...
-   {'N_PARAM'} ...
-   {'N_LEVELS'} ...
-   {'N_HISTORY'} ...
-   {'N_CALIB'} ...
-   ];
-fprintf(fidOut, ' WMO; ----------; ----------; DIMENSION\n');
-for idDim = 1:length(dimList)
-   if (dim_is_present_dec_argo(fCdf, dimList{idDim}))
-      [dimName, dimLen] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, dimList{idDim}));
-      fprintf(fidOut, ' %d; ; ; %s; %d\n', a_floatNum, dimName, dimLen);
-      if (strcmp(dimName, 'N_PROF'))
-         nProf = dimLen;
-      end
-      if (strcmp(dimName, 'N_PARAM'))
-         nParam = dimLen;
-      end
-      if (strcmp(dimName, 'N_HISTORY'))
-         nHistory = dimLen;
-      end
-      if (strcmp(dimName, 'N_CALIB'))
-         nCalib = dimLen;
+   % create CSV file
+   fidOut = fopen(a_outputPathFileName, 'wt');
+   if (fidOut == -1)
+      fprintf('ERROR: Unable to create output file: %s\n', a_outputPathFileName);
+      return
+   end
+
+   % dimensions
+   nProf = -1;
+   nParam = -1;
+   nHistory = -1;
+   nCalib = -1;
+   dimList = [ ...
+      {'N_PROF'} ...
+      {'N_PARAM'} ...
+      {'N_LEVELS'} ...
+      {'N_HISTORY'} ...
+      {'N_CALIB'} ...
+      ];
+   fprintf(fidOut, ' WMO; ----------; ----------; DIMENSION\n');
+   for idDim = 1:length(dimList)
+      if (dim_is_present_dec_argo(fCdf, dimList{idDim}))
+         [dimName, dimLen] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, dimList{idDim}));
+         fprintf(fidOut, ' %d; ; ; %s; %d\n', a_floatNum, dimName, dimLen);
+         if (strcmp(dimName, 'N_PROF'))
+            nProf = dimLen;
+         end
+         if (strcmp(dimName, 'N_PARAM'))
+            nParam = dimLen;
+         end
+         if (strcmp(dimName, 'N_HISTORY'))
+            nHistory = dimLen;
+         end
+         if (strcmp(dimName, 'N_CALIB'))
+            nCalib = dimLen;
+         end
       end
    end
-end
-[dimName, dimLength] = dim_is_present2_dec_argo(fCdf, 'N_VALUES');
-for idDim = 1:length(dimName)
-   fprintf(fidOut, ' %d; ; ; %s; %d\n', a_floatNum, dimName{idDim}, dimLength(idDim));
-end
+   [dimName, dimLength] = dim_is_present2_dec_argo(fCdf, 'N_VALUES');
+   for idDim = 1:length(dimName)
+      fprintf(fidOut, ' %d; ; ; %s; %d\n', a_floatNum, dimName{idDim}, dimLength(idDim));
+   end
 
-% global attributes
-globAttList = [ ...
-   {'title'} ...
-   {'institution'} ...
-   {'source'} ...
-   {'history'} ...
-   {'references'} ...
-   {'user_manual_version'} ...
-   {'Conventions'} ...
-   {'featureType'} ...
-   {'id'} ...
-   ];
-if (a_comparisonFlag == 1)
+   % global attributes
    globAttList = [ ...
       {'title'} ...
       {'institution'} ...
       {'source'} ...
+      {'history'} ...
       {'references'} ...
       {'user_manual_version'} ...
       {'Conventions'} ...
       {'featureType'} ...
       {'id'} ...
       ];
-end
-fprintf(fidOut, ' WMO; ----------; ----------; GLOBAL_ATT\n');
-for idAtt = 1:length(globAttList)
-   if (global_att_is_present_dec_argo(fCdf, globAttList{idAtt}))
-      attValue = netcdf.getAtt(fCdf, netcdf.getConstant('NC_GLOBAL'), globAttList{idAtt});
-      fprintf(fidOut, ' %d; ; ; %s; %s\n', a_floatNum, globAttList{idAtt}, strtrim(attValue));
-   else
-      fprintf('WARNING: Global attribute %s is missing in file %s\n', ...
-         globAttList{idAtt}, inputFileName);
+   if (a_comparisonFlag == 1)
+      globAttList = [ ...
+         {'title'} ...
+         {'institution'} ...
+         {'source'} ...
+         {'references'} ...
+         {'user_manual_version'} ...
+         {'Conventions'} ...
+         {'featureType'} ...
+         {'id'} ...
+         ];
    end
-end
+   fprintf(fidOut, ' WMO; ----------; ----------; GLOBAL_ATT\n');
+   for idAtt = 1:length(globAttList)
+      if (global_att_is_present_dec_argo(fCdf, globAttList{idAtt}))
+         attValue = netcdf.getAtt(fCdf, netcdf.getConstant('NC_GLOBAL'), globAttList{idAtt});
+         fprintf(fidOut, ' %d; ; ; %s; %s\n', a_floatNum, globAttList{idAtt}, strtrim(attValue));
+      else
+         fprintf('WARNING: Global attribute %s is missing in file %s\n', ...
+            globAttList{idAtt}, inputFileName);
+      end
+   end
 
-% file meta-data
-varList = [ ...
-   {'DATA_TYPE'} ...
-   {'FORMAT_VERSION'} ...
-   {'HANDBOOK_VERSION'} ...
-   {'REFERENCE_DATE_TIME'} ...
-   {'DATE_CREATION'} ...
-   {'DATE_UPDATE'} ...
-   ];
-if (a_comparisonFlag == 1)
+   % file meta-data
    varList = [ ...
       {'DATA_TYPE'} ...
       {'FORMAT_VERSION'} ...
       {'HANDBOOK_VERSION'} ...
       {'REFERENCE_DATE_TIME'} ...
+      {'DATE_CREATION'} ...
+      {'DATE_UPDATE'} ...
       ];
-end
-fprintf(fidOut, ' WMO; ----------; ----------; META-DATA\n');
-for idVar = 1:length(varList)
-   if (var_is_present_dec_argo(fCdf, varList{idVar}))
-      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varList{idVar}));
-      fprintf(fidOut, ' %d; ; ; %s; %s\n', a_floatNum, varList{idVar}, strtrim(varValue));
-   else
-      if (a_cfileFlag ~= -1)
-         fprintf('WARNING: Variable %s is missing in file %s\n', ...
-            varList{idVar}, inputFileName);
+   if (a_comparisonFlag == 1)
+      varList = [ ...
+         {'DATA_TYPE'} ...
+         {'FORMAT_VERSION'} ...
+         {'HANDBOOK_VERSION'} ...
+         {'REFERENCE_DATE_TIME'} ...
+         ];
+   end
+   fprintf(fidOut, ' WMO; ----------; ----------; META-DATA\n');
+   for idVar = 1:length(varList)
+      if (var_is_present_dec_argo(fCdf, varList{idVar}))
+         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varList{idVar}));
+         fprintf(fidOut, ' %d; ; ; %s; %s\n', a_floatNum, varList{idVar}, strtrim(varValue));
+      else
+         if (a_cfileFlag ~= -1)
+            fprintf('WARNING: Variable %s is missing in file %s\n', ...
+               varList{idVar}, inputFileName);
+         end
       end
    end
-end
 
-% profile meta-data
-varList = [ ...
-   {'PLATFORM_NUMBER'} ...
-   {'PROJECT_NAME'} ...
-   {'PI_NAME'} ...
-   {'DATA_CENTRE'} ...
-   {'DC_REFERENCE'} ...
-   {'PLATFORM_TYPE'} ...
-   {'FLOAT_SERIAL_NO'} ...
-   {'FIRMWARE_VERSION'} ...
-   {'WMO_INST_TYPE'} ...
-   ];
-for idVar = 1:length(varList)
-   if (var_is_present_dec_argo(fCdf, varList{idVar}))
-      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varList{idVar}));
-      fprintf(fidOut, ' %d; ; ; %s', a_floatNum, varList{idVar});
-      for idP = 1:nProf
-         fprintf(fidOut, '; %s', strtrim(varValue(:, idP)'));
+   % profile meta-data
+   varList = [ ...
+      {'PLATFORM_NUMBER'} ...
+      {'PROJECT_NAME'} ...
+      {'PI_NAME'} ...
+      {'DATA_CENTRE'} ...
+      {'DC_REFERENCE'} ...
+      {'PLATFORM_TYPE'} ...
+      {'FLOAT_SERIAL_NO'} ...
+      {'FIRMWARE_VERSION'} ...
+      {'WMO_INST_TYPE'} ...
+      ];
+   for idVar = 1:length(varList)
+      if (var_is_present_dec_argo(fCdf, varList{idVar}))
+         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varList{idVar}));
+         fprintf(fidOut, ' %d; ; ; %s', a_floatNum, varList{idVar});
+         for idP = 1:nProf
+            fprintf(fidOut, '; %s', strtrim(varValue(:, idP)'));
+         end
+         fprintf(fidOut, '\n');
+         %    else
+         %       fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         %          varList{idVar}, inputFileName);
       end
-      fprintf(fidOut, '\n');
-      %    else
-      %       fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      %          varList{idVar}, inputFileName);
    end
-end
 
-varName = 'CYCLE_NUMBER';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   cycleNumber = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'DIRECTION';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   direction = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'DATA_MODE';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   dataMode = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-if (a_cfileFlag == 0)
-   varName = 'PARAMETER_DATA_MODE';
+   varName = 'CYCLE_NUMBER';
    if (var_is_present_dec_argo(fCdf, varName))
       varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-      parameterDataMode = varValue;
+      cycleNumber = varValue;
    else
       fprintf('WARNING: Variable %s is missing in file %s\n', ...
          varName, inputFileName);
    end
-end
 
-varName = 'DATA_STATE_INDICATOR';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   dataStateIndicator = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'JULD';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   julD = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'JULD_QC';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   julDQc = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'JULD_LOCATION';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   julDLocation = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'LATITUDE';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   latitude = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'LONGITUDE';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   longitude = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'POSITION_QC';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   positionQc = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'POSITIONING_SYSTEM';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   positioningSystem = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'STATION_PARAMETERS';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   stationParameters = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'VERTICAL_SAMPLING_SCHEME';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   verticalSamplingScheme = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'CONFIG_MISSION_NUMBER';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   configMissionNumber = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-   configMissionNumber = nan(size(latitude));
-end
-
-paramList = [];
-for id3 = 1:size(stationParameters, 3)
-   for id2 = 1:size(stationParameters, 2)
-      paramName = strtrim(stationParameters(:, id2, id3)');
-      if (~isempty(paramName))
-         paramList = [paramList {paramName}];
-         paramInfo = get_netcdf_param_attributes(paramName);
-         if (paramInfo.adjAllowed == 1)
-            if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
-               paramList = [paramList {[paramName '_ADJUSTED']}];
-            end
-         end
-      end
-   end
-end
-paramList = unique(paramList);
-
-paramData = [];
-paramDataQc = [];
-paramFormat = [];
-paramFillValue = [];
-profileParamQc = [];
-for idParam = 1:length(paramList)
-   if (var_is_present_dec_argo(fCdf, paramList{idParam}))
-
-      if ((strncmp(paramList{idParam}, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
-            (strncmp(paramList{idParam}, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), 'double');
-      else
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}));
-      end
-      paramData = [paramData {varValue}];
-      varFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), 'C_format');
-      if ((strncmp(paramList{idParam}, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
-            (strncmp(paramList{idParam}, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
-         varFormat = '%u';
-      else
-         varFormat = '%g';
-      end
-      paramFormat = [paramFormat {varFormat}];
-      varFillValue = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), '_FillValue');
-      paramFillValue = [paramFillValue {varFillValue}];
-
-      if ((a_cfileFlag == 0) && ...
-            (strcmp(paramList{idParam}, 'PRES') || ...
-            strcmp(paramList{idParam}, 'PRES2')))
-         paramDataQc = [paramDataQc {''}];
-      else
-         varQcValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, [paramList{idParam} '_QC']));
-         paramDataQc = [paramDataQc {varQcValue}];
-      end
+   varName = 'DIRECTION';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      direction = varValue;
    else
-      if ~(strcmp(paramList{idParam}, 'PRES_ADJUSTED') && (a_cfileFlag == 0))
-         fprintf('WARNING: Variable %s is missing in file %s\n', ...
-            paramList{idParam}, inputFileName);
-      end
-      paramData = [paramData ''];
-      paramFormat = [paramFormat ''];
-      paramFillValue = [paramFillValue ''];
-      paramDataQc = [paramDataQc ''];
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
    end
-   profileParamVarName = ['PROFILE_' paramList{idParam} '_QC'];
-   if (var_is_present_dec_argo(fCdf, profileParamVarName))
-      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, profileParamVarName));
-      profileParamQc = [profileParamQc {varValue}];
+
+   varName = 'DATA_MODE';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      dataMode = varValue;
    else
-      if ~(((a_cfileFlag == 0) && ...
-            (strcmp(paramList{idParam}, 'PRES') || ...
-            strcmp(paramList{idParam}, 'PRES2'))) || ...
-            (~isempty(strfind(paramList{idParam}, '_ADJUSTED'))))
-         fprintf('WARNING: Variable %s is missing in file %s\n', ...
-            profileParamVarName, inputFileName);
-      end
-      profileParamQc = [profileParamQc {''}];
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
    end
-end
-
-% profile data
-for idP = 1:nProf
-   fprintf(fidOut, ' WMO; Cy#; N_PROF; PROFILE_META-DATA\n');
-
-   fprintf(fidOut, ' %d; %d; %d; VERTICAL_SAMPLING_SCHEME;"%s"\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      strtrim(verticalSamplingScheme(:, idP)'));
-   fprintf(fidOut, ' %d; %d; %d; CONFIG_MISSION_NUMBER; %d\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      configMissionNumber(idP));
-   fprintf(fidOut, ' %d; %d; %d; CYCLE_NUMBER; %d\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      cycleNumber(idP));
-   fprintf(fidOut, ' %d; %d; %d; DIRECTION; %c\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      direction(idP));
-   fprintf(fidOut, ' %d; %d; %d; DATA_MODE; %c\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      dataMode(idP));
    if (a_cfileFlag == 0)
-      fprintf(fidOut, ' %d; %d; %d; PARAMETER_DATA_MODE; %s\n', ...
+      varName = 'PARAMETER_DATA_MODE';
+      if (var_is_present_dec_argo(fCdf, varName))
+         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+         parameterDataMode = varValue;
+      else
+         fprintf('WARNING: Variable %s is missing in file %s\n', ...
+            varName, inputFileName);
+      end
+   end
+
+   varName = 'DATA_STATE_INDICATOR';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      dataStateIndicator = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'JULD';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      julD = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'JULD_QC';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      julDQc = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'JULD_LOCATION';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      julDLocation = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'LATITUDE';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      latitude = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'LONGITUDE';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      longitude = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'POSITION_QC';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      positionQc = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'POSITIONING_SYSTEM';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      positioningSystem = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'STATION_PARAMETERS';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      stationParameters = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'VERTICAL_SAMPLING_SCHEME';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      verticalSamplingScheme = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'CONFIG_MISSION_NUMBER';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      configMissionNumber = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+      configMissionNumber = nan(size(latitude));
+   end
+
+   paramList = [];
+   for id3 = 1:size(stationParameters, 3)
+      for id2 = 1:size(stationParameters, 2)
+         paramName = strtrim(stationParameters(:, id2, id3)');
+         if (~isempty(paramName))
+            paramList = [paramList {paramName}];
+            paramInfo = get_netcdf_param_attributes(paramName);
+            if (paramInfo.adjAllowed == 1)
+               if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2') || strcmp(paramName, 'PRES_2')) && (a_cfileFlag == 0))
+                  paramList = [paramList {[paramName '_ADJUSTED']}];
+               end
+            end
+         end
+      end
+   end
+   paramList = unique(paramList);
+
+   paramData = [];
+   paramDataQc = [];
+   paramFormat = [];
+   paramFillValue = [];
+   profileParamQc = [];
+   for idParam = 1:length(paramList)
+      if (var_is_present_dec_argo(fCdf, paramList{idParam}))
+
+         if ((strncmp(paramList{idParam}, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
+               (strncmp(paramList{idParam}, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
+            varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), 'double');
+         else
+            varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}));
+         end
+         paramData = [paramData {varValue}];
+         varFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), 'C_format');
+         if ((strncmp(paramList{idParam}, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
+               (strncmp(paramList{idParam}, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
+            varFormat = '%u';
+         else
+            varFormat = '%g';
+         end
+         paramFormat = [paramFormat {varFormat}];
+         varFillValue = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), '_FillValue');
+         paramFillValue = [paramFillValue {varFillValue}];
+
+         if ((a_cfileFlag == 0) && ...
+               (strcmp(paramList{idParam}, 'PRES') || ...
+               strcmp(paramList{idParam}, 'PRES2') || ...
+               strcmp(paramList{idParam}, 'PRES_2')))
+            paramDataQc = [paramDataQc {''}];
+         else
+            varQcValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, [paramList{idParam} '_QC']));
+            paramDataQc = [paramDataQc {varQcValue}];
+         end
+      else
+         if ~(strcmp(paramList{idParam}, 'PRES_ADJUSTED') && (a_cfileFlag == 0))
+            fprintf('WARNING: Variable %s is missing in file %s\n', ...
+               paramList{idParam}, inputFileName);
+         end
+         paramData = [paramData ''];
+         paramFormat = [paramFormat ''];
+         paramFillValue = [paramFillValue ''];
+         paramDataQc = [paramDataQc ''];
+      end
+      profileParamVarName = ['PROFILE_' paramList{idParam} '_QC'];
+      if (var_is_present_dec_argo(fCdf, profileParamVarName))
+         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, profileParamVarName));
+         profileParamQc = [profileParamQc {varValue}];
+      else
+         if ~(((a_cfileFlag == 0) && ...
+               (strcmp(paramList{idParam}, 'PRES') || ...
+               strcmp(paramList{idParam}, 'PRES2') || ...
+               strcmp(paramList{idParam}, 'PRES_2'))) || ...
+               (~isempty(strfind(paramList{idParam}, '_ADJUSTED'))))
+            fprintf('WARNING: Variable %s is missing in file %s\n', ...
+               profileParamVarName, inputFileName);
+         end
+         profileParamQc = [profileParamQc {''}];
+      end
+   end
+
+   % profile data
+   for idP = 1:nProf
+      fprintf(fidOut, ' WMO; Cy#; N_PROF; PROFILE_META-DATA\n');
+
+      fprintf(fidOut, ' %d; %d; %d; VERTICAL_SAMPLING_SCHEME;"%s"\n', ...
          a_floatNum, cycleNumber(idP), idP, ...
-         parameterDataMode(:, idP)');
-   end
-   fprintf(fidOut, ' %d; %d; %d; DATA_STATE_INDICATOR; %s\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      strtrim(dataStateIndicator(:, idP)'));
-   fprintf(fidOut, ' %d; %d; %d; JULD; %s\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      julian_2_gregorian_dec_argo(julD(idP)));
-   fprintf(fidOut, ' %d; %d; %d; JULD_QC; %c\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      julDQc(idP));
-   fprintf(fidOut, ' %d; %d; %d; JULD_LOCATION; %s\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      julian_2_gregorian_dec_argo(julDLocation(idP)));
-   fprintf(fidOut, ' %d; %d; %d; LATITUDE; %.3f\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      latitude(idP));
-   fprintf(fidOut, ' %d; %d; %d; LONGITUDE; %.3f\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      longitude(idP));
-   fprintf(fidOut, ' %d; %d; %d; POSITION_QC; %c\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      positionQc(idP));
-   fprintf(fidOut, ' %d; %d; %d; POSITIONING_SYSTEM; %s\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      strtrim(positioningSystem(:, idP)'));
-
-   fprintf(fidOut, ' %d; %d; %d; STATION_PARAMETERS', ...
-      a_floatNum, cycleNumber(idP), idP);
-   for idParam = 1:nParam
-      parameterName = strtrim(stationParameters(:, idParam, idP)');
-      if (isempty(parameterName))
-         continue
+         strtrim(verticalSamplingScheme(:, idP)'));
+      fprintf(fidOut, ' %d; %d; %d; CONFIG_MISSION_NUMBER; %d\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         configMissionNumber(idP));
+      fprintf(fidOut, ' %d; %d; %d; CYCLE_NUMBER; %d\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         cycleNumber(idP));
+      fprintf(fidOut, ' %d; %d; %d; DIRECTION; %c\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         direction(idP));
+      fprintf(fidOut, ' %d; %d; %d; DATA_MODE; %c\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         dataMode(idP));
+      if (a_cfileFlag == 0)
+         fprintf(fidOut, ' %d; %d; %d; PARAMETER_DATA_MODE; %s\n', ...
+            a_floatNum, cycleNumber(idP), idP, ...
+            parameterDataMode(:, idP)');
       end
+      fprintf(fidOut, ' %d; %d; %d; DATA_STATE_INDICATOR; %s\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         strtrim(dataStateIndicator(:, idP)'));
+      fprintf(fidOut, ' %d; %d; %d; JULD; %s\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         julian_2_gregorian_dec_argo(julD(idP)));
+      fprintf(fidOut, ' %d; %d; %d; JULD_QC; %c\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         julDQc(idP));
+      fprintf(fidOut, ' %d; %d; %d; JULD_LOCATION; %s\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         julian_2_gregorian_dec_argo(julDLocation(idP)));
+      fprintf(fidOut, ' %d; %d; %d; LATITUDE; %.3f\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         latitude(idP));
+      fprintf(fidOut, ' %d; %d; %d; LONGITUDE; %.3f\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         longitude(idP));
+      fprintf(fidOut, ' %d; %d; %d; POSITION_QC; %c\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         positionQc(idP));
+      fprintf(fidOut, ' %d; %d; %d; POSITIONING_SYSTEM; %s\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         strtrim(positioningSystem(:, idP)'));
 
-      paramName = parameterName;
-
-      % PARAM
-      idF = find(strcmp(paramList, paramName) == 1, 1);
-      if (~isempty(idF))
-         dataTmp = paramData{idF};
-         if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
-            fprintf(fidOut, '; %s', ...
-               paramName);
-         else
-            for id1 = 1:size(dataTmp, 1)
-               fprintf(fidOut, '; %s', ...
-                  sprintf('%s_%d', paramName, id1));
-            end
+      fprintf(fidOut, ' %d; %d; %d; STATION_PARAMETERS', ...
+         a_floatNum, cycleNumber(idP), idP);
+      for idParam = 1:nParam
+         parameterName = strtrim(stationParameters(:, idParam, idP)');
+         if (isempty(parameterName))
+            continue
          end
-         if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
-            fprintf(fidOut, '; QC');
-         end
-      else
-         fprintf('ERROR: Variable %s is missing in file %s\n', ...
-            paramName, inputFileName);
-      end
 
-      % PARAM_ADJUSTED
-      paramInfo = get_netcdf_param_attributes(paramName);
-      if (~isempty(paramInfo))
-         if (paramInfo.adjAllowed == 1)
-            if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
-               paramName = [paramName '_ADJUSTED'];
-               idF = find(strcmp(paramList, paramName) == 1, 1);
-               if (~isempty(idF))
-                  dataTmp = paramData{idF};
-                  if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
-                     fprintf(fidOut, '; %s', ...
-                        paramName);
-                  else
-                     for id1 = 1:size(dataTmp, 1)
-                        fprintf(fidOut, '; %s', ...
-                           sprintf('%s_%d', paramName, id1));
-                     end
-                  end
-                  if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
-                     fprintf(fidOut, '; QC');
-                  end
-               else
-                  if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
-                     fprintf('ERROR: Variable %s is missing in file %s\n', ...
-                        paramName, inputFileName);
-                  end
-               end
-            end
-         end
-      end
+         paramName = parameterName;
 
-   end
-   fprintf(fidOut, '\n');
-
-   fprintf(fidOut, ' %d; %d; %d; PROFILE_<PARAM>_QC; ', ...
-      a_floatNum, cycleNumber(idP), idP);
-   for idParam = 1:nParam
-      parameterName = strtrim(stationParameters(:, idParam, idP)');
-      if (isempty(parameterName))
-         continue
-      end
-
-      paramName = parameterName;
-
-      % PARAM
-      idF = find(strcmp(paramList, paramName) == 1, 1);
-      if (~isempty(idF))
-         profileParamQcTmp = profileParamQc{idF};
-         if (~isempty(profileParamQcTmp))
-            fprintf(fidOut, '%c; ', ...
-               profileParamQcTmp(idP));
+         % PARAM
+         idF = find(strcmp(paramList, paramName) == 1, 1);
+         if (~isempty(idF))
             dataTmp = paramData{idF};
-            if (ismember(parameterName, g_decArgo_paramWithExtraDimList))
-               for id1 = 2:size(dataTmp, 1)
-                  fprintf(fidOut, '; ');
-               end
-            end
-            fprintf(fidOut, '; ');
-         else
-            fprintf(fidOut, '; ');
-         end
-      else
-         fprintf('ERROR: Variable %s is missing in file %s\n', ...
-            paramName, inputFileName);
-      end
-
-      % PARAM_ADJUSTED
-      paramInfo = get_netcdf_param_attributes(paramName);
-      if (~isempty(paramInfo))
-         if (paramInfo.adjAllowed == 1)
-            if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
-               fprintf(fidOut, '; ; ');
-            end
-         end
-      end
-
-   end
-   fprintf(fidOut, '\n');
-
-   data = [];
-   dataFillValue = [];
-   format = '';
-   for idParam = 1:nParam
-      parameterName = strtrim(stationParameters(:, idParam, idP)');
-
-      if (isempty(parameterName))
-         continue
-      end
-
-      paramName = parameterName;
-
-      % PARAM
-      idF = find(strcmp(paramList, paramName) == 1, 1);
-      if (~isempty(idF))
-         dataTmp = paramData{idF};
-         if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
-            data = [data double(dataTmp(:, idP))];
-            dataFillValue = [dataFillValue paramFillValue{idF}];
-            format = [format '; ' paramFormat{idF}];
-         else
-            if (ndims(dataTmp) == 2) % when N_PROF = 1
-               for id1 = 1:size(dataTmp, 1)
-                  data = [data double(dataTmp(id1, :)')];
-                  dataFillValue = [dataFillValue paramFillValue{idF}];
-                  format = [format '; ' paramFormat{idF}];
-               end
+            if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
+               fprintf(fidOut, '; %s', ...
+                  paramName);
             else
                for id1 = 1:size(dataTmp, 1)
-                  data = [data double(dataTmp(id1, :, idP)')];
-                  dataFillValue = [dataFillValue paramFillValue{idF}];
-                  format = [format '; ' paramFormat{idF}];
+                  fprintf(fidOut, '; %s', ...
+                     sprintf('%s_%d', paramName, id1));
                end
             end
+            if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2') || strcmp(paramName, 'PRES_2')) && (a_cfileFlag == 0))
+               fprintf(fidOut, '; QC');
+            end
+         else
+            fprintf('ERROR: Variable %s is missing in file %s\n', ...
+               paramName, inputFileName);
          end
-         dataQcTmp = paramDataQc{idF};
-         if (~isempty(dataQcTmp))
-            dataQcTmp = dataQcTmp(:, idP);
-            dataQcTmp(find(dataQcTmp == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
-            dataQcTmp = str2num(dataQcTmp);
-            dataQcTmp(find(dataQcTmp == str2num(g_decArgo_qcStrUnused2))) = -1;
-            data = [data double(dataQcTmp)];
-            dataFillValue = [dataFillValue -1];
-            format = [format '; ' '%d'];
-         end
-      else
-         fprintf('ERROR: Variable %s is missing in file %s\n', ...
-            paramName, inputFileName);
-      end
 
-      % PARAM_ADJUSTED
-      paramInfo = get_netcdf_param_attributes(paramName);
-      if (~isempty(paramInfo))
-         if (paramInfo.adjAllowed == 1)
-            if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
-               paramName = [paramName '_ADJUSTED'];
-               idF = find(strcmp(paramList, paramName) == 1, 1);
-               if (~isempty(idF))
-                  dataTmp = paramData{idF};
-                  if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
-                     data = [data double(dataTmp(:, idP))];
-                     dataFillValue = [dataFillValue paramFillValue{idF}];
-                     format = [format '; ' paramFormat{idF}];
-                  else
-                     if (ndims(dataTmp) == 2) % when N_PROF = 1
-                        for id1 = 1:size(dataTmp, 1)
-                           data = [data double(dataTmp(id1, :)')];
-                           dataFillValue = [dataFillValue paramFillValue{idF}];
-                           format = [format '; ' paramFormat{idF}];
-                        end
+         % PARAM_ADJUSTED
+         paramInfo = get_netcdf_param_attributes(paramName);
+         if (~isempty(paramInfo))
+            if (paramInfo.adjAllowed == 1)
+               if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2') || strcmp(paramName, 'PRES_2')) && (a_cfileFlag == 0))
+                  paramName = [paramName '_ADJUSTED'];
+                  idF = find(strcmp(paramList, paramName) == 1, 1);
+                  if (~isempty(idF))
+                     dataTmp = paramData{idF};
+                     if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
+                        fprintf(fidOut, '; %s', ...
+                           paramName);
                      else
                         for id1 = 1:size(dataTmp, 1)
-                           data = [data double(dataTmp(id1, :, idP)')];
-                           dataFillValue = [dataFillValue paramFillValue{idF}];
-                           format = [format '; ' paramFormat{idF}];
+                           fprintf(fidOut, '; %s', ...
+                              sprintf('%s_%d', paramName, id1));
                         end
                      end
-                  end
-                  dataQcTmp = paramDataQc{idF};
-                  if (~isempty(dataQcTmp))
-                     dataQcTmp = dataQcTmp(:, idP);
-                     dataQcTmp(find(dataQcTmp == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
-                     dataQcTmp = str2num(dataQcTmp);
-                     dataQcTmp(find(dataQcTmp == str2num(g_decArgo_qcStrUnused2))) = -1;
-                     data = [data double(dataQcTmp)];
-                     dataFillValue = [dataFillValue -1];
-                     format = [format '; ' '%d'];
-                  end
-               else
-                  if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2')) && (a_cfileFlag == 0))
-                     fprintf('ERROR: Variable %s is missing in file %s\n', ...
-                        paramName, inputFileName);
+                     if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2') || strcmp(paramName, 'PRES_2')) && (a_cfileFlag == 0))
+                        fprintf(fidOut, '; QC');
+                     end
+                  else
+                     if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2') || strcmp(paramName, 'PRES_2')) && (a_cfileFlag == 0))
+                        fprintf('ERROR: Variable %s is missing in file %s\n', ...
+                           paramName, inputFileName);
+                     end
                   end
                end
             end
+         end
+
+      end
+      fprintf(fidOut, '\n');
+
+      fprintf(fidOut, ' %d; %d; %d; PROFILE_<PARAM>_QC; ', ...
+         a_floatNum, cycleNumber(idP), idP);
+      for idParam = 1:nParam
+         parameterName = strtrim(stationParameters(:, idParam, idP)');
+         if (isempty(parameterName))
+            continue
+         end
+
+         paramName = parameterName;
+
+         % PARAM
+         idF = find(strcmp(paramList, paramName) == 1, 1);
+         if (~isempty(idF))
+            profileParamQcTmp = profileParamQc{idF};
+            if (~isempty(profileParamQcTmp))
+               fprintf(fidOut, '%c; ', ...
+                  profileParamQcTmp(idP));
+               dataTmp = paramData{idF};
+               if (ismember(parameterName, g_decArgo_paramWithExtraDimList))
+                  for id1 = 2:size(dataTmp, 1)
+                     fprintf(fidOut, '; ');
+                  end
+               end
+               fprintf(fidOut, '; ');
+            else
+               fprintf(fidOut, '; ');
+            end
+         else
+            fprintf('ERROR: Variable %s is missing in file %s\n', ...
+               paramName, inputFileName);
+         end
+
+         % PARAM_ADJUSTED
+         paramInfo = get_netcdf_param_attributes(paramName);
+         if (~isempty(paramInfo))
+            if (paramInfo.adjAllowed == 1)
+               if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2') || strcmp(paramName, 'PRES_2')) && (a_cfileFlag == 0))
+                  fprintf(fidOut, '; ; ');
+               end
+            end
+         end
+
+      end
+      fprintf(fidOut, '\n');
+
+      data = [];
+      dataFillValue = [];
+      format = '';
+      for idParam = 1:nParam
+         parameterName = strtrim(stationParameters(:, idParam, idP)');
+
+         if (isempty(parameterName))
+            continue
+         end
+
+         paramName = parameterName;
+
+         % PARAM
+         idF = find(strcmp(paramList, paramName) == 1, 1);
+         if (~isempty(idF))
+            dataTmp = paramData{idF};
+            if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
+               data = [data double(dataTmp(:, idP))];
+               dataFillValue = [dataFillValue paramFillValue{idF}];
+               format = [format '; ' paramFormat{idF}];
+            else
+               if (ndims(dataTmp) == 2) % when N_PROF = 1
+                  for id1 = 1:size(dataTmp, 1)
+                     data = [data double(dataTmp(id1, :)')];
+                     dataFillValue = [dataFillValue paramFillValue{idF}];
+                     format = [format '; ' paramFormat{idF}];
+                  end
+               else
+                  for id1 = 1:size(dataTmp, 1)
+                     data = [data double(dataTmp(id1, :, idP)')];
+                     dataFillValue = [dataFillValue paramFillValue{idF}];
+                     format = [format '; ' paramFormat{idF}];
+                  end
+               end
+            end
+            dataQcTmp = paramDataQc{idF};
+            if (~isempty(dataQcTmp))
+               dataQcTmp = dataQcTmp(:, idP);
+               dataQcTmp(find(dataQcTmp == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
+               dataQcTmp = str2num(dataQcTmp);
+               dataQcTmp(find(dataQcTmp == str2num(g_decArgo_qcStrUnused2))) = -1;
+               data = [data double(dataQcTmp)];
+               dataFillValue = [dataFillValue -1];
+               format = [format '; ' '%d'];
+            end
+         else
+            fprintf('ERROR: Variable %s is missing in file %s\n', ...
+               paramName, inputFileName);
+         end
+
+         % PARAM_ADJUSTED
+         paramInfo = get_netcdf_param_attributes(paramName);
+         if (~isempty(paramInfo))
+            if (paramInfo.adjAllowed == 1)
+               if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2') || strcmp(paramName, 'PRES_2')) && (a_cfileFlag == 0))
+                  paramName = [paramName '_ADJUSTED'];
+                  idF = find(strcmp(paramList, paramName) == 1, 1);
+                  if (~isempty(idF))
+                     dataTmp = paramData{idF};
+                     if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
+                        data = [data double(dataTmp(:, idP))];
+                        dataFillValue = [dataFillValue paramFillValue{idF}];
+                        format = [format '; ' paramFormat{idF}];
+                     else
+                        if (ndims(dataTmp) == 2) % when N_PROF = 1
+                           for id1 = 1:size(dataTmp, 1)
+                              data = [data double(dataTmp(id1, :)')];
+                              dataFillValue = [dataFillValue paramFillValue{idF}];
+                              format = [format '; ' paramFormat{idF}];
+                           end
+                        else
+                           for id1 = 1:size(dataTmp, 1)
+                              data = [data double(dataTmp(id1, :, idP)')];
+                              dataFillValue = [dataFillValue paramFillValue{idF}];
+                              format = [format '; ' paramFormat{idF}];
+                           end
+                        end
+                     end
+                     dataQcTmp = paramDataQc{idF};
+                     if (~isempty(dataQcTmp))
+                        dataQcTmp = dataQcTmp(:, idP);
+                        dataQcTmp(find(dataQcTmp == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
+                        dataQcTmp = str2num(dataQcTmp);
+                        dataQcTmp(find(dataQcTmp == str2num(g_decArgo_qcStrUnused2))) = -1;
+                        data = [data double(dataQcTmp)];
+                        dataFillValue = [dataFillValue -1];
+                        format = [format '; ' '%d'];
+                     end
+                  else
+                     if ~((strcmp(paramName, 'PRES') || strcmp(paramName, 'PRES2') || strcmp(paramName, 'PRES_2')) && (a_cfileFlag == 0))
+                        fprintf('ERROR: Variable %s is missing in file %s\n', ...
+                           paramName, inputFileName);
+                     end
+                  end
+               end
+            end
+         end
+
+      end
+
+      fprintf(fidOut, ' WMO; Cy#; N_PROF; PROFILE_MEAS\n');
+      for idLev = 1:size(data, 1)
+         if (sum(data(idLev, :) == dataFillValue) ~= size(data, 2))
+            fprintf(fidOut, ' %d; %d; %d; MEAS #%d', ...
+               a_floatNum, cycleNumber(idP), idP, idLev);
+            fprintf(fidOut, format, ...
+               data(idLev, :));
+            fprintf(fidOut, '\n');
          end
       end
 
    end
 
-   fprintf(fidOut, ' WMO; Cy#; N_PROF; PROFILE_MEAS\n');
-   for idLev = 1:size(data, 1)
-      if (sum(data(idLev, :) == dataFillValue) ~= size(data, 2))
-         fprintf(fidOut, ' %d; %d; %d; MEAS #%d', ...
-            a_floatNum, cycleNumber(idP), idP, idLev);
-         fprintf(fidOut, format, ...
-            data(idLev, :));
+   varName = 'PARAMETER';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      parameter = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'SCIENTIFIC_CALIB_EQUATION';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      scientificCalibEquation = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'SCIENTIFIC_CALIB_COEFFICIENT';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      scientificCalibCoefficient = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'SCIENTIFIC_CALIB_COMMENT';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      scientificCalibComment = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'SCIENTIFIC_CALIB_DATE';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      scientificCalibDate = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   % calibration information
+   fprintf(fidOut, ' WMO; N_PROF; N_CALIB; CALIB_DATA\n');
+   for idP = 1:nProf
+      for idC = 1:nCalib
+         fprintf(fidOut, ' %d; %d; %d; PARAMETER', ...
+            a_floatNum, idP, idC);
+         for idParam = 1:nParam
+            fprintf(fidOut, '; %s', ...
+               strtrim(parameter(:, idParam, idC, idP)'));
+         end
+         fprintf(fidOut, '\n');
+
+         fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_EQUATION', ...
+            a_floatNum, idP, idC);
+         if (a_comparisonFlag == 0)
+            for idParam = 1:nParam
+               fprintf(fidOut, '; %s', ...
+                  strtrim(scientificCalibEquation(:, idParam, idC, idP)'));
+            end
+         end
+         fprintf(fidOut, '\n');
+
+         fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_COEFFICIENT', ...
+            a_floatNum, idP, idC);
+         if (a_comparisonFlag == 0)
+            for idParam = 1:nParam
+               fprintf(fidOut, '; %s', ...
+                  strtrim(scientificCalibCoefficient(:, idParam, idC, idP)'));
+            end
+         end
+         fprintf(fidOut, '\n');
+
+         fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_COMMENT', ...
+            a_floatNum, idP, idC);
+         if (a_comparisonFlag == 0)
+            for idParam = 1:nParam
+               fprintf(fidOut, '; %s', ...
+                  strtrim(scientificCalibComment(:, idParam, idC, idP)'));
+            end
+         end
+         fprintf(fidOut, '\n');
+
+         fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_DATE', ...
+            a_floatNum, idP, idC);
+         if (a_comparisonFlag == 0)
+            for idParam = 1:nParam
+               fprintf(fidOut, '; %s', ...
+                  strtrim(scientificCalibDate(:, idParam, idC, idP)'));
+            end
+         end
          fprintf(fidOut, '\n');
       end
    end
 
-end
-
-varName = 'PARAMETER';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   parameter = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'SCIENTIFIC_CALIB_EQUATION';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   scientificCalibEquation = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'SCIENTIFIC_CALIB_COEFFICIENT';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   scientificCalibCoefficient = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'SCIENTIFIC_CALIB_COMMENT';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   scientificCalibComment = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'SCIENTIFIC_CALIB_DATE';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   scientificCalibDate = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-% calibration information
-fprintf(fidOut, ' WMO; N_PROF; N_CALIB; CALIB_DATA\n');
-for idP = 1:nProf
-   for idC = 1:nCalib
-      fprintf(fidOut, ' %d; %d; %d; PARAMETER', ...
-         a_floatNum, idP, idC);
-      for idParam = 1:nParam
-         fprintf(fidOut, '; %s', ...
-            strtrim(parameter(:, idParam, idC, idP)'));
-      end
-      fprintf(fidOut, '\n');
-
-      fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_EQUATION', ...
-         a_floatNum, idP, idC);
-      if (a_comparisonFlag == 0)
-         for idParam = 1:nParam
-            fprintf(fidOut, '; %s', ...
-               strtrim(scientificCalibEquation(:, idParam, idC, idP)'));
-         end
-      end
-      fprintf(fidOut, '\n');
-
-      fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_COEFFICIENT', ...
-         a_floatNum, idP, idC);
-      if (a_comparisonFlag == 0)
-         for idParam = 1:nParam
-            fprintf(fidOut, '; %s', ...
-               strtrim(scientificCalibCoefficient(:, idParam, idC, idP)'));
-         end
-      end
-      fprintf(fidOut, '\n');
-
-      fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_COMMENT', ...
-         a_floatNum, idP, idC);
-      if (a_comparisonFlag == 0)
-         for idParam = 1:nParam
-            fprintf(fidOut, '; %s', ...
-               strtrim(scientificCalibComment(:, idParam, idC, idP)'));
-         end
-      end
-      fprintf(fidOut, '\n');
-
-      fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_DATE', ...
-         a_floatNum, idP, idC);
-      if (a_comparisonFlag == 0)
-         for idParam = 1:nParam
-            fprintf(fidOut, '; %s', ...
-               strtrim(scientificCalibDate(:, idParam, idC, idP)'));
-         end
-      end
-      fprintf(fidOut, '\n');
+   varName = 'HISTORY_INSTITUTION';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      historyInstitution = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
    end
-end
 
-varName = 'HISTORY_INSTITUTION';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   historyInstitution = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'HISTORY_STEP';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   historyStep = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'HISTORY_SOFTWARE';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   historySoftware = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'HISTORY_SOFTWARE_RELEASE';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   historySoftwareRelease = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'HISTORY_REFERENCE';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   historyReference = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'HISTORY_DATE';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   historyDate = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'HISTORY_ACTION';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   historyAction = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'HISTORY_PARAMETER';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   historyParameter = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'HISTORY_START_PRES';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   historyStartPres = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'HISTORY_STOP_PRES';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   historyStopPres = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'HISTORY_PREVIOUS_VALUE';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   historyPreviousValue = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'HISTORY_QCTEST';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   historyQcTest = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-% history information
-fprintf(fidOut, ' WMO; N_HISTORY; N_PROF; HISTORY_DATA\n');
-for idH = 1:nHistory
-   for idP = 1:nProf
-      fprintf(fidOut, ' %d; %d; %d; HISTORY_INSTITUTION; %s\n', ...
-         a_floatNum, idH, idP, ...
-         strtrim(historyInstitution(:, idP, idH)'));
-      fprintf(fidOut, ' %d; %d; %d; HISTORY_STEP; %s\n', ...
-         a_floatNum, idH, idP, ...
-         strtrim(historyStep(:, idP, idH)'));
-      fprintf(fidOut, ' %d; %d; %d; HISTORY_SOFTWARE; %s\n', ...
-         a_floatNum, idH, idP, ...
-         strtrim(historySoftware(:, idP, idH)'));
-      if (a_comparisonFlag == 0)
-         fprintf(fidOut, ' %d; %d; %d; HISTORY_SOFTWARE_RELEASE; %s\n', ...
-            a_floatNum, idH, idP, ...
-            strtrim(historySoftwareRelease(:, idP, idH)'));
-      end
-      fprintf(fidOut, ' %d; %d; %d; HISTORY_REFERENCE; %s\n', ...
-         a_floatNum, idH, idP, ...
-         strtrim(historyReference(:, idP, idH)'));
-      if (a_comparisonFlag == 0)
-         fprintf(fidOut, ' %d; %d; %d; HISTORY_DATE; %s\n', ...
-            a_floatNum, idH, idP, ...
-            strtrim(historyDate(:, idP, idH)'));
-      end
-      fprintf(fidOut, ' %d; %d; %d; HISTORY_ACTION; %s\n', ...
-         a_floatNum, idH, idP, ...
-         strtrim(historyAction(:, idP, idH)'));
-      fprintf(fidOut, ' %d; %d; %d; HISTORY_PARAMETER; %s\n', ...
-         a_floatNum, idH, idP, ...
-         strtrim(historyParameter(:, idP, idH)'));
-      fprintf(fidOut, ' %d; %d; %d; HISTORY_START_PRES; %g\n', ...
-         a_floatNum, idH, idP, ...
-         historyStartPres(idP, idH));
-      fprintf(fidOut, ' %d; %d; %d; HISTORY_STOP_PRES; %g\n', ...
-         a_floatNum, idH, idP, ...
-         historyStopPres(idP, idH));
-      fprintf(fidOut, ' %d; %d; %d; HISTORY_PREVIOUS_VALUE; %g\n', ...
-         a_floatNum, idH, idP, ...
-         historyPreviousValue(idP, idH));
-      fprintf(fidOut, ' %d; %d; %d; HISTORY_QCTEST; %s\n', ...
-         a_floatNum, idH, idP, ...
-         strtrim(historyQcTest(:, idP, idH)'));
+   varName = 'HISTORY_STEP';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      historyStep = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
    end
+
+   varName = 'HISTORY_SOFTWARE';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      historySoftware = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'HISTORY_SOFTWARE_RELEASE';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      historySoftwareRelease = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'HISTORY_REFERENCE';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      historyReference = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'HISTORY_DATE';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      historyDate = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'HISTORY_ACTION';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      historyAction = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'HISTORY_PARAMETER';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      historyParameter = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'HISTORY_START_PRES';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      historyStartPres = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'HISTORY_STOP_PRES';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      historyStopPres = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'HISTORY_PREVIOUS_VALUE';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      historyPreviousValue = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'HISTORY_QCTEST';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      historyQcTest = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   % history information
+   fprintf(fidOut, ' WMO; N_HISTORY; N_PROF; HISTORY_DATA\n');
+   for idH = 1:nHistory
+      for idP = 1:nProf
+         fprintf(fidOut, ' %d; %d; %d; HISTORY_INSTITUTION; %s\n', ...
+            a_floatNum, idH, idP, ...
+            strtrim(historyInstitution(:, idP, idH)'));
+         fprintf(fidOut, ' %d; %d; %d; HISTORY_STEP; %s\n', ...
+            a_floatNum, idH, idP, ...
+            strtrim(historyStep(:, idP, idH)'));
+         fprintf(fidOut, ' %d; %d; %d; HISTORY_SOFTWARE; %s\n', ...
+            a_floatNum, idH, idP, ...
+            strtrim(historySoftware(:, idP, idH)'));
+         if (a_comparisonFlag == 0)
+            fprintf(fidOut, ' %d; %d; %d; HISTORY_SOFTWARE_RELEASE; %s\n', ...
+               a_floatNum, idH, idP, ...
+               strtrim(historySoftwareRelease(:, idP, idH)'));
+         end
+         fprintf(fidOut, ' %d; %d; %d; HISTORY_REFERENCE; %s\n', ...
+            a_floatNum, idH, idP, ...
+            strtrim(historyReference(:, idP, idH)'));
+         if (a_comparisonFlag == 0)
+            fprintf(fidOut, ' %d; %d; %d; HISTORY_DATE; %s\n', ...
+               a_floatNum, idH, idP, ...
+               strtrim(historyDate(:, idP, idH)'));
+         end
+         fprintf(fidOut, ' %d; %d; %d; HISTORY_ACTION; %s\n', ...
+            a_floatNum, idH, idP, ...
+            strtrim(historyAction(:, idP, idH)'));
+         fprintf(fidOut, ' %d; %d; %d; HISTORY_PARAMETER; %s\n', ...
+            a_floatNum, idH, idP, ...
+            strtrim(historyParameter(:, idP, idH)'));
+         fprintf(fidOut, ' %d; %d; %d; HISTORY_START_PRES; %g\n', ...
+            a_floatNum, idH, idP, ...
+            historyStartPres(idP, idH));
+         fprintf(fidOut, ' %d; %d; %d; HISTORY_STOP_PRES; %g\n', ...
+            a_floatNum, idH, idP, ...
+            historyStopPres(idP, idH));
+         fprintf(fidOut, ' %d; %d; %d; HISTORY_PREVIOUS_VALUE; %g\n', ...
+            a_floatNum, idH, idP, ...
+            historyPreviousValue(idP, idH));
+         fprintf(fidOut, ' %d; %d; %d; HISTORY_QCTEST; %s\n', ...
+            a_floatNum, idH, idP, ...
+            strtrim(historyQcTest(:, idP, idH)'));
+      end
+   end
+
+   fclose(fidOut);
+
+   netcdf.close(fCdf);
+
+catch MException
+   netcdf.close(fCdf);
+   rethrow(MException)
 end
-
-fclose(fidOut);
-
-netcdf.close(fCdf);
 
 return
 
@@ -1107,7 +1117,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/07/2020 - RNU - creation
@@ -1137,557 +1147,535 @@ if (isempty(fCdf))
    return
 end
 
-% create CSV file
-fidOut = fopen(a_outputPathFileName, 'wt');
-if (fidOut == -1)
-   fprintf('ERROR: Unable to create output file: %s\n', a_outputPathFileName);
-   return
-end
+try
 
-% dimensions
-nProf = -1;
-nParam = -1;
-nHistory = -1;
-nCalib = -1;
-dimList = [ ...
-   {'N_PROF'} ...
-   {'N_PARAM'} ...
-   {'N_LEVELS'} ...
-   {'N_HISTORY'} ...
-   {'N_CALIB'} ...
-   ];
-fprintf(fidOut, ' WMO; ----------; ----------; DIMENSION\n');
-for idDim = 1:length(dimList)
-   if (dim_is_present_dec_argo(fCdf, dimList{idDim}))
-      [dimName, dimLen] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, dimList{idDim}));
-      fprintf(fidOut, ' %d; ; ; %s; %d\n', a_floatNum, dimName, dimLen);
-      if (strcmp(dimName, 'N_PROF'))
-         nProf = dimLen;
-      end
-      if (strcmp(dimName, 'N_PARAM'))
-         nParam = dimLen;
-      end
-      if (strcmp(dimName, 'N_HISTORY'))
-         nHistory = dimLen;
-      end
-      if (strcmp(dimName, 'N_CALIB'))
-         nCalib = dimLen;
+   % create CSV file
+   fidOut = fopen(a_outputPathFileName, 'wt');
+   if (fidOut == -1)
+      fprintf('ERROR: Unable to create output file: %s\n', a_outputPathFileName);
+      return
+   end
+
+   % dimensions
+   nProf = -1;
+   nParam = -1;
+   nHistory = -1;
+   nCalib = -1;
+   dimList = [ ...
+      {'N_PROF'} ...
+      {'N_PARAM'} ...
+      {'N_LEVELS'} ...
+      {'N_HISTORY'} ...
+      {'N_CALIB'} ...
+      ];
+   fprintf(fidOut, ' WMO; ----------; ----------; DIMENSION\n');
+   for idDim = 1:length(dimList)
+      if (dim_is_present_dec_argo(fCdf, dimList{idDim}))
+         [dimName, dimLen] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, dimList{idDim}));
+         fprintf(fidOut, ' %d; ; ; %s; %d\n', a_floatNum, dimName, dimLen);
+         if (strcmp(dimName, 'N_PROF'))
+            nProf = dimLen;
+         end
+         if (strcmp(dimName, 'N_PARAM'))
+            nParam = dimLen;
+         end
+         if (strcmp(dimName, 'N_HISTORY'))
+            nHistory = dimLen;
+         end
+         if (strcmp(dimName, 'N_CALIB'))
+            nCalib = dimLen;
+         end
       end
    end
-end
-[dimName, dimLength] = dim_is_present2_dec_argo(fCdf, 'N_VALUES');
-for idDim = 1:length(dimName)
-   fprintf(fidOut, ' %d; ; ; %s; %d\n', a_floatNum, dimName{idDim}, dimLength(idDim));
-end
+   [dimName, dimLength] = dim_is_present2_dec_argo(fCdf, 'N_VALUES');
+   for idDim = 1:length(dimName)
+      fprintf(fidOut, ' %d; ; ; %s; %d\n', a_floatNum, dimName{idDim}, dimLength(idDim));
+   end
 
-% global attributes
-globAttList = [ ...
-   {'title'} ...
-   {'institution'} ...
-   {'source'} ...
-   {'history'} ...
-   {'references'} ...
-   {'user_manual_version'} ...
-   {'Conventions'} ...
-   {'featureType'} ...
-   {'id'} ...
-   ];
-if (a_comparisonFlag == 1)
+   % global attributes
    globAttList = [ ...
       {'title'} ...
       {'institution'} ...
       {'source'} ...
+      {'history'} ...
       {'references'} ...
       {'user_manual_version'} ...
       {'Conventions'} ...
+      {'featureType'} ...
       {'id'} ...
       ];
-end
-fprintf(fidOut, ' WMO; ----------; ----------; GLOBAL_ATT\n');
-for idAtt = 1:length(globAttList)
-   if (global_att_is_present_dec_argo(fCdf, globAttList{idAtt}))
-      attValue = netcdf.getAtt(fCdf, netcdf.getConstant('NC_GLOBAL'), globAttList{idAtt});
-      fprintf(fidOut, ' %d; ; ; %s; %s\n', a_floatNum, globAttList{idAtt}, strtrim(attValue));
-   else
-      fprintf('WARNING: Global attribute %s is missing in file %s\n', ...
-         globAttList{idAtt}, inputFileName);
+   if (a_comparisonFlag == 1)
+      globAttList = [ ...
+         {'title'} ...
+         {'institution'} ...
+         {'source'} ...
+         {'references'} ...
+         {'user_manual_version'} ...
+         {'Conventions'} ...
+         {'id'} ...
+         ];
    end
-end
+   fprintf(fidOut, ' WMO; ----------; ----------; GLOBAL_ATT\n');
+   for idAtt = 1:length(globAttList)
+      if (global_att_is_present_dec_argo(fCdf, globAttList{idAtt}))
+         attValue = netcdf.getAtt(fCdf, netcdf.getConstant('NC_GLOBAL'), globAttList{idAtt});
+         fprintf(fidOut, ' %d; ; ; %s; %s\n', a_floatNum, globAttList{idAtt}, strtrim(attValue));
+      else
+         fprintf('WARNING: Global attribute %s is missing in file %s\n', ...
+            globAttList{idAtt}, inputFileName);
+      end
+   end
 
-% file meta-data
-varList = [ ...
-   {'DATA_TYPE'} ...
-   {'FORMAT_VERSION'} ...
-   {'HANDBOOK_VERSION'} ...
-   {'REFERENCE_DATE_TIME'} ...
-   {'DATE_CREATION'} ...
-   {'DATE_UPDATE'} ...
-   ];
-if (a_comparisonFlag == 1)
+   % file meta-data
    varList = [ ...
       {'DATA_TYPE'} ...
       {'FORMAT_VERSION'} ...
       {'HANDBOOK_VERSION'} ...
       {'REFERENCE_DATE_TIME'} ...
+      {'DATE_CREATION'} ...
+      {'DATE_UPDATE'} ...
       ];
-end
-fprintf(fidOut, ' WMO; ----------; ----------; META-DATA\n');
-for idVar = 1:length(varList)
-   if (var_is_present_dec_argo(fCdf, varList{idVar}))
-      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varList{idVar}));
-      fprintf(fidOut, ' %d; ; ; %s; %s\n', a_floatNum, varList{idVar}, strtrim(varValue));
-   else
-      fprintf('WARNING: Variable %s is missing in file %s\n', ...
-         varList{idVar}, inputFileName);
+   if (a_comparisonFlag == 1)
+      varList = [ ...
+         {'DATA_TYPE'} ...
+         {'FORMAT_VERSION'} ...
+         {'HANDBOOK_VERSION'} ...
+         {'REFERENCE_DATE_TIME'} ...
+         ];
    end
-end
-
-% profile meta-data
-varList = [ ...
-   {'PLATFORM_NUMBER'} ...
-   {'PROJECT_NAME'} ...
-   {'PI_NAME'} ...
-   {'DATA_CENTRE'} ...
-   {'DC_REFERENCE'} ...
-   {'PLATFORM_TYPE'} ...
-   {'FLOAT_SERIAL_NO'} ...
-   {'FIRMWARE_VERSION'} ...
-   {'WMO_INST_TYPE'} ...
-   ];
-for idVar = 1:length(varList)
-   if (var_is_present_dec_argo(fCdf, varList{idVar}))
-      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varList{idVar}));
-      fprintf(fidOut, ' %d; ; ; %s', a_floatNum, varList{idVar});
-      for idP = 1:nProf
-         fprintf(fidOut, '; %s', strtrim(varValue(:, idP)'));
-      end
-      fprintf(fidOut, '\n');
-      %    else
-      %       fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      %          varList{idVar}, inputFileName);
-   end
-end
-
-varName = 'CYCLE_NUMBER';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   cycleNumber = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'DIRECTION';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   direction = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'PARAMETER_DATA_MODE';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   parameterDataMode = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'JULD';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   julD = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'JULD_QC';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   julDQc = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'JULD_LOCATION';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   julDLocation = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'LATITUDE';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   latitude = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'LONGITUDE';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   longitude = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'POSITION_QC';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   positionQc = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'POSITIONING_SYSTEM';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   positioningSystem = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'STATION_PARAMETERS';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   stationParameters = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'CONFIG_MISSION_NUMBER';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   configMissionNumber = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-paramList = [];
-for id3 = 1:size(stationParameters, 3)
-   for id2 = 1:size(stationParameters, 2)
-      paramName = strtrim(stationParameters(:, id2, id3)');
-      if (~isempty(paramName))
-         if (~strcmp(paramName, 'PRES'))
-            paramList = [paramList {[paramName '_dPRES']}];
-         end
-         paramList = [paramList {paramName}];
-         paramInfo = get_netcdf_param_attributes(paramName);
-         if (paramInfo.adjAllowed == 1)
-            paramList = [paramList {[paramName '_ADJUSTED']}];
-         end
-      end
-   end
-end
-paramList = unique(paramList);
-
-paramData = [];
-paramDataQc = [];
-paramFormat = [];
-paramFillValue = [];
-profileParamQc = [];
-for idParam = 1:length(paramList)
-   paramName = paramList{idParam};
-   if ((length(paramName) > 5) && strcmp(paramName(end-5:end), '_dPRES'))
-      if (var_is_present_dec_argo(fCdf, paramList{idParam}))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}));
-         paramData = [paramData {varValue}];
-         paramFormat = [paramFormat {'%g'}];
-         varFillValue = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), '_FillValue');
-         paramFillValue = [paramFillValue {varFillValue}];
-         paramDataQc = [paramDataQc {repmat(' ', size(varValue))}];
-      else
-         paramData = [paramData {''}];
-         paramFormat = [paramFormat {''}];
-         paramFillValue = [paramFillValue {''}];
-         paramDataQc = [paramDataQc {''}];
-      end
-      profileParamQc = [profileParamQc {''}];
-   else
-      if (var_is_present_dec_argo(fCdf, paramList{idParam}))
-
-         if ((strncmp(paramList{idParam}, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
-               (strncmp(paramList{idParam}, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
-            varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), 'double');
-         else
-            varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}));
-         end
-         paramData = [paramData {varValue}];
-         varFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), 'C_format');
-         if ((strncmp(paramList{idParam}, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
-               (strncmp(paramList{idParam}, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
-            varFormat = '%u';
-         else
-            varFormat = '%g';
-         end
-         paramFormat = [paramFormat {varFormat}];
-         varFillValue = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), '_FillValue');
-         paramFillValue = [paramFillValue {varFillValue}];
-
-         varQcValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, [paramList{idParam} '_QC']));
-         paramDataQc = [paramDataQc {varQcValue}];
+   fprintf(fidOut, ' WMO; ----------; ----------; META-DATA\n');
+   for idVar = 1:length(varList)
+      if (var_is_present_dec_argo(fCdf, varList{idVar}))
+         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varList{idVar}));
+         fprintf(fidOut, ' %d; ; ; %s; %s\n', a_floatNum, varList{idVar}, strtrim(varValue));
       else
          fprintf('WARNING: Variable %s is missing in file %s\n', ...
-            paramList{idParam}, inputFileName);
-
-         paramData = [paramData {''}];
-         paramFormat = [paramFormat {''}];
-         paramFillValue = [paramFillValue {''}];
-         paramDataQc = [paramDataQc {''}];
-         profileParamQc = [profileParamQc {''}];
-      end
-      profileParamVarName = ['PROFILE_' paramList{idParam} '_QC'];
-      if (var_is_present_dec_argo(fCdf, profileParamVarName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, profileParamVarName));
-         profileParamQc = [profileParamQc {varValue}];
-      else
-         if (isempty(strfind(paramList{idParam}, '_ADJUSTED')))
-            fprintf('WARNING: Variable %s is missing in file %s\n', ...
-               profileParamVarName, inputFileName);
-         end
-         profileParamQc = [profileParamQc {''}];
+            varList{idVar}, inputFileName);
       end
    end
-end
 
-% profile data
-for idP = 1:nProf
-   fprintf(fidOut, ' WMO; Cy#; N_PROF; PROFILE_META-DATA\n');
-
-   fprintf(fidOut, ' %d; %d; %d; CONFIG_MISSION_NUMBER; %d\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      configMissionNumber(idP));
-   fprintf(fidOut, ' %d; %d; %d; CYCLE_NUMBER; %d\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      cycleNumber(idP));
-   fprintf(fidOut, ' %d; %d; %d; DIRECTION; %c\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      direction(idP));
-   fprintf(fidOut, ' %d; %d; %d; PARAMETER_DATA_MODE; %s\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      parameterDataMode(:, idP)');
-   fprintf(fidOut, ' %d; %d; %d; JULD; %s\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      julian_2_gregorian_dec_argo(julD(idP)));
-   fprintf(fidOut, ' %d; %d; %d; JULD_QC; %c\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      julDQc(idP));
-   fprintf(fidOut, ' %d; %d; %d; JULD_LOCATION; %s\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      julian_2_gregorian_dec_argo(julDLocation(idP)));
-   fprintf(fidOut, ' %d; %d; %d; LATITUDE; %.3f\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      latitude(idP));
-   fprintf(fidOut, ' %d; %d; %d; LONGITUDE; %.3f\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      longitude(idP));
-   fprintf(fidOut, ' %d; %d; %d; POSITION_QC; %c\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      positionQc(idP));
-   fprintf(fidOut, ' %d; %d; %d; POSITIONING_SYSTEM; %s\n', ...
-      a_floatNum, cycleNumber(idP), idP, ...
-      strtrim(positioningSystem(:, idP)'));
-
-   fprintf(fidOut, ' %d; %d; %d; STATION_PARAMETERS', ...
-      a_floatNum, cycleNumber(idP), idP);
-   for idParam = 1:nParam
-      parameterName = strtrim(stationParameters(:, idParam, idP)');
-      if (isempty(parameterName))
-         continue
+   % profile meta-data
+   varList = [ ...
+      {'PLATFORM_NUMBER'} ...
+      {'PROJECT_NAME'} ...
+      {'PI_NAME'} ...
+      {'DATA_CENTRE'} ...
+      {'DC_REFERENCE'} ...
+      {'PLATFORM_TYPE'} ...
+      {'FLOAT_SERIAL_NO'} ...
+      {'FIRMWARE_VERSION'} ...
+      {'WMO_INST_TYPE'} ...
+      ];
+   for idVar = 1:length(varList)
+      if (var_is_present_dec_argo(fCdf, varList{idVar}))
+         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varList{idVar}));
+         fprintf(fidOut, ' %d; ; ; %s', a_floatNum, varList{idVar});
+         for idP = 1:nProf
+            fprintf(fidOut, '; %s', strtrim(varValue(:, idP)'));
+         end
+         fprintf(fidOut, '\n');
+         %    else
+         %       fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         %          varList{idVar}, inputFileName);
       end
+   end
 
-      paramName = parameterName;
+   varName = 'CYCLE_NUMBER';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      cycleNumber = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
 
-      % PARAM
-      idF = find(strcmp(paramList, paramName) == 1, 1);
-      if (~isempty(idF))
-         dataTmp = paramData{idF};
-         if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
-            fprintf(fidOut, '; %s', ...
-               paramName);
-         else
-            for id1 = 1:size(dataTmp, 1)
-               fprintf(fidOut, '; %s', ...
-                  sprintf('%s_%d', paramName, id1));
+   varName = 'DIRECTION';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      direction = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'PARAMETER_DATA_MODE';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      parameterDataMode = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'JULD';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      julD = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'JULD_QC';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      julDQc = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'JULD_LOCATION';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      julDLocation = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'LATITUDE';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      latitude = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'LONGITUDE';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      longitude = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'POSITION_QC';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      positionQc = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'POSITIONING_SYSTEM';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      positioningSystem = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'STATION_PARAMETERS';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      stationParameters = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'CONFIG_MISSION_NUMBER';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      configMissionNumber = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   paramList = [];
+   for id3 = 1:size(stationParameters, 3)
+      for id2 = 1:size(stationParameters, 2)
+         paramName = strtrim(stationParameters(:, id2, id3)');
+         if (~isempty(paramName))
+            if (~strcmp(paramName, 'PRES'))
+               paramList = [paramList {[paramName '_dPRES']}];
+            end
+            paramList = [paramList {paramName}];
+            paramInfo = get_netcdf_param_attributes(paramName);
+            if (paramInfo.adjAllowed == 1)
+               paramList = [paramList {[paramName '_ADJUSTED']}];
             end
          end
-         fprintf(fidOut, '; QC');
-      else
-         fprintf('ERROR: Variable %s is missing in file %s\n', ...
-            paramName, inputFileName);
       end
+   end
+   paramList = unique(paramList);
 
-      % PARAM_dPRES
-      if (~strcmp(paramName, 'PRES'))
-         paramName = [paramName '_dPRES'];
+   paramData = [];
+   paramDataQc = [];
+   paramFormat = [];
+   paramFillValue = [];
+   profileParamQc = [];
+   for idParam = 1:length(paramList)
+      paramName = paramList{idParam};
+      if ((length(paramName) > 5) && strcmp(paramName(end-5:end), '_dPRES'))
+         if (var_is_present_dec_argo(fCdf, paramList{idParam}))
+            varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}));
+            paramData = [paramData {varValue}];
+            paramFormat = [paramFormat {'%g'}];
+            varFillValue = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), '_FillValue');
+            paramFillValue = [paramFillValue {varFillValue}];
+            paramDataQc = [paramDataQc {repmat(' ', size(varValue))}];
+         else
+            paramData = [paramData {''}];
+            paramFormat = [paramFormat {''}];
+            paramFillValue = [paramFillValue {''}];
+            paramDataQc = [paramDataQc {''}];
+         end
+         profileParamQc = [profileParamQc {''}];
+      else
+         if (var_is_present_dec_argo(fCdf, paramList{idParam}))
+
+            if ((strncmp(paramList{idParam}, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
+                  (strncmp(paramList{idParam}, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
+               varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), 'double');
+            else
+               varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}));
+            end
+            paramData = [paramData {varValue}];
+            varFormat = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), 'C_format');
+            if ((strncmp(paramList{idParam}, 'RAW_DOWNWELLING_IRRADIANCE', length('RAW_DOWNWELLING_IRRADIANCE')) == 1) || ...
+                  (strncmp(paramList{idParam}, 'RAW_DOWNWELLING_PAR', length('RAW_DOWNWELLING_PAR')) == 1))
+               varFormat = '%u';
+            else
+               varFormat = '%g';
+            end
+            paramFormat = [paramFormat {varFormat}];
+            varFillValue = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, paramList{idParam}), '_FillValue');
+            paramFillValue = [paramFillValue {varFillValue}];
+
+            varQcValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, [paramList{idParam} '_QC']));
+            paramDataQc = [paramDataQc {varQcValue}];
+         else
+            fprintf('WARNING: Variable %s is missing in file %s\n', ...
+               paramList{idParam}, inputFileName);
+
+            paramData = [paramData {''}];
+            paramFormat = [paramFormat {''}];
+            paramFillValue = [paramFillValue {''}];
+            paramDataQc = [paramDataQc {''}];
+            profileParamQc = [profileParamQc {''}];
+         end
+         profileParamVarName = ['PROFILE_' paramList{idParam} '_QC'];
+         if (var_is_present_dec_argo(fCdf, profileParamVarName))
+            varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, profileParamVarName));
+            profileParamQc = [profileParamQc {varValue}];
+         else
+            if (isempty(strfind(paramList{idParam}, '_ADJUSTED')))
+               fprintf('WARNING: Variable %s is missing in file %s\n', ...
+                  profileParamVarName, inputFileName);
+            end
+            profileParamQc = [profileParamQc {''}];
+         end
+      end
+   end
+
+   % profile data
+   for idP = 1:nProf
+      fprintf(fidOut, ' WMO; Cy#; N_PROF; PROFILE_META-DATA\n');
+
+      fprintf(fidOut, ' %d; %d; %d; CONFIG_MISSION_NUMBER; %d\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         configMissionNumber(idP));
+      fprintf(fidOut, ' %d; %d; %d; CYCLE_NUMBER; %d\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         cycleNumber(idP));
+      fprintf(fidOut, ' %d; %d; %d; DIRECTION; %c\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         direction(idP));
+      fprintf(fidOut, ' %d; %d; %d; PARAMETER_DATA_MODE; %s\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         parameterDataMode(:, idP)');
+      fprintf(fidOut, ' %d; %d; %d; JULD; %s\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         julian_2_gregorian_dec_argo(julD(idP)));
+      fprintf(fidOut, ' %d; %d; %d; JULD_QC; %c\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         julDQc(idP));
+      fprintf(fidOut, ' %d; %d; %d; JULD_LOCATION; %s\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         julian_2_gregorian_dec_argo(julDLocation(idP)));
+      fprintf(fidOut, ' %d; %d; %d; LATITUDE; %.3f\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         latitude(idP));
+      fprintf(fidOut, ' %d; %d; %d; LONGITUDE; %.3f\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         longitude(idP));
+      fprintf(fidOut, ' %d; %d; %d; POSITION_QC; %c\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         positionQc(idP));
+      fprintf(fidOut, ' %d; %d; %d; POSITIONING_SYSTEM; %s\n', ...
+         a_floatNum, cycleNumber(idP), idP, ...
+         strtrim(positioningSystem(:, idP)'));
+
+      fprintf(fidOut, ' %d; %d; %d; STATION_PARAMETERS', ...
+         a_floatNum, cycleNumber(idP), idP);
+      for idParam = 1:nParam
+         parameterName = strtrim(stationParameters(:, idParam, idP)');
+         if (isempty(parameterName))
+            continue
+         end
+
+         paramName = parameterName;
+
+         % PARAM
          idF = find(strcmp(paramList, paramName) == 1, 1);
          if (~isempty(idF))
-            fprintf(fidOut, '; %s', ...
-               paramName);
+            dataTmp = paramData{idF};
+            if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
+               fprintf(fidOut, '; %s', ...
+                  paramName);
+            else
+               for id1 = 1:size(dataTmp, 1)
+                  fprintf(fidOut, '; %s', ...
+                     sprintf('%s_%d', paramName, id1));
+               end
+            end
             fprintf(fidOut, '; QC');
          else
             fprintf('ERROR: Variable %s is missing in file %s\n', ...
                paramName, inputFileName);
          end
-      end
 
-      % PARAM_ADJUSTED
-      if ~((length(paramName) > 5) && strcmp(paramName(end-5:end), '_dPRES'))
-         paramInfo = get_netcdf_param_attributes(paramName);
-         if (~isempty(paramInfo))
-            if (paramInfo.adjAllowed == 1)
-               paramName = [paramName '_ADJUSTED'];
-               idF = find(strcmp(paramList, paramName) == 1, 1);
-               if (~isempty(idF))
-                  dataTmp = paramData{idF};
-                  if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
-                     fprintf(fidOut, '; %s', ...
-                        paramName);
-                  else
-                     for id1 = 1:size(dataTmp, 1)
+         % PARAM_dPRES
+         if (~strcmp(paramName, 'PRES'))
+            paramName = [paramName '_dPRES'];
+            idF = find(strcmp(paramList, paramName) == 1, 1);
+            if (~isempty(idF))
+               fprintf(fidOut, '; %s', ...
+                  paramName);
+               fprintf(fidOut, '; QC');
+            else
+               fprintf('ERROR: Variable %s is missing in file %s\n', ...
+                  paramName, inputFileName);
+            end
+         end
+
+         % PARAM_ADJUSTED
+         if ~((length(paramName) > 5) && strcmp(paramName(end-5:end), '_dPRES'))
+            paramInfo = get_netcdf_param_attributes(paramName);
+            if (~isempty(paramInfo))
+               if (paramInfo.adjAllowed == 1)
+                  paramName = [paramName '_ADJUSTED'];
+                  idF = find(strcmp(paramList, paramName) == 1, 1);
+                  if (~isempty(idF))
+                     dataTmp = paramData{idF};
+                     if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
                         fprintf(fidOut, '; %s', ...
-                           sprintf('%s_%d', paramName, id1));
+                           paramName);
+                     else
+                        for id1 = 1:size(dataTmp, 1)
+                           fprintf(fidOut, '; %s', ...
+                              sprintf('%s_%d', paramName, id1));
+                        end
                      end
+                     fprintf(fidOut, '; QC');
+                  else
+                     fprintf('ERROR: Variable %s is missing in file %s\n', ...
+                        paramName, inputFileName);
                   end
-                  fprintf(fidOut, '; QC');
-               else
-                  fprintf('ERROR: Variable %s is missing in file %s\n', ...
-                     paramName, inputFileName);
                end
             end
          end
       end
-   end
-   fprintf(fidOut, '\n');
+      fprintf(fidOut, '\n');
 
-   fprintf(fidOut, ' %d; %d; %d; PROFILE_<PARAM>_QC; ', ...
-      a_floatNum, cycleNumber(idP), idP);
-   for idParam = 1:nParam
-      parameterName = strtrim(stationParameters(:, idParam, idP)');
-      if (isempty(parameterName))
-         continue
-      end
-
-      paramName = parameterName;
-
-      % PARAM
-      idF = find(strcmp(paramList, paramName) == 1, 1);
-      if (~isempty(idF))
-         profileParamQcTmp = profileParamQc{idF};
-         if (~isempty(profileParamQcTmp))
-            fprintf(fidOut, '%c; ', ...
-               profileParamQcTmp(idP));
-            dataTmp = paramData{idF};
-            if (ismember(parameterName, g_decArgo_paramWithExtraDimList))
-               for id1 = 2:size(dataTmp, 1)
-                  fprintf(fidOut, '; ');
-               end
-            end
-            fprintf(fidOut, '; ');
-         else
-            fprintf(fidOut, '; ');
+      fprintf(fidOut, ' %d; %d; %d; PROFILE_<PARAM>_QC; ', ...
+         a_floatNum, cycleNumber(idP), idP);
+      for idParam = 1:nParam
+         parameterName = strtrim(stationParameters(:, idParam, idP)');
+         if (isempty(parameterName))
+            continue
          end
-      else
-         fprintf('ERROR: Variable %s is missing in file %s\n', ...
-            paramName, inputFileName);
-      end
 
-      % PARAM_dPRES
-      if (~strcmp(paramName, 'PRES'))
-         paramName = [paramName '_dPRES'];
+         paramName = parameterName;
+
+         % PARAM
          idF = find(strcmp(paramList, paramName) == 1, 1);
          if (~isempty(idF))
-            fprintf(fidOut, '; ; ');
+            profileParamQcTmp = profileParamQc{idF};
+            if (~isempty(profileParamQcTmp))
+               fprintf(fidOut, '%c; ', ...
+                  profileParamQcTmp(idP));
+               dataTmp = paramData{idF};
+               if (ismember(parameterName, g_decArgo_paramWithExtraDimList))
+                  for id1 = 2:size(dataTmp, 1)
+                     fprintf(fidOut, '; ');
+                  end
+               end
+               fprintf(fidOut, '; ');
+            else
+               fprintf(fidOut, '; ');
+            end
          else
             fprintf('ERROR: Variable %s is missing in file %s\n', ...
                paramName, inputFileName);
          end
-      end
 
-      % PARAM_ADJUSTED
-      if ~((length(paramName) > 5) && strcmp(paramName(end-5:end), '_dPRES'))
-         paramInfo = get_netcdf_param_attributes(paramName);
-         if (~isempty(paramInfo))
-            if (paramInfo.adjAllowed == 1)
+         % PARAM_dPRES
+         if (~strcmp(paramName, 'PRES'))
+            paramName = [paramName '_dPRES'];
+            idF = find(strcmp(paramList, paramName) == 1, 1);
+            if (~isempty(idF))
                fprintf(fidOut, '; ; ');
-            end
-         end
-      end
-   end
-   fprintf(fidOut, '\n');
-
-   data = [];
-   dataFillValue = [];
-   format = '';
-   for idParam = 1:nParam
-      parameterName = strtrim(stationParameters(:, idParam, idP)');
-
-      if (isempty(parameterName))
-         continue
-      end
-
-      paramName = parameterName;
-
-      % PARAM
-      idF = find(strcmp(paramList, paramName) == 1, 1);
-      if (~isempty(idF))
-         dataTmp = paramData{idF};
-         if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
-            data = [data double(dataTmp(:, idP))];
-            dataFillValue = [dataFillValue paramFillValue{idF}];
-            format = [format '; ' paramFormat{idF}];
-         else
-            if (ndims(dataTmp) == 2) % when N_PROF = 1
-               for id1 = 1:size(dataTmp, 1)
-                  data = [data double(dataTmp(id1, :)')];
-                  dataFillValue = [dataFillValue paramFillValue{idF}];
-                  format = [format '; ' paramFormat{idF}];
-               end
             else
-               for id1 = 1:size(dataTmp, 1)
-                  data = [data double(dataTmp(id1, :, idP)')];
-                  dataFillValue = [dataFillValue paramFillValue{idF}];
-                  format = [format '; ' paramFormat{idF}];
+               fprintf('ERROR: Variable %s is missing in file %s\n', ...
+                  paramName, inputFileName);
+            end
+         end
+
+         % PARAM_ADJUSTED
+         if ~((length(paramName) > 5) && strcmp(paramName(end-5:end), '_dPRES'))
+            paramInfo = get_netcdf_param_attributes(paramName);
+            if (~isempty(paramInfo))
+               if (paramInfo.adjAllowed == 1)
+                  fprintf(fidOut, '; ; ');
                end
             end
          end
-         dataQcTmp = paramDataQc{idF};
-         if (~isempty(dataQcTmp))
-            dataQcTmp = dataQcTmp(:, idP);
-            dataQcTmp(find(dataQcTmp == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
-            dataQcTmp = str2num(dataQcTmp);
-            dataQcTmp(find(dataQcTmp == str2num(g_decArgo_qcStrUnused2))) = -1;
-            data = [data double(dataQcTmp)];
-            dataFillValue = [dataFillValue -1];
-            format = [format '; ' '%d'];
-         end
-      else
-         fprintf('ERROR: Variable %s is missing in file %s\n', ...
-            paramName, inputFileName);
       end
+      fprintf(fidOut, '\n');
 
-      % PARAM_dPRES
-      if (~strcmp(paramName, 'PRES'))
-         paramName = [paramName '_dPRES'];
+      data = [];
+      dataFillValue = [];
+      format = '';
+      for idParam = 1:nParam
+         parameterName = strtrim(stationParameters(:, idParam, idP)');
+
+         if (isempty(parameterName))
+            continue
+         end
+
+         paramName = parameterName;
+
+         % PARAM
          idF = find(strcmp(paramList, paramName) == 1, 1);
          if (~isempty(idF))
             dataTmp = paramData{idF};
-            data = [data double(dataTmp(:, idP))];
-            dataFillValue = [dataFillValue paramFillValue{idF}];
-            format = [format '; ' paramFormat{idF}];
+            if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
+               data = [data double(dataTmp(:, idP))];
+               dataFillValue = [dataFillValue paramFillValue{idF}];
+               format = [format '; ' paramFormat{idF}];
+            else
+               if (ndims(dataTmp) == 2) % when N_PROF = 1
+                  for id1 = 1:size(dataTmp, 1)
+                     data = [data double(dataTmp(id1, :)')];
+                     dataFillValue = [dataFillValue paramFillValue{idF}];
+                     format = [format '; ' paramFormat{idF}];
+                  end
+               else
+                  for id1 = 1:size(dataTmp, 1)
+                     data = [data double(dataTmp(id1, :, idP)')];
+                     dataFillValue = [dataFillValue paramFillValue{idF}];
+                     format = [format '; ' paramFormat{idF}];
+                  end
+               end
+            end
             dataQcTmp = paramDataQc{idF};
             if (~isempty(dataQcTmp))
                dataQcTmp = dataQcTmp(:, idP);
@@ -1702,169 +1690,198 @@ for idP = 1:nProf
             fprintf('ERROR: Variable %s is missing in file %s\n', ...
                paramName, inputFileName);
          end
-      end
 
-      % PARAM_ADJUSTED
-      if ~((length(paramName) > 5) && strcmp(paramName(end-5:end), '_dPRES'))
-         paramInfo = get_netcdf_param_attributes(paramName);
-         if (~isempty(paramInfo))
-            if (paramInfo.adjAllowed == 1)
-               paramName = [paramName '_ADJUSTED'];
-               idF = find(strcmp(paramList, paramName) == 1, 1);
-               if (~isempty(idF))
-                  dataTmp = paramData{idF};
-                  if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
-                     data = [data double(dataTmp(:, idP))];
-                     dataFillValue = [dataFillValue paramFillValue{idF}];
-                     format = [format '; ' paramFormat{idF}];
-                  else
-                     if (ndims(dataTmp) == 2) % when N_PROF = 1
-                        for id1 = 1:size(dataTmp, 1)
-                           data = [data double(dataTmp(id1, :)')];
-                           dataFillValue = [dataFillValue paramFillValue{idF}];
-                           format = [format '; ' paramFormat{idF}];
-                        end
+         % PARAM_dPRES
+         if (~strcmp(paramName, 'PRES'))
+            paramName = [paramName '_dPRES'];
+            idF = find(strcmp(paramList, paramName) == 1, 1);
+            if (~isempty(idF))
+               dataTmp = paramData{idF};
+               data = [data double(dataTmp(:, idP))];
+               dataFillValue = [dataFillValue paramFillValue{idF}];
+               format = [format '; ' paramFormat{idF}];
+               dataQcTmp = paramDataQc{idF};
+               if (~isempty(dataQcTmp))
+                  dataQcTmp = dataQcTmp(:, idP);
+                  dataQcTmp(find(dataQcTmp == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
+                  dataQcTmp = str2num(dataQcTmp);
+                  dataQcTmp(find(dataQcTmp == str2num(g_decArgo_qcStrUnused2))) = -1;
+                  data = [data double(dataQcTmp)];
+                  dataFillValue = [dataFillValue -1];
+                  format = [format '; ' '%d'];
+               end
+            else
+               fprintf('ERROR: Variable %s is missing in file %s\n', ...
+                  paramName, inputFileName);
+            end
+         end
+
+         % PARAM_ADJUSTED
+         if ~((length(paramName) > 5) && strcmp(paramName(end-5:end), '_dPRES'))
+            paramInfo = get_netcdf_param_attributes(paramName);
+            if (~isempty(paramInfo))
+               if (paramInfo.adjAllowed == 1)
+                  paramName = [paramName '_ADJUSTED'];
+                  idF = find(strcmp(paramList, paramName) == 1, 1);
+                  if (~isempty(idF))
+                     dataTmp = paramData{idF};
+                     if (~ismember(parameterName, g_decArgo_paramWithExtraDimList))
+                        data = [data double(dataTmp(:, idP))];
+                        dataFillValue = [dataFillValue paramFillValue{idF}];
+                        format = [format '; ' paramFormat{idF}];
                      else
-                        for id1 = 1:size(dataTmp, 1)
-                           data = [data double(dataTmp(id1, :, idP)')];
-                           dataFillValue = [dataFillValue paramFillValue{idF}];
-                           format = [format '; ' paramFormat{idF}];
+                        if (ndims(dataTmp) == 2) % when N_PROF = 1
+                           for id1 = 1:size(dataTmp, 1)
+                              data = [data double(dataTmp(id1, :)')];
+                              dataFillValue = [dataFillValue paramFillValue{idF}];
+                              format = [format '; ' paramFormat{idF}];
+                           end
+                        else
+                           for id1 = 1:size(dataTmp, 1)
+                              data = [data double(dataTmp(id1, :, idP)')];
+                              dataFillValue = [dataFillValue paramFillValue{idF}];
+                              format = [format '; ' paramFormat{idF}];
+                           end
                         end
                      end
+                     dataQcTmp = paramDataQc{idF};
+                     if (~isempty(dataQcTmp))
+                        dataQcTmp = dataQcTmp(:, idP);
+                        dataQcTmp(find(dataQcTmp == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
+                        dataQcTmp = str2num(dataQcTmp);
+                        dataQcTmp(find(dataQcTmp == str2num(g_decArgo_qcStrUnused2))) = -1;
+                        data = [data double(dataQcTmp)];
+                        dataFillValue = [dataFillValue -1];
+                        format = [format '; ' '%d'];
+                     end
+                  else
+                     fprintf('ERROR: Variable %s is missing in file %s\n', ...
+                        paramName, inputFileName);
                   end
-                  dataQcTmp = paramDataQc{idF};
-                  if (~isempty(dataQcTmp))
-                     dataQcTmp = dataQcTmp(:, idP);
-                     dataQcTmp(find(dataQcTmp == g_decArgo_qcStrDef)) = g_decArgo_qcStrUnused2;
-                     dataQcTmp = str2num(dataQcTmp);
-                     dataQcTmp(find(dataQcTmp == str2num(g_decArgo_qcStrUnused2))) = -1;
-                     data = [data double(dataQcTmp)];
-                     dataFillValue = [dataFillValue -1];
-                     format = [format '; ' '%d'];
-                  end
-               else
-                  fprintf('ERROR: Variable %s is missing in file %s\n', ...
-                     paramName, inputFileName);
                end
             end
          end
       end
+
+      fprintf(fidOut, ' WMO; Cy#; N_PROF; PROFILE_MEAS\n');
+      for idLev = 1:size(data, 1)
+         if (sum(data(idLev, :) == dataFillValue) ~= size(data, 2))
+            fprintf(fidOut, ' %d; %d; %d; MEAS #%d', ...
+               a_floatNum, cycleNumber(idP), idP, idLev);
+            fprintf(fidOut, format, ...
+               data(idLev, :));
+            fprintf(fidOut, '\n');
+         end
+      end
+
    end
 
-   fprintf(fidOut, ' WMO; Cy#; N_PROF; PROFILE_MEAS\n');
-   for idLev = 1:size(data, 1)
-      if (sum(data(idLev, :) == dataFillValue) ~= size(data, 2))
-         fprintf(fidOut, ' %d; %d; %d; MEAS #%d', ...
-            a_floatNum, cycleNumber(idP), idP, idLev);
-         fprintf(fidOut, format, ...
-            data(idLev, :));
+   varName = 'PARAMETER';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      parameter = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'SCIENTIFIC_CALIB_EQUATION';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      scientificCalibEquation = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'SCIENTIFIC_CALIB_COEFFICIENT';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      scientificCalibCoefficient = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'SCIENTIFIC_CALIB_COMMENT';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      scientificCalibComment = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   varName = 'SCIENTIFIC_CALIB_DATE';
+   if (var_is_present_dec_argo(fCdf, varName))
+      varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+      scientificCalibDate = varValue;
+   else
+      fprintf('WARNING: Variable %s is missing in file %s\n', ...
+         varName, inputFileName);
+   end
+
+   % calibration information
+   fprintf(fidOut, ' WMO; N_PROF; N_CALIB; CALIB_DATA\n');
+   for idP = 1:nProf
+      for idC = 1:nCalib
+         fprintf(fidOut, ' %d; %d; %d; PARAMETER', ...
+            a_floatNum, idP, idC);
+         for idParam = 1:nParam
+            fprintf(fidOut, '; %s', ...
+               strtrim(parameter(:, idParam, idC, idP)'));
+         end
+         fprintf(fidOut, '\n');
+
+         fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_EQUATION', ...
+            a_floatNum, idP, idC);
+         if (a_comparisonFlag == 0)
+            for idParam = 1:nParam
+               fprintf(fidOut, '; %s', ...
+                  strtrim(scientificCalibEquation(:, idParam, idC, idP)'));
+            end
+         end
+         fprintf(fidOut, '\n');
+
+         fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_COEFFICIENT', ...
+            a_floatNum, idP, idC);
+         if (a_comparisonFlag == 0)
+            for idParam = 1:nParam
+               fprintf(fidOut, '; %s', ...
+                  strtrim(scientificCalibCoefficient(:, idParam, idC, idP)'));
+            end
+         end
+         fprintf(fidOut, '\n');
+
+         fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_COMMENT', ...
+            a_floatNum, idP, idC);
+         if (a_comparisonFlag == 0)
+            for idParam = 1:nParam
+               fprintf(fidOut, '; %s', ...
+                  strtrim(scientificCalibComment(:, idParam, idC, idP)'));
+            end
+         end
+         fprintf(fidOut, '\n');
+
+         fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_DATE', ...
+            a_floatNum, idP, idC);
+         if (a_comparisonFlag == 0)
+            for idParam = 1:nParam
+               fprintf(fidOut, '; %s', ...
+                  strtrim(scientificCalibDate(:, idParam, idC, idP)'));
+            end
+         end
          fprintf(fidOut, '\n');
       end
    end
 
+   fclose(fidOut);
+
+   netcdf.close(fCdf);
+
+catch MException
+   netcdf.close(fCdf);
+   rethrow(MException)
 end
-
-varName = 'PARAMETER';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   parameter = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'SCIENTIFIC_CALIB_EQUATION';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   scientificCalibEquation = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'SCIENTIFIC_CALIB_COEFFICIENT';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   scientificCalibCoefficient = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'SCIENTIFIC_CALIB_COMMENT';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   scientificCalibComment = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-varName = 'SCIENTIFIC_CALIB_DATE';
-if (var_is_present_dec_argo(fCdf, varName))
-   varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-   scientificCalibDate = varValue;
-else
-   fprintf('WARNING: Variable %s is missing in file %s\n', ...
-      varName, inputFileName);
-end
-
-% calibration information
-fprintf(fidOut, ' WMO; N_PROF; N_CALIB; CALIB_DATA\n');
-for idP = 1:nProf
-   for idC = 1:nCalib
-      fprintf(fidOut, ' %d; %d; %d; PARAMETER', ...
-         a_floatNum, idP, idC);
-      for idParam = 1:nParam
-         fprintf(fidOut, '; %s', ...
-            strtrim(parameter(:, idParam, idC, idP)'));
-      end
-      fprintf(fidOut, '\n');
-
-      fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_EQUATION', ...
-         a_floatNum, idP, idC);
-      if (a_comparisonFlag == 0)
-         for idParam = 1:nParam
-            fprintf(fidOut, '; %s', ...
-               strtrim(scientificCalibEquation(:, idParam, idC, idP)'));
-         end
-      end
-      fprintf(fidOut, '\n');
-
-      fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_COEFFICIENT', ...
-         a_floatNum, idP, idC);
-      if (a_comparisonFlag == 0)
-         for idParam = 1:nParam
-            fprintf(fidOut, '; %s', ...
-               strtrim(scientificCalibCoefficient(:, idParam, idC, idP)'));
-         end
-      end
-      fprintf(fidOut, '\n');
-
-      fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_COMMENT', ...
-         a_floatNum, idP, idC);
-      if (a_comparisonFlag == 0)
-         for idParam = 1:nParam
-            fprintf(fidOut, '; %s', ...
-               strtrim(scientificCalibComment(:, idParam, idC, idP)'));
-         end
-      end
-      fprintf(fidOut, '\n');
-
-      fprintf(fidOut, ' %d; %d; %d; SCIENTIFIC_CALIB_DATE', ...
-         a_floatNum, idP, idC);
-      if (a_comparisonFlag == 0)
-         for idParam = 1:nParam
-            fprintf(fidOut, '; %s', ...
-               strtrim(scientificCalibDate(:, idParam, idC, idP)'));
-         end
-      end
-      fprintf(fidOut, '\n');
-   end
-end
-
-fclose(fidOut);
-
-netcdf.close(fCdf);
 
 return

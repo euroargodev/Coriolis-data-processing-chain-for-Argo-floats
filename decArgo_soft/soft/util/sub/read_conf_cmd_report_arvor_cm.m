@@ -10,6 +10,7 @@
 %   a_configDefaultFilename : default configuration file name
 %   a_sensorList            : list of the sensors mounted on the float
 %   a_floatNum              : float WMO number
+%   a_rtVersionFlag         : 1 if it is the RT version of the tool, 0 otherwise
 %
 % OUTPUT PARAMETERS :
 %   o_confParamNames  : configuration parameter names
@@ -18,13 +19,13 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/26/2015 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_confParamNames, o_confParamValues] = read_conf_cmd_report_arvor_cm( ...
-   a_configReportFileName, a_sensorList, a_floatNum)
+   a_configReportFileName, a_sensorList, a_floatNum, a_rtVersionFlag)
 
 % output parameters initialization
 o_confParamNames = [];
@@ -103,7 +104,9 @@ end
 
 % read the configuration file
 if ~(exist(a_configReportFileName, 'file') == 2)
-   fprintf('WARNING: Float #%d: Input file not found: %s - using the default configuration\n', a_floatNum, a_configReportFileName);
+   if (a_rtVersionFlag == 0)
+      fprintf('WARNING: Float #%d: Input file not found: %s - using the default configuration\n', a_floatNum, a_configReportFileName);
+   end
 else
    
    fId = fopen(a_configReportFileName, 'r');
@@ -297,11 +300,13 @@ end
 o_confParamNames(idToDel) = [];
 o_confParamValues(idToDel) = [];
 
-if (length(o_confParamNames) ~= 104+(49*length(sensorList))+(nbSpecific))
-   fprintf('WARNING: Float #%d: Number of config parameters (%d) different from expected (%d)\n', ...
-      a_floatNum, length(o_confParamNames), 104+(49*length(sensorList))+(nbSpecific));
-else
-   fprintf('INFO: Float #%d: %d config parameters\n', a_floatNum, length(o_confParamNames));
+if (a_rtVersionFlag == 0)
+   if (length(o_confParamNames) ~= 104+(49*length(sensorList))+(nbSpecific))
+      fprintf('WARNING: Float #%d: Number of config parameters (%d) different from expected (%d)\n', ...
+         a_floatNum, length(o_confParamNames), 104+(49*length(sensorList))+(nbSpecific));
+   else
+      fprintf('INFO: Float #%d: %d config parameters\n', a_floatNum, length(o_confParamNames));
+   end
 end
 
 % sort the configuration names

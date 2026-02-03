@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/10/2016 - RNU - V 1.0: creation
@@ -22,25 +22,27 @@ function nc_add_rtqc_flags_prof_and_traj(varargin)
 
 % top directory of the input NetCDF files
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+% DIR_INPUT_NC_FILES = 'G:\argo_snapshot_202309\coriolis\';
 
 % top directory of the output NetCDF files (should be set to '' if we want to
 % update the existing files
 DIR_OUTPUT_NC_FILES = ''; % update existing files
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rtqc\';
-% DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\Contacts\Desktop\refonte_RTQC_20201113\DATA_OUT\NKE2\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\POUB\';
 
 % default list of floats to convert
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_floats_bbp2.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_apex.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_nke.txt';
+% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_floats_bbp2.txt';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % GEBCO file
-GEBCO_FILE_PATH_NAME = 'C:\Users\jprannou\_RNU\_ressources\GEBCO_2022\GEBCO_2022.nc';
+GEBCO_FILE_PATH_NAME = 'C:\Users\jprannou\_RNU\_ressources\GEBCO_2024\GEBCO_2024.nc';
 
-% grey list file
-GREY_LIST_FILE_PATH_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\ar_greylist.txt';
+% exclusion list file
+EXCLUSION_LIST_FILE_PATH_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\ar_exclusionlist.txt';
 
 % mode processing flags
 global g_decArgo_realtimeFlag;
@@ -65,8 +67,8 @@ NB_FILES_TO_PROCESS = -1;
 % the RTQC on profiles and trajectory data are linked (they should always be
 % performed together), however the 2 following flags can be used to report or
 % not the QC values in the concerned files
-UPDATE_PROFILE_FILE_FLAG = 1;
-UPDATE_TRAJECTORY_FILE_FLAG = 1;
+UPDATE_PROFILE_FILE_FLAG = 0;
+UPDATE_TRAJECTORY_FILE_FLAG = 0;
 
 
 % list of tests to perform
@@ -85,7 +87,7 @@ testToPerformList = [ ...
    {'TEST012_DIGIT_ROLLOVER'} {1} ...
    {'TEST013_STUCK_VALUE'} {1} ...
    {'TEST014_DENSITY_INVERSION'} {1} ...
-   {'TEST015_GREY_LIST'} {1} ...
+   {'TEST015_EXCLUSION_LIST'} {1} ...
    {'TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT'} {0} ...
    {'TEST018_FROZEN_PRESSURE'} {0} ...
    {'TEST019_DEEPEST_PRESSURE'} {1} ...
@@ -99,6 +101,8 @@ testToPerformList = [ ...
    {'TEST056_PH'} {1} ...
    {'TEST057_DOXY'} {1} ...
    {'TEST059_NITRATE'} {1} ...
+   {'TEST060_PAR'} {1} ...
+   {'TEST061_IRRADIANCE'} {1} ...
    {'TEST062_BBP'} {1} ...
    {'TEST063_CHLA'} {1} ...
    ];
@@ -118,7 +122,7 @@ testToPerformList = [ ...
 %    {'TEST012_DIGIT_ROLLOVER'} {1} ...
 %    {'TEST013_STUCK_VALUE'} {1} ...
 %    {'TEST014_DENSITY_INVERSION'} {1} ...
-%    {'TEST015_GREY_LIST'} {1} ...
+%    {'TEST015_EXCLUSION_LIST'} {1} ...
 %    {'TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT'} {1} ...
 %    {'TEST018_FROZEN_PRESSURE'} {1} ...
 %    {'TEST019_DEEPEST_PRESSURE'} {1} ...
@@ -132,6 +136,8 @@ testToPerformList = [ ...
 %    {'TEST056_PH'} {1} ...
 %    {'TEST057_DOXY'} {1} ...
 %    {'TEST059_NITRATE'} {1} ...
+%    {'TEST060_PAR'} {1} ...
+%    {'TEST061_IRRADIANCE'} {1} ...
 %    {'TEST062_BBP'} {1} ...
 %    {'TEST063_CHLA'} {1} ...
 %    ];
@@ -150,7 +156,7 @@ testToPerformList = [ ...
 %    {'TEST011_GRADIENT'} {0} ...
 %    {'TEST012_DIGIT_ROLLOVER'} {0} ...
 %    {'TEST014_DENSITY_INVERSION'} {0} ...
-%    {'TEST015_GREY_LIST'} {0} ...
+%    {'TEST015_EXCLUSION_LIST'} {0} ...
 %    {'TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT'} {0} ...
 %    {'TEST018_FROZEN_PRESSURE'} {0} ...
 %    {'TEST019_DEEPEST_PRESSURE'} {0} ...
@@ -164,6 +170,8 @@ testToPerformList = [ ...
 %    {'TEST056_PH'} {0} ...
 %    {'TEST057_DOXY'} {0} ...
 %    {'TEST059_NITRATE'} {0} ...
+%    {'TEST060_PAR'} {0} ...
+%    {'TEST061_IRRADIANCE'} {0} ...
 %    {'TEST062_BBP'} {0} ...
 %    {'TEST063_CHLA'} {0} ...
 %    ];
@@ -173,7 +181,7 @@ testMetaData = [ ...
    {'TEST000_FLOAT_DECODER_ID'} {''} ...
    {'TEST004_GEBCO_FILE'} {GEBCO_FILE_PATH_NAME} ...
    {'TEST013_METADA_DATA_FILE'} {''} ...
-   {'TEST015_GREY_LIST_FILE'} {GREY_LIST_FILE_PATH_NAME} ...
+   {'TEST015_EXCLUSION_LIST_FILE'} {EXCLUSION_LIST_FILE_PATH_NAME} ...
    {'TEST019_METADA_DATA_FILE'} {''} ...
    {'TEST021_METADA_DATA_FILE'} {''} ...
    {'TEST024_METADA_DATA_FILE'} {''} ...
@@ -185,13 +193,13 @@ testMetaData = [ ...
 
 if (nargin == 0)
    floatListFileName = FLOAT_LIST_FILE_NAME;
-   
+
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
       return
    end
-   
+
    fprintf('Floats from list: %s\n', floatListFileName);
    floatList = load(floatListFileName);
 else
@@ -239,23 +247,23 @@ end
 % process the floats
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
-   
+
    floatNum = floatList(idFloat);
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
-   
+
    ncInputFileDir = [DIR_INPUT_NC_FILES '/' num2str(floatNum) '/'];
-   
+
    if (exist(ncInputFileDir, 'dir') == 7)
-      
+
       % get float decoder Id
-      
+
       % get floats information
       [listWmoNum, listDecId, listArgosId, listFrameLen, ...
          listCycleTime, listDriftSamplingPeriod, listDelay, ...
          listLaunchDate, listLaunchLon, listLaunchLat, ...
          listRefDay, listEndDate, listDmFlag] = get_floats_info(floatInformationFileName);
-      
+
       % find current float decoder Id
       floatDecoderId = [];
       idF = find(listWmoNum == floatNum, 1);
@@ -268,9 +276,9 @@ for idFloat = 1:nbFloats
       else
          fprintf('WARNING: Cannot retrieve float decoder Id for float #%d\n', floatNum);
       end
-            
+
       if (test_to_perform('TEST013_STUCK_VALUE', testToPerformList) == 1)
-         
+
          % add meta file path name
          ncMetaFilePathName = [ncInputFileDir sprintf('%d_meta.nc', floatNum)];
          if (exist(ncMetaFilePathName, 'file') == 2)
@@ -282,9 +290,9 @@ for idFloat = 1:nbFloats
             fprintf('WARNING: TEST013: No meta file to perform test#13\n');
          end
       end
-      
+
       if (test_to_perform('TEST019_DEEPEST_PRESSURE', testToPerformList) == 1)
-         
+
          % add meta file path name
          ncMetaFilePathName = [ncInputFileDir sprintf('%d_meta.nc', floatNum)];
          if (exist(ncMetaFilePathName, 'file') == 2)
@@ -296,9 +304,9 @@ for idFloat = 1:nbFloats
             fprintf('WARNING: TEST019: No meta file to perform test#19\n');
          end
       end
-            
+
       if (test_to_perform('TEST021_NS_UNPUMPED_SALINITY', testToPerformList) == 1)
-         
+
          % add meta file path name
          ncMetaFilePathName = [ncInputFileDir sprintf('%d_meta.nc', floatNum)];
          if (exist(ncMetaFilePathName, 'file') == 2)
@@ -310,9 +318,9 @@ for idFloat = 1:nbFloats
             fprintf('WARNING: TEST021: No meta file to perform test#21\n');
          end
       end
-            
+
       if (test_to_perform('TEST024_RBR_FLOAT', testToPerformList) == 1)
-         
+
          % add meta file path name
          ncMetaFilePathName = [ncInputFileDir sprintf('%d_meta.nc', floatNum)];
          if (exist(ncMetaFilePathName, 'file') == 2)
@@ -324,9 +332,9 @@ for idFloat = 1:nbFloats
             fprintf('WARNING: TEST024: No meta file to perform test#24\n');
          end
       end
-            
+
       if (test_to_perform('TEST057_DOXY', testToPerformList) == 1)
-         
+
          % add meta file path name
          ncMetaFilePathName = [ncInputFileDir sprintf('%d_meta.nc', floatNum)];
          if (exist(ncMetaFilePathName, 'file') == 2)
@@ -338,24 +346,24 @@ for idFloat = 1:nbFloats
             fprintf('WARNING: TEST057: No meta file to perform test#57\n');
          end
       end
-      
+
       if (test_to_perform('TEST059_NITRATE', testToPerformList) == 1)
-      
+
          % create the NITRATE calibration arrays
-         
+
          % json meta-data file for this float
          jsonInputFileName = [dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', floatNum)];
-         
+
          if (exist(jsonInputFileName, 'file') == 2)
-            
+
             % read meta-data file
             metaData = loadjson(jsonInputFileName);
-            
+
             if (isfield(metaData, 'SENSOR_MOUNTED_ON_FLOAT'))
                if (~isempty(metaData.SENSOR_MOUNTED_ON_FLOAT))
                   jSensorNames = struct2cell(metaData.SENSOR_MOUNTED_ON_FLOAT);
                   if (any(strcmp(jSensorNames, 'SUNA')))
-                     
+
                      if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                         if (~isempty(metaData.CALIBRATION_COEFFICIENT))
                            fieldNames = fields(metaData.CALIBRATION_COEFFICIENT);
@@ -364,7 +372,7 @@ for idFloat = 1:nbFloats
                            end
                         end
                      end
-                     
+
                      if (isfield(g_decArgo_calibInfo, 'SUNA'))
                         calibData = g_decArgo_calibInfo.SUNA;
                         tabOpticalWavelengthUv = [];
@@ -418,7 +426,7 @@ for idFloat = 1:nbFloats
                            g_decArgo_calibInfo.SUNA.TabEBisulfide = tabEBisulfide;
                         end
                         g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate = tabUvIntensityRefNitrate;
-                        
+
                         g_decArgo_calibInfo.SUNA.SunaVerticalOffset = get_config_value_from_json('CONFIG_PX_1_6_0_0_0', metaData);
                         g_decArgo_calibInfo.SUNA.FloatPixelBegin = get_config_value_from_json('CONFIG_PX_1_6_0_0_3', metaData);
                         g_decArgo_calibInfo.SUNA.FloatPixelEnd = get_config_value_from_json('CONFIG_PX_1_6_0_0_4', metaData);
@@ -429,13 +437,13 @@ for idFloat = 1:nbFloats
                end
             end
          else
-            
+
             fprintf('INFO: TEST059: Json meta-data file not found: %s, using NetCDF meta file\n', jsonInputFileName);
-            
+
             % use NetCDF meta file
             ncMetaFilePathName = [ncInputFileDir sprintf('%d_meta.nc', floatNum)];
             if (exist(ncMetaFilePathName, 'file') == 2)
-               
+
                % retrieve information from NetCDF meta file
                wantedVars = [ ...
                   {'PARAMETER'} ...
@@ -443,40 +451,40 @@ for idFloat = 1:nbFloats
                   {'LAUNCH_CONFIG_PARAMETER_NAME'} ...
                   {'LAUNCH_CONFIG_PARAMETER_VALUE'} ...
                   ];
-               
+
                % retrieve information from NetCDF meta file
                [ncMetaData] = get_data_from_nc_file(ncMetaFilePathName, wantedVars);
-               
+
                coefData = [];
                idVal = find(strcmp('PARAMETER', ncMetaData) == 1);
                idCoef = find(strcmp('PREDEPLOYMENT_CALIB_COEFFICIENT', ncMetaData) == 1);
                if (~isempty(idVal) && ~isempty(idCoef))
                   parameterMetaTmp = ncMetaData{idVal+1}';
                   parameterCoefTmp = ncMetaData{idCoef+1}';
-                  
+
                   for id = 1:size(parameterMetaTmp, 1)
                      if (strcmp(deblank(parameterMetaTmp(id, :)), 'NITRATE'))
                         coefData = deblank(parameterCoefTmp(id, :));
                      end
                   end
                end
-               
+
                launchConfigParameterName = [];
                idVal = find(strcmp('LAUNCH_CONFIG_PARAMETER_NAME', ncMetaData) == 1);
                if (~isempty(idVal))
                   launchConfigParameterNameTmp = ncMetaData{idVal+1}';
-                  
+
                   for id = 1:size(launchConfigParameterNameTmp, 1)
                      launchConfigParameterName{end+1} = deblank(launchConfigParameterNameTmp(id, :));
                   end
                end
-               
+
                launchConfigParameterValue = [];
                idVal = find(strcmp('LAUNCH_CONFIG_PARAMETER_VALUE', ncMetaData) == 1);
                if (~isempty(idVal))
                   launchConfigParameterValue = ncMetaData{idVal+1}';
                end
-               
+
                % retrieve needed information
                tempCalNitrate = [];
                opticalWavelengthUv = [];
@@ -484,9 +492,9 @@ for idFloat = 1:nbFloats
                eSwaNitrate = [];
                eBisulfide = [];
                uvIntensityRefNitrate = [];
-               
+
                if (~isempty(coefData))
-                  
+
                   % TEMP_CAL_NITRATE
                   idF1 = strfind(coefData, 'TEMP_CAL_NITRATE');
                   if (~isempty(idF1))
@@ -501,7 +509,7 @@ for idFloat = 1:nbFloats
                         end
                      end
                   end
-                  
+
                   % OPTICAL_WAVELENGTH_UV
                   idF1 = strfind(coefData, 'OPTICAL_WAVELENGTH_UV');
                   if (~isempty(idF1))
@@ -594,10 +602,10 @@ for idFloat = 1:nbFloats
                         end
                      end
                   end
-                  
+
                   if (~isempty(launchConfigParameterName))
                      if (~isempty(launchConfigParameterValue))
-                        
+
                         % sunaVerticalOffset
                         idF = find(strcmp(launchConfigParameterName, 'CONFIG_SunaVerticalPressureOffset_dbar'), 1);
                         if (~isempty(idF))
@@ -619,7 +627,7 @@ for idFloat = 1:nbFloats
                   else
                      fprintf('ERROR: TEST059: unable to retrieve LAUNCH_CONFIG_PARAMETER_NAME from NetCDF meta file: %s\n', ncMetaFilePathName);
                   end
-                  
+
                   if ~((~ismember(floatDecoderId, [110, 113]) && ...
                         (isempty(tempCalNitrate) || ...
                         isempty(opticalWavelengthUv) || ...
@@ -633,7 +641,7 @@ for idFloat = 1:nbFloats
                         isempty(eSwaNitrate) || ...
                         isempty(eBisulfide) || ...
                         isempty(uvIntensityRefNitrate))))
-                     
+
                      g_decArgo_calibInfo.SUNA.TabOpticalWavelengthUv = nan(1, 256);
                      g_decArgo_calibInfo.SUNA.TabENitrate = nan(1, 256);
                      g_decArgo_calibInfo.SUNA.TabESwaNitrate = nan(1, 256);
@@ -641,9 +649,9 @@ for idFloat = 1:nbFloats
                         g_decArgo_calibInfo.SUNA.TabEBisulfide = nan(1, 256);
                      end
                      g_decArgo_calibInfo.SUNA.TabUvIntensityRefNitrate = nan(1, 256);
-                     
+
                      pixelRange = g_decArgo_calibInfo.SUNA.FloatPixelBegin:g_decArgo_calibInfo.SUNA.FloatPixelEnd;
-                     
+
                      g_decArgo_calibInfo.SUNA.TEMP_CAL_NITRATE(pixelRange) = tempCalNitrate;
                      g_decArgo_calibInfo.SUNA.TabOpticalWavelengthUv(pixelRange) = opticalWavelengthUv;
                      g_decArgo_calibInfo.SUNA.TabENitrate(pixelRange) = eNitrate;
@@ -663,9 +671,9 @@ for idFloat = 1:nbFloats
             end
          end
       end
-      
+
       if (test_to_perform('TEST062_BBP', testToPerformList) == 1)
-         
+
          % add meta file path name
          ncMetaFilePathName = [ncInputFileDir sprintf('%d_meta.nc', floatNum)];
          if (exist(ncMetaFilePathName, 'file') == 2)
@@ -677,22 +685,22 @@ for idFloat = 1:nbFloats
             fprintf('WARNING: TEST062: No meta file to perform parking hook test in test#62\n');
          end
       end
-      
+
       if (test_to_perform('TEST063_CHLA', testToPerformList) == 1)
-      
+
          % retrieve DARK_CHLA and SCALE_CHLA from json meta data file and
          % LAST_DARK_CHLA from scientific calibration information of the
          % previous profile file
 
          % json meta-data file for this float
          jsonInputFileName = [dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', floatNum)];
-         
+
          if ~(exist(jsonInputFileName, 'file') == 2)
             fprintf('ERROR: TEST063: Json meta-data file not found: %s\n', jsonInputFileName);
          else
             % read meta-data file
             metaData = loadjson(jsonInputFileName);
-            
+
             % fill the calibration coefficients
             if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
                if (~isempty(metaData.CALIBRATION_COEFFICIENT))
@@ -727,7 +735,7 @@ for idFloat = 1:nbFloats
             end
          end
       end
-      
+
       % create output directory
       if (updateFiles == 0)
          ncOutputFileDir = [DIR_OUTPUT_NC_FILES '/' num2str(floatNum) '/'];
@@ -735,7 +743,7 @@ for idFloat = 1:nbFloats
             mkdir(ncOutputFileDir);
          end
       end
-      
+
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % PARTIAL RTQC ON TRAJECTORY FILE
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -758,11 +766,11 @@ for idFloat = 1:nbFloats
             ncTrajInputFilePathName = '';
          end
       end
-      
+
       % global variable to store temporary RTQC on traj data
       g_rtqc_trajData = [];
       if (~isempty(ncTrajInputFilePathName))
-         
+
          % define the tests to perform on trajectory data
          testToPerformList2 = [ ...
             {'TEST002_IMPOSSIBLE_DATE'} {1} ...
@@ -779,7 +787,7 @@ for idFloat = 1:nbFloats
       else
          fprintf('WARNING: Trajectory file not found for float #%d\n', floatNum);
       end
-      
+
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % RTQC ON PROFILE FILES
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -795,12 +803,12 @@ for idFloat = 1:nbFloats
          fprintf('WARNING: No multi profile file\n');
          multiProfInputFilePathName = '';
       end
-      
+
       % process mono-profile files
       ncInputFileDir = [ncInputFileDir '/profiles/'];
-      
+
       if (exist(ncInputFileDir, 'dir') == 7)
-         
+
          % create output directory
          if (updateFiles == 0)
             ncOutputFileDir = [ncOutputFileDir '/profiles/'];
@@ -808,8 +816,8 @@ for idFloat = 1:nbFloats
                mkdir(ncOutputFileDir);
             end
          end
-         
-         ncInputFiles = dir([ncInputFileDir '*.nc']);
+
+         ncInputFiles = [dir([ncInputFileDir 'R*.nc']); dir([ncInputFileDir 'B*.nc'])];
          % sort the file names so that descent profiles will be processed before
          % ascent associated one
          ncInputDescFiles = dir([ncInputFileDir '*D.nc']);
@@ -829,7 +837,7 @@ for idFloat = 1:nbFloats
          end
          nbFiles = NB_FILES_TO_PROCESS;
          for idFile = 1:length(ncInputFiles)
-            
+
             monoProfInputFileName = ncInputFiles(idFile).name;
             if (monoProfInputFileName(1) == 'B')
                continue
@@ -839,9 +847,9 @@ for idFloat = 1:nbFloats
             if (updateFiles == 0)
                monoProfOutputFilePathName = [ncOutputFileDir '/' monoProfInputFileName];
             end
-            
+
             fprintf('%s\n', monoProfInputFileName);
-            
+
             % perform RTQC on profile data
             add_rtqc_to_profile_file(floatNum, ...
                monoProfInputFilePathName, monoProfOutputFilePathName, ...
@@ -862,11 +870,11 @@ for idFloat = 1:nbFloats
       else
          fprintf('WARNING: Directory not found: %s\n', ncInputFileDir);
       end
-      
+
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % RTQC ON TRAJECTORY FILE
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            
+
       if (~isempty(ncTrajInputFilePathName))
 
          [~, trajInputFileName, ~] = fileparts(ncTrajInputFilePathName);
@@ -906,7 +914,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/21/2015 - RNU - creation
@@ -921,62 +929,6 @@ o_testToPerform = 0;
 testId = find(strcmp(a_testName, a_testToPerformList) == 1);
 if (~isempty(testId))
    o_testToPerform = a_testToPerformList{testId+1};
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('RTQC_ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         %          fprintf('RTQC_WARNING: Variable %s not present in file : %s\n', ...
-         %             varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {''}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
 end
 
 return

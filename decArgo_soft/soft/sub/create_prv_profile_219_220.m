@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/17/2019 - RNU - creation
@@ -66,10 +66,10 @@ for idP = 1:size(a_dataCTD, 1)
       end
    end
 end
-tabPres(cpt-1:end) = [];
-tabPresTrans(cpt-1:end) = [];
-tabTemp(cpt-1:end) = [];
-tabPsal(cpt-1:end) = [];
+tabPres(cpt:end) = [];
+tabPresTrans(cpt:end) = [];
+tabTemp(cpt:end) = [];
+tabPsal(cpt:end) = [];
 
 % sort the data by decreasing pressure
 [~, idSorted] = sort(tabPres, 'descend');

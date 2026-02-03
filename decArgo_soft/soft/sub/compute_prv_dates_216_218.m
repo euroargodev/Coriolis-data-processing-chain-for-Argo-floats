@@ -2,100 +2,35 @@
 % Compute the main dates of this PROVOR float cycle.
 %
 % SYNTAX :
-%  [o_cycleStartDate, ...
-%    o_descentToParkStartDate, ...
-%    o_firstStabDate, o_firstStabPres, ...
-%    o_descentToParkEndDate, ...
-%    o_descentToProfStartDate, ...
-%    o_descentToProfEndDate, ...
-%    o_ascentStartDate, ...
-%    o_ascentEndDate, ...
-%    o_transStartDate, ...
-%    o_gpsDate, ...
-%    o_eolStartDate, ...
-%    o_firstGroundingDate, o_firstGroundingPres, ...
-%    o_secondGroundingDate, o_secondGroundingPres, ...
-%    o_firstEmergencyAscentDate, o_firstEmergencyAscentPres, ...
-%    o_iceDetected] = ...
-%    compute_prv_dates_216_218(a_tabTech1, a_tabTech2, a_deepCycle, a_iceDelayedCycleFlag, a_refDay, a_decoderId)
+%  [o_cycleTimeData] = ...
+%    compute_prv_dates_216_218(a_tabTech1, a_tabTech2, a_deepCycle, ...
+%    a_iceAscentAbortedFlag, a_refDay, a_cycleNum)
 %
 % INPUT PARAMETERS :
-%   a_tabTech1            : decoded data of technical msg #1
-%   a_tabTech2            : decoded data of technical msg #2
-%   a_deepCycle           : deep cycle flag
-%   a_iceDelayedCycleFlag : Ice delayed cycle flag
-%   a_refDay              : reference day
-%   a_decoderId           : float decoder Id
+%   a_tabTech1             : decoded data of technical msg #1
+%   a_tabTech2             : decoded data of technical msg #2
+%   a_deepCycle            : deep cycle flag
+%   a_iceAscentAbortedFlag : Ice aborted cycle flag (RT detemination)
+%   a_refDay               : reference day
+%   a_cycleNum             : cycle number
 %
 % OUTPUT PARAMETERS :
-%   o_cycleStartDate           : cycle start date
-%   o_descentToParkStartDate   : descent to park start date
-%   o_firstStabDate            : first stabilisation date
-%   o_firstStabPres            : first stabilisation pressure
-%   o_descentToParkEndDate     : descent to park end date
-%   o_descentToProfStartDate   : descent to profile start date
-%   o_descentToProfEndDate     : descent to profile end date
-%   o_ascentStartDate          : ascent start date
-%   o_ascentEndDate            : ascent end date
-%   o_transStartDate           : transmission start date
-%   o_gpsDate                  : date associated to the GPS location
-%   o_eolStartDate             : EOL start date
-%   o_firstGroundingDate       : first grounding date
-%   o_firstGroundingPres       : first grounding pressure
-%   o_secondGroundingDate      : second grounding date
-%   o_secondGroundingPres      : second grounding pressure
-%   o_firstEmergencyAscentDate : first emergency ascent ascent date
-%   o_firstEmergencyAscentPres : first grounding pressure
-%   o_iceDetected              : ice detected value (-1: no information,
-%                                0: surfaced cycle, 1: ice detected, 2: no ice
-%                                detected but end of profile and transmission
-%                                session aborted because of ice algorithm)
+%   o_cycleTimeData : cycle timings structure
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/22/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_cycleStartDate, ...
-   o_descentToParkStartDate, ...
-   o_firstStabDate, o_firstStabPres, ...
-   o_descentToParkEndDate, ...
-   o_descentToProfStartDate, ...
-   o_descentToProfEndDate, ...
-   o_ascentStartDate, ...
-   o_ascentEndDate, ...
-   o_transStartDate, ...
-   o_gpsDate, ...
-   o_eolStartDate, ...
-   o_firstGroundingDate, o_firstGroundingPres, ...
-   o_secondGroundingDate, o_secondGroundingPres, ...
-   o_firstEmergencyAscentDate, o_firstEmergencyAscentPres, ...
-   o_iceDetected] = ...
-   compute_prv_dates_216_218(a_tabTech1, a_tabTech2, a_deepCycle, a_iceDelayedCycleFlag, a_refDay, a_decoderId)
+function [o_cycleTimeData] = ...
+   compute_prv_dates_216_218(a_tabTech1, a_tabTech2, a_deepCycle, ...
+   a_iceAscentAbortedFlag, a_refDay, a_cycleNum)
 
 % output parameters initialization
-o_cycleStartDate = [];
-o_descentToParkStartDate = [];
-o_firstStabDate = [];
-o_firstStabPres = [];
-o_descentToParkEndDate = [];
-o_descentToProfStartDate = [];
-o_descentToProfEndDate = [];
-o_ascentStartDate = [];
-o_ascentEndDate = [];
-o_transStartDate = [];
-o_gpsDate = [];
-o_eolStartDate = [];
-o_firstGroundingDate = [];
-o_firstGroundingPres = [];
-o_secondGroundingDate = [];
-o_secondGroundingPres = [];
-o_firstEmergencyAscentDate = [];
-o_firstEmergencyAscentPres = [];
-o_iceDetected = -1;
+o_cycleTimeData = get_prv_ir_float_time_init_struct(a_cycleNum);
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -118,8 +53,27 @@ if (isempty(a_tabTech1) && isempty(a_tabTech2))
    return
 end
 
-% ice detection determination
-o_iceDetected = compute_ascent_aborted_flag(a_tabTech1, a_tabTech2, a_decoderId);
+% times and information to be set
+cycleStartDate = [];
+descentToParkStartDate = [];
+firstStabDate = [];
+firstStabPres = [];
+descentToParkEndDate = [];
+descentToProfStartDate = [];
+descentToProfEndDate = [];
+ascentStartDate = [];
+ascentEndDate = [];
+ascentEndDateBis = [];
+transStartDate = [];
+transStartDateBis = [];
+gpsDate = [];
+firstGroundingDate = [];
+firstGroundingPres = [];
+secondGroundingDate = [];
+secondGroundingPres = [];
+eolStartDate = [];
+firstEmergencyAscentDate = [];
+firstEmergencyAscentPres = [];
 
 % technical message #1
 idF1 = find(a_tabTech1(:, 1) == 0);
@@ -128,150 +82,174 @@ if (length(idF1) > 1)
       g_decArgo_floatNum, g_decArgo_cycleNum, ...
       length(idF1));
 elseif (length(idF1) == 1)
-   
+
    id = idF1(1);
 
-   cycleStartDateDay = g_decArgo_dateDef;
-   startDateInfo = [a_tabTech1(id, 3:5) a_tabTech1(id, 7)];
-   if ~((length(unique(startDateInfo)) == 1) && (unique(startDateInfo) == 0))
-      cycleStartDateDay = datenum(sprintf('%02d%02d%02d', a_tabTech1(id, 3:5)), 'ddmmyy') - g_decArgo_janFirst1950InMatlab;
-      cycleStartHour = a_tabTech1(id, 7);
-      o_cycleStartDate = cycleStartDateDay + cycleStartHour/1440;
-   end
-   
-   if (~isempty(o_cycleStartDate))
-      descentToParkStartHour = a_tabTech1(id, 11);
-      o_descentToParkStartDate = cycleStartDateDay + descentToParkStartHour/1440;
-      if (o_descentToParkStartDate < o_cycleStartDate)
-         o_descentToParkStartDate = o_descentToParkStartDate + 1;
+   gpsDate = a_tabTech1(id, end-3);
+
+   if (a_deepCycle == 1)
+
+      cycleStartDateDay = g_decArgo_dateDef;
+      startDateInfo = [a_tabTech1(id, 3:5) a_tabTech1(id, 7)];
+      if ~((length(unique(startDateInfo)) == 1) && (unique(startDateInfo) == 0))
+         cycleStartDateDay = datenum(sprintf('%02d%02d%02d', a_tabTech1(id, 3:5)), 'ddmmyy') - g_decArgo_janFirst1950InMatlab;
+         cycleStartHour = a_tabTech1(id, 7);
+         cycleStartDate = cycleStartDateDay + cycleStartHour/1440;
       end
-      
-      o_firstStabPres = a_tabTech1(id, 16);
-      o_firstStabDate = o_descentToParkStartDate;
-      if (o_firstStabPres ~= 0)
-         firstStabHour = a_tabTech1(id, 12);
-         o_firstStabDate = cycleStartDateDay + firstStabHour/1440;
-         if (o_firstStabDate < o_descentToParkStartDate)
-            o_firstStabDate = o_firstStabDate + 1;
+
+      if (~isempty(cycleStartDate))
+         descentToParkStartHour = a_tabTech1(id, 11);
+         descentToParkStartDate = cycleStartDateDay + descentToParkStartHour/1440;
+         if (descentToParkStartDate < cycleStartDate)
+            descentToParkStartDate = descentToParkStartDate + 1;
          end
-         
+
+         firstStabPres = a_tabTech1(id, 16);
+         firstStabDate = descentToParkStartDate;
+         if (firstStabPres ~= 0)
+            firstStabHour = a_tabTech1(id, 12);
+            firstStabDate = cycleStartDateDay + firstStabHour/1440;
+            if (firstStabDate < descentToParkStartDate)
+               firstStabDate = firstStabDate + 1;
+            end
+
+            % the descent duration can be > 24 h (see 6901757 #7)
+            nbDays = 0;
+            while (a_tabTech1(id, 16)*100/((firstStabDate-descentToParkStartDate)*86400) > MAX_DESC_SPEED)
+               firstStabDate = firstStabDate + 1;
+               nbDays = nbDays + 1;
+            end
+            if (nbDays > 0)
+               fprintf('INFO: Float #%d cycle #%d: %d day added to FIRST STAB DATE (the descent duration is > 24 h)\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleNum, nbDays);
+            end
+         end
+
+         descentToParkEndHour = a_tabTech1(id, 13);
+         descentToParkEndDate = cycleStartDateDay + descentToParkEndHour/1440;
+         if (descentToParkEndDate < firstStabDate)
+            descentToParkEndDate = descentToParkEndDate + 1;
+         end
+
          % the descent duration can be > 24 h (see 6901757 #7)
          nbDays = 0;
-         while (a_tabTech1(id, 16)*100/((o_firstStabDate-o_descentToParkStartDate)*86400) > MAX_DESC_SPEED)
-            o_firstStabDate = o_firstStabDate + 1;
+         vertDist = abs(a_tabTech1(id, 16)-a_tabTech1(id, 17));
+         while (vertDist*100/((descentToParkEndDate-firstStabDate)*86400) > MAX_DESC_SPEED)
+            descentToParkEndDate = descentToParkEndDate + 1;
             nbDays = nbDays + 1;
          end
          if (nbDays > 0)
-            fprintf('INFO: Float #%d cycle #%d: %d day added to FIRST STAB DATE (the descent duration is > 24 h)\n', ...
+            fprintf('INFO: Float #%d cycle #%d: %d day added to DESCENT TO PARK END DATE (the descent duration is > 24 h)\n', ...
                g_decArgo_floatNum, g_decArgo_cycleNum, nbDays);
          end
-      end
-      
-      descentToParkEndHour = a_tabTech1(id, 13);
-      o_descentToParkEndDate = cycleStartDateDay + descentToParkEndHour/1440;
-      if (o_descentToParkEndDate < o_firstStabDate)
-         o_descentToParkEndDate = o_descentToParkEndDate + 1;
-      end
-      
-      % the descent duration can be > 24 h (see 6901757 #7)
-      nbDays = 0;
-      vertDist = abs(a_tabTech1(id, 16)-a_tabTech1(id, 17));
-      while (vertDist*100/((o_descentToParkEndDate-o_firstStabDate)*86400) > MAX_DESC_SPEED)
-         o_descentToParkEndDate = o_descentToParkEndDate + 1;
-         nbDays = nbDays + 1;
-      end
-      if (nbDays > 0)
-         fprintf('INFO: Float #%d cycle #%d: %d day added to DESCENT TO PARK END DATE (the descent duration is > 24 h)\n', ...
-            g_decArgo_floatNum, g_decArgo_cycleNum, nbDays);
-      end
-      
-      descentToParkEndGregDate = julian_2_gregorian_dec_argo(o_descentToParkEndDate);
-      if (str2num(descentToParkEndGregDate(9:10)) ~= a_tabTech1(id, 18))
-         fprintf('DEC_WARNING: Float #%d cycle #%d: DRIFT_PARK_START_TIME (%s) and drift at park start gregorian day (%d) are not consistent\n', ...
-            g_decArgo_floatNum, g_decArgo_cycleNum, ...
-            descentToParkEndGregDate, a_tabTech1(id, 18));
+
+         descentToParkEndGregDate = julian_2_gregorian_dec_argo(descentToParkEndDate);
+         if (str2num(descentToParkEndGregDate(9:10)) ~= a_tabTech1(id, 18))
+            fprintf('DEC_WARNING: Float #%d cycle #%d: DRIFT_PARK_START_TIME (%s) and drift at park start gregorian day (%d) are not consistent\n', ...
+               g_decArgo_floatNum, g_decArgo_cycleNum, ...
+               descentToParkEndGregDate, a_tabTech1(id, 18));
+         end
+
+         % compute theoretical TSD and AED whatever the value of the
+         % a_iceAscentAbortedFlag is
+         transStartHour = a_tabTech1(id, 37);
+         transStartDate = fix(gpsDate) +  transStartHour/1440;
+         if (transStartDate > gpsDate)
+            transStartDate = transStartDate - 1;
+         end
+
+         % The transmission start date is provided by the float
+         % The ascend end date is considered at the crossing of the PT22 dbar
+         % threshold, after that the float waits 10 minutes before:
+         % 1- if IN AIR measurements are programmed:
+         %     + sampling NEAR SURFACE data (PT31 minutes)
+         %     + starting the final buoyancy acquisition (duration PT32 cseconds)
+         %     + sampling IN AIR data (PT31 minutes)
+         %     + starting transmission phase
+         % 2- if no IN AIR measurements are programmed:
+         %     + starting the final buoyancy acquisition (duration PT4 cseconds)
+         %     + starting transmission phase
+
+         % retrieve IN AIR acquisition cycle periodicity
+         [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
+         inAirAcqPeriod = get_config_value('CONFIG_PT33', configNames, configValues);
+         if (mod(g_decArgo_cycleNum, inAirAcqPeriod) == 0)
+
+            % cycle with IN AIR measurements
+            inAirAcqDurationMin = get_config_value('CONFIG_PT31', configNames, configValues);
+            finalBuoyancyAcqSec = get_config_value('CONFIG_PT32', configNames, configValues)/100;
+
+            ascentEndDate = transStartDate - 10/1440 - inAirAcqDurationMin*2/1440 - finalBuoyancyAcqSec/86400;
+         else
+
+            % cycle without IN AIR measurements
+            finalBuoyancyAcqSec = get_config_value('CONFIG_PT04', configNames, configValues)/100;
+
+            ascentEndDate = transStartDate - 10/1440 - finalBuoyancyAcqSec/86400;
+         end
+
+         if (a_iceAscentAbortedFlag == 1)
+
+            % as a_iceAscentAbortedFlag is a RT value, it can be modified at the end
+            % of all processed data, then
+
+            % store current values
+            transStartDateBis = transStartDate;
+            ascentEndDateBis = ascentEndDate;
+
+            % process new values in ICE aborted conditions
+
+            % we use "Transmission start time" a_tabTech1(id, 39+ID_OFFSET) as
+            % the AET
+
+            % GPS date is float time at the moement of TECH packet creation
+            % GPS date is reliable (the day, month and year are provided) even
+            % if the float didn't surface
+            % we use it to compute AET (same as above for transStartDate)
+            ascentEndDate = transStartDate;
+            transStartDate = [];
+         end
+
+         ascentStartHour = a_tabTech1(id, 36);
+         ascentStartDate = fix(ascentEndDate) +  ascentStartHour/1440;
+         if (ascentStartDate > ascentEndDate)
+            ascentStartDate = ascentStartDate - 1;
+         end
+
+         descentToProfEndHour = a_tabTech1(id, 26);
+         descentToProfEndDate = fix(ascentStartDate) +  descentToProfEndHour/1440;
+         if (descentToProfEndDate > ascentStartDate)
+            descentToProfEndDate = descentToProfEndDate - 1;
+         end
+
+         descentToProfStartHour = a_tabTech1(id, 25);
+         descentToProfStartDate = fix(descentToProfEndDate) +  descentToProfStartHour/1440;
+         if (descentToProfStartDate > descentToProfEndDate)
+            descentToProfStartDate = descentToProfStartDate - 1;
+         end
+
+         % the descent duration can be > 24 h (see 6901757 #7)
+         if (a_tabTech1(id, 29) > 0) % a_tabTech1(id, 29) == 0 means that it is not set because the float didn't wait at profile pressure
+            nbDays = 0;
+            vertDist = abs(a_tabTech1(id, 29)-(a_tabTech1(id, 21)+a_tabTech1(id, 22))/2);
+            while (vertDist*100/((descentToProfEndDate-descentToProfStartDate)*86400) > MAX_DESC_SPEED)
+               descentToProfStartDate = descentToProfStartDate - 1;
+               nbDays = nbDays + 1;
+            end
+            if (nbDays > 0)
+               fprintf('INFO: Float #%d cycle #%d: %d day substracted to DESCENT TO PROF START DATE (the descent duration is > 24 h)\n', ...
+                  g_decArgo_floatNum, g_decArgo_cycleNum, nbDays);
+            end
+         end
       end
    end
-   
-   o_gpsDate = a_tabTech1(id, end-3);
-   
-   if (~isempty(o_cycleStartDate))
-      
-      transStartHour = a_tabTech1(id, 37);
-      o_transStartDate = fix(o_gpsDate) +  transStartHour/1440;
-      if (o_transStartDate > o_gpsDate)
-         o_transStartDate = o_transStartDate - 1;
-      end
-      
-      % The transmission start date is provided by the float
-      % The ascend end date is considered at the crossing of the PT22 dbar
-      % threshold, after that the float waits 10 minutes before:
-      % 1- if IN AIR measurements are programmed:
-      %     + sampling NEAR SURFACE data (PT31 minutes)
-      %     + starting the final buoyancy acquisition (duration PT32 cseconds)
-      %     + sampling IN AIR data (PT31 minutes)
-      %     + starting transmission phase
-      % 2- if no IN AIR measurements are programmed:
-      %     + starting the final buoyancy acquisition (duration PT4 cseconds)
-      %     + starting transmission phase
-      
-      % retrieve IN AIR acquisition cycle periodicity
-      [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
-      inAirAcqPeriod = get_config_value('CONFIG_PT33', configNames, configValues);
-      if (mod(g_decArgo_cycleNum, inAirAcqPeriod) == 0)
-         
-         % cycle with IN AIR measurements
-         inAirAcqDurationMin = get_config_value('CONFIG_PT31', configNames, configValues);
-         finalBuoyancyAcqSec = get_config_value('CONFIG_PT32', configNames, configValues)/100;
-         
-         o_ascentEndDate = o_transStartDate - 10/1440 - inAirAcqDurationMin*2/1440 - finalBuoyancyAcqSec/86400;
-      else
-         
-         % cycle without IN AIR measurements
-         finalBuoyancyAcqSec = get_config_value('CONFIG_PT04', configNames, configValues)/100;
-         
-         o_ascentEndDate = o_transStartDate - 10/1440 - finalBuoyancyAcqSec/86400;
-      end
-      
-      ascentStartHour = a_tabTech1(id, 36);
-      o_ascentStartDate = fix(o_ascentEndDate) +  ascentStartHour/1440;
-      if (o_ascentStartDate > o_ascentEndDate)
-         o_ascentStartDate = o_ascentStartDate - 1;
-      end
-      
-      descentToProfEndHour = a_tabTech1(id, 26);
-      o_descentToProfEndDate = fix(o_ascentStartDate) +  descentToProfEndHour/1440;
-      if (o_descentToProfEndDate > o_ascentStartDate)
-         o_descentToProfEndDate = o_descentToProfEndDate - 1;
-      end
-      
-      descentToProfStartHour = a_tabTech1(id, 25);
-      o_descentToProfStartDate = fix(o_descentToProfEndDate) +  descentToProfStartHour/1440;
-      if (o_descentToProfStartDate > o_descentToProfEndDate)
-         o_descentToProfStartDate = o_descentToProfStartDate - 1;
-      end
-      
-      % the descent duration can be > 24 h (see 6901757 #7)
-      if (a_tabTech1(id, 29) > 0) % a_tabTech1(id, 29) == 0 means that it is not set because the float didn't wait at profile pressure
-         nbDays = 0;
-         vertDist = abs(a_tabTech1(id, 29)-(a_tabTech1(id, 21)+a_tabTech1(id, 22))/2);
-         while (vertDist*100/((o_descentToProfEndDate-o_descentToProfStartDate)*86400) > MAX_DESC_SPEED)
-            o_descentToProfStartDate = o_descentToProfStartDate - 1;
-            nbDays = nbDays + 1;
-         end
-         if (nbDays > 0)
-            fprintf('INFO: Float #%d cycle #%d: %d day substracted to DESCENT TO PROF START DATE (the descent duration is > 24 h)\n', ...
-               g_decArgo_floatNum, g_decArgo_cycleNum, nbDays);
-         end
-      end
-   end
-   
+
    if (a_tabTech1(id, 64) > 0)
-      o_eolStartDate = datenum(sprintf('%02d%02d%02d', a_tabTech1(id, 65:70)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
+      eolStartDate = datenum(sprintf('%02d%02d%02d', a_tabTech1(id, 65:70)), 'HHMMSSddmmyy') - g_decArgo_janFirst1950InMatlab;
    end
-   
+
 end
-   
+
 % technical message #2
 idF2 = find(a_tabTech2(:, 1) == 4);
 if (length(idF2) > 1)
@@ -279,136 +257,159 @@ if (length(idF2) > 1)
       g_decArgo_floatNum, g_decArgo_cycleNum, ...
       length(idF2));
 elseif (length(idF2) == 1)
-   
+
    id = idF2(1);
 
    if (a_tabTech2(id, 17) > 0)
-      
+
       %       fprintf('\n\nGOUNDING\n\n');
-      
+
       % manage possible roll over of grounding day
       groundingDay = a_tabTech2(id, 19);
-      if (~isempty(o_cycleStartDate))
-         while ((groundingDay + a_tabTech2(id, 20)/1440 + g_decArgo_julD2FloatDayOffset) < o_cycleStartDate)
+      if (~isempty(cycleStartDate))
+         while ((groundingDay + a_tabTech2(id, 20)/1440 + g_decArgo_julD2FloatDayOffset) < cycleStartDate)
             groundingDay = groundingDay + 256;
          end
       end
-      
+
       firstGroundingTime = groundingDay + a_tabTech2(id, 20)/1440;
-      o_firstGroundingDate = firstGroundingTime + g_decArgo_julD2FloatDayOffset;
-      o_firstGroundingPres = a_tabTech2(id, 18);
+      firstGroundingDate = firstGroundingTime + g_decArgo_julD2FloatDayOffset;
+      firstGroundingPres = a_tabTech2(id, 18);
    end
-   
+
    if (a_tabTech2(id, 17) > 1)
-      
+
       % manage possible roll over of grounding day
       groundingDay = a_tabTech2(id, 24);
-      if (~isempty(o_cycleStartDate))
-         while ((groundingDay + a_tabTech2(id, 25)/1440 + g_decArgo_julD2FloatDayOffset) < o_cycleStartDate)
+      if (~isempty(cycleStartDate))
+         while ((groundingDay + a_tabTech2(id, 25)/1440 + g_decArgo_julD2FloatDayOffset) < cycleStartDate)
             groundingDay = groundingDay + 256;
          end
       end
-      
+
       secondGroundingTime = groundingDay + a_tabTech2(id, 25)/1440;
-      o_secondGroundingDate = secondGroundingTime + g_decArgo_julD2FloatDayOffset;
-      o_secondGroundingPres = a_tabTech2(id, 23);
+      secondGroundingDate = secondGroundingTime + g_decArgo_julD2FloatDayOffset;
+      secondGroundingPres = a_tabTech2(id, 23);
    end
 
    if (a_tabTech2(id, 28) > 0)
-      
+
       % manage possible roll over of first emergency ascent day
       firstEmergencyAscentDay = a_tabTech2(id, 32);
-      if (~isempty(o_cycleStartDate))
-         while ((a_refDay + firstEmergencyAscentDay + a_tabTech2(id, 29)/1440) < o_cycleStartDate)
+      if (~isempty(cycleStartDate))
+         while ((a_refDay + firstEmergencyAscentDay + a_tabTech2(id, 29)/1440) < cycleStartDate)
             firstEmergencyAscentDay = firstEmergencyAscentDay + 256;
          end
       end
-      
-      o_firstEmergencyAscentDate = a_refDay + firstEmergencyAscentDay + a_tabTech2(id, 29)/1440;
-      o_firstEmergencyAscentPres = a_tabTech2(id, 30);
-   end   
-end   
+
+      firstEmergencyAscentDate = a_refDay + firstEmergencyAscentDay + a_tabTech2(id, 29)/1440;
+      firstEmergencyAscentPres = a_tabTech2(id, 30);
+   end
+end
+
+% fill output structure
+o_cycleTimeData.cycleStartDate = cycleStartDate;
+o_cycleTimeData.descentToParkStartDate = descentToParkStartDate;
+o_cycleTimeData.firstStabDate = firstStabDate;
+o_cycleTimeData.firstStabPres = firstStabPres;
+o_cycleTimeData.descentToParkEndDate = descentToParkEndDate;
+o_cycleTimeData.descentToProfStartDate = descentToProfStartDate;
+o_cycleTimeData.descentToProfEndDate = descentToProfEndDate;
+o_cycleTimeData.ascentStartDate = ascentStartDate;
+o_cycleTimeData.ascentEndDate = ascentEndDate;
+o_cycleTimeData.ascentEndDateBis = ascentEndDateBis;
+o_cycleTimeData.transStartDate = transStartDate;
+o_cycleTimeData.transStartDateBis = transStartDateBis;
+o_cycleTimeData.gpsDate = gpsDate;
+o_cycleTimeData.eolStartDate = eolStartDate;
+o_cycleTimeData.firstGroundingDate = firstGroundingDate;
+o_cycleTimeData.firstGroundingPres = firstGroundingPres;
+o_cycleTimeData.secondGroundingDate = secondGroundingDate;
+o_cycleTimeData.secondGroundingPres = secondGroundingPres;
+o_cycleTimeData.firstEmergencyAscentDate = firstEmergencyAscentDate;
+o_cycleTimeData.firstEmergencyAscentPres = firstEmergencyAscentPres;
+o_cycleTimeData.iceAscentAbortedFlag = a_iceAscentAbortedFlag;
 
 print = 0;
 if (print == 1)
-   
+
    fprintf('Float #%d cycle #%d:\n', ...
       g_decArgo_floatNum, g_decArgo_cycleNum);
-   if (~isempty(o_cycleStartDate))
+   if (~isempty(cycleStartDate))
       fprintf('CYCLE START DATE           : %s\n', ...
-         julian_2_gregorian_dec_argo(o_cycleStartDate));
+         julian_2_gregorian_dec_argo(cycleStartDate));
    else
       fprintf('CYCLE START DATE           : UNDEF\n');
    end
-   if (~isempty(o_descentToParkStartDate))
+   if (~isempty(descentToParkStartDate))
       fprintf('DESCENT TO PARK START DATE : %s\n', ...
-         julian_2_gregorian_dec_argo(o_descentToParkStartDate));
+         julian_2_gregorian_dec_argo(descentToParkStartDate));
    else
       fprintf('DESCENT TO PARK START DATE : UNDEF\n');
    end
-   if (~isempty(o_firstStabDate))
+   if (~isempty(firstStabDate))
       fprintf('FIRST STAB DATE            : %s (%d dbar)\n', ...
-         julian_2_gregorian_dec_argo(o_firstStabDate), o_firstStabPres);
+         julian_2_gregorian_dec_argo(firstStabDate), firstStabPres);
    else
       fprintf('FIRST STAB DATE            : UNDEF\n');
    end
-   if (~isempty(o_descentToParkEndDate))
+   if (~isempty(descentToParkEndDate))
       fprintf('DESCENT TO PARK END DATE   : %s\n', ...
-         julian_2_gregorian_dec_argo(o_descentToParkEndDate));
+         julian_2_gregorian_dec_argo(descentToParkEndDate));
    else
       fprintf('DESCENT TO PARK END DATE   : UNDEF\n');
    end
-   if (~isempty(o_descentToProfStartDate))
+   if (~isempty(descentToProfStartDate))
       fprintf('DESCENT TO PROF START DATE : %s\n', ...
-         julian_2_gregorian_dec_argo(o_descentToProfStartDate));
+         julian_2_gregorian_dec_argo(descentToProfStartDate));
    else
       fprintf('DESCENT TO PROF START DATE : UNDEF\n');
    end
-   if (~isempty(o_descentToProfEndDate))
+   if (~isempty(descentToProfEndDate))
       fprintf('DESCENT TO PROF END DATE   : %s\n', ...
-         julian_2_gregorian_dec_argo(o_descentToProfEndDate));
+         julian_2_gregorian_dec_argo(descentToProfEndDate));
    else
       fprintf('DESCENT TO PROF END DATE   : UNDEF\n');
    end
-   if (~isempty(o_ascentStartDate))
+   if (~isempty(ascentStartDate))
       fprintf('ASCENT START DATE          : %s\n', ...
-         julian_2_gregorian_dec_argo(o_ascentStartDate));
+         julian_2_gregorian_dec_argo(ascentStartDate));
    else
       fprintf('ASCENT START DATE          : UNDEF\n');
    end
-   if (~isempty(o_ascentEndDate))
+   if (~isempty(ascentEndDate))
       fprintf('ASCENT END DATE            : %s\n', ...
-         julian_2_gregorian_dec_argo(o_ascentEndDate));
+         julian_2_gregorian_dec_argo(ascentEndDate));
    else
       fprintf('ASCENT END DATE            : UNDEF\n');
    end
-   if (~isempty(o_transStartDate))
+   if (~isempty(transStartDate))
       fprintf('TRANSMISSION START DATE    : %s\n', ...
-         julian_2_gregorian_dec_argo(o_transStartDate));
+         julian_2_gregorian_dec_argo(transStartDate));
    else
       fprintf('TRANSMISSION START DATE    : UNDEF\n');
    end
-   if (~isempty(o_gpsDate))
+   if (~isempty(gpsDate))
       fprintf('GPS DATE                   : %s\n', ...
-         julian_2_gregorian_dec_argo(o_gpsDate));
+         julian_2_gregorian_dec_argo(gpsDate));
    else
       fprintf('GPS DATE                   : UNDEF\n');
    end
-   if (~isempty(o_firstGroundingDate))
+   if (~isempty(firstGroundingDate))
       fprintf('FIRST GROUNDING DATE       : %s (%d dbar)\n', ...
-         julian_2_gregorian_dec_argo(o_firstGroundingDate), o_firstGroundingPres);
+         julian_2_gregorian_dec_argo(firstGroundingDate), firstGroundingPres);
    end
-   if (~isempty(o_secondGroundingDate))
+   if (~isempty(secondGroundingDate))
       fprintf('SECOND GROUNDING DATE      : %s (%d dbar)\n', ...
-         julian_2_gregorian_dec_argo(o_secondGroundingDate), o_secondGroundingPres);
+         julian_2_gregorian_dec_argo(secondGroundingDate), secondGroundingPres);
    end
-   if (~isempty(o_eolStartDate))
+   if (~isempty(eolStartDate))
       fprintf('EOL START DATE             : %s\n', ...
-         julian_2_gregorian_dec_argo(o_eolStartDate));
+         julian_2_gregorian_dec_argo(eolStartDate));
    end
-   if (~isempty(o_firstEmergencyAscentDate))
+   if (~isempty(firstEmergencyAscentDate))
       fprintf('FIRST EMERGENCY ASCENT DATE: %s (%d dbar)\n', ...
-         julian_2_gregorian_dec_argo(o_firstEmergencyAscentDate), o_firstEmergencyAscentPres);
+         julian_2_gregorian_dec_argo(firstEmergencyAscentDate), firstEmergencyAscentPres);
    end
 end
 

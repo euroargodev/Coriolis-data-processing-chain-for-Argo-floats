@@ -21,7 +21,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/22/2013 - RNU - creation
@@ -96,35 +96,53 @@ for idCyPrPh = 1:size(cycleProfPhaseList, 1)
       profStruct.sensorNumber = 0;
       
       if (phaseNum == g_decArgo_phaseAscProf)
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         % PROFILE CTD CUT OFF PRESSURE DETERMINATION
+
+         % retrieve the last pumped PRES from the tech data
+         subSurfacePres = '';
+         presCutOffProf = g_decArgo_presDef;
+         fromConfigFlag = 0;
          if (~isempty(presCutOffProfFromTech))
             if (size(presCutOffProfFromTech, 2) == 3)
                idPresCutOffProf = find((presCutOffProfFromTech(:, 1) == cycleNum) & ...
                   (presCutOffProfFromTech(:, 2) == profNum));
                if (~isempty(idPresCutOffProf))
-                  profStruct.presCutOffProf = presCutOffProfFromTech(idPresCutOffProf(1), 3);
+                  subSurfacePres = presCutOffProfFromTech(idPresCutOffProf(1), 3);
+                  presCutOffProf = subSurfacePres;
                end
             end
          end
-         if (profStruct.presCutOffProf == g_decArgo_presDef)
-            % get the pressure cut-off for CTD ascending profile (from the
-            % configuration)
-            [configPC0113] = config_get_value_ir_rudics_sbd2(cycleNum, profNum, 'CONFIG_PC_0_1_13');
-            if (~isempty(configPC0113) && ~isnan(configPC0113))
-               profStruct.presCutOffProf = configPC0113;
-               
-               fprintf('DEC_WARNING: Float #%d Cycle #%d Profile #%d: PRES_CUT_OFF_PROF parameter is missing in the tech data - value retrieved from the configuration\n', ...
-                  g_decArgo_floatNum, ...
-                  cycleNum, ...
-                  profNum);
+         if (isempty(subSurfacePres))
+            % retrieve the CTD pump cut-off pressure from the configuration
+            [presCutOffProfCfg] = config_get_value_ir_rudics_sbd2(cycleNum, profNum, 'CONFIG_PC_0_1_4');
+            if (~isempty(presCutOffProfCfg) && ~isnan(presCutOffProfCfg))
+               % CONFIG_PC_0_1_4 is CTD pump cut-off pressure we should add
+               % Poverlap = 0.5 dbar if it is not situated in a raw treatment
+               % type zone
+
+               % retrieve the treatment type associated to presCutOffProfCfg
+               treatType = config_get_treatment_type_ir_rudics_cts4( ...
+                  cycleNum, profNum, presCutOffProfCfg);
+               if (~isempty(treatType) && (treatType == 0))
+                  presCutOffProfConfig = presCutOffProfCfg;
+               else
+                  presCutOffProfConfig = presCutOffProfCfg + 0.5;
+               end
+               presCutOffProf = presCutOffProfConfig;
+               fromConfigFlag = 1;
             else
-               fprintf('ERROR: Float #%d Cycle #%d Profile #%d: PRES_CUT_OFF_PROF parameter is missing in the configuration - CTD profile not split\n', ...
+               fprintf('ERROR: Float #%d Cycle #%d Profile #%d: subsurface meas is missing in the tech data and PRES_CUT_OFF_PROF parameter is missing in the configuration - CTD profile not split\n', ...
                   g_decArgo_floatNum, ...
                   cycleNum, ...
                   profNum);
             end
          end
+         profStruct.presCutOffProf = presCutOffProf;
+         profStruct.presCutOffProfConfig = fromConfigFlag;
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       end
-      
       
       % select the data (according to cycleNum, profNum and phaseNum)
       idDataRaw = find((a_dataCTDRawDate(:, 1) == cycleNum) & ...

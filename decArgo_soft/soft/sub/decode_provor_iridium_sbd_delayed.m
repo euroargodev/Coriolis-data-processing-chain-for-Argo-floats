@@ -31,7 +31,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/16/2017 - RNU - creation
@@ -68,9 +68,6 @@ global g_decArgo_outputNcParamIndex;
 
 % output NetCDF technical parameter values
 global g_decArgo_outputNcParamValue;
-
-% output NetCDF technical parameter labels
-global g_decArgo_outputNcParamLabelBis;
 
 % default values
 global g_decArgo_janFirst1950InMatlab;
@@ -139,12 +136,6 @@ g_decArgo_cycleNumOffset = 0;
 global g_decArgo_cycleNumShift;
 g_decArgo_cycleNumShift = 0;
 
-% list of cycle numbers and ice detection flag
-global g_decArgo_cycleNumListForIce;
-global g_decArgo_cycleNumListIceDetected;
-g_decArgo_cycleNumListForIce = [];
-g_decArgo_cycleNumListIceDetected = [];
-
 % already processed rsync log information
 global g_decArgo_rsyncLogFileUnderProcessList;
 global g_decArgo_rsyncLogFileUsedList;
@@ -169,6 +160,15 @@ g_decArgo_isaDetectionCounter = 0;
 global g_decArgo_iceInfoFilePathName;
 g_decArgo_iceInfoFilePathName = [];
 
+% to store ICE data used to simulate ICE algorithm
+global g_decArgo_iceData;
+g_decArgo_iceData = [];
+
+% to store cycleTimeData for ICE floats (in case the RT iceAscentAbortedFlag is
+% not the same as the final one)
+global g_decArgo_cycleTimeData;
+g_decArgo_cycleTimeData = [];
+
 % float configuration
 global g_decArgo_floatConfig;
 
@@ -191,6 +191,10 @@ g_decArgo_doneOnceFlag = 0;
 
 % TRAJ 3.2 file generation flag
 global g_decArgo_generateNcTraj32;
+
+% to store information for resetoffset check
+global g_decArgo_resetOffsetData;
+g_decArgo_resetOffsetData = [];
 
 
 % create the float directory
@@ -228,7 +232,6 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    g_decArgo_outputNcParamIndex = [];
    g_decArgo_outputNcParamValue = [];
-   g_decArgo_outputNcParamLabelBis = [];
    
    % create the configuration parameter names for the META NetCDF file
    [decArgoConfParamNames, ncConfParamNames] = create_config_param_names_ir_sbd(a_decoderId);
@@ -372,9 +375,9 @@ for idSpoolFile = 1:length(tabAllFileNames)
    
    curMailFile = tabAllFileNames{idSpoolFile};
    curMailFileDate = tabAllFileDates(idSpoolFile);
-   
+
    % specific
-   if (ismember(g_decArgo_floatNum, [3901644, 6904105, 6903038]))
+   if (ismember(g_decArgo_floatNum, [3901644, 6904105, 6903038, 6903146, 6904097]))
       switch g_decArgo_floatNum
          case 3901644
             % 2 mails are probably not transmitted by this float
@@ -400,9 +403,24 @@ for idSpoolFile = 1:length(tabAllFileNames)
                   curMailFileDate == gregorian_2_julian_dec_argo('2021/10/13 11:14:29'))
                continue
             end
+         case 6903146
+            % 4 mails should be ignored
+            if (curMailFileDate == gregorian_2_julian_dec_argo('2022/07/28 15:35:15') || ...
+                  curMailFileDate == gregorian_2_julian_dec_argo('2022/07/28 15:35:35') || ...
+                  curMailFileDate == gregorian_2_julian_dec_argo('2022/07/28 15:35:50') || ...
+                  curMailFileDate == gregorian_2_julian_dec_argo('2022/07/28 15:38:16'))
+               continue
+            end
+         case 6904097
+            % 2 mails (kept for parameters only) should be ignored
+            if (curMailFileDate == gregorian_2_julian_dec_argo('2021/01/12 09:14:18') || ...
+                  curMailFileDate == gregorian_2_julian_dec_argo('2021/01/12 09:14:39'))
+               continue
+            end
+            
       end
    end
-   
+
    % move the current file into the buffer directory
    add_to_list_ir_sbd(curMailFile, 'buffer');
    remove_from_list_ir_sbd(curMailFile, 'spool', 0, 1);
@@ -419,6 +437,7 @@ for idSpoolFile = 1:length(tabAllFileNames)
       continue
    end
    
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % decode SBD file
    sbdFileName = regexprep(curMailFile, '.txt', '.sbd');
    decodedData = decode_sbd_file(sbdFileName, curMailFileDate, a_decoderId, a_launchDate);
@@ -444,6 +463,7 @@ end
 
 fprintf('\nDEC_INFO: creating buffers\n');
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % create decoding buffers
 decodedDataTab = create_decoding_buffers(decodedDataTab, a_decoderId);
 
@@ -456,6 +476,7 @@ end
 
 fprintf('\nDEC_INFO: processing decoded data\n');
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % process decoded data
 bufferList = [decodedDataTab.rankByCycle];
 % if (isempty(g_decArgo_outputCsvFileId))
@@ -500,7 +521,7 @@ if (isempty(g_decArgo_outputCsvFileId))
    % consistent
    [o_tabTrajNMeas, o_tabTrajNCycle] = set_n_cycle_vs_n_meas_consistency(o_tabTrajNMeas, o_tabTrajNCycle);
    
-   % add ICE detected flag in TECH variables and finalize TECH data
+   % finalize TECH data
    [o_tabNcTechIndex, o_tabNcTechVal] = finalize_technical_data_ir_sbd( ...
       o_tabNcTechIndex, o_tabNcTechVal, a_decoderId);
    

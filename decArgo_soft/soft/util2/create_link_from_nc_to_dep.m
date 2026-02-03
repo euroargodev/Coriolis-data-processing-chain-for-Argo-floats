@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/26/2019 - RNU - creation
@@ -49,7 +49,7 @@ if (nargin == 0)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
       return
    end
-   
+
    fprintf('Floats from list: %s\n', floatListFileName);
    floatList = load(floatListFileName);
 else
@@ -93,20 +93,20 @@ end
 cycleCorNumAll = [];
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
-   
+
    floatNum = floatList(idFloat);
    fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
-   
+
    % retrieve profile measurements from both sets
    [ncProfCyNum, ncProfDir, ncProfLen, ncProfTimes, ncProfMeas] = ...
       get_nc_profile_data(DIR_INPUT_NC_FILES, floatNum);
-   
+
    [depProfCyNum, depProfDir, depProfTimes, depProfMeas] = ...
       get_dep_profile_data(DIR_INPUT_DEP_FILES, floatNum);
-   
+
    % link nc data set to DEP one
    if (~isempty(depProfCyNum))
-      
+
       % try to associate a DEP cycle to each nc one
       nc2depCyNum = ones(length(ncProfCyNum), 1)*-1;
       depCyNumUsed = zeros(length(depProfCyNum), 1);
@@ -120,7 +120,7 @@ for idFloat = 1:nbFloats
             match = ismember(dataNc, dataDep);
             match = (sum(match)/length(match))*100;
             nc2depMatch(idProf) = match;
-            
+
             if (match > MATCH_PERCENT)
                nc2depCyNum(idProf) = depProfCyNum(idF);
                depCyNumUsed(idF) = 1;
@@ -139,7 +139,7 @@ for idFloat = 1:nbFloats
                match = ismember(dataNc, dataDep);
                match = (sum(match)/length(match))*100;
                nc2depMatch(idProfNc) = max(nc2depMatch(idProfNc), match);
-               
+
                if (match > MATCH_PERCENT)
                   nc2depCyNum(idProfNc) = depProfCyNum(idProfDep);
                   depCyNumUsed(idProfDep) = 1;
@@ -150,7 +150,7 @@ for idFloat = 1:nbFloats
             end
          end
       end
-      
+
       cycleCorNum = [repmat(floatNum, length(ncProfCyNum), 1), ...
          ncProfCyNum nc2depCyNum floor(nc2depMatch) ncProfLen ones(length(ncProfCyNum), 2)*-1];
       idF = find((cycleCorNum(:, 3) ~= -1) & (cycleCorNum(:, 2)-cycleCorNum(:, 3) ~= 0));
@@ -174,15 +174,15 @@ for idFloat = 1:nbFloats
             end
          end
       end
-      
+
       cycleCorNumAll = [cycleCorNumAll; cycleCorNum];
    end
-   
+
    if (DEP_2_NC_FLAG)
-      
+
       % link DEP data set to nc one
       if (~isempty(depProfCyNum))
-         
+
          % create 2 sets of measurements
          tabDataDep = cell(size(depProfCyNum));
          for idProf = 1:length(depProfCyNum)
@@ -192,7 +192,7 @@ for idFloat = 1:nbFloats
          for idProf = 1:length(ncProfCyNum)
             tabDataNc{idProf} = (strsplit(ncProfMeas{idProf}, '@'))';
          end
-         
+
          % for each DEP cycle, look for associated nc cycle (using profile
          % measurements)
          tabNc2Dep = cell(size(depProfCyNum));
@@ -209,7 +209,7 @@ for idFloat = 1:nbFloats
             end
             tabNc2Dep{idDepProf} = ncCyList;
          end
-         
+
          % for each DEP cycle not associated with one nc cycle, check if on
          % nc file exists
          tabNcFile = ones(size(depProfCyNum))*-1;
@@ -224,9 +224,9 @@ for idFloat = 1:nbFloats
             else
                tabNcFile(idProf) = 1;
             end
-         end         
-         
-         
+         end
+
+
          for idProf = 1:length(tabNc2Dep)
             cyListStr = '';
             cyList = tabNc2Dep{idProf};
@@ -281,7 +281,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/26/2019 - RNU - creation
@@ -302,16 +302,16 @@ monoProfDirName = [a_inputDirName sprintf('/%d/profiles/', a_floatNum)];
 monoProfFileName = [monoProfDirName sprintf('*%d_*.nc', a_floatNum)];
 monoProfFiles = dir(monoProfFileName);
 for idFile = 1:length(monoProfFiles)
-   
+
    fileName = monoProfFiles(idFile).name;
    % do not consider b file (if exists)
    if (fileName(1) == 'B')
       continue
    end
    profFileName = [monoProfDirName fileName];
-   
+
    if (exist(profFileName, 'file') == 2)
-      
+
       % retrieve information from Input file
       wantedInputVars = [ ...
          {'CYCLE_NUMBER'} ...
@@ -325,7 +325,7 @@ for idFile = 1:length(monoProfFiles)
          {'PSAL'} ...
          ];
       [inputData] = get_data_from_nc_file(profFileName, wantedInputVars);
-      
+
       idVal = find(strcmp('CYCLE_NUMBER', inputData(1:2:end)) == 1, 1);
       cycleNumber = inputData{2*idVal};
       idVal = find(strcmp('DIRECTION', inputData(1:2:end)) == 1, 1);
@@ -344,7 +344,7 @@ for idFile = 1:length(monoProfFiles)
       temp = inputData{2*idVal};
       idVal = find(strcmp('PSAL', inputData(1:2:end)) == 1, 1);
       psal = inputData{2*idVal};
-      
+
       if (length(cycleNumber) > 1)
          cycleNumber = cycleNumber(1);
          direction = direction(1);
@@ -356,7 +356,7 @@ for idFile = 1:length(monoProfFiles)
          temp = temp(:, 1);
          psal = psal(:, 1);
       end
-      
+
       o_ncProfCyNum = [o_ncProfCyNum; cycleNumber];
       o_ncProfDir = [o_ncProfDir; direction];
       o_ncProfLen = [o_ncProfLen; size(pres, 1)];
@@ -388,7 +388,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/26/2019 - RNU - creation
@@ -432,12 +432,12 @@ if (~exist(depFilePathName, 'dir') && exist(depFilePathName, 'file'))
       depTemp, depTempFlag, ...
       depSal, depSalFlag, ...
       depGrd, depEtat, depUpdate, depProfNum] = read_file_dep(depFilePathName);
-   
+
    cycleList = unique(depCycle);
    for idCy = 1:length(cycleList)
       cyNum = cycleList(idCy);
       idForCy = find(depCycle == cyNum);
-      
+
       profJuld = '';
       if (any(depType(idForCy) == g_typeAscentEndFloat))
          idF = find(depType(idForCy) == g_typeAscentEndFloat);
@@ -475,7 +475,7 @@ if (~exist(depFilePathName, 'dir') && exist(depFilePathName, 'file'))
             profJuld = min(depDate(idForCy(idF)));
          end
       end
-      
+
       profJuldLoc = '';
       profLat = '';
       profLon = '';
@@ -486,7 +486,7 @@ if (~exist(depFilePathName, 'dir') && exist(depFilePathName, 'file'))
          profLat = depLat(idForCy(idF(idMin)));
          profLon = depLon(idForCy(idF(idMin)));
       end
-      
+
       ascPres = [];
       ascTemp = [];
       ascPsal = [];
@@ -499,7 +499,7 @@ if (~exist(depFilePathName, 'dir') && exist(depFilePathName, 'file'))
          ascTemp = flipud(ascTemp);
          ascPsal = flipud(ascPsal);
       end
-      
+
       if (~isempty(profJuld) && ~isempty(profJuldLoc))
          if (~isempty(ascPres))
             o_depProfCyNum = [o_depProfCyNum; cyNum];
@@ -517,63 +517,7 @@ end
 return
 
 % ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         fprintf('WARNING: Variable %s not present in file : %s\n', ...
-            varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {''}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Initialisation des valeurs des flags utilisés dans le format DEP.
+% Initialisation des valeurs des flags utilisÃ©s dans le format DEP.
 %
 % SYNTAX :
 %   init_valflag
@@ -585,7 +529,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   13/05/2007 - RNU - creation
@@ -761,7 +705,7 @@ g_dateFlagModifProg = 6;
 g_dateFlagAddNeedClockDriftCor = 10;
 g_dateFlagAddClockDriftLaunchCor = 20;
 g_dateFlagAddClockDriftCor = 40;
-g_dateFlagAddDoubtfulDate = 80; %uniquement utilisée dans les DEP2
+g_dateFlagAddDoubtfulDate = 80; %uniquement utilisÃ©e dans les DEP2
 
 g_posDef = 99;
 g_posLacher = 0;
@@ -807,7 +751,7 @@ g_rppQcMinMax = 5;
 g_rppQcMetaNoCy = 6;
 g_rppQcMetaNoMeas = 7;
 
-% date utilisée pour effectuer la limitation temporelle du jeu de données
+% date utilisÃ©e pour effectuer la limitation temporelle du jeu de donnÃ©es
 g_dataSetEndDate = '2013/04/15 00:00:00'; % pour ANDRO 2013
 % g_dataSetEndDate = '2013/11/15 00:00:00'; % pour misc andro 2013 (APEX IR)
 % g_dataSetEndDate = '2009/01/01 00:00:00';
@@ -821,7 +765,7 @@ g_bounceProfMaxLength = 100;
 return
 
 % ------------------------------------------------------------------------------
-% Initialisation des valeurs par défaut des variables courantes.
+% Initialisation des valeurs par dÃ©faut des variables courantes.
 %
 % SYNTAX :
 %   init_valdef
@@ -833,7 +777,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   29/08/2007 - RNU - creation
@@ -903,16 +847,16 @@ g_satNameDef = '9';
 g_dateGregStr = '9999/99/99 99:99:99';
 g_profNumDef = -1;
 
-% valeurs par défaut du format DEP2
+% valeurs par dÃ©faut du format DEP2
 g_clockDriftFlagDef = 9;
 g_clockOffsetDef = -9999999999;
 g_interpClockOffsetDef = -1;
 
-% valeurs par défaut du format TRAJ
+% valeurs par dÃ©faut du format TRAJ
 g_cycleNumTrajDef = 99999;
 g_clockOffsetTrajDef = 999999.0;
 
-% valeurs par défaut du format YoMaHa
+% valeurs par dÃ©faut du format YoMaHa
 g_yoLonDef = -999.9999;
 g_yoLatDef = -99.9999;
 g_yoPresDef = -999.9;
@@ -923,7 +867,7 @@ g_yoUVDef = -999.99;
 g_yoDeepUVErrDef = -999.99;
 g_yoProfNumDef = -99;
 
-% valeurs par défaut des fichiers Argos bruts au format Aoml
+% valeurs par dÃ©faut des fichiers Argos bruts au format Aoml
 g_argosLonDef = 999.999;
 g_argosLatDef = 99.999;
 

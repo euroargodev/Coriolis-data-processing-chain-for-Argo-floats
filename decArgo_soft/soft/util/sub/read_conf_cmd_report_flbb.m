@@ -9,6 +9,7 @@
 %   a_configReportFileName : predeployment configuration sheet file name
 %   a_sensorList           : list of the sensors mounted on the float
 %   a_floatNum             : float WMO number
+%   a_rtVersionFlag        : 1 if it is the RT version of the tool, 0 otherwise
 % 
 % OUTPUT PARAMETERS :
 %   o_confParamNames  : configuration parameter names
@@ -17,13 +18,13 @@
 % EXAMPLES :
 % 
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/01/2014 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_confParamNames, o_confParamValues] = read_conf_cmd_report_flbb( ...
-   a_configReportFileName, a_sensorList, a_floatNum)
+   a_configReportFileName, a_sensorList, a_floatNum, a_rtVersionFlag)
 
 % output parameters initialization
 o_confParamNames = [];
@@ -283,11 +284,13 @@ end
 o_confParamNames(idToDel) = [];
 o_confParamValues(idToDel) = [];
 
-if (length(o_confParamNames) ~= 104+(29*length(sensorList))+(nbSpecific))
-   fprintf('WARNING: Float #%d: Number of config parameters (%d) different from expected (%d)\n', ...
-      a_floatNum, length(o_confParamNames), 104+(29*length(sensorList))+(nbSpecific));
-else
-   fprintf('INFO: Float #%d: %d config parameters\n', a_floatNum, length(o_confParamNames));
+if (a_rtVersionFlag == 0)
+   if (length(o_confParamNames) ~= 104+(29*length(sensorList))+(nbSpecific))
+      fprintf('WARNING: Float #%d: Number of config parameters (%d) different from expected (%d)\n', ...
+         a_floatNum, length(o_confParamNames), 104+(29*length(sensorList))+(nbSpecific));
+   else
+      fprintf('INFO: Float #%d: %d config parameters\n', a_floatNum, length(o_confParamNames));
+   end
 end
 
 % sort the configuration names

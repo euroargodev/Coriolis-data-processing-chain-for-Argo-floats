@@ -6,7 +6,7 @@
 %  generate_json_float_meta_prv_cts4_ir_rudics_( ...
 %    a_floatMetaFileName, a_sensorListFileName, a_floatListFileName, ...
 %    a_calibFileName, a_configDirName, a_sunaConfigDirName, ...
-%    a_outputDirName)
+%    a_outputDirName, a_rtVersionFlag)
 %
 % INPUT PARAMETERS :
 %   a_floatMetaFileName  : meta-data file exported from Coriolis data base
@@ -17,13 +17,14 @@
 %   a_configDirName      : directory of float configuration at launch files
 %   a_sunaConfigDirName  : directory of SUNA configuration files
 %   a_outputDirName      : directory of individual json float meta-data files
+%   a_rtVersionFlag      : 1 if it is the RT version of the tool, 0 otherwise
 %
 % OUTPUT PARAMETERS :
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/17/2013 - RNU - creation
@@ -32,7 +33,7 @@
 function generate_json_float_meta_prv_cts4_ir_rudics_( ...
    a_floatMetaFileName, a_sensorListFileName, a_floatListFileName, ...
    a_calibFileName, a_configDirName, a_sunaConfigDirName, ...
-   a_outputDirName)
+   a_outputDirName, a_rtVersionFlag)
 
 % report information structure
 global g_cogj_reportData;
@@ -252,6 +253,7 @@ for idFloat = 1:length(floatList)
       {'SENSOR_MAKER'} ...
       {'SENSOR_MODEL'} ...
       {'SENSOR_SERIAL_NO'} ...
+      {'SENSOR_FIRMWARE_VERSION'} ...
       ];
    [metaStruct] = add_multi_dim_data( ...
       itemList, ...
@@ -432,7 +434,7 @@ for idFloat = 1:length(floatList)
          sunaCalibFileName = [a_sunaConfigDirName '/' files(1).name];
          [creationDate, TEMP_CAL_NITRATE, ...
             OPTICAL_WAVELENGTH_UV, E_NITRATE, E_SWA_NITRATE, E_BISULFIDE, ...
-            UV_INTENSITY_REF_NITRATE] = read_suna_calib_file(sunaCalibFileName, dacFormatId);
+            UV_INTENSITY_REF_NITRATE] = read_suna_calib_file(sunaCalibFileName, dacFormatId, floatNum);
          
          if (~isempty(creationDate))
             
@@ -498,9 +500,9 @@ for idFloat = 1:length(floatList)
    configReportFileName = [a_configDirName '/' metaStruct.PLATFORM_NUMBER '_2.txt'];
    if (~ismember(dacFormatId, [{'6.11'}, {'6.12'}, {'6.13'}, {'6.14'}, {'6.15'}]))
       configDefaultFilename = [a_configDirName '/defaultConfiguration_v1.txt'];
-      [configParamNames, configParamValues] = read_conf_cmd_report_105_to_110_112(configReportFileName, configDefaultFilename, sensorList, floatNum);
+      [configParamNames, configParamValues] = read_conf_cmd_report_105_to_110_112(configReportFileName, configDefaultFilename, sensorList, floatNum, a_rtVersionFlag);
    else
-      [configParamNames, configParamValues] = read_conf_cmd_report_111_113_to_116(configReportFileName, sensorList, floatNum);
+      [configParamNames, configParamValues] = read_conf_cmd_report_111_113_to_116(configReportFileName, sensorList, floatNum, a_rtVersionFlag);
    end
    
    idF = find(strcmp('CONFIG_PT_27', configParamNames) ==1, 1);
@@ -666,7 +668,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/17/2013 - RNU - creation
@@ -717,7 +719,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/17/2013 - RNU - creation
@@ -755,6 +757,7 @@ o_metaStruct = struct( ...
    'CONTROLLER_BOARD_SERIAL_NO_PRIMARY', 'CONTROLLER_BOARD_SERIAL_NO_PRIMA', ...
    'CONTROLLER_BOARD_SERIAL_NO_SECONDARY', 'CONTROLLER_BOARD_SERIAL_NO_SECON', ...
    'SPECIAL_FEATURES', 'SPECIAL_FEATURES', ...
+   'PROGRAM_NAME', 'PROGRAM_NAME', ...
    'FLOAT_OWNER', 'FLOAT_OWNER', ...
    'OPERATING_INSTITUTION', 'OPERATING_INSTITUTION', ...
    'CUSTOMISATION', 'CUSTOMISATION', ...

@@ -9,7 +9,7 @@
 % INPUT PARAMETERS :
 %   a_phaseDelayDoxy : outpout from SBE63's sensor (delay in microsecond)
 %   a_pres           : pressure in dbar
-%   a_tempDoxy       : temperature output from SBE 63's thermistor in °C
+%   a_tempDoxy       : temperature output from SBE 63's thermistor in Â°C
 %   a_tabcoef        : calibration coefficients
 %                      size(a_tabcoef) = 1 9 and
 %                         a_tabcoef(1:3) = [A0 A1 A2]

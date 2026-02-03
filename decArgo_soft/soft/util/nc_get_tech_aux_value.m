@@ -11,7 +11,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/07/2019 - RNU - creation
@@ -42,17 +42,17 @@ fprintf(fidOut, '%s\n', header);
 
 floatDir = dir(DIR_INPUT_NC_FILES);
 for idDir2 = 1:length(floatDir)
-   
+
    floatDirName = floatDir(idDir2).name;
    floatDirPathName = [DIR_INPUT_NC_FILES '/' floatDirName];
    if ((exist(floatDirPathName, 'dir') == 7) && ~strcmp(floatDirName, '.') && ~strcmp(floatDirName, '..'))
-      
+
       fprintf('%03d/%03d %s\n', idDir2, length(floatDir), floatDirName);
-      
+
       floatTechFilePathName = [floatDirPathName '/auxiliary/' floatDirName '_tech_aux.nc'];
-      
+
       if (exist(floatTechFilePathName, 'file') == 2)
-         
+
          % retrieve information from technical file
          wantedInputVars = [ ...
             {'CYCLE_NUMBER'} ...
@@ -83,57 +83,3 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 diary off;
 
 return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         %          fprintf('WARNING: Variable %s not present in file : %s\n', ...
-         %             varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {''}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
-end

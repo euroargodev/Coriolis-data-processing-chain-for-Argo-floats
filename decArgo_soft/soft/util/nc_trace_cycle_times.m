@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/14/2017 - RNU - creation
@@ -54,16 +54,22 @@ else
 
    % top directory of NetCDF files to plot (TRAJ and META)
    g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+   % g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\ARV_IR_212\';
+   % g_NTCT_NC_DIR = 'C:\Users\jprannou\_DATA\TRAJ_DM_2024\nc_output_decArgo_traj_dm\';
 
    % top directory of NetCDF auxiliary files to plot (TECH_AUX)
    g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+   % g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\ARV_IR_212\';
+   % g_NTCT_NC_DIR_AUX = 'C:\Users\jprannou\_DATA\TRAJ_DM_2024\nc_output_decArgo_traj_dm\';
 
    % directory to store pdf output
    g_NTCT_PDF_DIR = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\pdf\';
 
    % default list of floats to plot
    FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
-%    FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\lists_20221013\list_decId_222_4.txt';
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_cts57.24_OGS_tridente_pal.txt';
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB_apx_olaf2\_apex_olaf2.txt';
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmpPfv2.txt';
 
    % JPR CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,7 +167,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/14/2017 - RNU - creation
@@ -190,6 +196,9 @@ global g_NTCT_tabBathyJuld;
 global g_NTCT_tabBathyMin;
 global g_NTCT_tabBathyMax;
 
+global g_NTCT_SpyToDescToPark_juld;
+global g_NTCT_SpyToDescToPark_pres;
+global g_NTCT_SpyToDescToPark_evFlag;
 global g_NTCT_SpyInDescToPark_juld;
 global g_NTCT_SpyInDescToPark_pres;
 global g_NTCT_SpyInDescToPark_evFlag;
@@ -268,6 +277,7 @@ init_measurement_codes;
 global g_MC_FillValue;
 global g_MC_Launch;
 global g_MC_CycleStart;
+global g_MC_CycleStartBis;
 global g_MC_DST;
 global g_MC_PressureOffset
 global g_MC_MinPresInDriftAtParkSupportMeas;
@@ -303,9 +313,7 @@ global g_MC_SpyInAscProf;
 global g_MC_AscProf;
 global g_MC_MedianValueInAscProf;
 global g_MC_LastAscPumpedCtd;
-global g_MC_IceThermalDetectionTrue;
-global g_MC_IceBreakupDetectionFlag;
-global g_MC_IceAscentAbortNum;
+global g_MC_IceAscentAbort;
 global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_AET_Float;
@@ -499,8 +507,10 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
             {'JULD'} ...
             {'JULD_ADJUSTED'} ...
             {'VALVE_ACTION_DURATION'} ...
+            {'TECH_VOLUME_ValveOilVolumeTransferred_cm^3'} ...
             {'VALVE_ACTION_FLAG'} ...
             {'PUMP_ACTION_DURATION'} ...
+            {'TECH_VOLUME_PumpOilVolumeTransferred_cm^3'} ...
             {'PUMP_ACTION_FLAG'} ...
             {'CYCLE_NUMBER_MEAS'} ...
             {'MEASUREMENT_CODE'} ...
@@ -522,11 +532,17 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
          idVal = find(strcmp('VALVE_ACTION_DURATION', techAuxData(1:2:end)) == 1, 1);
          valveActDuration = techAuxData{2*idVal};
 
+         idVal = find(strcmp('TECH_VOLUME_ValveOilVolumeTransferred_cm^3', techAuxData(1:2:end)) == 1, 1);
+         valveOilVolume = techAuxData{2*idVal};
+
          idVal = find(strcmp('VALVE_ACTION_FLAG', techAuxData(1:2:end)) == 1, 1);
          valveActFlag = techAuxData{2*idVal};
 
          idVal = find(strcmp('PUMP_ACTION_DURATION', techAuxData(1:2:end)) == 1, 1);
          pumpActDuration = techAuxData{2*idVal};
+
+         idVal = find(strcmp('TECH_VOLUME_PumpOilVolumeTransferred_cm^3', techAuxData(1:2:end)) == 1, 1);
+         pumpOilVolume = techAuxData{2*idVal};
 
          idVal = find(strcmp('PUMP_ACTION_FLAG', techAuxData(1:2:end)) == 1, 1);
          pumpActFlag = techAuxData{2*idVal};
@@ -547,6 +563,10 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
          elseif (~isempty(pumpActDuration))
             valveAct = pumpActDuration;
             valveAct(find(valveAct ~= -1)) = -1;
+         elseif (~isempty(valveOilVolume))
+            valveAct = valveOilVolume;
+            valveAct(valveAct == 99999) = 0;
+            valveAct(pumpOilVolume ~= 99999) = -1;
          end
       end
 
@@ -556,9 +576,18 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
       g_NTCT_cycles = unique(cycleNumber(find(cycleNumber >= 0)));
 
       % buoyancy activitity
-      idF = find(ismember(measCode, [239 g_MC_SpyInDescToPark g_MC_SpyAtPark g_MC_SpyInDescToProf g_MC_SpyAtProf g_MC_SpyInAscProf g_MC_SpyAtSurface])); % 239 = 250-11 for Apex
+      idF = find(ismember(measCode, [ ...
+         g_MC_PST-11 g_MC_SpyInDescToPark ...
+         g_MC_PET-11 g_MC_SpyAtPark ...
+         g_MC_DPST-11 g_MC_SpyInDescToProf ...
+         g_MC_AST-11 g_MC_SpyAtProf ...
+         g_MC_AET-11 g_MC_SpyInAscProf ...
+         g_MC_TST-11 g_MC_SpyAtSurface]));
       nbMax = max(histc(cycleNumber(idF), min(cycleNumber(idF)):max(cycleNumber(idF))));
 
+      g_NTCT_SpyToDescToPark_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
+      g_NTCT_SpyToDescToPark_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
+      g_NTCT_SpyToDescToPark_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
       g_NTCT_SpyInDescToPark_juld = ones(length(g_NTCT_cycles), nbMax)*g_dateDef;
       g_NTCT_SpyInDescToPark_pres = ones(length(g_NTCT_cycles), nbMax)*g_presDef;
       g_NTCT_SpyInDescToPark_evFlag = ones(length(g_NTCT_cycles), nbMax)*-1;
@@ -580,11 +609,26 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
 
       if (~isempty(valveAct))
          for idC = 1:length(g_NTCT_cycles)
-            idF = find((cycleNumber == g_NTCT_cycles(idC)) & ismember(measCode, [239 g_MC_SpyInDescToPark]));
+            if (any(measCode == g_MC_CycleStartBis))
+               % for PFV2 g_MC_CycleStartBis is for cycle start and g_MC_CycleStart
+               % for buoyancy activity before the DST
+               idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_CycleStart));
+               if (~isempty(idF))
+                  g_NTCT_SpyToDescToPark_juld(idC, 1:length(idF)) = juld(idF);
+                  g_NTCT_SpyToDescToPark_pres(idC, 1:length(idF)) = pres(idF);
+                  idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_CycleStart));
+                  if (length(idF) ~= length(idF2))
+                     fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
+                  else
+                     g_NTCT_SpyToDescToPark_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
+                  end
+               end
+            end
+            idF = find((cycleNumber == g_NTCT_cycles(idC)) & ismember(measCode, [g_MC_PST-11 g_MC_SpyInDescToPark]));
             if (~isempty(idF))
                g_NTCT_SpyInDescToPark_juld(idC, 1:length(idF)) = juld(idF);
                g_NTCT_SpyInDescToPark_pres(idC, 1:length(idF)) = pres(idF);
-               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & ismember(measCodeTech, [239 g_MC_SpyInDescToPark]));
+               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & ismember(measCodeTech, [g_MC_PST-11 g_MC_SpyInDescToPark]));
                %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
                if (length(idF) ~= length(idF2))
                   fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
@@ -592,11 +636,11 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
                   g_NTCT_SpyInDescToPark_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
                end
             end
-            idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyAtPark));
+            idF = find((cycleNumber == g_NTCT_cycles(idC)) & ismember(measCode, [g_MC_PET-11 g_MC_SpyAtPark]));
             if (~isempty(idF))
                g_NTCT_SpyAtPark_juld(idC, 1:length(idF)) = juld(idF);
                g_NTCT_SpyAtPark_pres(idC, 1:length(idF)) = pres(idF);
-               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyAtPark));
+               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & ismember(measCodeTech, [g_MC_PET-11 g_MC_SpyAtPark]));
                %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
                if (length(idF) ~= length(idF2))
                   fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
@@ -604,11 +648,11 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
                   g_NTCT_SpyAtPark_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
                end
             end
-            idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyInDescToProf));
+            idF = find((cycleNumber == g_NTCT_cycles(idC)) & ismember(measCode, [g_MC_DPST-11 g_MC_SpyInDescToProf]));
             if (~isempty(idF))
                g_NTCT_SpyInDescToProf_juld(idC, 1:length(idF)) = juld(idF);
                g_NTCT_SpyInDescToProf_pres(idC, 1:length(idF)) = pres(idF);
-               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyInDescToProf));
+               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & ismember(measCodeTech, [g_MC_DPST-11 g_MC_SpyInDescToProf]));
                %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
                if (length(idF) ~= length(idF2))
                   fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
@@ -616,11 +660,11 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
                   g_NTCT_SpyInDescToProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
                end
             end
-            idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyAtProf));
+            idF = find((cycleNumber == g_NTCT_cycles(idC)) & ismember(measCode, [g_MC_AST-11 g_MC_SpyAtProf]));
             if (~isempty(idF))
                g_NTCT_SpyAtProf_juld(idC, 1:length(idF)) = juld(idF);
                g_NTCT_SpyAtProf_pres(idC, 1:length(idF)) = pres(idF);
-               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyAtProf));
+               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & ismember(measCodeTech, [g_MC_AST-11 g_MC_SpyAtProf]));
                %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
                if (length(idF) ~= length(idF2))
                   fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
@@ -628,11 +672,11 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
                   g_NTCT_SpyAtProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
                end
             end
-            idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyInAscProf));
+            idF = find((cycleNumber == g_NTCT_cycles(idC)) & ismember(measCode, [g_MC_AET-11 g_MC_SpyInAscProf]));
             if (~isempty(idF))
                g_NTCT_SpyInAscProf_juld(idC, 1:length(idF)) = juld(idF);
                g_NTCT_SpyInAscProf_pres(idC, 1:length(idF)) = pres(idF);
-               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyInAscProf));
+               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & ismember(measCodeTech, [g_MC_AET-11 g_MC_SpyInAscProf]));
                %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
                if (length(idF) ~= length(idF2))
                   fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
@@ -640,11 +684,11 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
                   g_NTCT_SpyInAscProf_evFlag(idC, 1:length(idF2)) = valveAct(idF2);
                end
             end
-            idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_SpyAtSurface));
+            idF = find((cycleNumber == g_NTCT_cycles(idC)) & ismember(measCode, [g_MC_TST-11 g_MC_SpyAtSurface]));
             if (~isempty(idF))
                g_NTCT_SpyAtSurface_juld(idC, 1:length(idF)) = juld(idF);
                g_NTCT_SpyAtSurface_pres(idC, 1:length(idF)) = pres(idF);
-               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & (measCodeTech == g_MC_SpyAtSurface));
+               idF2 = find((cycleNumberTech == g_NTCT_cycles(idC)) & ismember(measCodeTech, [g_MC_TST-11 g_MC_SpyAtSurface]));
                %             if ((length(idF) ~= length(idF2)) || any(abs(juld(idF) - juldTech(idF2)) > 1/86400))
                if (length(idF) ~= length(idF2))
                   fprintf('ERROR: Traj / Tech_aux consistency (nominal for APF11)\n');
@@ -801,9 +845,18 @@ if (isempty(g_NTCT_FLOAT_ID) || (a_idFloat ~= g_NTCT_FLOAT_ID) || (a_reload == 1
       g_NTCT_Grounded_flag = zeros(length(g_NTCT_cycles), 1);
 
       for idC = 1:length(g_NTCT_cycles)
-         idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_CycleStart));
-         if (~isempty(idF))
-            g_NTCT_CycleStart_juld(idC) = juld(idF);
+         if (any(measCode == g_MC_CycleStartBis))
+            % for PFV2 g_MC_CycleStartBis is for cycle start and g_MC_CycleStart
+            % for buoyancy activity before the DST
+            idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_CycleStartBis));
+            if (~isempty(idF))
+               g_NTCT_CycleStart_juld(idC) = juld(idF);
+            end
+         else
+            idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_CycleStart));
+            if (~isempty(idF))
+               g_NTCT_CycleStart_juld(idC) = juld(idF);
+            end
          end
          idF = find((cycleNumber == g_NTCT_cycles(idC)) & (measCode == g_MC_DST));
          if (~isempty(idF))
@@ -1015,6 +1068,7 @@ end
 
 presAxes = subplot(1, 1, 1);
 timeData = [
+   g_NTCT_SpyToDescToPark_juld(a_idCycle+1, :), ...
    g_NTCT_SpyInDescToPark_juld(a_idCycle+1, :), ...
    g_NTCT_SpyAtPark_juld(a_idCycle+1, :), ...
    g_NTCT_SpyInDescToProf_juld(a_idCycle+1, :), ...
@@ -1050,6 +1104,7 @@ timeData = [
 presData = [ 0, ...
    g_NTCT_ParkPres(a_idCycle+1), ...
    g_NTCT_ProfPres(a_idCycle+1), ...
+   g_NTCT_SpyToDescToPark_pres(a_idCycle+1, :), ...
    g_NTCT_SpyInDescToPark_pres(a_idCycle+1, :), ...
    g_NTCT_SpyAtPark_pres(a_idCycle+1, :), ...
    g_NTCT_SpyInDescToProf_pres(a_idCycle+1, :), ...
@@ -1174,6 +1229,22 @@ yInAirSeriesOfMeas(idDel) = [];
 if (~isempty(xInAirSeriesOfMeas))
    plot(presAxes, xInAirSeriesOfMeas, yInAirSeriesOfMeas, 'gs-', 'MarkerFaceColor', 'g', 'MarkerSize', 4);
    hold on;
+end
+
+xSpyToDescToPark = g_NTCT_SpyToDescToPark_juld(a_idCycle+1, :);
+ySpyToDescToPark = g_NTCT_SpyToDescToPark_pres(a_idCycle+1, :);
+idDel = find((xSpyToDescToPark == g_dateDef) | (ySpyToDescToPark == g_presDef));
+xSpyToDescToPark(idDel) = [];
+ySpyToDescToPark(idDel) = [];
+if (~isempty(xSpyToDescToPark))
+   plot(presAxes, xSpyToDescToPark, ySpyToDescToPark, 'k');
+   hold on;
+
+   evSpyToDescToPark = g_NTCT_SpyToDescToPark_evFlag(a_idCycle+1, 1:length(xSpyToDescToPark));
+   idEv = find(evSpyToDescToPark > 0);
+   plot(presAxes, xSpyToDescToPark(idEv), ySpyToDescToPark(idEv), 'bv', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
+   idPump = find(evSpyToDescToPark == -1);
+   plot(presAxes, xSpyToDescToPark(idPump), ySpyToDescToPark(idPump), 'r^', 'MarkerFaceColor', 'r', 'MarkerSize', 5);
 end
 
 xSpyInDescToPark = g_NTCT_SpyInDescToPark_juld(a_idCycle+1, :);
@@ -1568,7 +1639,7 @@ if (g_NTCT_PRINT)
    print('-dpdf', [g_NTCT_PDF_DIR '/' sprintf('nc_trace_cycle_times_%s_%s%s', ...
       num2str(g_NTCT_FLOAT_LIST(a_idFloat+1))), num2str(g_NTCT_cycles(a_idCycle+1)), surfText, '.pdf']);
    g_NTCT_PRINT = 0;
-   orient portrait
+   % orient portrait
 end
 
 return
@@ -1588,7 +1659,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/14/2017 - RNU - creation
@@ -1705,7 +1776,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/14/2017 - RNU - creation
@@ -1736,7 +1807,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/14/2017 - RNU - creation
@@ -1779,7 +1850,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/14/2017 - RNU - creation
@@ -1789,61 +1860,5 @@ function [o_text] = data_cursor_output(a_src, a_eventData)
 pos = get(a_eventData, 'Position');
 o_text = {['Time: ', julian_2_gregorian_dec_argo(pos(1))],...
    ['Pres: ',num2str(pos(2)) ' dbar']};
-
-return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         %          fprintf('WARNING: Variable %s not present in file : %s\n', ...
-         %             varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {''}];
-      end
-
-   end
-
-   netcdf.close(fCdf);
-end
 
 return

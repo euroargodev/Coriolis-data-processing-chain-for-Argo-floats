@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/02/2010 - RNU - creation
@@ -21,6 +21,9 @@ function decode_provor(a_floatList)
 
 % current float WMO number
 global g_decArgo_floatNum;
+
+% configuration values
+global g_decArgo_dirOutputCsvFile;
 
 % output CSV file Id
 global g_decArgo_outputCsvFileId;
@@ -85,6 +88,12 @@ global g_decArgo_janFirst1950InMatlab;
 % for virtual buffers management
 global g_decArgo_spoolFileList;
 global g_decArgo_bufFileList;
+
+% file to store BDD update
+global g_decArgo_bddUpdateCsvFileName;
+global g_decArgo_bddUpdateCsvFileId;
+g_decArgo_bddUpdateCsvFileName = '';
+g_decArgo_bddUpdateCsvFileId = -1;
 
 % float launch information
 global g_decArgo_floatLaunchDate;
@@ -246,13 +255,25 @@ for idFloat = 1:nbFloats
       fprintf('ERROR: Float #%d is not a Provor float - not decoded\n', floatNum);
       continue
    end
-   
+
    % read the json meta-data file for this float
    jsonInputFileName = [g_decArgo_dirInputJsonFloatMetaDataFile '/' sprintf('%d_meta.json', g_decArgo_floatNum)];
 
    if ~(exist(jsonInputFileName, 'file') == 2)
       fprintf('ERROR: Json meta-data file not found: %s - nothing done\n', jsonInputFileName);
       continue
+   end
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % output CSV file creation
+   if (~isempty(g_decArgo_outputCsvFileId))
+      outputFileName = [g_decArgo_dirOutputCsvFile '/provor_decoded_data_' num2str(floatNum) '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
+      fidOut = fopen(outputFileName, 'wt');
+      if (fidOut == -1)
+         fprintf('ERROR: Unable to create CSV output file: %s\n', outputFileName);
+         continue
+      end
+      g_decArgo_outputCsvFileId = fidOut;
    end
 
    % read meta-data file
@@ -283,9 +304,10 @@ for idFloat = 1:nbFloats
    
    % create list of cycles to decode
    [floatCycleList, floatExcludedCycleList] = ...
-      get_float_cycle_list(floatNum, floatArgosId, floatLaunchDate, floatDecId);
+      get_float_cycle_list(floatNum, floatArgosId, floatLaunchDate, floatEndDate, floatDecId);
    
    % decode float cycles
+   tabTechNMeas = [];
    tabTechAuxNMeas = [];
    if (g_decArgo_floatTransType == 1)
       
@@ -317,7 +339,15 @@ for idFloat = 1:nbFloats
          floatDecId, str2num(floatArgosId), floatFrameLen, ...
          floatCycleTime, floatDriftSamplingPeriod, ...
          floatDelay, floatRefDay, floatEndDate);
-      
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % manage erroneous resetoffset
+      if (isempty(g_decArgo_outputCsvFileId))
+         [tabProfiles, tabTrajNMeas, tabTrajNCycle, tabNcTechIndex, tabNcTechVal] = ...
+            manage_erroneous_resetoffset_argos_ir(floatDecId, ...
+            tabProfiles, tabTrajNMeas, tabTrajNCycle, tabNcTechIndex, tabNcTechVal);
+      end
+
    elseif (g_decArgo_floatTransType == 2)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -368,6 +398,12 @@ for idFloat = 1:nbFloats
                structConfig] = decode_provor_iridium_rudics_cts5_payload( ...
                floatNum, floatDecId, floatArgosId, ...
                floatLaunchDate);
+
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % check consistency between ICE algorithm and float behaviour
+            [tabTrajNMeas, tabTrajNCycle, tabNcTechIndex, tabNcTechVal] = ...
+               check_ice_algorithm_cts5_osean(tabTrajNMeas, tabTrajNCycle, tabNcTechIndex, tabNcTechVal);
+
          else
             % APMT + USEA
             [tabProfiles, ...
@@ -376,6 +412,11 @@ for idFloat = 1:nbFloats
                structConfig] = decode_provor_iridium_rudics_cts5_usea( ...
                floatNum, floatDecId, floatArgosId, ...
                floatLaunchDate);
+
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % check consistency between ICE algorithm and float behaviour
+            [tabTrajNMeas, tabTrajNCycle, tabNcTechIndex, tabNcTechVal] = ...
+               check_ice_algorithm_cts5_usea(tabTrajNMeas, tabTrajNCycle, tabNcTechIndex, tabNcTechVal);
          end
       end
       
@@ -398,13 +439,32 @@ for idFloat = 1:nbFloats
          g_decArgo_gpsData{13} = 0;
       end
       
-      if (ismember(floatDecId, [212, 222, 214, 216, 217, 218, 221, 223, 224, 225, 226]))
+      if (ismember(floatDecId, [401, 402]))
+
+         % PFV2 floats
+
+         if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT') && ~isempty(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT))
+            g_decArgo_sensorMountedOnFloat = struct2cell(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT)';
+         else
+            fprintf('ERROR: Float #%d: No information on sensor mounted on the float - check float_sensor_list\n', ...
+               g_decArgo_floatNum);
+         end
+
+         [tabProfiles, ...
+            tabTrajNMeas, tabTrajNCycle, ...
+            tabNcTechIndex, tabNcTechVal, tabTechNMeas, tabTechAuxNMeas, ...
+            structConfig] = decode_arvor_pfv2_iridium_sbd( ...
+            floatNum, floatCycleList, ...
+            floatDecId, str2double(floatArgosId), ...
+            floatLaunchDate, floatRefDay, floatEndDate);
+
+      elseif (ismember(floatDecId, [212, 222, 214, 216, 217, 218, 221, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232]))
 
          % ICE floats
 
-         % since version 5.67 Arvor Deep are supposed to be in the
-         % float_sensor_list
-         if (ismember(floatDecId, [221]))
+         % since version 5.67 Arvor Deep are supposed to be in the float_sensor_list
+         % since version 5.54 Arvor are supposed to be in the float_sensor_list
+         if (ismember(floatDecId, [221, 228, 229, 230, 232]))
             % store the sensor list
             if (isfield(g_decArgo_jsonMetaData, 'SENSOR_MOUNTED_ON_FLOAT') && ~isempty(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT))
                jSensorNames = struct2cell(g_decArgo_jsonMetaData.SENSOR_MOUNTED_ON_FLOAT);
@@ -422,6 +482,20 @@ for idFloat = 1:nbFloats
             floatNum, floatCycleList, ...
             floatDecId, str2num(floatArgosId), ...
             floatLaunchDate, floatRefDay, floatEndDate);
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         % check consistency between ICE algorithm and float behaviour
+         [tabProfiles, tabTrajNMeas, tabTrajNCycle, tabNcTechIndex, tabNcTechVal] = ...
+            check_ice_algorithm_arvor(floatDecId, ...
+            tabProfiles, tabTrajNMeas, tabTrajNCycle, tabNcTechIndex, tabNcTechVal);
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         % manage erroneous resetoffset
+         if (isempty(g_decArgo_outputCsvFileId))
+            [tabProfiles, tabTrajNMeas, tabTrajNCycle, tabNcTechIndex, tabNcTechVal] = ...
+               manage_erroneous_resetoffset(floatDecId, ...
+               tabProfiles, tabTrajNMeas, tabTrajNCycle, tabNcTechIndex, tabNcTechVal);
+         end
 
       elseif (ismember(floatDecId, [219, 220]))
 
@@ -446,6 +520,15 @@ for idFloat = 1:nbFloats
             floatNum, floatCycleList, ...
             floatDecId, str2num(floatArgosId), ...
             floatLaunchDate, floatRefDay, floatEndDate);
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         % manage erroneous resetoffset
+         if (isempty(g_decArgo_outputCsvFileId))
+            [tabProfiles, tabTrajNMeas, tabTrajNCycle, tabNcTechIndex, tabNcTechVal] = ...
+               manage_erroneous_resetoffset_argos_ir(floatDecId, ...
+               tabProfiles, tabTrajNMeas, tabTrajNCycle, tabNcTechIndex, tabNcTechVal);
+         end
+
       end
 
    elseif (g_decArgo_floatTransType == 4)
@@ -476,6 +559,9 @@ for idFloat = 1:nbFloats
          floatLaunchDate, floatRefDay, floatDelay, floatEndDate, floatDmFlag);
 
    end
+   
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % generate NetCDF files
    
    if (isempty(g_decArgo_outputCsvFileId))
       
@@ -523,22 +609,24 @@ for idFloat = 1:nbFloats
       
       % NetCDF TECHNICAL file
       if ((g_decArgo_generateNcTech ~= 0) && ...
-            ~(isempty(tabNcTechIndex) && isempty(tabTechAuxNMeas)))
+            ~(isempty(tabNcTechIndex) && isempty(tabTechNMeas) && isempty(tabTechAuxNMeas)))
          create_nc_tech_file(floatDecId, ...
-            tabNcTechIndex, tabNcTechVal, [], tabTechAuxNMeas, ...
+            tabNcTechIndex, tabNcTechVal, tabTechNMeas, tabTechAuxNMeas, ...
             g_decArgo_outputNcParamLabelInfo, additionalMetaData);
       end
-      
+
       % NetCDF META-DATA file
       if (g_decArgo_generateNcMeta ~= 0)
          create_nc_meta_file(floatDecId, structConfig);
       end
-      
-      if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_applyRtqc == 1))
-         % apply RTQC to NetCDF profile files
+
+      % apply RTQC to NetCDF profile files
+      if (g_decArgo_applyRtqc == 1)
          add_rtqc_flags_to_netcdf_profile_and_trajectory_data( ...
             g_decArgo_reportStruct, floatDecId);
       end
+   else
+      fclose(g_decArgo_outputCsvFileId);
    end
    
    % store the information for the XML report
@@ -546,6 +634,10 @@ for idFloat = 1:nbFloats
       g_decArgo_reportData = [g_decArgo_reportData g_decArgo_reportStruct];
    end
    
+end
+
+if (g_decArgo_bddUpdateCsvFileId ~= -1)
+   fclose(g_decArgo_bddUpdateCsvFileId);
 end
 
 return

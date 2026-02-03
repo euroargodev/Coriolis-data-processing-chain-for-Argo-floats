@@ -1,5 +1,5 @@
 % ------------------------------------------------------------------------------
-% Lecture d'un fichier de méta données.
+% Lecture d'un fichier de mÃ©ta donnÃ©es.
 %
 % SYNTAX :
 %   [o_nCycles, o_nParam, ...
@@ -19,15 +19,15 @@
 %    o_deepestPressureDescending] = read_file_meta_all_nc_outside(a_fileName)
 %
 % INPUT PARAMETERS :
-%   a_fileName : nom du fichier de meta données à lire
+%   a_fileName : nom du fichier de meta donnÃ©es Ã  lire
 %
 % OUTPUT PARAMETERS :
-%   paramètres lus dans le fichier
+%   paramÃ¨tres lus dans le fichier
 %
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/01/2007 - RNU - creation
@@ -50,7 +50,7 @@ function [o_nCycles, o_nParam, ...
 
 global g_latDef g_lonDef g_presDef g_durationDef;
 
-% initialisation des valeurs par défaut
+% initialisation des valeurs par dÃ©faut
 init_valdef;
 
 o_nCycles = -1;
@@ -127,7 +127,7 @@ end
 o_nCycles = length(fCdf('N_CYCLES'));
 o_nParam = length(fCdf('N_PARAM'));
 
-% caractéristiques du flotteur
+% caractÃ©ristiques du flotteur
 o_platformNumber = fCdf{'PLATFORM_NUMBER'}(:);
 o_ptt = fCdf{'PTT'}(:);
 o_transSystem = fCdf{'TRANS_SYSTEM'}(:);
@@ -154,7 +154,7 @@ o_dataCentre = fCdf{'DATA_CENTRE'}(:);
 o_piName = fCdf{'PI_NAME'}(:);
 o_anomaly = fCdf{'ANOMALY'}(:);
 
-% déploiement du flotteur et informations sur la mission du flotteur
+% dÃ©ploiement du flotteur et informations sur la mission du flotteur
 o_launchDate = fCdf{'LAUNCH_DATE'}(:);
 o_launchLatitude = fCdf{'LAUNCH_LATITUDE'}(:);
 idFillValue = find(o_launchLatitude == fCdf{'LAUNCH_LATITUDE'}.FillValue_(:));
@@ -190,7 +190,7 @@ o_predeploymentCalibEquation = fCdf{'PREDEPLOYMENT_CALIB_EQUATION'}(:);
 o_predeploymentCalibCoefficient = fCdf{'PREDEPLOYMENT_CALIB_COEFFICIENT'}(:);
 o_predeploymentCalibComment = fCdf{'PREDEPLOYMENT_CALIB_COMMENT'}(:);
 
-% paramètres de mission du flotteur
+% paramÃ¨tres de mission du flotteur
 o_repetitionRate = fCdf{'REPETITION_RATE'}(:);
 o_cycleTime = fCdf{'CYCLE_TIME'}(:);
 o_parkingTime = fCdf{'PARKING_TIME'}(:);

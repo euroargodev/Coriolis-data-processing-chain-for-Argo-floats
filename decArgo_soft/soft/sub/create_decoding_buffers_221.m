@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/14/2019 - RNU - creation
@@ -167,7 +167,10 @@ if (any(diff(tabResetDate(idPackType4)) > 0))
       resetId = idPackType4(resetListId(idR));
       resetDate = tabResetDate(resetId);
       tabResetFlag(resetId) = 1;
-      cycNumPrev = tabCyNum(find(tabDate < resetDate, 1, 'last'));
+
+      % cycNumPrev = tabCyNum(find(tabDate < resetDate, 1, 'last'));
+      cycNumPrev = max(tabCyNum(find(tabDate < resetDate))); % example 6904097 (the last cycle is cycle #23 but transmitted after cycle #24)
+
       firstPack = find(tabDate >= resetDate, 1);
       
       fprintf('INFO: Float #%d: A reset has been performed at sea on %s\n', ...
@@ -480,6 +483,49 @@ for cyNum = cyNumList
    end
 end
 
+% specific
+if (ismember(g_decArgo_floatNum, [ ...
+      6902980, 6903080, 1902662]))
+   switch g_decArgo_floatNum
+      case 6902980
+         % cycle #77 data are separated
+         id = find((tabCyNum == 77));
+         tabRank(tabCyNum == 77) = tabRank(id(1));
+         tabDeep(tabCyNum == 77) = 1;
+      case 6903080
+         % second Iridium session of cycles #123 to #126 should have their
+         % own rank number
+         for cyNum = 123:126
+            id = find((tabCyNum == cyNum));
+            tabCompleted(id) = 1;
+            tabGo(id) = 1;
+            tabDeep(id(1:end-2)) = 1;
+            id = id(end-1:end);
+            tabRank(id) = max(tabRank) + 1;
+            tabDeep(id) = 0;
+         end
+      case 1902662
+         % cycle #10 data are separated
+         id1 = find(tabCyNum == 10);
+         tabRank(id1) = tabRank(id1(1));
+         tabSession(id1) = tabSession(id1(1));
+         tabCompleted(id1) = 1;
+   end
+
+   % sort rank numbers according to cycle numbers
+   rank = 1;
+   cyNumList = unique(tabCyNum);
+   for cyNum = cyNumList
+      idForCy = find(tabCyNum == cyNum);
+      rankNumList = setdiff(unique(tabRank(idForCy)), -1);
+      for rankNum = rankNumList
+         idForRankCy = idForCy(find(tabRank(idForCy) == rankNum));
+         tabRankByCycle(idForRankCy) = rank;
+         rank = rank + 1;
+      end
+   end
+end
+
 % update tabCompleted array
 rankByCycleList = unique(tabRankByCycle);
 rankByCycleList(rankByCycleList < 0) = [];
@@ -726,7 +772,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/14/2019 - RNU - creation
@@ -910,7 +956,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/14/2019 - RNU - creation

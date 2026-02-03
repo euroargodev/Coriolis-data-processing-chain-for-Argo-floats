@@ -17,7 +17,7 @@
 % EXAMPLES :
 % 
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/09/2013 - RNU - creation
@@ -32,6 +32,7 @@ o_ncParamDescription = [];
 
 % lists of managed decoders
 global g_decArgo_decoderIdListApexApf11Iridium;
+global g_decArgo_decoderIdListNkePfv2Iridium;
 
 
 % technical parameter list file name
@@ -54,7 +55,7 @@ for idField = 1:length(techDataFieldNames)
    
    % duplicate TECH labels for surface TECH information stored in the TECH_AUX
    % files
-   if (~ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium))
+   if (~ismember(a_decoderId, [g_decArgo_decoderIdListApexApf11Iridium g_decArgo_decoderIdListNkePfv2Iridium]))
       o_ncParamIds(idField+length(techDataFieldNames)) = str2num(techItemData.TECH_PARAM_DEC_ID) + 10000;
       if (~strncmp(techItemData.TECH_PARAM_NAME, 'TECH_AUX', length('TECH_AUX')))
          o_ncParamNames{idField+length(techDataFieldNames)} = ['TECH_AUX_SURFACE_' techItemData.TECH_PARAM_NAME];

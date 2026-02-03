@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -51,7 +51,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -112,6 +112,8 @@ notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_17_P00';
 notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_18_P00';
 notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_20_P00';
 notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_21_P00';
+notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_23_P00';
+notWantedStaticConfigNames{end+1} = 'CONFIG_APMT_SENSOR_24_P00';
 
 % remove them from output lists
 idDel = [];
@@ -425,6 +427,8 @@ for ptnNum = 2:10
    end
 end
 
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_TECHNICAL_P26';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_TECHNICAL_P27';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_01_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_01_P07';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_01_P08';
@@ -442,6 +446,9 @@ notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SURFACE_APPROACH_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_ICE_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_ICE_AVOIDANCE_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_ISA_P00';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_EVENT_DRIVEN_P00';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_EVENT_RAIN_P00';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_EVENT_WIND_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_CYCLE_P00';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_CYCLE_P01';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_CYCLE_P02';
@@ -460,7 +467,9 @@ notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_17_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_18_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_20_P53';
 notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_21_P53';
-if (ismember(a_decoderId, [126, 127, 128]))
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_23_P53';
+notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_SENSOR_24_P53';
+if (ismember(a_decoderId, [126, 127, 128, 134, 136]))
    notWantedDynamicConfigNames{end+1} = 'CONFIG_APMT_PATTERN_01_P99'; % used to manage multi parking for decId >= 129
 end
 

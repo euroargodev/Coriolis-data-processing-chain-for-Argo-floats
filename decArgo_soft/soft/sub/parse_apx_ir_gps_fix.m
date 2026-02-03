@@ -2,33 +2,39 @@
 % Parse Apex Iridium Rudics GPS data.
 %
 % SYNTAX :
-%  [o_gpsLocDate, o_gpsLocLon, o_gpsLocLat, ...
-%    o_gpsLocNbSat, o_gpsLocAcqTime, ...
-%    o_gpsLocFailedAcqTime, o_gpsLocFailedIce] = parse_apx_ir_gps_fix(a_gpsFixDataStr)
+% [o_gpsLocDate, o_gpsLocLon, o_gpsLocLat, ...
+%   o_gpsLocNbSat, o_gpsLocAcqTime, ...
+%   o_gpsLocFailedAcqTime, ...
+%   o_gpsLocFailedIceEvasion, o_gpsLocFailedIceCap, o_gpsLocFailedIceBreakup] = ...
+%   parse_apx_ir_gps_fix(a_gpsFixDataStr)
 %
 % INPUT PARAMETERS :
 %   a_gpsFixDataStr : input ASCII GPS data
 %
 % OUTPUT PARAMETERS :
-%   o_gpsLocDate          : GPS fix date
-%   o_gpsLocLon           : GPS fix longitude
-%   o_gpsLocLat           : GPS fix latitude
-%   o_gpsLocNbSat         : GPS fix nb satellites used
-%   o_gpsLocAcqTime       : GPS fix acquisition time
-%   o_gpsLocFailedAcqTime : GPS fix failed acquisition time
-%   o_gpsLocFailedIce     : GPS fix failed because of Ice coverage
+%   o_gpsLocDate             : GPS fix date
+%   o_gpsLocLon              : GPS fix longitude
+%   o_gpsLocLat              : GPS fix latitude
+%   o_gpsLocNbSat            : GPS fix nb satellites used
+%   o_gpsLocAcqTime          : GPS fix acquisition time
+%   o_gpsLocFailedAcqTime    : GPS fix failed acquisition time
+%   o_gpsLocFailedIceEvasion : GPS fix failed because of Ice evasion
+%   o_gpsLocFailedIceCap     : GPS fix failed because of Ice coverage
+%   o_gpsLocFailedIceBreakup : GPS fix failed because of Ice breakup
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_gpsLocDate, o_gpsLocLon, o_gpsLocLat, ...
    o_gpsLocNbSat, o_gpsLocAcqTime, ...
-   o_gpsLocFailedAcqTime, o_gpsLocFailedIce] = parse_apx_ir_gps_fix(a_gpsFixDataStr)
+   o_gpsLocFailedAcqTime, ...
+   o_gpsLocFailedIceEvasion, o_gpsLocFailedIceCap, o_gpsLocFailedIceBreakup] = ...
+   parse_apx_ir_gps_fix(a_gpsFixDataStr)
 
 % output parameters initialization
 o_gpsLocDate = [];
@@ -37,7 +43,9 @@ o_gpsLocLat = [];
 o_gpsLocNbSat = [];
 o_gpsLocAcqTime = [];
 o_gpsLocFailedAcqTime = [];
-o_gpsLocFailedIce = [];
+o_gpsLocFailedIceEvasion = [];
+o_gpsLocFailedIceCap = [];
+o_gpsLocFailedIceBreakup = [];
 
 HEADER_1 = '# GPS fix obtained in';
 HEADER_2 = 'seconds.';
@@ -111,10 +119,14 @@ for idGpsFix = 1:length(a_gpsFixDataStr)
             continue
          end
          
-         o_gpsLocFailedIce{end+1} = val;
+         o_gpsLocFailedIceEvasion{end+1} = val;
          noFix = 1;
          
-      elseif (any(strfind(dataStr, HEADER_7)) || any(strfind(dataStr, HEADER_8)))
+      elseif (any(strfind(dataStr, HEADER_7)))
+         o_gpsLocFailedIceCap{end+1} = 1;
+         noFix = 1;
+      elseif (any(strfind(dataStr, HEADER_8)))
+         o_gpsLocFailedIceBreakup{end+1} = 1;
          noFix = 1;
       else
          fprintf('DEC_INFO: Unused prof info ''%s''\n', dataStr);

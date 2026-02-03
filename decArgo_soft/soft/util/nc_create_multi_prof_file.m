@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/21/2021 - RNU - creation
@@ -42,7 +42,7 @@ if (nargin == 0)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
       return
    end
-   
+
    fprintf('Floats from list: %s\n', floatListFileName);
    floatList = load(floatListFileName);
 else
@@ -65,32 +65,32 @@ tic;
 % process the floats
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
-   
+
    floatData = [];
    floatNum = floatList(idFloat);
    fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
-   
+
    % read available mono-profile files
    ncProfFileDir = [DIR_INPUT_NC_FILES sprintf('/%d/profiles/', floatNum)];
    if ~(exist(ncProfFileDir, 'dir') == 7)
       fprintf('WARNING: Directory not found: %s\n', ncProfFileDir);
       continue
    end
-   
+
    ncFiles = [dir([ncProfFileDir sprintf('R*%d_*.nc', floatNum)]); ...
       dir([ncProfFileDir sprintf('D*%d_*.nc', floatNum)])];
    for idFile = 1:length(ncFiles)
-      
+
       ncFileName = ncFiles(idFile).name;
       ncFilePathName = [ncProfFileDir '/' ncFileName];
       fprintf('   - %s\n', ncFileName);
-      
+
       profData = get_primary_sampling_profile_data(ncFilePathName);
       if (~isempty(profData))
          floatData = store_data(floatData, profData);
       end
    end
-   
+
    % create multi-profile associated file
    if (~isempty(floatData))
       create_multi_prof_c_file(floatData, floatNum, DIR_OUTPUT_NC_FILES);
@@ -122,7 +122,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/21/2021 - RNU - creation
@@ -360,39 +360,39 @@ for idLev = size(profData, 1):-1:1
 end
 o_profData.N_LEVELS = size(profData, 1);
 if (idLev ~= size(profData, 1))
-   
+
    if ((idLev == 1) && (sum(profData(idLev, :) == profDataFv) == size(profData, 2)))
       fprintf('WARNING: no profile measurement in file:%s\n', a_profFilePathName);
       o_profData = [];
       return
    end
-   
+
    idDel = idLev+1:size(profData, 1);
    for idParam = 1:length(parameterList)
       paramName = parameterList{idParam};
-      
+
       data = o_profData.(paramName);
       data(idDel) = [];
       o_profData.(paramName) = data;
-      
+
       data = o_profData.([paramName '_QC']);
       data(idDel) = [];
       o_profData.([paramName '_QC']) = data;
-      
+
       if (isfield(o_profData, [paramName '_ADJUSTED']))
-         
+
          data = o_profData.([paramName '_ADJUSTED']);
          data(idDel) = [];
          o_profData.([paramName '_ADJUSTED']) = data;
-         
+
          data = o_profData.([paramName '_ADJUSTED_QC']);
          data(idDel) = [];
          o_profData.([paramName '_ADJUSTED_QC']) = data;
-         
+
          data = o_profData.([paramName '_ADJUSTED_ERROR']);
          data(idDel) = [];
          o_profData.([paramName '_ADJUSTED_ERROR']) = data;
-         
+
       end
    end
    o_profData.N_LEVELS = size(profData, 1) - length(idDel);
@@ -416,7 +416,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/21/2021 - RNU - creation
@@ -471,766 +471,773 @@ if (isempty(fCdf))
    return
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% DEFINE MODE BEGIN
+try
 
-% create dimensions
-dateTimeDimId = netcdf.defDim(fCdf, 'DATE_TIME', 14);
-if (isfield(a_floatData, 'POSITION_ERROR_REPORTED') || ...
-      isfield(a_floatData, 'POSITION_ERROR_ESTIMATED') || ...
-      isfield(a_floatData, 'POSITION_ERROR_ESTIMATED_COMMENT'))
-   string1024DimId = netcdf.defDim(fCdf, 'STRING1024', 1024);
-end
-string256DimId = netcdf.defDim(fCdf, 'STRING256', 256);
-string64DimId = netcdf.defDim(fCdf, 'STRING64', 64);
-string32DimId = netcdf.defDim(fCdf, 'STRING32', 32);
-string16DimId = netcdf.defDim(fCdf, 'STRING16', 16);
-string8DimId = netcdf.defDim(fCdf, 'STRING8', 8);
-string4DimId = netcdf.defDim(fCdf, 'STRING4', 4);
-string2DimId = netcdf.defDim(fCdf, 'STRING2', 2);
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % DEFINE MODE BEGIN
 
-nProfDimId = netcdf.defDim(fCdf, 'N_PROF', nbProfInFile);
-nParamDimId = netcdf.defDim(fCdf, 'N_PARAM', nbProfParam);
-nLevelsDimId = netcdf.defDim(fCdf, 'N_LEVELS', nbProfLevels);
-nCalibDimId = netcdf.defDim(fCdf, 'N_CALIB', nbProfCalib);
-nHistoryDimId = netcdf.defDim(fCdf, 'N_HISTORY', netcdf.getConstant('NC_UNLIMITED'));
-
-% create global attributes
-globalVarId = netcdf.getConstant('NC_GLOBAL');
-netcdf.putAtt(fCdf, globalVarId, 'title', 'Argo float vertical profile');
-netcdf.putAtt(fCdf, globalVarId, 'institution', 'CORIOLIS');
-netcdf.putAtt(fCdf, globalVarId, 'source', 'Argo float');
-globalHistoryText = [datestr(datenum(currentDate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; '];
-netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
-netcdf.putAtt(fCdf, globalVarId, 'references', 'http://www.argodatamgt.org/Documentation');
-netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '3.4');
-netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
-netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectoryProfile');
-netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
-
-% create misc variables
-dataTypeVarId = netcdf.defVar(fCdf, 'DATA_TYPE', 'NC_CHAR', string16DimId);
-netcdf.putAtt(fCdf, dataTypeVarId, 'long_name', 'Data type');
-netcdf.putAtt(fCdf, dataTypeVarId, 'conventions', 'Argo reference table 1');
-netcdf.putAtt(fCdf, dataTypeVarId, '_FillValue', ' ');
-
-formatVersionVarId = netcdf.defVar(fCdf, 'FORMAT_VERSION', 'NC_CHAR', string4DimId);
-netcdf.putAtt(fCdf, formatVersionVarId, 'long_name', 'File format version');
-netcdf.putAtt(fCdf, formatVersionVarId, '_FillValue', ' ');
-
-handbookVersionVarId = netcdf.defVar(fCdf, 'HANDBOOK_VERSION', 'NC_CHAR', string4DimId);
-netcdf.putAtt(fCdf, handbookVersionVarId, 'long_name', 'Data handbook version');
-netcdf.putAtt(fCdf, handbookVersionVarId, '_FillValue', ' ');
-
-referenceDateTimeVarId = netcdf.defVar(fCdf, 'REFERENCE_DATE_TIME', 'NC_CHAR', dateTimeDimId);
-netcdf.putAtt(fCdf, referenceDateTimeVarId, 'long_name', 'Date of reference for Julian days');
-netcdf.putAtt(fCdf, referenceDateTimeVarId, 'conventions', 'YYYYMMDDHHMISS');
-netcdf.putAtt(fCdf, referenceDateTimeVarId, '_FillValue', ' ');
-
-dateCreationVarId = netcdf.defVar(fCdf, 'DATE_CREATION', 'NC_CHAR', dateTimeDimId);
-netcdf.putAtt(fCdf, dateCreationVarId, 'long_name', 'Date of file creation');
-netcdf.putAtt(fCdf, dateCreationVarId, 'conventions', 'YYYYMMDDHHMISS');
-netcdf.putAtt(fCdf, dateCreationVarId, '_FillValue', ' ');
-
-dateUpdateVarId = netcdf.defVar(fCdf, 'DATE_UPDATE', 'NC_CHAR', dateTimeDimId);
-netcdf.putAtt(fCdf, dateUpdateVarId, 'long_name', 'Date of update of this file');
-netcdf.putAtt(fCdf, dateUpdateVarId, 'conventions', 'YYYYMMDDHHMISS');
-netcdf.putAtt(fCdf, dateUpdateVarId, '_FillValue', ' ');
-
-% create profile variables
-platformNumberVarId = netcdf.defVar(fCdf, 'PLATFORM_NUMBER', 'NC_CHAR', fliplr([nProfDimId string8DimId]));
-netcdf.putAtt(fCdf, platformNumberVarId, 'long_name', 'Float unique identifier');
-netcdf.putAtt(fCdf, platformNumberVarId, 'conventions', 'WMO float identifier : A9IIIII');
-netcdf.putAtt(fCdf, platformNumberVarId, '_FillValue', ' ');
-
-projectNameVarId = netcdf.defVar(fCdf, 'PROJECT_NAME', 'NC_CHAR', fliplr([nProfDimId string64DimId]));
-netcdf.putAtt(fCdf, projectNameVarId, 'long_name', 'Name of the project');
-netcdf.putAtt(fCdf, projectNameVarId, '_FillValue', ' ');
-
-piNameVarId = netcdf.defVar(fCdf, 'PI_NAME', 'NC_CHAR', fliplr([nProfDimId string64DimId]));
-netcdf.putAtt(fCdf, piNameVarId, 'long_name', 'Name of the principal investigator');
-netcdf.putAtt(fCdf, piNameVarId, '_FillValue', ' ');
-
-stationParametersVarId = netcdf.defVar(fCdf, 'STATION_PARAMETERS', 'NC_CHAR', fliplr([nProfDimId nParamDimId string16DimId]));
-netcdf.putAtt(fCdf, stationParametersVarId, 'long_name', 'List of available parameters for the station');
-netcdf.putAtt(fCdf, stationParametersVarId, 'conventions', 'Argo reference table 3');
-netcdf.putAtt(fCdf, stationParametersVarId, '_FillValue', ' ');
-
-cycleNumberVarId = netcdf.defVar(fCdf, 'CYCLE_NUMBER', 'NC_INT', nProfDimId);
-netcdf.putAtt(fCdf, cycleNumberVarId, 'long_name', 'Float cycle number');
-netcdf.putAtt(fCdf, cycleNumberVarId, 'conventions', '0...N, 0 : launch cycle (if exists), 1 : first complete cycle');
-netcdf.putAtt(fCdf, cycleNumberVarId, '_FillValue', int32(99999));
-
-directionVarId = netcdf.defVar(fCdf, 'DIRECTION', 'NC_CHAR', nProfDimId);
-netcdf.putAtt(fCdf, directionVarId, 'long_name', 'Direction of the station profiles');
-netcdf.putAtt(fCdf, directionVarId, 'conventions', 'A: ascending profiles, D: descending profiles');
-netcdf.putAtt(fCdf, directionVarId, '_FillValue', ' ');
-
-dataCenterVarId = netcdf.defVar(fCdf, 'DATA_CENTRE', 'NC_CHAR', fliplr([nProfDimId string2DimId]));
-netcdf.putAtt(fCdf, dataCenterVarId, 'long_name', 'Data centre in charge of float data processing');
-netcdf.putAtt(fCdf, dataCenterVarId, 'conventions', 'Argo reference table 4');
-netcdf.putAtt(fCdf, dataCenterVarId, '_FillValue', ' ');
-
-dcReferenceVarId = netcdf.defVar(fCdf, 'DC_REFERENCE', 'NC_CHAR', fliplr([nProfDimId string32DimId]));
-netcdf.putAtt(fCdf, dcReferenceVarId, 'long_name', 'Station unique identifier in data centre');
-netcdf.putAtt(fCdf, dcReferenceVarId, 'conventions', 'Data centre convention');
-netcdf.putAtt(fCdf, dcReferenceVarId, '_FillValue', ' ');
-
-dataStateIndicatorVarId = netcdf.defVar(fCdf, 'DATA_STATE_INDICATOR', 'NC_CHAR', fliplr([nProfDimId string4DimId]));
-netcdf.putAtt(fCdf, dataStateIndicatorVarId, 'long_name', 'Degree of processing the data have passed through');
-netcdf.putAtt(fCdf, dataStateIndicatorVarId, 'conventions', 'Argo reference table 6');
-netcdf.putAtt(fCdf, dataStateIndicatorVarId, '_FillValue', ' ');
-
-dataModeVarId = netcdf.defVar(fCdf, 'DATA_MODE', 'NC_CHAR', nProfDimId);
-netcdf.putAtt(fCdf, dataModeVarId, 'long_name', 'Delayed mode or real time data');
-netcdf.putAtt(fCdf, dataModeVarId, 'conventions', 'R : real time; D : delayed mode; A : real time with adjustment');
-netcdf.putAtt(fCdf, dataModeVarId, '_FillValue', ' ');
-
-platformTypeVarId = netcdf.defVar(fCdf, 'PLATFORM_TYPE', 'NC_CHAR', fliplr([nProfDimId string32DimId]));
-netcdf.putAtt(fCdf, platformTypeVarId, 'long_name', 'Type of float');
-netcdf.putAtt(fCdf, platformTypeVarId, 'conventions', 'Argo reference table 23');
-netcdf.putAtt(fCdf, platformTypeVarId, '_FillValue', ' ');
-
-floatSerialNoVarId = netcdf.defVar(fCdf, 'FLOAT_SERIAL_NO', 'NC_CHAR', fliplr([nProfDimId string32DimId]));
-netcdf.putAtt(fCdf, floatSerialNoVarId, 'long_name', 'Serial number of the float');
-netcdf.putAtt(fCdf, floatSerialNoVarId, '_FillValue', ' ');
-
-firmwareVersionVarId = netcdf.defVar(fCdf, 'FIRMWARE_VERSION', 'NC_CHAR', fliplr([nProfDimId string32DimId]));
-netcdf.putAtt(fCdf, firmwareVersionVarId, 'long_name', 'Instrument firmware version');
-netcdf.putAtt(fCdf, firmwareVersionVarId, '_FillValue', ' ');
-
-wmoInstTypeVarId = netcdf.defVar(fCdf, 'WMO_INST_TYPE', 'NC_CHAR', fliplr([nProfDimId string4DimId]));
-netcdf.putAtt(fCdf, wmoInstTypeVarId, 'long_name', 'Coded instrument type');
-netcdf.putAtt(fCdf, wmoInstTypeVarId, 'conventions', 'Argo reference table 8');
-netcdf.putAtt(fCdf, wmoInstTypeVarId, '_FillValue', ' ');
-
-juldVarId = netcdf.defVar(fCdf, 'JULD', 'NC_DOUBLE', nProfDimId);
-netcdf.putAtt(fCdf, juldVarId, 'long_name', 'Julian day (UTC) of the station relative to REFERENCE_DATE_TIME');
-netcdf.putAtt(fCdf, juldVarId, 'standard_name', 'time');
-netcdf.putAtt(fCdf, juldVarId, 'units', 'days since 1950-01-01 00:00:00 UTC');
-netcdf.putAtt(fCdf, juldVarId, 'conventions', 'Relative julian days with decimal part (as parts of day)');
-netcdf.putAtt(fCdf, juldVarId, '_FillValue', double(999999));
-netcdf.putAtt(fCdf, juldVarId, 'axis', 'T');
-
-juldQcVarId = netcdf.defVar(fCdf, 'JULD_QC', 'NC_CHAR', nProfDimId);
-netcdf.putAtt(fCdf, juldQcVarId, 'long_name', 'Quality on date and time');
-netcdf.putAtt(fCdf, juldQcVarId, 'conventions', 'Argo reference table 2');
-netcdf.putAtt(fCdf, juldQcVarId, '_FillValue', ' ');
-
-juldLocationVarId = netcdf.defVar(fCdf, 'JULD_LOCATION', 'NC_DOUBLE', nProfDimId);
-netcdf.putAtt(fCdf, juldLocationVarId, 'long_name', 'Julian day (UTC) of the location relative to REFERENCE_DATE_TIME');
-netcdf.putAtt(fCdf, juldLocationVarId, 'units', 'days since 1950-01-01 00:00:00 UTC');
-netcdf.putAtt(fCdf, juldLocationVarId, 'conventions', 'Relative julian days with decimal part (as parts of day)');
-netcdf.putAtt(fCdf, juldLocationVarId, '_FillValue', double(999999));
-
-latitudeVarId = netcdf.defVar(fCdf, 'LATITUDE', 'NC_DOUBLE', nProfDimId);
-netcdf.putAtt(fCdf, latitudeVarId, 'long_name', 'Latitude of the station, best estimate');
-netcdf.putAtt(fCdf, latitudeVarId, 'standard_name', 'latitude');
-netcdf.putAtt(fCdf, latitudeVarId, 'units', 'degree_north');
-netcdf.putAtt(fCdf, latitudeVarId, '_FillValue', double(99999));
-netcdf.putAtt(fCdf, latitudeVarId, 'valid_min', double(-90));
-netcdf.putAtt(fCdf, latitudeVarId, 'valid_max', double(90));
-netcdf.putAtt(fCdf, latitudeVarId, 'axis', 'Y');
-
-longitudeVarId = netcdf.defVar(fCdf, 'LONGITUDE', 'NC_DOUBLE', nProfDimId);
-netcdf.putAtt(fCdf, longitudeVarId, 'long_name', 'Longitude of the station, best estimate');
-netcdf.putAtt(fCdf, longitudeVarId, 'standard_name', 'longitude');
-netcdf.putAtt(fCdf, longitudeVarId, 'units', 'degree_east');
-netcdf.putAtt(fCdf, longitudeVarId, '_FillValue', double(99999));
-netcdf.putAtt(fCdf, longitudeVarId, 'valid_min', double(-180));
-netcdf.putAtt(fCdf, longitudeVarId, 'valid_max', double(180));
-netcdf.putAtt(fCdf, longitudeVarId, 'axis', 'X');
-
-positionQcVarId = netcdf.defVar(fCdf, 'POSITION_QC', 'NC_CHAR', nProfDimId);
-netcdf.putAtt(fCdf, positionQcVarId, 'long_name', 'Quality on position (latitude and longitude)');
-netcdf.putAtt(fCdf, positionQcVarId, 'conventions', 'Argo reference table 2');
-netcdf.putAtt(fCdf, positionQcVarId, '_FillValue', ' ');
-
-positioningSystemVarId = netcdf.defVar(fCdf, 'POSITIONING_SYSTEM', 'NC_CHAR', fliplr([nProfDimId string8DimId]));
-netcdf.putAtt(fCdf, positioningSystemVarId, 'long_name', 'Positioning system');
-netcdf.putAtt(fCdf, positioningSystemVarId, '_FillValue', ' ');
-
-if (isfield(a_floatData, 'POSITION_ERROR_REPORTED') || ...
-      isfield(a_floatData, 'POSITION_ERROR_ESTIMATED') || ...
-      isfield(a_floatData, 'POSITION_ERROR_ESTIMATED_COMMENT'))
-   
-   positionErrorReportedVarId = netcdf.defVar(fCdf, 'POSITION_ERROR_REPORTED', 'NC_FLOAT', nProfDimId);
-   netcdf.putAtt(fCdf, positionErrorReportedVarId, 'long_name', 'Position error reported by the positioning system');
-   netcdf.putAtt(fCdf, positionErrorReportedVarId, 'units', 'meters');
-   netcdf.putAtt(fCdf, positionErrorReportedVarId, '_FillValue', single(99999));
-   
-   positionErrorEstimatedVarId = netcdf.defVar(fCdf, 'POSITION_ERROR_ESTIMATED', 'NC_FLOAT', nProfDimId);
-   netcdf.putAtt(fCdf, positionErrorEstimatedVarId, 'long_name', 'Position error estimated by the real-time or delayed-mode process');
-   netcdf.putAtt(fCdf, positionErrorEstimatedVarId, 'units', 'meters');
-   netcdf.putAtt(fCdf, positionErrorEstimatedVarId, '_FillValue', single(99999));
-   
-   positionErrorEstimatedCommentVarId = netcdf.defVar(fCdf, 'POSITION_ERROR_ESTIMATED_COMMENT', 'NC_CHAR', fliplr([nProfDimId string1024DimId]));
-   netcdf.putAtt(fCdf, positionErrorEstimatedCommentVarId, 'long_name', 'Comment on the method used to determine POSITION_ERROR_ESTIMATED');
-   netcdf.putAtt(fCdf, positionErrorEstimatedCommentVarId, '_FillValue', ' ');
-end
-
-% global quality of PARAM profile
-for idParam = 1:length(profUniqueParamName)
-   paramName = profUniqueParamName{idParam};
-   ncParamName = ['PROFILE_' paramName '_QC'];
-   
-   profileParamQcVarId = netcdf.defVar(fCdf, ncParamName, 'NC_CHAR', nProfDimId);
-   netcdf.putAtt(fCdf, profileParamQcVarId, 'long_name', sprintf('Global quality flag of %s profile', paramName));
-   netcdf.putAtt(fCdf, profileParamQcVarId, 'conventions', 'Argo reference table 2a');
-   netcdf.putAtt(fCdf, profileParamQcVarId, '_FillValue', ' ');
-end
-
-verticalSamplingSchemeVarId = netcdf.defVar(fCdf, 'VERTICAL_SAMPLING_SCHEME', 'NC_CHAR', fliplr([nProfDimId string256DimId]));
-netcdf.putAtt(fCdf, verticalSamplingSchemeVarId, 'long_name', 'Vertical sampling scheme');
-netcdf.putAtt(fCdf, verticalSamplingSchemeVarId, 'conventions', 'Argo reference table 16');
-netcdf.putAtt(fCdf, verticalSamplingSchemeVarId, '_FillValue', ' ');
-
-configMissionNumberVarId = netcdf.defVar(fCdf, 'CONFIG_MISSION_NUMBER', 'NC_INT', nProfDimId);
-netcdf.putAtt(fCdf, configMissionNumberVarId, 'long_name', 'Unique number denoting the missions performed by the float');
-netcdf.putAtt(fCdf, configMissionNumberVarId, 'conventions', '1...N, 1 : first complete mission');
-netcdf.putAtt(fCdf, configMissionNumberVarId, '_FillValue', int32(99999));
-
-% create profile parameters
-for idParam = 1:length(profUniqueParamName)
-   
-   paramName = profUniqueParamName{idParam};
-   paramInfo = get_netcdf_param_attributes(paramName);
-   paramNcType = paramInfo.paramNcType;
-   
-   % parameter variable and attributes
-   profParamVarId = netcdf.defVar(fCdf, paramName, paramNcType, fliplr([nProfDimId nLevelsDimId]));
-   
-   if (~isempty(paramInfo.longName))
-      netcdf.putAtt(fCdf, profParamVarId, 'long_name', paramInfo.longName);
+   % create dimensions
+   dateTimeDimId = netcdf.defDim(fCdf, 'DATE_TIME', 14);
+   if (isfield(a_floatData, 'POSITION_ERROR_REPORTED') || ...
+         isfield(a_floatData, 'POSITION_ERROR_ESTIMATED') || ...
+         isfield(a_floatData, 'POSITION_ERROR_ESTIMATED_COMMENT'))
+      string1024DimId = netcdf.defDim(fCdf, 'STRING1024', 1024);
    end
-   if (~isempty(paramInfo.standardName))
-      netcdf.putAtt(fCdf, profParamVarId, 'standard_name', paramInfo.standardName);
+   string256DimId = netcdf.defDim(fCdf, 'STRING256', 256);
+   string64DimId = netcdf.defDim(fCdf, 'STRING64', 64);
+   string32DimId = netcdf.defDim(fCdf, 'STRING32', 32);
+   string16DimId = netcdf.defDim(fCdf, 'STRING16', 16);
+   string8DimId = netcdf.defDim(fCdf, 'STRING8', 8);
+   string4DimId = netcdf.defDim(fCdf, 'STRING4', 4);
+   string2DimId = netcdf.defDim(fCdf, 'STRING2', 2);
+
+   nProfDimId = netcdf.defDim(fCdf, 'N_PROF', nbProfInFile);
+   nParamDimId = netcdf.defDim(fCdf, 'N_PARAM', nbProfParam);
+   nLevelsDimId = netcdf.defDim(fCdf, 'N_LEVELS', nbProfLevels);
+   nCalibDimId = netcdf.defDim(fCdf, 'N_CALIB', nbProfCalib);
+   nHistoryDimId = netcdf.defDim(fCdf, 'N_HISTORY', netcdf.getConstant('NC_UNLIMITED'));
+
+   % create global attributes
+   globalVarId = netcdf.getConstant('NC_GLOBAL');
+   netcdf.putAtt(fCdf, globalVarId, 'title', 'Argo float vertical profile');
+   netcdf.putAtt(fCdf, globalVarId, 'institution', 'CORIOLIS');
+   netcdf.putAtt(fCdf, globalVarId, 'source', 'Argo float');
+   globalHistoryText = [datestr(datenum(currentDate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; '];
+   netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
+   netcdf.putAtt(fCdf, globalVarId, 'references', 'http://www.argodatamgt.org/Documentation');
+   netcdf.putAtt(fCdf, globalVarId, 'user_manual_version', '3.4');
+   netcdf.putAtt(fCdf, globalVarId, 'Conventions', 'Argo-3.1 CF-1.6');
+   netcdf.putAtt(fCdf, globalVarId, 'featureType', 'trajectoryProfile');
+   netcdf.putAtt(fCdf, globalVarId, 'id', 'https://doi.org/10.17882/42182');
+
+   % create misc variables
+   dataTypeVarId = netcdf.defVar(fCdf, 'DATA_TYPE', 'NC_CHAR', string16DimId);
+   netcdf.putAtt(fCdf, dataTypeVarId, 'long_name', 'Data type');
+   netcdf.putAtt(fCdf, dataTypeVarId, 'conventions', 'Argo reference table 1');
+   netcdf.putAtt(fCdf, dataTypeVarId, '_FillValue', ' ');
+
+   formatVersionVarId = netcdf.defVar(fCdf, 'FORMAT_VERSION', 'NC_CHAR', string4DimId);
+   netcdf.putAtt(fCdf, formatVersionVarId, 'long_name', 'File format version');
+   netcdf.putAtt(fCdf, formatVersionVarId, '_FillValue', ' ');
+
+   handbookVersionVarId = netcdf.defVar(fCdf, 'HANDBOOK_VERSION', 'NC_CHAR', string4DimId);
+   netcdf.putAtt(fCdf, handbookVersionVarId, 'long_name', 'Data handbook version');
+   netcdf.putAtt(fCdf, handbookVersionVarId, '_FillValue', ' ');
+
+   referenceDateTimeVarId = netcdf.defVar(fCdf, 'REFERENCE_DATE_TIME', 'NC_CHAR', dateTimeDimId);
+   netcdf.putAtt(fCdf, referenceDateTimeVarId, 'long_name', 'Date of reference for Julian days');
+   netcdf.putAtt(fCdf, referenceDateTimeVarId, 'conventions', 'YYYYMMDDHHMISS');
+   netcdf.putAtt(fCdf, referenceDateTimeVarId, '_FillValue', ' ');
+
+   dateCreationVarId = netcdf.defVar(fCdf, 'DATE_CREATION', 'NC_CHAR', dateTimeDimId);
+   netcdf.putAtt(fCdf, dateCreationVarId, 'long_name', 'Date of file creation');
+   netcdf.putAtt(fCdf, dateCreationVarId, 'conventions', 'YYYYMMDDHHMISS');
+   netcdf.putAtt(fCdf, dateCreationVarId, '_FillValue', ' ');
+
+   dateUpdateVarId = netcdf.defVar(fCdf, 'DATE_UPDATE', 'NC_CHAR', dateTimeDimId);
+   netcdf.putAtt(fCdf, dateUpdateVarId, 'long_name', 'Date of update of this file');
+   netcdf.putAtt(fCdf, dateUpdateVarId, 'conventions', 'YYYYMMDDHHMISS');
+   netcdf.putAtt(fCdf, dateUpdateVarId, '_FillValue', ' ');
+
+   % create profile variables
+   platformNumberVarId = netcdf.defVar(fCdf, 'PLATFORM_NUMBER', 'NC_CHAR', fliplr([nProfDimId string8DimId]));
+   netcdf.putAtt(fCdf, platformNumberVarId, 'long_name', 'Float unique identifier');
+   netcdf.putAtt(fCdf, platformNumberVarId, 'conventions', 'WMO float identifier : A9IIIII');
+   netcdf.putAtt(fCdf, platformNumberVarId, '_FillValue', ' ');
+
+   projectNameVarId = netcdf.defVar(fCdf, 'PROJECT_NAME', 'NC_CHAR', fliplr([nProfDimId string64DimId]));
+   netcdf.putAtt(fCdf, projectNameVarId, 'long_name', 'Name of the project');
+   netcdf.putAtt(fCdf, projectNameVarId, '_FillValue', ' ');
+
+   piNameVarId = netcdf.defVar(fCdf, 'PI_NAME', 'NC_CHAR', fliplr([nProfDimId string64DimId]));
+   netcdf.putAtt(fCdf, piNameVarId, 'long_name', 'Name of the principal investigator');
+   netcdf.putAtt(fCdf, piNameVarId, '_FillValue', ' ');
+
+   stationParametersVarId = netcdf.defVar(fCdf, 'STATION_PARAMETERS', 'NC_CHAR', fliplr([nProfDimId nParamDimId string16DimId]));
+   netcdf.putAtt(fCdf, stationParametersVarId, 'long_name', 'List of available parameters for the station');
+   netcdf.putAtt(fCdf, stationParametersVarId, 'conventions', 'Argo reference table 3');
+   netcdf.putAtt(fCdf, stationParametersVarId, '_FillValue', ' ');
+
+   cycleNumberVarId = netcdf.defVar(fCdf, 'CYCLE_NUMBER', 'NC_INT', nProfDimId);
+   netcdf.putAtt(fCdf, cycleNumberVarId, 'long_name', 'Float cycle number');
+   netcdf.putAtt(fCdf, cycleNumberVarId, 'conventions', '0...N, 0 : launch cycle (if exists), 1 : first complete cycle');
+   netcdf.putAtt(fCdf, cycleNumberVarId, '_FillValue', int32(99999));
+
+   directionVarId = netcdf.defVar(fCdf, 'DIRECTION', 'NC_CHAR', nProfDimId);
+   netcdf.putAtt(fCdf, directionVarId, 'long_name', 'Direction of the station profiles');
+   netcdf.putAtt(fCdf, directionVarId, 'conventions', 'A: ascending profiles, D: descending profiles');
+   netcdf.putAtt(fCdf, directionVarId, '_FillValue', ' ');
+
+   dataCenterVarId = netcdf.defVar(fCdf, 'DATA_CENTRE', 'NC_CHAR', fliplr([nProfDimId string2DimId]));
+   netcdf.putAtt(fCdf, dataCenterVarId, 'long_name', 'Data centre in charge of float data processing');
+   netcdf.putAtt(fCdf, dataCenterVarId, 'conventions', 'Argo reference table 4');
+   netcdf.putAtt(fCdf, dataCenterVarId, '_FillValue', ' ');
+
+   dcReferenceVarId = netcdf.defVar(fCdf, 'DC_REFERENCE', 'NC_CHAR', fliplr([nProfDimId string32DimId]));
+   netcdf.putAtt(fCdf, dcReferenceVarId, 'long_name', 'Station unique identifier in data centre');
+   netcdf.putAtt(fCdf, dcReferenceVarId, 'conventions', 'Data centre convention');
+   netcdf.putAtt(fCdf, dcReferenceVarId, '_FillValue', ' ');
+
+   dataStateIndicatorVarId = netcdf.defVar(fCdf, 'DATA_STATE_INDICATOR', 'NC_CHAR', fliplr([nProfDimId string4DimId]));
+   netcdf.putAtt(fCdf, dataStateIndicatorVarId, 'long_name', 'Degree of processing the data have passed through');
+   netcdf.putAtt(fCdf, dataStateIndicatorVarId, 'conventions', 'Argo reference table 6');
+   netcdf.putAtt(fCdf, dataStateIndicatorVarId, '_FillValue', ' ');
+
+   dataModeVarId = netcdf.defVar(fCdf, 'DATA_MODE', 'NC_CHAR', nProfDimId);
+   netcdf.putAtt(fCdf, dataModeVarId, 'long_name', 'Delayed mode or real time data');
+   netcdf.putAtt(fCdf, dataModeVarId, 'conventions', 'R : real time; D : delayed mode; A : real time with adjustment');
+   netcdf.putAtt(fCdf, dataModeVarId, '_FillValue', ' ');
+
+   platformTypeVarId = netcdf.defVar(fCdf, 'PLATFORM_TYPE', 'NC_CHAR', fliplr([nProfDimId string32DimId]));
+   netcdf.putAtt(fCdf, platformTypeVarId, 'long_name', 'Type of float');
+   netcdf.putAtt(fCdf, platformTypeVarId, 'conventions', 'Argo reference table 23');
+   netcdf.putAtt(fCdf, platformTypeVarId, '_FillValue', ' ');
+
+   floatSerialNoVarId = netcdf.defVar(fCdf, 'FLOAT_SERIAL_NO', 'NC_CHAR', fliplr([nProfDimId string32DimId]));
+   netcdf.putAtt(fCdf, floatSerialNoVarId, 'long_name', 'Serial number of the float');
+   netcdf.putAtt(fCdf, floatSerialNoVarId, '_FillValue', ' ');
+
+   firmwareVersionVarId = netcdf.defVar(fCdf, 'FIRMWARE_VERSION', 'NC_CHAR', fliplr([nProfDimId string32DimId]));
+   netcdf.putAtt(fCdf, firmwareVersionVarId, 'long_name', 'Instrument firmware version');
+   netcdf.putAtt(fCdf, firmwareVersionVarId, '_FillValue', ' ');
+
+   wmoInstTypeVarId = netcdf.defVar(fCdf, 'WMO_INST_TYPE', 'NC_CHAR', fliplr([nProfDimId string4DimId]));
+   netcdf.putAtt(fCdf, wmoInstTypeVarId, 'long_name', 'Coded instrument type');
+   netcdf.putAtt(fCdf, wmoInstTypeVarId, 'conventions', 'Argo reference table 8');
+   netcdf.putAtt(fCdf, wmoInstTypeVarId, '_FillValue', ' ');
+
+   juldVarId = netcdf.defVar(fCdf, 'JULD', 'NC_DOUBLE', nProfDimId);
+   netcdf.putAtt(fCdf, juldVarId, 'long_name', 'Julian day (UTC) of the station relative to REFERENCE_DATE_TIME');
+   netcdf.putAtt(fCdf, juldVarId, 'standard_name', 'time');
+   netcdf.putAtt(fCdf, juldVarId, 'units', 'days since 1950-01-01 00:00:00 UTC');
+   netcdf.putAtt(fCdf, juldVarId, 'conventions', 'Relative julian days with decimal part (as parts of day)');
+   netcdf.putAtt(fCdf, juldVarId, '_FillValue', double(999999));
+   netcdf.putAtt(fCdf, juldVarId, 'axis', 'T');
+
+   juldQcVarId = netcdf.defVar(fCdf, 'JULD_QC', 'NC_CHAR', nProfDimId);
+   netcdf.putAtt(fCdf, juldQcVarId, 'long_name', 'Quality on date and time');
+   netcdf.putAtt(fCdf, juldQcVarId, 'conventions', 'Argo reference table 2');
+   netcdf.putAtt(fCdf, juldQcVarId, '_FillValue', ' ');
+
+   juldLocationVarId = netcdf.defVar(fCdf, 'JULD_LOCATION', 'NC_DOUBLE', nProfDimId);
+   netcdf.putAtt(fCdf, juldLocationVarId, 'long_name', 'Julian day (UTC) of the location relative to REFERENCE_DATE_TIME');
+   netcdf.putAtt(fCdf, juldLocationVarId, 'units', 'days since 1950-01-01 00:00:00 UTC');
+   netcdf.putAtt(fCdf, juldLocationVarId, 'conventions', 'Relative julian days with decimal part (as parts of day)');
+   netcdf.putAtt(fCdf, juldLocationVarId, '_FillValue', double(999999));
+
+   latitudeVarId = netcdf.defVar(fCdf, 'LATITUDE', 'NC_DOUBLE', nProfDimId);
+   netcdf.putAtt(fCdf, latitudeVarId, 'long_name', 'Latitude of the station, best estimate');
+   netcdf.putAtt(fCdf, latitudeVarId, 'standard_name', 'latitude');
+   netcdf.putAtt(fCdf, latitudeVarId, 'units', 'degree_north');
+   netcdf.putAtt(fCdf, latitudeVarId, '_FillValue', double(99999));
+   netcdf.putAtt(fCdf, latitudeVarId, 'valid_min', double(-90));
+   netcdf.putAtt(fCdf, latitudeVarId, 'valid_max', double(90));
+   netcdf.putAtt(fCdf, latitudeVarId, 'axis', 'Y');
+
+   longitudeVarId = netcdf.defVar(fCdf, 'LONGITUDE', 'NC_DOUBLE', nProfDimId);
+   netcdf.putAtt(fCdf, longitudeVarId, 'long_name', 'Longitude of the station, best estimate');
+   netcdf.putAtt(fCdf, longitudeVarId, 'standard_name', 'longitude');
+   netcdf.putAtt(fCdf, longitudeVarId, 'units', 'degree_east');
+   netcdf.putAtt(fCdf, longitudeVarId, '_FillValue', double(99999));
+   netcdf.putAtt(fCdf, longitudeVarId, 'valid_min', double(-180));
+   netcdf.putAtt(fCdf, longitudeVarId, 'valid_max', double(180));
+   netcdf.putAtt(fCdf, longitudeVarId, 'axis', 'X');
+
+   positionQcVarId = netcdf.defVar(fCdf, 'POSITION_QC', 'NC_CHAR', nProfDimId);
+   netcdf.putAtt(fCdf, positionQcVarId, 'long_name', 'Quality on position (latitude and longitude)');
+   netcdf.putAtt(fCdf, positionQcVarId, 'conventions', 'Argo reference table 2');
+   netcdf.putAtt(fCdf, positionQcVarId, '_FillValue', ' ');
+
+   positioningSystemVarId = netcdf.defVar(fCdf, 'POSITIONING_SYSTEM', 'NC_CHAR', fliplr([nProfDimId string8DimId]));
+   netcdf.putAtt(fCdf, positioningSystemVarId, 'long_name', 'Positioning system');
+   netcdf.putAtt(fCdf, positioningSystemVarId, '_FillValue', ' ');
+
+   if (isfield(a_floatData, 'POSITION_ERROR_REPORTED') || ...
+         isfield(a_floatData, 'POSITION_ERROR_ESTIMATED') || ...
+         isfield(a_floatData, 'POSITION_ERROR_ESTIMATED_COMMENT'))
+
+      positionErrorReportedVarId = netcdf.defVar(fCdf, 'POSITION_ERROR_REPORTED', 'NC_FLOAT', nProfDimId);
+      netcdf.putAtt(fCdf, positionErrorReportedVarId, 'long_name', 'Position error reported by the positioning system');
+      netcdf.putAtt(fCdf, positionErrorReportedVarId, 'units', 'meters');
+      netcdf.putAtt(fCdf, positionErrorReportedVarId, '_FillValue', single(99999));
+
+      positionErrorEstimatedVarId = netcdf.defVar(fCdf, 'POSITION_ERROR_ESTIMATED', 'NC_FLOAT', nProfDimId);
+      netcdf.putAtt(fCdf, positionErrorEstimatedVarId, 'long_name', 'Position error estimated by the real-time or delayed-mode process');
+      netcdf.putAtt(fCdf, positionErrorEstimatedVarId, 'units', 'meters');
+      netcdf.putAtt(fCdf, positionErrorEstimatedVarId, '_FillValue', single(99999));
+
+      positionErrorEstimatedCommentVarId = netcdf.defVar(fCdf, 'POSITION_ERROR_ESTIMATED_COMMENT', 'NC_CHAR', fliplr([nProfDimId string1024DimId]));
+      netcdf.putAtt(fCdf, positionErrorEstimatedCommentVarId, 'long_name', 'Comment on the method used to determine POSITION_ERROR_ESTIMATED');
+      netcdf.putAtt(fCdf, positionErrorEstimatedCommentVarId, '_FillValue', ' ');
    end
-   if (~isempty(paramInfo.fillValue))
-      netcdf.putAtt(fCdf, profParamVarId, '_FillValue', paramInfo.fillValue);
+
+   % global quality of PARAM profile
+   for idParam = 1:length(profUniqueParamName)
+      paramName = profUniqueParamName{idParam};
+      ncParamName = ['PROFILE_' paramName '_QC'];
+
+      profileParamQcVarId = netcdf.defVar(fCdf, ncParamName, 'NC_CHAR', nProfDimId);
+      netcdf.putAtt(fCdf, profileParamQcVarId, 'long_name', sprintf('Global quality flag of %s profile', paramName));
+      netcdf.putAtt(fCdf, profileParamQcVarId, 'conventions', 'Argo reference table 2a');
+      netcdf.putAtt(fCdf, profileParamQcVarId, '_FillValue', ' ');
    end
-   if (~isempty(paramInfo.units))
-      netcdf.putAtt(fCdf, profParamVarId, 'units', paramInfo.units);
-   end
-   if (~isempty(paramInfo.validMin))
-      netcdf.putAtt(fCdf, profParamVarId, 'valid_min', paramInfo.validMin);
-   end
-   if (~isempty(paramInfo.validMax))
-      netcdf.putAtt(fCdf, profParamVarId, 'valid_max', paramInfo.validMax);
-   end
-   if (~isempty(paramInfo.cFormat))
-      netcdf.putAtt(fCdf, profParamVarId, 'C_format', paramInfo.cFormat);
-   end
-   if (~isempty(paramInfo.fortranFormat))
-      netcdf.putAtt(fCdf, profParamVarId, 'FORTRAN_format', paramInfo.fortranFormat);
-   end
-   if (~isempty(paramInfo.resolution))
-      netcdf.putAtt(fCdf, profParamVarId, 'resolution', paramInfo.resolution);
-   end
-   if (~isempty(paramInfo.axis))
-      netcdf.putAtt(fCdf, profParamVarId, 'axis', paramInfo.axis);
-   end
-   
-   % parameter QC variable and attributes
-   paramQcName = [paramName '_QC'];
-   
-   profParamQcVarId = netcdf.defVar(fCdf, paramQcName, 'NC_CHAR', fliplr([nProfDimId nLevelsDimId]));
-   
-   netcdf.putAtt(fCdf, profParamQcVarId, 'long_name', 'quality flag');
-   netcdf.putAtt(fCdf, profParamQcVarId, 'conventions', 'Argo reference table 2');
-   netcdf.putAtt(fCdf, profParamQcVarId, '_FillValue', ' ');
-   
-   if (paramInfo.adjAllowed == 1)
-      
-      % parameter adjusted variable and attributes
-      paramAdjName = [paramName '_ADJUSTED'];
-      
-      profParamAdjVarId = netcdf.defVar(fCdf, paramAdjName, paramNcType, fliplr([nProfDimId nLevelsDimId]));
-      
+
+   verticalSamplingSchemeVarId = netcdf.defVar(fCdf, 'VERTICAL_SAMPLING_SCHEME', 'NC_CHAR', fliplr([nProfDimId string256DimId]));
+   netcdf.putAtt(fCdf, verticalSamplingSchemeVarId, 'long_name', 'Vertical sampling scheme');
+   netcdf.putAtt(fCdf, verticalSamplingSchemeVarId, 'conventions', 'Argo reference table 16');
+   netcdf.putAtt(fCdf, verticalSamplingSchemeVarId, '_FillValue', ' ');
+
+   configMissionNumberVarId = netcdf.defVar(fCdf, 'CONFIG_MISSION_NUMBER', 'NC_INT', nProfDimId);
+   netcdf.putAtt(fCdf, configMissionNumberVarId, 'long_name', 'Unique number denoting the missions performed by the float');
+   netcdf.putAtt(fCdf, configMissionNumberVarId, 'conventions', '1...N, 1 : first complete mission');
+   netcdf.putAtt(fCdf, configMissionNumberVarId, '_FillValue', int32(99999));
+
+   % create profile parameters
+   for idParam = 1:length(profUniqueParamName)
+
+      paramName = profUniqueParamName{idParam};
+      paramInfo = get_netcdf_param_attributes(paramName);
+      paramNcType = paramInfo.paramNcType;
+
+      % parameter variable and attributes
+      profParamVarId = netcdf.defVar(fCdf, paramName, paramNcType, fliplr([nProfDimId nLevelsDimId]));
+
       if (~isempty(paramInfo.longName))
-         netcdf.putAtt(fCdf, profParamAdjVarId, 'long_name', paramInfo.longName);
+         netcdf.putAtt(fCdf, profParamVarId, 'long_name', paramInfo.longName);
       end
       if (~isempty(paramInfo.standardName))
-         netcdf.putAtt(fCdf, profParamAdjVarId, 'standard_name', paramInfo.standardName);
+         netcdf.putAtt(fCdf, profParamVarId, 'standard_name', paramInfo.standardName);
       end
       if (~isempty(paramInfo.fillValue))
-         netcdf.putAtt(fCdf, profParamAdjVarId, '_FillValue', paramInfo.fillValue);
+         netcdf.putAtt(fCdf, profParamVarId, '_FillValue', paramInfo.fillValue);
       end
       if (~isempty(paramInfo.units))
-         netcdf.putAtt(fCdf, profParamAdjVarId, 'units', paramInfo.units);
+         netcdf.putAtt(fCdf, profParamVarId, 'units', paramInfo.units);
       end
       if (~isempty(paramInfo.validMin))
-         netcdf.putAtt(fCdf, profParamAdjVarId, 'valid_min', paramInfo.validMin);
+         netcdf.putAtt(fCdf, profParamVarId, 'valid_min', paramInfo.validMin);
       end
       if (~isempty(paramInfo.validMax))
-         netcdf.putAtt(fCdf, profParamAdjVarId, 'valid_max', paramInfo.validMax);
+         netcdf.putAtt(fCdf, profParamVarId, 'valid_max', paramInfo.validMax);
       end
       if (~isempty(paramInfo.cFormat))
-         netcdf.putAtt(fCdf, profParamAdjVarId, 'C_format', paramInfo.cFormat);
+         netcdf.putAtt(fCdf, profParamVarId, 'C_format', paramInfo.cFormat);
       end
       if (~isempty(paramInfo.fortranFormat))
-         netcdf.putAtt(fCdf, profParamAdjVarId, 'FORTRAN_format', paramInfo.fortranFormat);
+         netcdf.putAtt(fCdf, profParamVarId, 'FORTRAN_format', paramInfo.fortranFormat);
       end
       if (~isempty(paramInfo.resolution))
-         netcdf.putAtt(fCdf, profParamAdjVarId, 'resolution', paramInfo.resolution);
+         netcdf.putAtt(fCdf, profParamVarId, 'resolution', paramInfo.resolution);
       end
       if (~isempty(paramInfo.axis))
-         netcdf.putAtt(fCdf, profParamAdjVarId, 'axis', paramInfo.axis);
+         netcdf.putAtt(fCdf, profParamVarId, 'axis', paramInfo.axis);
       end
-      
-      % parameter adjusted QC variable and attributes
-      paramAdjQcName = [paramName '_ADJUSTED_QC'];
-      
-      profParamAdjQcVarId = netcdf.defVar(fCdf, paramAdjQcName, 'NC_CHAR', fliplr([nProfDimId nLevelsDimId]));
-      
-      netcdf.putAtt(fCdf, profParamAdjQcVarId, 'long_name', 'quality flag');
-      netcdf.putAtt(fCdf, profParamAdjQcVarId, 'conventions', 'Argo reference table 2');
-      netcdf.putAtt(fCdf, profParamAdjQcVarId, '_FillValue', ' ');
-      
-      % parameter adjusted error variable and attributes
-      paramAdjErrName = [paramName '_ADJUSTED_ERROR'];
-      
-      profParamAdjErrVarId = netcdf.defVar(fCdf, paramAdjErrName, paramNcType, fliplr([nProfDimId nLevelsDimId]));
-      
-      netcdf.putAtt(fCdf, profParamAdjErrVarId, 'long_name', 'Contains the error on the adjusted values as determined by the delayed mode QC process');
-      if (~isempty(paramInfo.fillValue))
-         netcdf.putAtt(fCdf, profParamAdjErrVarId, '_FillValue', paramInfo.fillValue);
-      end
-      if (~isempty(paramInfo.units))
-         netcdf.putAtt(fCdf, profParamAdjErrVarId, 'units', paramInfo.units);
-      end
-      if (~isempty(paramInfo.cFormat))
-         netcdf.putAtt(fCdf, profParamAdjErrVarId, 'C_format', paramInfo.cFormat);
-      end
-      if (~isempty(paramInfo.fortranFormat))
-         netcdf.putAtt(fCdf, profParamAdjErrVarId, 'FORTRAN_format', paramInfo.fortranFormat);
-      end
-      if (~isempty(paramInfo.resolution))
-         netcdf.putAtt(fCdf, profParamAdjErrVarId, 'resolution', paramInfo.resolution);
-      end
-   end
-end
 
-% calibration information
-parameterVarId = netcdf.defVar(fCdf, 'PARAMETER', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId string16DimId]));
-netcdf.putAtt(fCdf, parameterVarId, 'long_name', 'List of parameters with calibration information');
-netcdf.putAtt(fCdf, parameterVarId, 'conventions', 'Argo reference table 3');
-netcdf.putAtt(fCdf, parameterVarId, '_FillValue', ' ');
+      % parameter QC variable and attributes
+      paramQcName = [paramName '_QC'];
 
-scientificCalibEquationVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_EQUATION', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId string256DimId]));
-netcdf.putAtt(fCdf, scientificCalibEquationVarId, 'long_name', 'Calibration equation for this parameter');
-netcdf.putAtt(fCdf, scientificCalibEquationVarId, '_FillValue', ' ');
+      profParamQcVarId = netcdf.defVar(fCdf, paramQcName, 'NC_CHAR', fliplr([nProfDimId nLevelsDimId]));
 
-scientificCalibCoefficientVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_COEFFICIENT', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId string256DimId]));
-netcdf.putAtt(fCdf, scientificCalibCoefficientVarId, 'long_name', 'Calibration coefficients for this equation');
-netcdf.putAtt(fCdf, scientificCalibCoefficientVarId, '_FillValue', ' ');
+      netcdf.putAtt(fCdf, profParamQcVarId, 'long_name', 'quality flag');
+      netcdf.putAtt(fCdf, profParamQcVarId, 'conventions', 'Argo reference table 2');
+      netcdf.putAtt(fCdf, profParamQcVarId, '_FillValue', ' ');
 
-scientificCalibCommentVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_COMMENT', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId string256DimId]));
-netcdf.putAtt(fCdf, scientificCalibCommentVarId, 'long_name', 'Comment applying to this parameter calibration');
-netcdf.putAtt(fCdf, scientificCalibCommentVarId, '_FillValue', ' ');
+      if (paramInfo.adjAllowed == 1)
 
-scientificCalibDateVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_DATE', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId dateTimeDimId]));
-netcdf.putAtt(fCdf, scientificCalibDateVarId, 'long_name', 'Date of calibration');
-netcdf.putAtt(fCdf, scientificCalibDateVarId, 'conventions', 'YYYYMMDDHHMISS');
-netcdf.putAtt(fCdf, scientificCalibDateVarId, '_FillValue', ' ');
+         % parameter adjusted variable and attributes
+         paramAdjName = [paramName '_ADJUSTED'];
 
-% history information
-historyInstitutionVarId = netcdf.defVar(fCdf, 'HISTORY_INSTITUTION', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
-netcdf.putAtt(fCdf, historyInstitutionVarId, 'long_name', 'Institution which performed action');
-netcdf.putAtt(fCdf, historyInstitutionVarId, 'conventions', 'Argo reference table 4');
-netcdf.putAtt(fCdf, historyInstitutionVarId, '_FillValue', ' ');
+         profParamAdjVarId = netcdf.defVar(fCdf, paramAdjName, paramNcType, fliplr([nProfDimId nLevelsDimId]));
 
-historyStepVarId = netcdf.defVar(fCdf, 'HISTORY_STEP', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
-netcdf.putAtt(fCdf, historyStepVarId, 'long_name', 'Step in data processing');
-netcdf.putAtt(fCdf, historyStepVarId, 'conventions', 'Argo reference table 12');
-netcdf.putAtt(fCdf, historyStepVarId, '_FillValue', ' ');
+         if (~isempty(paramInfo.longName))
+            netcdf.putAtt(fCdf, profParamAdjVarId, 'long_name', paramInfo.longName);
+         end
+         if (~isempty(paramInfo.standardName))
+            netcdf.putAtt(fCdf, profParamAdjVarId, 'standard_name', paramInfo.standardName);
+         end
+         if (~isempty(paramInfo.fillValue))
+            netcdf.putAtt(fCdf, profParamAdjVarId, '_FillValue', paramInfo.fillValue);
+         end
+         if (~isempty(paramInfo.units))
+            netcdf.putAtt(fCdf, profParamAdjVarId, 'units', paramInfo.units);
+         end
+         if (~isempty(paramInfo.validMin))
+            netcdf.putAtt(fCdf, profParamAdjVarId, 'valid_min', paramInfo.validMin);
+         end
+         if (~isempty(paramInfo.validMax))
+            netcdf.putAtt(fCdf, profParamAdjVarId, 'valid_max', paramInfo.validMax);
+         end
+         if (~isempty(paramInfo.cFormat))
+            netcdf.putAtt(fCdf, profParamAdjVarId, 'C_format', paramInfo.cFormat);
+         end
+         if (~isempty(paramInfo.fortranFormat))
+            netcdf.putAtt(fCdf, profParamAdjVarId, 'FORTRAN_format', paramInfo.fortranFormat);
+         end
+         if (~isempty(paramInfo.resolution))
+            netcdf.putAtt(fCdf, profParamAdjVarId, 'resolution', paramInfo.resolution);
+         end
+         if (~isempty(paramInfo.axis))
+            netcdf.putAtt(fCdf, profParamAdjVarId, 'axis', paramInfo.axis);
+         end
 
-historySoftwareVarId = netcdf.defVar(fCdf, 'HISTORY_SOFTWARE', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
-netcdf.putAtt(fCdf, historySoftwareVarId, 'long_name', 'Name of software which performed action');
-netcdf.putAtt(fCdf, historySoftwareVarId, 'conventions', 'Institution dependent');
-netcdf.putAtt(fCdf, historySoftwareVarId, '_FillValue', ' ');
+         % parameter adjusted QC variable and attributes
+         paramAdjQcName = [paramName '_ADJUSTED_QC'];
 
-historySoftwareReleaseVarId = netcdf.defVar(fCdf, 'HISTORY_SOFTWARE_RELEASE', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
-netcdf.putAtt(fCdf, historySoftwareReleaseVarId, 'long_name', 'Version/release of software which performed action');
-netcdf.putAtt(fCdf, historySoftwareReleaseVarId, 'conventions', 'Institution dependent');
-netcdf.putAtt(fCdf, historySoftwareReleaseVarId, '_FillValue', ' ');
+         profParamAdjQcVarId = netcdf.defVar(fCdf, paramAdjQcName, 'NC_CHAR', fliplr([nProfDimId nLevelsDimId]));
 
-historyReferenceVarId = netcdf.defVar(fCdf, 'HISTORY_REFERENCE', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string64DimId]));
-netcdf.putAtt(fCdf, historyReferenceVarId, 'long_name', 'Reference of database');
-netcdf.putAtt(fCdf, historyReferenceVarId, 'conventions', 'Institution dependent');
-netcdf.putAtt(fCdf, historyReferenceVarId, '_FillValue', ' ');
+         netcdf.putAtt(fCdf, profParamAdjQcVarId, 'long_name', 'quality flag');
+         netcdf.putAtt(fCdf, profParamAdjQcVarId, 'conventions', 'Argo reference table 2');
+         netcdf.putAtt(fCdf, profParamAdjQcVarId, '_FillValue', ' ');
 
-historyDateVarId = netcdf.defVar(fCdf, 'HISTORY_DATE', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId dateTimeDimId]));
-netcdf.putAtt(fCdf, historyDateVarId, 'long_name', 'Date the history record was created');
-netcdf.putAtt(fCdf, historyDateVarId, 'conventions', 'YYYYMMDDHHMISS');
-netcdf.putAtt(fCdf, historyDateVarId, '_FillValue', ' ');
+         % parameter adjusted error variable and attributes
+         paramAdjErrName = [paramName '_ADJUSTED_ERROR'];
 
-historyActionVarId = netcdf.defVar(fCdf, 'HISTORY_ACTION', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
-netcdf.putAtt(fCdf, historyActionVarId, 'long_name', 'Action performed on data');
-netcdf.putAtt(fCdf, historyActionVarId, 'conventions', 'Argo reference table 7');
-netcdf.putAtt(fCdf, historyActionVarId, '_FillValue', ' ');
+         profParamAdjErrVarId = netcdf.defVar(fCdf, paramAdjErrName, paramNcType, fliplr([nProfDimId nLevelsDimId]));
 
-historyParameterVarId = netcdf.defVar(fCdf, 'HISTORY_PARAMETER', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string16DimId]));
-netcdf.putAtt(fCdf, historyParameterVarId, 'long_name', 'Station parameter action is performed on');
-netcdf.putAtt(fCdf, historyParameterVarId, 'conventions', 'Argo reference table 3');
-netcdf.putAtt(fCdf, historyParameterVarId, '_FillValue', ' ');
-
-historyStartPresVarId = netcdf.defVar(fCdf, 'HISTORY_START_PRES', 'NC_FLOAT', fliplr([nHistoryDimId nProfDimId]));
-netcdf.putAtt(fCdf, historyStartPresVarId, 'long_name', 'Start pressure action applied on');
-netcdf.putAtt(fCdf, historyStartPresVarId, '_FillValue', single(99999));
-netcdf.putAtt(fCdf, historyStartPresVarId, 'units', 'decibar');
-
-historyStopPresVarId = netcdf.defVar(fCdf, 'HISTORY_STOP_PRES', 'NC_FLOAT', fliplr([nHistoryDimId nProfDimId]));
-netcdf.putAtt(fCdf, historyStopPresVarId, 'long_name', 'Stop pressure action applied on');
-netcdf.putAtt(fCdf, historyStopPresVarId, '_FillValue', single(99999));
-netcdf.putAtt(fCdf, historyStopPresVarId, 'units', 'decibar');
-
-historyPreviousValueVarId = netcdf.defVar(fCdf, 'HISTORY_PREVIOUS_VALUE', 'NC_FLOAT', fliplr([nHistoryDimId nProfDimId]));
-netcdf.putAtt(fCdf, historyPreviousValueVarId, 'long_name', 'Parameter/Flag previous value before action');
-netcdf.putAtt(fCdf, historyPreviousValueVarId, '_FillValue', single(99999));
-
-historyQcTestVarId = netcdf.defVar(fCdf, 'HISTORY_QCTEST', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string16DimId]));
-netcdf.putAtt(fCdf, historyQcTestVarId, 'long_name', 'Documentation of tests performed, tests failed (in hex form)');
-netcdf.putAtt(fCdf, historyQcTestVarId, 'conventions', 'Write tests performed when ACTION=QCP$; tests failed when ACTION=QCF$');
-netcdf.putAtt(fCdf, historyQcTestVarId, '_FillValue', ' ');
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% DEFINE MODE END
-
-netcdf.endDef(fCdf);
-
-valueStr = 'Argo profile';
-netcdf.putVar(fCdf, dataTypeVarId, 0, length(valueStr), valueStr);
-
-valueStr = '3.1';
-netcdf.putVar(fCdf, formatVersionVarId, 0, length(valueStr), valueStr);
-
-valueStr = '1.2';
-netcdf.putVar(fCdf, handbookVersionVarId, 0, length(valueStr), valueStr);
-
-netcdf.putVar(fCdf, referenceDateTimeVarId, '19500101000000');
-
-netcdf.putVar(fCdf, dateCreationVarId, currentDate);
-
-netcdf.putVar(fCdf, dateUpdateVarId, currentDate);
-
-% store profile data
-for idP = 1:length(profIdList)
-   valueStr = a_floatData(profIdList(idP)).PLATFORM_NUMBER;
-   if (~isempty(valueStr))
-      netcdf.putVar(fCdf, platformNumberVarId, ...
-         fliplr([idP-1 0]), ...
-         fliplr([1 length(valueStr)]), valueStr');
-   end
-   
-   valueStr = a_floatData(profIdList(idP)).PROJECT_NAME;
-   if (~isempty(valueStr))
-      netcdf.putVar(fCdf, projectNameVarId, ...
-         fliplr([idP-1 0]), ...
-         fliplr([1 length(valueStr)]), valueStr');
-   end
-   
-   valueStr = a_floatData(profIdList(idP)).PI_NAME;
-   if (~isempty(valueStr))
-      netcdf.putVar(fCdf, piNameVarId, ...
-         fliplr([idP-1 0]), ...
-         fliplr([1 length(valueStr)]), valueStr');
-   end
-   
-   parameterList = a_floatData(profIdList(idP)).STATION_PARAMETERS;
-   paramPos = 0;
-   for idParam = 1:length(parameterList)
-      valueStr = parameterList{idParam};
-      netcdf.putVar(fCdf, stationParametersVarId, ...
-         fliplr([idP-1 paramPos 0]), ...
-         fliplr([1 1 length(valueStr)]), valueStr');
-      paramPos = paramPos + 1;
-   end
-   
-   value = a_floatData(profIdList(idP)).CYCLE_NUMBER;
-   if (~isempty(value))
-      netcdf.putVar(fCdf, cycleNumberVarId, idP-1, 1, value);
-   end
-   
-   value = a_floatData(profIdList(idP)).DIRECTION;
-   if (~isempty(value))
-      netcdf.putVar(fCdf, directionVarId, idP-1, 1, value);
-   end
-   
-   valueStr = a_floatData(profIdList(idP)).DATA_CENTRE;
-   if (~isempty(valueStr))
-      netcdf.putVar(fCdf, dataCenterVarId, ...
-         fliplr([idP-1 0]), ...
-         fliplr([1 length(valueStr)]), valueStr');
-   end
-   
-   valueStr = a_floatData(profIdList(idP)).DC_REFERENCE;
-   if (~isempty(valueStr))
-      netcdf.putVar(fCdf, dcReferenceVarId, ...
-         fliplr([idP-1 0]), ...
-         fliplr([1 length(valueStr)]), valueStr');
-   end
-   
-   valueStr = a_floatData(profIdList(idP)).DATA_STATE_INDICATOR;
-   if (~isempty(valueStr))
-      netcdf.putVar(fCdf, dataStateIndicatorVarId, ...
-         fliplr([idP-1 0]), ...
-         fliplr([1 length(valueStr)]), valueStr');
-   end
-   
-   value = a_floatData(profIdList(idP)).DATA_MODE;
-   if (~isempty(value))
-      netcdf.putVar(fCdf, dataModeVarId, idP-1, 1, value);
-   end
-   
-   valueStr = a_floatData(profIdList(idP)).PLATFORM_TYPE;
-   if (~isempty(valueStr))
-      netcdf.putVar(fCdf, platformTypeVarId, ...
-         fliplr([idP-1 0]), ...
-         fliplr([1 length(valueStr)]), valueStr');
-   end
-   
-   valueStr = a_floatData(profIdList(idP)).FLOAT_SERIAL_NO;
-   if (~isempty(valueStr))
-      netcdf.putVar(fCdf, floatSerialNoVarId, ...
-         fliplr([idP-1 0]), ...
-         fliplr([1 length(valueStr)]), valueStr');
-   end
-   
-   valueStr = a_floatData(profIdList(idP)).FIRMWARE_VERSION;
-   if (~isempty(valueStr))
-      netcdf.putVar(fCdf, firmwareVersionVarId, ...
-         fliplr([idP-1 0]), ...
-         fliplr([1 length(valueStr)]), valueStr');
-   end
-   
-   valueStr = a_floatData(profIdList(idP)).WMO_INST_TYPE;
-   if (~isempty(valueStr))
-      netcdf.putVar(fCdf, wmoInstTypeVarId, ...
-         fliplr([idP-1 0]), ...
-         fliplr([1 length(valueStr)]), valueStr');
-   end
-   
-   value = a_floatData(profIdList(idP)).JULD;
-   if (~isempty(value))
-      netcdf.putVar(fCdf, juldVarId, idP-1, 1, value);
-   end
-   
-   value = a_floatData(profIdList(idP)).JULD_QC;
-   if (~isempty(value))
-      netcdf.putVar(fCdf, juldQcVarId, idP-1, 1, value);
-   end
-   
-   value = a_floatData(profIdList(idP)).JULD_LOCATION;
-   if (~isempty(value))
-      netcdf.putVar(fCdf, juldLocationVarId, idP-1, 1, value);
-   end
-   
-   value = a_floatData(profIdList(idP)).LATITUDE;
-   if (~isempty(value))
-      netcdf.putVar(fCdf, latitudeVarId, idP-1, 1, value);
-   end
-   
-   value = a_floatData(profIdList(idP)).LONGITUDE;
-   if (~isempty(value))
-      netcdf.putVar(fCdf, longitudeVarId, idP-1, 1, value);
-   end
-   
-   value = a_floatData(profIdList(idP)).POSITION_QC;
-   if (~isempty(value))
-      netcdf.putVar(fCdf, positionQcVarId, idP-1, 1, value);
-   end
-   
-   valueStr = a_floatData(profIdList(idP)).POSITIONING_SYSTEM;
-   if (~isempty(valueStr))
-      netcdf.putVar(fCdf, positioningSystemVarId, ...
-         fliplr([idP-1 0]), ...
-         fliplr([1 length(valueStr)]), valueStr');
-   end
-   
-   if (isfield(a_floatData(profIdList(idP)), 'POSITION_ERROR_REPORTED'))
-      value = a_floatData(profIdList(idP)).POSITION_ERROR_REPORTED;
-      if (~isempty(value))
-         netcdf.putVar(fCdf, positionErrorReportedVarId, idP-1, 1, value);
+         netcdf.putAtt(fCdf, profParamAdjErrVarId, 'long_name', 'Contains the error on the adjusted values as determined by the delayed mode QC process');
+         if (~isempty(paramInfo.fillValue))
+            netcdf.putAtt(fCdf, profParamAdjErrVarId, '_FillValue', paramInfo.fillValue);
+         end
+         if (~isempty(paramInfo.units))
+            netcdf.putAtt(fCdf, profParamAdjErrVarId, 'units', paramInfo.units);
+         end
+         if (~isempty(paramInfo.cFormat))
+            netcdf.putAtt(fCdf, profParamAdjErrVarId, 'C_format', paramInfo.cFormat);
+         end
+         if (~isempty(paramInfo.fortranFormat))
+            netcdf.putAtt(fCdf, profParamAdjErrVarId, 'FORTRAN_format', paramInfo.fortranFormat);
+         end
+         if (~isempty(paramInfo.resolution))
+            netcdf.putAtt(fCdf, profParamAdjErrVarId, 'resolution', paramInfo.resolution);
+         end
       end
    end
-   
-   if (isfield(a_floatData(profIdList(idP)), 'POSITION_ERROR_ESTIMATED'))
-      value = a_floatData(profIdList(idP)).POSITION_ERROR_ESTIMATED;
-      if (~isempty(value))
-         netcdf.putVar(fCdf, positionErrorEstimatedVarId, idP-1, 1, value);
-      end
-   end
-   
-   if (isfield(a_floatData(profIdList(idP)), 'POSITION_ERROR_ESTIMATED_COMMENT'))
-      valueStr = a_floatData(profIdList(idP)).POSITION_ERROR_ESTIMATED_COMMENT;
+
+   % calibration information
+   parameterVarId = netcdf.defVar(fCdf, 'PARAMETER', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId string16DimId]));
+   netcdf.putAtt(fCdf, parameterVarId, 'long_name', 'List of parameters with calibration information');
+   netcdf.putAtt(fCdf, parameterVarId, 'conventions', 'Argo reference table 3');
+   netcdf.putAtt(fCdf, parameterVarId, '_FillValue', ' ');
+
+   scientificCalibEquationVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_EQUATION', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId string256DimId]));
+   netcdf.putAtt(fCdf, scientificCalibEquationVarId, 'long_name', 'Calibration equation for this parameter');
+   netcdf.putAtt(fCdf, scientificCalibEquationVarId, '_FillValue', ' ');
+
+   scientificCalibCoefficientVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_COEFFICIENT', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId string256DimId]));
+   netcdf.putAtt(fCdf, scientificCalibCoefficientVarId, 'long_name', 'Calibration coefficients for this equation');
+   netcdf.putAtt(fCdf, scientificCalibCoefficientVarId, '_FillValue', ' ');
+
+   scientificCalibCommentVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_COMMENT', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId string256DimId]));
+   netcdf.putAtt(fCdf, scientificCalibCommentVarId, 'long_name', 'Comment applying to this parameter calibration');
+   netcdf.putAtt(fCdf, scientificCalibCommentVarId, '_FillValue', ' ');
+
+   scientificCalibDateVarId = netcdf.defVar(fCdf, 'SCIENTIFIC_CALIB_DATE', 'NC_CHAR', fliplr([nProfDimId nCalibDimId nParamDimId dateTimeDimId]));
+   netcdf.putAtt(fCdf, scientificCalibDateVarId, 'long_name', 'Date of calibration');
+   netcdf.putAtt(fCdf, scientificCalibDateVarId, 'conventions', 'YYYYMMDDHHMISS');
+   netcdf.putAtt(fCdf, scientificCalibDateVarId, '_FillValue', ' ');
+
+   % history information
+   historyInstitutionVarId = netcdf.defVar(fCdf, 'HISTORY_INSTITUTION', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
+   netcdf.putAtt(fCdf, historyInstitutionVarId, 'long_name', 'Institution which performed action');
+   netcdf.putAtt(fCdf, historyInstitutionVarId, 'conventions', 'Argo reference table 4');
+   netcdf.putAtt(fCdf, historyInstitutionVarId, '_FillValue', ' ');
+
+   historyStepVarId = netcdf.defVar(fCdf, 'HISTORY_STEP', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
+   netcdf.putAtt(fCdf, historyStepVarId, 'long_name', 'Step in data processing');
+   netcdf.putAtt(fCdf, historyStepVarId, 'conventions', 'Argo reference table 12');
+   netcdf.putAtt(fCdf, historyStepVarId, '_FillValue', ' ');
+
+   historySoftwareVarId = netcdf.defVar(fCdf, 'HISTORY_SOFTWARE', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
+   netcdf.putAtt(fCdf, historySoftwareVarId, 'long_name', 'Name of software which performed action');
+   netcdf.putAtt(fCdf, historySoftwareVarId, 'conventions', 'Institution dependent');
+   netcdf.putAtt(fCdf, historySoftwareVarId, '_FillValue', ' ');
+
+   historySoftwareReleaseVarId = netcdf.defVar(fCdf, 'HISTORY_SOFTWARE_RELEASE', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
+   netcdf.putAtt(fCdf, historySoftwareReleaseVarId, 'long_name', 'Version/release of software which performed action');
+   netcdf.putAtt(fCdf, historySoftwareReleaseVarId, 'conventions', 'Institution dependent');
+   netcdf.putAtt(fCdf, historySoftwareReleaseVarId, '_FillValue', ' ');
+
+   historyReferenceVarId = netcdf.defVar(fCdf, 'HISTORY_REFERENCE', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string64DimId]));
+   netcdf.putAtt(fCdf, historyReferenceVarId, 'long_name', 'Reference of database');
+   netcdf.putAtt(fCdf, historyReferenceVarId, 'conventions', 'Institution dependent');
+   netcdf.putAtt(fCdf, historyReferenceVarId, '_FillValue', ' ');
+
+   historyDateVarId = netcdf.defVar(fCdf, 'HISTORY_DATE', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId dateTimeDimId]));
+   netcdf.putAtt(fCdf, historyDateVarId, 'long_name', 'Date the history record was created');
+   netcdf.putAtt(fCdf, historyDateVarId, 'conventions', 'YYYYMMDDHHMISS');
+   netcdf.putAtt(fCdf, historyDateVarId, '_FillValue', ' ');
+
+   historyActionVarId = netcdf.defVar(fCdf, 'HISTORY_ACTION', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string4DimId]));
+   netcdf.putAtt(fCdf, historyActionVarId, 'long_name', 'Action performed on data');
+   netcdf.putAtt(fCdf, historyActionVarId, 'conventions', 'Argo reference table 7');
+   netcdf.putAtt(fCdf, historyActionVarId, '_FillValue', ' ');
+
+   historyParameterVarId = netcdf.defVar(fCdf, 'HISTORY_PARAMETER', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string16DimId]));
+   netcdf.putAtt(fCdf, historyParameterVarId, 'long_name', 'Station parameter action is performed on');
+   netcdf.putAtt(fCdf, historyParameterVarId, 'conventions', 'Argo reference table 3');
+   netcdf.putAtt(fCdf, historyParameterVarId, '_FillValue', ' ');
+
+   historyStartPresVarId = netcdf.defVar(fCdf, 'HISTORY_START_PRES', 'NC_FLOAT', fliplr([nHistoryDimId nProfDimId]));
+   netcdf.putAtt(fCdf, historyStartPresVarId, 'long_name', 'Start pressure action applied on');
+   netcdf.putAtt(fCdf, historyStartPresVarId, '_FillValue', single(99999));
+   netcdf.putAtt(fCdf, historyStartPresVarId, 'units', 'decibar');
+
+   historyStopPresVarId = netcdf.defVar(fCdf, 'HISTORY_STOP_PRES', 'NC_FLOAT', fliplr([nHistoryDimId nProfDimId]));
+   netcdf.putAtt(fCdf, historyStopPresVarId, 'long_name', 'Stop pressure action applied on');
+   netcdf.putAtt(fCdf, historyStopPresVarId, '_FillValue', single(99999));
+   netcdf.putAtt(fCdf, historyStopPresVarId, 'units', 'decibar');
+
+   historyPreviousValueVarId = netcdf.defVar(fCdf, 'HISTORY_PREVIOUS_VALUE', 'NC_FLOAT', fliplr([nHistoryDimId nProfDimId]));
+   netcdf.putAtt(fCdf, historyPreviousValueVarId, 'long_name', 'Parameter/Flag previous value before action');
+   netcdf.putAtt(fCdf, historyPreviousValueVarId, '_FillValue', single(99999));
+
+   historyQcTestVarId = netcdf.defVar(fCdf, 'HISTORY_QCTEST', 'NC_CHAR', fliplr([nHistoryDimId nProfDimId string16DimId]));
+   netcdf.putAtt(fCdf, historyQcTestVarId, 'long_name', 'Documentation of tests performed, tests failed (in hex form)');
+   netcdf.putAtt(fCdf, historyQcTestVarId, 'conventions', 'Write tests performed when ACTION=QCP$; tests failed when ACTION=QCF$');
+   netcdf.putAtt(fCdf, historyQcTestVarId, '_FillValue', ' ');
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % DEFINE MODE END
+
+   netcdf.endDef(fCdf);
+
+   valueStr = 'Argo profile';
+   netcdf.putVar(fCdf, dataTypeVarId, 0, length(valueStr), valueStr);
+
+   valueStr = '3.1';
+   netcdf.putVar(fCdf, formatVersionVarId, 0, length(valueStr), valueStr);
+
+   valueStr = '1.2';
+   netcdf.putVar(fCdf, handbookVersionVarId, 0, length(valueStr), valueStr);
+
+   netcdf.putVar(fCdf, referenceDateTimeVarId, '19500101000000');
+
+   netcdf.putVar(fCdf, dateCreationVarId, currentDate);
+
+   netcdf.putVar(fCdf, dateUpdateVarId, currentDate);
+
+   % store profile data
+   for idP = 1:length(profIdList)
+      valueStr = a_floatData(profIdList(idP)).PLATFORM_NUMBER;
       if (~isempty(valueStr))
-         netcdf.putVar(fCdf, positionErrorEstimatedCommentVarId, ...
+         netcdf.putVar(fCdf, platformNumberVarId, ...
             fliplr([idP-1 0]), ...
             fliplr([1 length(valueStr)]), valueStr');
       end
-   end
-   
-   parameterList = a_floatData(profIdList(idP)).STATION_PARAMETERS;
-   for idParam = 1:length(parameterList)
-      paramName = parameterList{idParam};
-      fieldName = ['PROFILE_' paramName '_QC'];
-      value = a_floatData(profIdList(idP)).(fieldName);
-      if (~isempty(value))
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, fieldName), idP-1, 1, value);
-      end
-   end
-   
-   valueStr = a_floatData(profIdList(idP)).VERTICAL_SAMPLING_SCHEME;
-   if (~isempty(valueStr))
-      netcdf.putVar(fCdf, verticalSamplingSchemeVarId, ...
-         fliplr([idP-1 0]), ...
-         fliplr([1 length(valueStr)]), valueStr');
-   end
-   
-   value = a_floatData(profIdList(idP)).CONFIG_MISSION_NUMBER;
-   if (~isempty(value))
-      netcdf.putVar(fCdf, configMissionNumberVarId, idP-1, 1, value);
-   end
-   
-   parameterList = a_floatData(profIdList(idP)).STATION_PARAMETERS;
-   for idParam = 1:length(parameterList)
-      
-      paramName = parameterList{idParam};
-      paramInfo = get_netcdf_param_attributes(paramName);
-      value = a_floatData(profIdList(idP)).(paramName);
-      if (~isempty(value))
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramName), ...
+
+      valueStr = a_floatData(profIdList(idP)).PROJECT_NAME;
+      if (~isempty(valueStr))
+         netcdf.putVar(fCdf, projectNameVarId, ...
             fliplr([idP-1 0]), ...
-            fliplr([1 length(value)]), value);
+            fliplr([1 length(valueStr)]), valueStr');
       end
-      
-      paramQcName = [paramName '_QC'];
-      value = a_floatData(profIdList(idP)).(paramQcName);
-      if (~isempty(value))
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), ...
+
+      valueStr = a_floatData(profIdList(idP)).PI_NAME;
+      if (~isempty(valueStr))
+         netcdf.putVar(fCdf, piNameVarId, ...
             fliplr([idP-1 0]), ...
-            fliplr([1 length(value)]), value);
+            fliplr([1 length(valueStr)]), valueStr');
       end
-      
-      if (paramInfo.adjAllowed == 1)
-         
-         paramAdjName = [paramName '_ADJUSTED'];
-         value = a_floatData(profIdList(idP)).(paramAdjName);
+
+      parameterList = a_floatData(profIdList(idP)).STATION_PARAMETERS;
+      paramPos = 0;
+      for idParam = 1:length(parameterList)
+         valueStr = parameterList{idParam};
+         netcdf.putVar(fCdf, stationParametersVarId, ...
+            fliplr([idP-1 paramPos 0]), ...
+            fliplr([1 1 length(valueStr)]), valueStr');
+         paramPos = paramPos + 1;
+      end
+
+      value = a_floatData(profIdList(idP)).CYCLE_NUMBER;
+      if (~isempty(value))
+         netcdf.putVar(fCdf, cycleNumberVarId, idP-1, 1, value);
+      end
+
+      value = a_floatData(profIdList(idP)).DIRECTION;
+      if (~isempty(value))
+         netcdf.putVar(fCdf, directionVarId, idP-1, 1, value);
+      end
+
+      valueStr = a_floatData(profIdList(idP)).DATA_CENTRE;
+      if (~isempty(valueStr))
+         netcdf.putVar(fCdf, dataCenterVarId, ...
+            fliplr([idP-1 0]), ...
+            fliplr([1 length(valueStr)]), valueStr');
+      end
+
+      valueStr = a_floatData(profIdList(idP)).DC_REFERENCE;
+      if (~isempty(valueStr))
+         netcdf.putVar(fCdf, dcReferenceVarId, ...
+            fliplr([idP-1 0]), ...
+            fliplr([1 length(valueStr)]), valueStr');
+      end
+
+      valueStr = a_floatData(profIdList(idP)).DATA_STATE_INDICATOR;
+      if (~isempty(valueStr))
+         netcdf.putVar(fCdf, dataStateIndicatorVarId, ...
+            fliplr([idP-1 0]), ...
+            fliplr([1 length(valueStr)]), valueStr');
+      end
+
+      value = a_floatData(profIdList(idP)).DATA_MODE;
+      if (~isempty(value))
+         netcdf.putVar(fCdf, dataModeVarId, idP-1, 1, value);
+      end
+
+      valueStr = a_floatData(profIdList(idP)).PLATFORM_TYPE;
+      if (~isempty(valueStr))
+         netcdf.putVar(fCdf, platformTypeVarId, ...
+            fliplr([idP-1 0]), ...
+            fliplr([1 length(valueStr)]), valueStr');
+      end
+
+      valueStr = a_floatData(profIdList(idP)).FLOAT_SERIAL_NO;
+      if (~isempty(valueStr))
+         netcdf.putVar(fCdf, floatSerialNoVarId, ...
+            fliplr([idP-1 0]), ...
+            fliplr([1 length(valueStr)]), valueStr');
+      end
+
+      valueStr = a_floatData(profIdList(idP)).FIRMWARE_VERSION;
+      if (~isempty(valueStr))
+         netcdf.putVar(fCdf, firmwareVersionVarId, ...
+            fliplr([idP-1 0]), ...
+            fliplr([1 length(valueStr)]), valueStr');
+      end
+
+      valueStr = a_floatData(profIdList(idP)).WMO_INST_TYPE;
+      if (~isempty(valueStr))
+         netcdf.putVar(fCdf, wmoInstTypeVarId, ...
+            fliplr([idP-1 0]), ...
+            fliplr([1 length(valueStr)]), valueStr');
+      end
+
+      value = a_floatData(profIdList(idP)).JULD;
+      if (~isempty(value))
+         netcdf.putVar(fCdf, juldVarId, idP-1, 1, value);
+      end
+
+      value = a_floatData(profIdList(idP)).JULD_QC;
+      if (~isempty(value))
+         netcdf.putVar(fCdf, juldQcVarId, idP-1, 1, value);
+      end
+
+      value = a_floatData(profIdList(idP)).JULD_LOCATION;
+      if (~isempty(value))
+         netcdf.putVar(fCdf, juldLocationVarId, idP-1, 1, value);
+      end
+
+      value = a_floatData(profIdList(idP)).LATITUDE;
+      if (~isempty(value))
+         netcdf.putVar(fCdf, latitudeVarId, idP-1, 1, value);
+      end
+
+      value = a_floatData(profIdList(idP)).LONGITUDE;
+      if (~isempty(value))
+         netcdf.putVar(fCdf, longitudeVarId, idP-1, 1, value);
+      end
+
+      value = a_floatData(profIdList(idP)).POSITION_QC;
+      if (~isempty(value))
+         netcdf.putVar(fCdf, positionQcVarId, idP-1, 1, value);
+      end
+
+      valueStr = a_floatData(profIdList(idP)).POSITIONING_SYSTEM;
+      if (~isempty(valueStr))
+         netcdf.putVar(fCdf, positioningSystemVarId, ...
+            fliplr([idP-1 0]), ...
+            fliplr([1 length(valueStr)]), valueStr');
+      end
+
+      if (isfield(a_floatData(profIdList(idP)), 'POSITION_ERROR_REPORTED'))
+         value = a_floatData(profIdList(idP)).POSITION_ERROR_REPORTED;
          if (~isempty(value))
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramAdjName), ...
-               fliplr([idP-1 0]), ...
-               fliplr([1 length(value)]), value);
-         end
-         
-         paramAdjQcName = [paramName '_ADJUSTED_QC'];
-         value = a_floatData(profIdList(idP)).(paramAdjQcName);
-         if (~isempty(value))
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramAdjQcName), ...
-               fliplr([idP-1 0]), ...
-               fliplr([1 length(value)]), value);
-         end
-         
-         paramAdjErrName = [paramName '_ADJUSTED_ERROR'];
-         value = a_floatData(profIdList(idP)).(paramAdjErrName);
-         if (~isempty(value))
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramAdjErrName), ...
-               fliplr([idP-1 0]), ...
-               fliplr([1 length(value)]), value);
+            netcdf.putVar(fCdf, positionErrorReportedVarId, idP-1, 1, value);
          end
       end
-   end
-   
-   varList = [ ...
-      {'PARAMETER'} ...
-      {'SCIENTIFIC_CALIB_EQUATION'} ...
-      {'SCIENTIFIC_CALIB_COEFFICIENT'} ...
-      {'SCIENTIFIC_CALIB_COMMENT'} ...
-      {'SCIENTIFIC_CALIB_DATE'} ...
-      ];
-   varIdList = [ ...
-      parameterVarId ...
-      scientificCalibEquationVarId ...
-      scientificCalibCoefficientVarId ...
-      scientificCalibCommentVarId ...
-      scientificCalibDateVarId ...
-      ];
-   nbCalib = a_floatData(profIdList(idP)).N_CALIB;
-   for idL = 1:length(varList)
-      valueAll = a_floatData(profIdList(idP)).(varList{idL});
-      for idCalib = 1:nbCalib
-         valueCalib = valueAll{idCalib};
-         for idParam = 1:length(valueCalib)
-            value = valueCalib{idParam};
+
+      if (isfield(a_floatData(profIdList(idP)), 'POSITION_ERROR_ESTIMATED'))
+         value = a_floatData(profIdList(idP)).POSITION_ERROR_ESTIMATED;
+         if (~isempty(value))
+            netcdf.putVar(fCdf, positionErrorEstimatedVarId, idP-1, 1, value);
+         end
+      end
+
+      if (isfield(a_floatData(profIdList(idP)), 'POSITION_ERROR_ESTIMATED_COMMENT'))
+         valueStr = a_floatData(profIdList(idP)).POSITION_ERROR_ESTIMATED_COMMENT;
+         if (~isempty(valueStr))
+            netcdf.putVar(fCdf, positionErrorEstimatedCommentVarId, ...
+               fliplr([idP-1 0]), ...
+               fliplr([1 length(valueStr)]), valueStr');
+         end
+      end
+
+      parameterList = a_floatData(profIdList(idP)).STATION_PARAMETERS;
+      for idParam = 1:length(parameterList)
+         paramName = parameterList{idParam};
+         fieldName = ['PROFILE_' paramName '_QC'];
+         value = a_floatData(profIdList(idP)).(fieldName);
+         if (~isempty(value))
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, fieldName), idP-1, 1, value);
+         end
+      end
+
+      valueStr = a_floatData(profIdList(idP)).VERTICAL_SAMPLING_SCHEME;
+      if (~isempty(valueStr))
+         netcdf.putVar(fCdf, verticalSamplingSchemeVarId, ...
+            fliplr([idP-1 0]), ...
+            fliplr([1 length(valueStr)]), valueStr');
+      end
+
+      value = a_floatData(profIdList(idP)).CONFIG_MISSION_NUMBER;
+      if (~isempty(value))
+         netcdf.putVar(fCdf, configMissionNumberVarId, idP-1, 1, value);
+      end
+
+      parameterList = a_floatData(profIdList(idP)).STATION_PARAMETERS;
+      for idParam = 1:length(parameterList)
+
+         paramName = parameterList{idParam};
+         paramInfo = get_netcdf_param_attributes(paramName);
+         value = a_floatData(profIdList(idP)).(paramName);
+         if (~isempty(value))
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramName), ...
+               fliplr([idP-1 0]), ...
+               fliplr([1 length(value)]), value);
+         end
+
+         paramQcName = [paramName '_QC'];
+         value = a_floatData(profIdList(idP)).(paramQcName);
+         if (~isempty(value))
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), ...
+               fliplr([idP-1 0]), ...
+               fliplr([1 length(value)]), value);
+         end
+
+         if (paramInfo.adjAllowed == 1)
+
+            paramAdjName = [paramName '_ADJUSTED'];
+            value = a_floatData(profIdList(idP)).(paramAdjName);
+            if (~isempty(value))
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramAdjName), ...
+                  fliplr([idP-1 0]), ...
+                  fliplr([1 length(value)]), value);
+            end
+
+            paramAdjQcName = [paramName '_ADJUSTED_QC'];
+            value = a_floatData(profIdList(idP)).(paramAdjQcName);
+            if (~isempty(value))
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramAdjQcName), ...
+                  fliplr([idP-1 0]), ...
+                  fliplr([1 length(value)]), value);
+            end
+
+            paramAdjErrName = [paramName '_ADJUSTED_ERROR'];
+            value = a_floatData(profIdList(idP)).(paramAdjErrName);
+            if (~isempty(value))
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramAdjErrName), ...
+                  fliplr([idP-1 0]), ...
+                  fliplr([1 length(value)]), value);
+            end
+         end
+      end
+
+      varList = [ ...
+         {'PARAMETER'} ...
+         {'SCIENTIFIC_CALIB_EQUATION'} ...
+         {'SCIENTIFIC_CALIB_COEFFICIENT'} ...
+         {'SCIENTIFIC_CALIB_COMMENT'} ...
+         {'SCIENTIFIC_CALIB_DATE'} ...
+         ];
+      varIdList = [ ...
+         parameterVarId ...
+         scientificCalibEquationVarId ...
+         scientificCalibCoefficientVarId ...
+         scientificCalibCommentVarId ...
+         scientificCalibDateVarId ...
+         ];
+      nbCalib = a_floatData(profIdList(idP)).N_CALIB;
+      for idL = 1:length(varList)
+         valueAll = a_floatData(profIdList(idP)).(varList{idL});
+         for idCalib = 1:nbCalib
+            valueCalib = valueAll{idCalib};
+            for idParam = 1:length(valueCalib)
+               value = valueCalib{idParam};
+               if (~isempty(value))
+                  netcdf.putVar(fCdf, varIdList(idL), ...
+                     fliplr([idP-1 idCalib-1 idParam-1 0]), ...
+                     fliplr([1 1 1 length(value)]), value');
+               end
+            end
+         end
+      end
+
+      varList = [ ...
+         {'HISTORY_INSTITUTION'} ...
+         {'HISTORY_STEP'} ...
+         {'HISTORY_SOFTWARE'} ...
+         {'HISTORY_SOFTWARE_RELEASE'} ...
+         {'HISTORY_REFERENCE'} ...
+         {'HISTORY_DATE'} ...
+         {'HISTORY_ACTION'} ...
+         {'HISTORY_PARAMETER'} ...
+         {'HISTORY_QCTEST'} ...
+         ];
+      varIdList = [ ...
+         historyInstitutionVarId ...
+         historyStepVarId ...
+         historySoftwareVarId ...
+         historySoftwareReleaseVarId ...
+         historyReferenceVarId ...
+         historyDateVarId ...
+         historyActionVarId ...
+         historyParameterVarId ...
+         historyQcTestVarId ...
+         ];
+      nbHistory = a_floatData(profIdList(idP)).N_HISTORY;
+      for idL = 1:length(varList)
+         valueAll = a_floatData(profIdList(idP)).(varList{idL});
+         for idHisto = 1:nbHistory
+            value = valueAll{idHisto};
             if (~isempty(value))
                netcdf.putVar(fCdf, varIdList(idL), ...
-                  fliplr([idP-1 idCalib-1 idParam-1 0]), ...
-                  fliplr([1 1 1 length(value)]), value');
+                  fliplr([idHisto-1 idP-1 0]), ...
+                  fliplr([1 1 length(value)]), value');
+            end
+         end
+      end
+
+      varList = [ ...
+         {'HISTORY_START_PRES'} ...
+         {'HISTORY_STOP_PRES'} ...
+         {'HISTORY_PREVIOUS_VALUE'} ...
+         ];
+      varIdList = [ ...
+         historyStartPresVarId ...
+         historyStopPresVarId ...
+         historyPreviousValueVarId ...
+         ];
+      nbHistory = a_floatData(profIdList(idP)).N_HISTORY;
+      for idL = 1:length(varList)
+         valueAll = a_floatData(profIdList(idP)).(varList{idL});
+         for idHisto = 1:nbHistory
+            value = valueAll(idHisto);
+            if (~isempty(value))
+               netcdf.putVar(fCdf, varIdList(idL), ...
+                  fliplr([idHisto-1 idP-1]), ...
+                  fliplr([1 1]), value);
             end
          end
       end
    end
-   
-   varList = [ ...
-      {'HISTORY_INSTITUTION'} ...
-      {'HISTORY_STEP'} ...
-      {'HISTORY_SOFTWARE'} ...
-      {'HISTORY_SOFTWARE_RELEASE'} ...
-      {'HISTORY_REFERENCE'} ...
-      {'HISTORY_DATE'} ...
-      {'HISTORY_ACTION'} ...
-      {'HISTORY_PARAMETER'} ...
-      {'HISTORY_QCTEST'} ...
-      ];
-   varIdList = [ ...
-      historyInstitutionVarId ...
-      historyStepVarId ...
-      historySoftwareVarId ...
-      historySoftwareReleaseVarId ...
-      historyReferenceVarId ...
-      historyDateVarId ...
-      historyActionVarId ...
-      historyParameterVarId ...
-      historyQcTestVarId ...
-      ];
-   nbHistory = a_floatData(profIdList(idP)).N_HISTORY;
-   for idL = 1:length(varList)
-      valueAll = a_floatData(profIdList(idP)).(varList{idL});
-      for idHisto = 1:nbHistory
-         value = valueAll{idHisto};
-         if (~isempty(value))
-            netcdf.putVar(fCdf, varIdList(idL), ...
-               fliplr([idHisto-1 idP-1 0]), ...
-               fliplr([1 1 length(value)]), value');
-         end
-      end
-   end
-   
-   varList = [ ...
-      {'HISTORY_START_PRES'} ...
-      {'HISTORY_STOP_PRES'} ...
-      {'HISTORY_PREVIOUS_VALUE'} ...
-      ];
-   varIdList = [ ...
-      historyStartPresVarId ...
-      historyStopPresVarId ...
-      historyPreviousValueVarId ...
-      ];
-   nbHistory = a_floatData(profIdList(idP)).N_HISTORY;
-   for idL = 1:length(varList)
-      valueAll = a_floatData(profIdList(idP)).(varList{idL});
-      for idHisto = 1:nbHistory
-         value = valueAll(idHisto);
-         if (~isempty(value))
-            netcdf.putVar(fCdf, varIdList(idL), ...
-               fliplr([idHisto-1 idP-1]), ...
-               fliplr([1 1]), value);
-         end
-      end
-   end   
-end
 
-netcdf.close(fCdf);
+   netcdf.close(fCdf);
+
+catch MException
+   netcdf.close(fCdf);
+   rethrow(MException)
+end
 
 fprintf('   ... NetCDF MULTI-PROFILE c file created\n');
 
@@ -1252,7 +1259,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/21/2021 - RNU - creation
@@ -1294,93 +1301,6 @@ o_dataAll = [o_dataAll a_dataNew];
 return
 
 % ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      end
-   end
-   
-   netcdf.close(fCdf);
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Check if a given variable is present in a NetCDF file.
-%
-% SYNTAX :
-%  [o_present] = var_is_present_dec_argo(a_ncId, a_varName)
-%
-% INPUT PARAMETERS :
-%   a_ncId    : NetCDF file Id
-%   a_varName : variable name
-%
-% OUTPUT PARAMETERS :
-%   o_present : 1 if the variable is present (0 otherwise)
-%
-% EXAMPLES :
-%
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   05/27/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_present] = var_is_present_dec_argo(a_ncId, a_varName)
-
-o_present = 0;
-
-[nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(a_ncId);
-
-for idVar= 0:nbVars-1
-   [varName, varType, varDims, nbAtts] = netcdf.inqVar(a_ncId, idVar);
-   if (strcmp(varName, a_varName))
-      o_present = 1;
-      break
-   end
-end
-
-return
-
-% ------------------------------------------------------------------------------
 % Get Argo attributes for a given parameter.
 %
 % SYNTAX :
@@ -1395,7 +1315,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/30/2014 - RNU - creation
@@ -1409,9 +1329,9 @@ o_attributeStruct = [];
 paramName = a_paramName;
 again = 1;
 while (again ~= 0)
-   
+
    switch (paramName)
-      
+
       case 'JULD'
          o_attributeStruct = struct('name', 'JULD', ...
             'longName', 'Julian day (UTC) of each measurement relative to REFERENCE_DATE_TIME', ...
@@ -1423,7 +1343,7 @@ while (again ~= 0)
             'paramType', '', ...
             'paramNcType', 'NC_DOUBLE', ...
             'adjAllowed', 0);
-         
+
       case 'LATITUDE'
          o_attributeStruct = struct('name', 'LATITUDE', ...
             'longName', 'Latitude of each location', ...
@@ -1436,7 +1356,7 @@ while (again ~= 0)
             'paramType', '', ...
             'paramNcType', 'NC_DOUBLE', ...
             'adjAllowed', 0);
-         
+
       case 'LONGITUDE'
          o_attributeStruct = struct('name', 'LONGITUDE', ...
             'longName', 'Longitude of each location', ...
@@ -1449,10 +1369,10 @@ while (again ~= 0)
             'paramType', '', ...
             'paramNcType', 'NC_DOUBLE', ...
             'adjAllowed', 0);
-         
+
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % C PARAMETERS
-         
+
       case 'CNDC'
          o_attributeStruct = struct('name', 'CNDC', ...
             'longName', 'Electrical conductivity', ...
@@ -1468,7 +1388,7 @@ while (again ~= 0)
             'paramType', 'c', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'PRES'
          o_attributeStruct = struct('name', 'PRES', ...
             'longName', 'Sea water pressure, equals 0 at sea-level', ...
@@ -1484,7 +1404,7 @@ while (again ~= 0)
             'paramType', 'c', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'PSAL'
          o_attributeStruct = struct('name', 'PSAL', ...
             'longName', 'Practical salinity', ...
@@ -1500,7 +1420,7 @@ while (again ~= 0)
             'paramType', 'c', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'TEMP'
          o_attributeStruct = struct('name', 'TEMP', ...
             'longName', 'Sea temperature in-situ ITS-90 scale', ...
@@ -1516,10 +1436,10 @@ while (again ~= 0)
             'paramType', 'c', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % B PARAMETERS
-         
+
       case 'DOXY'
          o_attributeStruct = struct('name', 'DOXY', ...
             'longName', 'Dissolved oxygen', ...
@@ -1535,7 +1455,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'BBP470' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'BBP470', ...
             'longName', 'Particle backscattering at 470 nanometers', ...
@@ -1551,7 +1471,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'BBP532'
          o_attributeStruct = struct('name', 'BBP532', ...
             'longName', 'Particle backscattering at 532 nanometers', ...
@@ -1567,7 +1487,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'BBP700'
          o_attributeStruct = struct('name', 'BBP700', ...
             'longName', 'Particle backscattering at 700 nanometers', ...
@@ -1599,7 +1519,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'CP660'
          o_attributeStruct = struct('name', 'CP660', ...
             'longName', 'Particle beam attenuation at 660 nanometers', ...
@@ -1615,7 +1535,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'CP660_STD'
          o_attributeStruct = struct('name', 'CP660_STD', ...
             'longName', 'Standard deviation of particle beam attenuation at 660 nanometers', ...
@@ -1631,7 +1551,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'CP660_MED'
          o_attributeStruct = struct('name', 'CP660_MED', ...
             'longName', 'Median value of particle beam attenuation at 660 nanometers', ...
@@ -1647,7 +1567,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'CHLA'
          o_attributeStruct = struct('name', 'CHLA', ...
             'longName', 'Chlorophyll-A', ...
@@ -1663,7 +1583,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'CDOM'
          o_attributeStruct = struct('name', 'CDOM', ...
             'longName', 'Concentration of coloured dissolved organic matter in sea water', ...
@@ -1679,7 +1599,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'NITRATE'
          o_attributeStruct = struct('name', 'NITRATE', ...
             'longName', 'Nitrate', ...
@@ -1695,7 +1615,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'BISULFIDE'
          o_attributeStruct = struct('name', 'BISULFIDE', ...
             'longName', 'Bisulfide', ...
@@ -1711,7 +1631,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'PH_IN_SITU_TOTAL'
          o_attributeStruct = struct('name', 'PH_IN_SITU_TOTAL', ...
             'longName', 'pH', ...
@@ -1727,7 +1647,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'DOWN_IRRADIANCE380'
          o_attributeStruct = struct('name', 'DOWN_IRRADIANCE380', ...
             'longName', 'Downwelling irradiance at 380 nanometers', ...
@@ -1743,7 +1663,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'DOWN_IRRADIANCE412'
          o_attributeStruct = struct('name', 'DOWN_IRRADIANCE412', ...
             'longName', 'Downwelling irradiance at 412 nanometers', ...
@@ -1759,7 +1679,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'DOWN_IRRADIANCE443'
          o_attributeStruct = struct('name', 'DOWN_IRRADIANCE443', ...
             'longName', 'Downwelling irradiance at 443 nanometers', ...
@@ -1775,7 +1695,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'DOWN_IRRADIANCE490'
          o_attributeStruct = struct('name', 'DOWN_IRRADIANCE490', ...
             'longName', 'Downwelling irradiance at 490 nanometers', ...
@@ -1807,7 +1727,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'DOWN_IRRADIANCE670'
          o_attributeStruct = struct('name', 'DOWN_IRRADIANCE670', ...
             'longName', 'Downwelling irradiance at 670 nanometers', ...
@@ -1823,7 +1743,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'UP_RADIANCE412' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'UP_RADIANCE412', ...
             'longName', 'Upwelling radiance at 412 nanometers', ...
@@ -1839,7 +1759,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'UP_RADIANCE443' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'UP_RADIANCE443', ...
             'longName', 'Upwelling radiance at 443 nanometers', ...
@@ -1855,7 +1775,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'UP_RADIANCE490' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'UP_RADIANCE490', ...
             'longName', 'Upwelling radiance at 490 nanometers', ...
@@ -1871,7 +1791,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'UP_RADIANCE555' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'UP_RADIANCE555', ...
             'longName', 'Upwelling radiance at 555 nanometers', ...
@@ -1887,7 +1807,7 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'DOWNWELLING_PAR'
          o_attributeStruct = struct('name', 'DOWNWELLING_PAR', ...
             'longName', 'Downwelling photosynthetic available radiation', ...
@@ -1903,10 +1823,10 @@ while (again ~= 0)
             'paramType', 'b', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % I PARAMETERS
-         
+
       case 'PRES_MED'
          o_attributeStruct = struct('name', 'PRES_MED', ...
             'longName', 'Median value of sea water pressure, equals 0 at sea-level', ...
@@ -1922,7 +1842,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'TEMP_STD'
          o_attributeStruct = struct('name', 'TEMP_STD', ...
             'longName', 'Standard deviation of sea temperature in-situ ITS-90 scale', ...
@@ -1938,7 +1858,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'TEMP_MED'
          o_attributeStruct = struct('name', 'TEMP_MED', ...
             'longName', 'Median value of sea temperature in-situ ITS-90 scale', ...
@@ -1954,7 +1874,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'TEMP_CNDC'
          o_attributeStruct = struct('name', 'TEMP_CNDC', ...
             'longName', 'Internal temperature of the conductivity cell', ...
@@ -1986,7 +1906,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'PSAL_MED'
          o_attributeStruct = struct('name', 'PSAL_MED', ...
             'longName', 'Median value of practical salinity', ...
@@ -2002,7 +1922,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'TEMP_DOXY'
          o_attributeStruct = struct('name', 'TEMP_DOXY', ...
             'longName', 'Sea temperature from oxygen sensor ITS-90 scale', ...
@@ -2018,7 +1938,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'TEMP_DOXY_STD'
          o_attributeStruct = struct('name', 'TEMP_DOXY_STD', ...
             'longName', 'Standard deviation of sea temperature from oxygen sensor ITS-90 scale', ...
@@ -2034,7 +1954,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'TEMP_DOXY_MED'
          o_attributeStruct = struct('name', 'TEMP_DOXY_MED', ...
             'longName', 'Median value of sea temperature from oxygen sensor ITS-90 scale', ...
@@ -2050,7 +1970,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'TEMP_VOLTAGE_DOXY' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'TEMP_VOLTAGE_DOXY', ...
             'longName', 'Thermistor voltage reported by oxygen sensor', ...
@@ -2066,7 +1986,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'VOLTAGE_DOXY'
          o_attributeStruct = struct('name', 'VOLTAGE_DOXY', ...
             'longName', 'Voltage reported by oxygen sensor', ...
@@ -2082,7 +2002,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'FREQUENCY_DOXY'
          o_attributeStruct = struct('name', 'FREQUENCY_DOXY', ...
             'longName', 'Frequency reported by oxygen sensor', ...
@@ -2098,7 +2018,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'COUNT_DOXY'
          o_attributeStruct = struct('name', 'COUNT_DOXY', ...
             'longName', 'Count reported by oxygen sensor', ...
@@ -2114,7 +2034,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'BPHASE_DOXY'
          o_attributeStruct = struct('name', 'BPHASE_DOXY', ...
             'longName', 'Uncalibrated phase shift reported by oxygen sensor', ...
@@ -2130,7 +2050,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'DPHASE_DOXY'
          o_attributeStruct = struct('name', 'DPHASE_DOXY', ...
             'longName', 'Calibrated phase shift reported by oxygen sensor', ...
@@ -2146,7 +2066,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'TPHASE_DOXY'
          o_attributeStruct = struct('name', 'TPHASE_DOXY', ...
             'longName', 'Uncalibrated phase shift reported by oxygen sensor', ...
@@ -2162,7 +2082,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'C1PHASE_DOXY'
          o_attributeStruct = struct('name', 'C1PHASE_DOXY', ...
             'longName', 'Uncalibrated phase shift reported by oxygen sensor', ...
@@ -2178,7 +2098,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'C1PHASE_DOXY_STD'
          o_attributeStruct = struct('name', 'C1PHASE_DOXY_STD', ...
             'longName', 'Standard deviation of uncalibrated phase shift reported by oxygen sensor', ...
@@ -2194,7 +2114,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'C1PHASE_DOXY_MED'
          o_attributeStruct = struct('name', 'C1PHASE_DOXY_MED', ...
             'longName', 'Median value of uncalibrated phase shift reported by oxygen sensor', ...
@@ -2210,7 +2130,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'C2PHASE_DOXY'
          o_attributeStruct = struct('name', 'C2PHASE_DOXY', ...
             'longName', 'Uncalibrated phase shift reported by oxygen sensor', ...
@@ -2226,7 +2146,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'C2PHASE_DOXY_STD'
          o_attributeStruct = struct('name', 'C2PHASE_DOXY_STD', ...
             'longName', 'Standard deviation of uncalibrated phase shift reported by oxygen sensor', ...
@@ -2242,7 +2162,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'C2PHASE_DOXY_MED'
          o_attributeStruct = struct('name', 'C2PHASE_DOXY_MED', ...
             'longName', 'Median value of uncalibrated phase shift reported by oxygen sensor', ...
@@ -2258,7 +2178,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'MOLAR_DOXY'
          o_attributeStruct = struct('name', 'MOLAR_DOXY', ...
             'longName', 'Uncompensated (pressure and salinity) oxygen concentration reported by the oxygen sensor', ...
@@ -2274,7 +2194,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'PHASE_DELAY_DOXY'
          o_attributeStruct = struct('name', 'PHASE_DELAY_DOXY', ...
             'longName', 'Phase delay reported by oxygen sensor', ...
@@ -2290,7 +2210,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'MLPL_DOXY'
          o_attributeStruct = struct('name', 'MLPL_DOXY', ...
             'longName', 'Oxygen concentration reported by the oxygen sensor', ...
@@ -2306,7 +2226,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-                  
+
       case 'NB_SAMPLE_CTD'
          o_attributeStruct = struct('name', 'NB_SAMPLE_CTD', ...
             'longName', 'Number of samples in each pressure bin for the CTD', ...
@@ -2322,7 +2242,7 @@ while (again ~= 0)
             'paramType', 'j', ... % 'I' parameter stored in core files
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'NB_SAMPLE_SFET'
          o_attributeStruct = struct('name', 'NB_SAMPLE_SFET', ...
             'longName', 'Number of samples in each pressure bin for the SFET', ...
@@ -2338,7 +2258,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'NB_SAMPLE_ICE_DETECTION'  % for TRAJ_AUX
          o_attributeStruct = struct('name', 'NB_SAMPLE_ICE_DETECTION', ...
             'longName', 'Number of samples used to detect Ice', ...
@@ -2354,7 +2274,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RPHASE_DOXY'
          o_attributeStruct = struct('name', 'RPHASE_DOXY', ...
             'longName', 'Uncalibrated red phase shift reported by oxygen sensor', ...
@@ -2370,7 +2290,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'TEMP_COUNT_DOXY' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'TEMP_COUNT_DOXY', ...
             'longName', 'Count which is expressive of uncalibrated temperature value reported by oxygen sensor', ...
@@ -2386,7 +2306,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'LED_FLASHING_COUNT_DOXY' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'LED_FLASHING_COUNT_DOXY', ...
             'longName', 'Number of times oxygen sensor flashing to measure oxygen', ...
@@ -2402,7 +2322,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'PPOX_DOXY'
          o_attributeStruct = struct('name', 'PPOX_DOXY', ...
             'longName', 'Partial pressure of oxygen', ...
@@ -2418,7 +2338,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 1);
-         
+
       case 'BETA_BACKSCATTERING470' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'BETA_BACKSCATTERING470', ...
             'longName', 'Total angle specific volume from backscattering sensor at 470 nanometers', ...
@@ -2434,7 +2354,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'BETA_BACKSCATTERING532'
          o_attributeStruct = struct('name', 'BETA_BACKSCATTERING532', ...
             'longName', 'Total angle specific volume from backscattering sensor at 532 nanometers', ...
@@ -2450,7 +2370,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'BETA_BACKSCATTERING532_STD'
          o_attributeStruct = struct('name', 'BETA_BACKSCATTERING532_STD', ...
             'longName', 'Standard deviation of total angle specific volume from backscattering sensor at 532 nanometers', ...
@@ -2466,7 +2386,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'BETA_BACKSCATTERING532_MED'
          o_attributeStruct = struct('name', 'BETA_BACKSCATTERING532_MED', ...
             'longName', 'Median value of total angle specific volume from backscattering sensor at 532 nanometers', ...
@@ -2482,7 +2402,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'BETA_BACKSCATTERING700'
          o_attributeStruct = struct('name', 'BETA_BACKSCATTERING700', ...
             'longName', 'Total angle specific volume from backscattering sensor at 700 nanometers', ...
@@ -2498,7 +2418,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'BETA_BACKSCATTERING700_STD'
          o_attributeStruct = struct('name', 'BETA_BACKSCATTERING700_STD', ...
             'longName', 'Standard deviation of total angle specific volume from backscattering sensor at 700 nanometers', ...
@@ -2514,7 +2434,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'BETA_BACKSCATTERING700_MED'
          o_attributeStruct = struct('name', 'BETA_BACKSCATTERING700_MED', ...
             'longName', 'Median value of total angle specific volume from backscattering sensor at 700 nanometers', ...
@@ -2530,7 +2450,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'FLUORESCENCE_CHLA'
          o_attributeStruct = struct('name', 'FLUORESCENCE_CHLA', ...
             'longName', 'Chlorophyll-A signal from fluorescence sensor', ...
@@ -2546,7 +2466,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'FLUORESCENCE_CHLA_STD'
          o_attributeStruct = struct('name', 'FLUORESCENCE_CHLA_STD', ...
             'longName', 'Standard deviation of chlorophyll-A signal from fluorescence sensor', ...
@@ -2562,7 +2482,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'FLUORESCENCE_CHLA_MED'
          o_attributeStruct = struct('name', 'FLUORESCENCE_CHLA_MED', ...
             'longName', 'Median value of chlorophyll-A signal from fluorescence sensor', ...
@@ -2578,7 +2498,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'TEMP_CPU_CHLA'
          o_attributeStruct = struct('name', 'TEMP_CPU_CHLA', ...
             'longName', 'Thermistor signal from backscattering sensor', ...
@@ -2594,7 +2514,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'FLUORESCENCE_CDOM'
          o_attributeStruct = struct('name', 'FLUORESCENCE_CDOM', ...
             'longName', 'Raw fluorescence from coloured dissolved organic matter sensor', ...
@@ -2610,7 +2530,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'FLUORESCENCE_CDOM_STD'
          o_attributeStruct = struct('name', 'FLUORESCENCE_CDOM_STD', ...
             'longName', 'Standard deviation of raw fluorescence from coloured dissolved organic matter sensor', ...
@@ -2626,7 +2546,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'FLUORESCENCE_CDOM_MED'
          o_attributeStruct = struct('name', 'FLUORESCENCE_CDOM_MED', ...
             'longName', 'Median value of raw fluorescence from coloured dissolved organic matter sensor', ...
@@ -2641,8 +2561,8 @@ while (again ~= 0)
             'resolution', single(0.1), ...
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);         
-         
+            'adjAllowed', 0);
+
       case 'FLUORESCENCE_VOLTAGE_CHLA' % for CYCLOPS of ARVOR CM
          o_attributeStruct = struct('name', 'FLUORESCENCE_VOLTAGE_CHLA', ...
             'longName', 'Chlorophyll-A signal from analogic fluorescence sensor', ...
@@ -2658,7 +2578,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'FLUORESCENCE_VOLTAGE_CHLA_STD' % for CYCLOPS of ARVOR CM
          o_attributeStruct = struct('name', 'FLUORESCENCE_VOLTAGE_CHLA_STD', ...
             'longName', 'Standard deviation of chlorophyll-A signal from analogic fluorescence sensor', ...
@@ -2674,7 +2594,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'FLUORESCENCE_VOLTAGE_CHLA_MED' % for CYCLOPS of ARVOR CM
          o_attributeStruct = struct('name', 'FLUORESCENCE_VOLTAGE_CHLA_MED', ...
             'longName', 'Median value of chlorophyll-A signal from analogic fluorescence sensor', ...
@@ -2706,7 +2626,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'SIDE_SCATTERING_TURBIDITY_STD'
          o_attributeStruct = struct('name', 'SIDE_SCATTERING_TURBIDITY_STD', ...
             'longName', 'Standard deviation of turbidity signal from side scattering sensor', ...
@@ -2722,7 +2642,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'SIDE_SCATTERING_TURBIDITY_MED'
          o_attributeStruct = struct('name', 'SIDE_SCATTERING_TURBIDITY_MED', ...
             'longName', 'Median value of turbidity signal from side scattering sensor', ...
@@ -2738,7 +2658,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'VOLTAGE_TURBIDITY' % for SEAPOINT of ARVOR CM
          o_attributeStruct = struct('name', 'VOLTAGE_TURBIDITY', ...
             'longName', 'Turbidity signal from side scattering analogic sensor', ...
@@ -2754,7 +2674,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'VOLTAGE_TURBIDITY_STD' % for SEAPOINT of ARVOR CM
          o_attributeStruct = struct('name', 'VOLTAGE_TURBIDITY_STD', ...
             'longName', 'Standard deviation of turbidity signal from side scattering analogic sensor', ...
@@ -2770,7 +2690,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'VOLTAGE_TURBIDITY_MED' % for SEAPOINT of ARVOR CM
          o_attributeStruct = struct('name', 'VOLTAGE_TURBIDITY_MED', ...
             'longName', 'Median value of turbidity signal from side scattering analogic sensor', ...
@@ -2785,7 +2705,7 @@ while (again ~= 0)
             'resolution', single(0.001), ...
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);                
+            'adjAllowed', 0);
 
       case 'UV_INTENSITY_NITRATE'
          o_attributeStruct = struct('name', 'UV_INTENSITY_NITRATE', ...
@@ -2802,7 +2722,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'UV_INTENSITY_DARK_NITRATE'
          o_attributeStruct = struct('name', 'UV_INTENSITY_DARK_NITRATE', ...
             'longName', 'Intensity of ultra violet flux dark measurement from nitrate sensor', ...
@@ -2818,7 +2738,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'UV_INTENSITY_DARK_NITRATE_STD'
          o_attributeStruct = struct('name', 'UV_INTENSITY_DARK_NITRATE_STD', ...
             'longName', 'Standard deviation of intensity of ultra violet flux dark measurement from nitrate sensor', ...
@@ -2834,7 +2754,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'UV_INTENSITY_DARK_SEAWATER_NITRATE'
          o_attributeStruct = struct('name', 'UV_INTENSITY_DARK_SEAWATER_NITRATE', ...
             'longName', 'Intensity of ultra-violet flux dark sea water from nitrate sensor', ...
@@ -2849,8 +2769,8 @@ while (again ~= 0)
             'resolution', single(1), ...
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);         
-         
+            'adjAllowed', 0);
+
       case 'MOLAR_NITRATE'
          o_attributeStruct = struct('name', 'MOLAR_NITRATE', ...
             'longName', 'Nitrate', ...
@@ -2866,7 +2786,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'FIT_ERROR_NITRATE'
          o_attributeStruct = struct('name', 'FIT_ERROR_NITRATE', ...
             'longName', 'Nitrate fit error', ...
@@ -2930,7 +2850,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'VRS_PH'
          o_attributeStruct = struct('name', 'VRS_PH', ...
             'longName', 'Voltage difference between reference and source from pH sensor', ...
@@ -2946,7 +2866,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'VRS_PH_STD'
          o_attributeStruct = struct('name', 'VRS_PH_STD', ...
             'longName', 'Standard deviation of voltage difference between reference and source from pH sensor', ...
@@ -2962,7 +2882,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'VRS_PH_MED'
          o_attributeStruct = struct('name', 'VRS_PH_MED', ...
             'longName', 'Median value of voltage difference between reference and source from pH sensor', ...
@@ -2994,7 +2914,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'IB_PH'
          o_attributeStruct = struct('name', 'IB_PH', ...
             'longName', 'Base current of pH sensor', ...
@@ -3010,7 +2930,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'VK_PH'
          o_attributeStruct = struct('name', 'VK_PH', ...
             'longName', 'Counter electrode voltage of pH sensor', ...
@@ -3026,7 +2946,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'IK_PH'
          o_attributeStruct = struct('name', 'IK_PH', ...
             'longName', 'Counter electrode current of pH sensor', ...
@@ -3058,7 +2978,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'PH_IN_SITU_SEAWATER'
          o_attributeStruct = struct('name', 'PH_IN_SITU_SEAWATER', ...
             'longName', 'pH', ...
@@ -3074,7 +2994,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RAW_DOWNWELLING_IRRADIANCE380'
          o_attributeStruct = struct('name', 'RAW_DOWNWELLING_IRRADIANCE380', ...
             'longName', 'Raw downwelling irradiance at 380 nanometers', ...
@@ -3090,7 +3010,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RAW_DOWNWELLING_IRRADIANCE380_STD'
          o_attributeStruct = struct('name', 'RAW_DOWNWELLING_IRRADIANCE380_STD', ...
             'longName', 'Standard deviation of raw downwelling irradiance at 380 nanometers', ...
@@ -3106,7 +3026,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RAW_DOWNWELLING_IRRADIANCE380_MED'
          o_attributeStruct = struct('name', 'RAW_DOWNWELLING_IRRADIANCE380_MED', ...
             'longName', 'Median value of raw downwelling irradiance at 380 nanometers', ...
@@ -3122,7 +3042,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RAW_DOWNWELLING_IRRADIANCE412'
          o_attributeStruct = struct('name', 'RAW_DOWNWELLING_IRRADIANCE412', ...
             'longName', 'Raw downwelling irradiance at 412 nanometers', ...
@@ -3138,7 +3058,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RAW_DOWNWELLING_IRRADIANCE412_STD'
          o_attributeStruct = struct('name', 'RAW_DOWNWELLING_IRRADIANCE412_STD', ...
             'longName', 'Standard deviation of raw downwelling irradiance at 412 nanometers', ...
@@ -3154,7 +3074,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RAW_DOWNWELLING_IRRADIANCE412_MED'
          o_attributeStruct = struct('name', 'RAW_DOWNWELLING_IRRADIANCE412_MED', ...
             'longName', 'Median value of raw downwelling irradiance at 412 nanometers', ...
@@ -3170,7 +3090,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RAW_DOWNWELLING_IRRADIANCE443' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'RAW_DOWNWELLING_IRRADIANCE443', ...
             'longName', 'Raw downwelling irradiance at 443 nanometers', ...
@@ -3185,7 +3105,7 @@ while (again ~= 0)
             'resolution', single(1), ...
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);         
+            'adjAllowed', 0);
 
       case 'RAW_DOWNWELLING_IRRADIANCE490'
          o_attributeStruct = struct('name', 'RAW_DOWNWELLING_IRRADIANCE490', ...
@@ -3202,7 +3122,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RAW_DOWNWELLING_IRRADIANCE490_STD'
          o_attributeStruct = struct('name', 'RAW_DOWNWELLING_IRRADIANCE490_STD', ...
             'longName', 'Standard deviation of raw downwelling irradiance at 490 nanometers', ...
@@ -3218,7 +3138,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RAW_DOWNWELLING_IRRADIANCE490_MED'
          o_attributeStruct = struct('name', 'RAW_DOWNWELLING_IRRADIANCE490_MED', ...
             'longName', 'Median value of raw downwelling irradiance at 490 nanometers', ...
@@ -3234,7 +3154,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RAW_DOWNWELLING_IRRADIANCE555' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'RAW_DOWNWELLING_IRRADIANCE555', ...
             'longName', 'Raw downwelling irradiance at 555 nanometers', ...
@@ -3249,8 +3169,8 @@ while (again ~= 0)
             'resolution', single(1), ...
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);         
-         
+            'adjAllowed', 0);
+
       case 'RAW_UPWELLING_RADIANCE412' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'RAW_UPWELLING_RADIANCE412', ...
             'longName', 'Raw upwelling radiance at 412 nanometers', ...
@@ -3265,7 +3185,7 @@ while (again ~= 0)
             'resolution', single(1), ...
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);         
+            'adjAllowed', 0);
 
       case 'RAW_UPWELLING_RADIANCE443' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'RAW_UPWELLING_RADIANCE443', ...
@@ -3281,7 +3201,7 @@ while (again ~= 0)
             'resolution', single(1), ...
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);         
+            'adjAllowed', 0);
 
       case 'RAW_UPWELLING_RADIANCE490' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'RAW_UPWELLING_RADIANCE490', ...
@@ -3297,7 +3217,7 @@ while (again ~= 0)
             'resolution', single(1), ...
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);         
+            'adjAllowed', 0);
 
       case 'RAW_UPWELLING_RADIANCE555' % for nc_create_synthetic_profile
          o_attributeStruct = struct('name', 'RAW_UPWELLING_RADIANCE555', ...
@@ -3313,7 +3233,7 @@ while (again ~= 0)
             'resolution', single(1), ...
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);         
+            'adjAllowed', 0);
 
       case 'RAW_DOWNWELLING_PAR'
          o_attributeStruct = struct('name', 'RAW_DOWNWELLING_PAR', ...
@@ -3330,7 +3250,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RAW_DOWNWELLING_PAR_STD'
          o_attributeStruct = struct('name', 'RAW_DOWNWELLING_PAR_STD', ...
             'longName', 'Standard deviation of raw downwelling photosynthetic available radiation', ...
@@ -3346,7 +3266,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RAW_DOWNWELLING_PAR_MED'
          o_attributeStruct = struct('name', 'RAW_DOWNWELLING_PAR_MED', ...
             'longName', 'Median value of raw downwelling photosynthetic available radiation', ...
@@ -3394,7 +3314,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_DOUBLE', ...
             'adjAllowed', 0);
-                  
+
       case 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660'
          o_attributeStruct = struct('name', 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660', ...
             'longName', 'Beam attenuation from transmissometer sensor at 660 nanometers', ...
@@ -3426,7 +3346,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660_MED'
          o_attributeStruct = struct('name', 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660_MED', ...
             'longName', 'Median value of beam attenuation from transmissometer sensor at 660 nanometers', ...
@@ -3445,7 +3365,7 @@ while (again ~= 0)
 
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TEMPORARY PARAMETERS
-         
+
       case 'JULD_LEVEL' % for nc_create_merged_profile
          o_attributeStruct = struct('name', 'JULD_LEVEL', ...
             'longName', 'Julian day (UTC) of each profile level measurement relative to REFERENCE_DATE_TIME', ...
@@ -3465,7 +3385,7 @@ while (again ~= 0)
 
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TEMPORARY PARAMETERS
-                  
+
       case 'VALVE_ACTION_FLAG' % for TECH_AUX
          o_attributeStruct = struct('name', 'VALVE_ACTION_FLAG', ...
             'longName', 'Valve action flag', ...
@@ -3481,7 +3401,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_INT', ...
             'adjAllowed', 0);
-         
+
       case 'PUMP_ACTION_FLAG' % for TECH_AUX
          o_attributeStruct = struct('name', 'PUMP_ACTION_FLAG', ...
             'longName', 'Pump action flag', ...
@@ -3497,7 +3417,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_INT', ...
             'adjAllowed', 0);
-         
+
       case 'VALVE_ACTION_DURATION' % for TECH_AUX
          o_attributeStruct = struct('name', 'VALVE_ACTION_DURATION', ...
             'longName', 'Duration of valve action', ...
@@ -3513,7 +3433,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'PUMP_ACTION_DURATION' % for TECH_AUX
          o_attributeStruct = struct('name', 'PUMP_ACTION_DURATION', ...
             'longName', 'Duration of pump action', ...
@@ -3539,13 +3459,13 @@ while (again ~= 0)
             'validMin', '', ...
             'validMax', '', ...
             'axis', '', ...
-            'cFormat', '%.3f', ...  
+            'cFormat', '%.3f', ...
             'fortranFormat', 'F.3', ...
             'resolution', single(0.001), ...
             'paramType', 't', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'PRESSURE_AirBladder_COUNT' % for TECH_AUX
          o_attributeStruct = struct('name', 'PRESSURE_AirBladder_COUNT', ...
             'longName', '', ...
@@ -3577,7 +3497,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'VOLTAGE_Battery_COUNT' % for TECH_AUX
          o_attributeStruct = struct('name', 'VOLTAGE_Battery_COUNT', ...
             'longName', '', ...
@@ -3592,8 +3512,8 @@ while (again ~= 0)
             'resolution', single(1), ...
             'paramType', 't', ...
             'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);         
-         
+            'adjAllowed', 0);
+
       case 'HUMIDITY_InsideHull_percent' % for TECH_AUX
          o_attributeStruct = struct('name', 'HUMIDITY_InsideHull_percent', ...
             'longName', '', ...
@@ -3609,7 +3529,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'VOLTAGE_WaterLeakInsideHullDetection_volts' % for TECH_AUX
          o_attributeStruct = struct('name', 'VOLTAGE_WaterLeakInsideHullDetection_volts', ...
             'longName', '', ...
@@ -3641,7 +3561,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'PRESSURE_InternalVacuum_COUNT' % for TECH_AUX
          o_attributeStruct = struct('name', 'PRESSURE_InternalVacuum_COUNT', ...
             'longName', '', ...
@@ -3657,7 +3577,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'NUMBER_BatteryUsedCoulombCounts_mA_hour' % for TECH_AUX
          o_attributeStruct = struct('name', 'NUMBER_BatteryUsedCoulombCounts_mA_hour', ...
             'longName', '', ...
@@ -3689,7 +3609,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'CURRENT_Battery_COUNT' % for TECH_AUX
          o_attributeStruct = struct('name', 'CURRENT_Battery_COUNT', ...
             'longName', '', ...
@@ -3721,7 +3641,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'SURFACE_PRESSURE_DBAR' % for TECH_AUX
          o_attributeStruct = struct('name', 'SURFACE_PRESSURE_DBAR', ...
             'longName', 'Surface pressure measurement sampled during Argos transmission and updated at each new Argos block message', ...
@@ -3734,38 +3654,6 @@ while (again ~= 0)
             'cFormat', '%.3f', ...
             'fortranFormat', 'F.3', ...
             'resolution', single(0.001), ...
-            'paramType', 't', ...
-            'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);         
-
-      case 'ICE_BREAKUP_DETECT_FLAG'  % for TECH_AUX
-         o_attributeStruct = struct('name', 'ICE_BREAKUP_DETECT_FLAG', ...
-            'longName', 'Ice breakup detection flag', ...
-            'standardName', '', ...
-            'fillValue', single(-1), ...
-            'units', 'dimensionless', ...
-            'validMin', '', ...
-            'validMax', '', ...
-            'axis', '', ...
-            'cFormat', '%d', ...
-            'fortranFormat', 'I', ...
-            'resolution', single(1), ...
-            'paramType', 't', ...
-            'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);
-         
-      case 'ICE_ASCENT_ABORT_NUMBER'  % for TECH_AUX
-         o_attributeStruct = struct('name', 'ICE_ASCENT_ABORT_NUMBER', ...
-            'longName', 'Type of Ice algorithm responsible of float ascent abortion', ...
-            'standardName', '', ...
-            'fillValue', single(-1), ...
-            'units', 'dimensionless', ...
-            'validMin', '', ...
-            'validMax', '', ...
-            'axis', '', ...
-            'cFormat', '%d', ...
-            'fortranFormat', 'I', ...
-            'resolution', single(1), ...
             'paramType', 't', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
@@ -3788,7 +3676,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_INT', ...
             'adjAllowed', 0);
-         
+
       case 'GPS_TIME_TO_FIX' % for TRAJ_AUX
          o_attributeStruct = struct('name', 'GPS_TIME_TO_FIX', ...
             'longName', 'Number of seconds required to obtain the GPS fix', ...
@@ -3804,7 +3692,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_INT', ...
             'adjAllowed', 0);
-         
+
       case 'GPS_NB_SATELLITE' % for TRAJ_AUX
          o_attributeStruct = struct('name', 'GPS_NB_SATELLITE', ...
             'longName', 'Number of GPS satellites seen by the float', ...
@@ -3836,7 +3724,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_INT', ...
             'adjAllowed', 0);
-         
+
       case 'COR' % for TRAJ_AUX
          o_attributeStruct = struct('name', 'COR', ...
             'longName', 'RAFOS correlation height', ...
@@ -3852,7 +3740,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_INT', ...
             'adjAllowed', 0);
-         
+
       case 'TOA' % for TRAJ_AUX
          o_attributeStruct = struct('name', 'TOA', ...
             'longName', 'Time Of Arrival', ...
@@ -3868,7 +3756,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_DOUBLE', ...
             'adjAllowed', 0);
-         
+
       case 'RAW_TOA' % for TRAJ_AUX
          o_attributeStruct = struct('name', 'RAW_TOA', ...
             'longName', 'Time Of Arrival reported by RAFOS sensor', ...
@@ -3884,7 +3772,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_INT', ...
             'adjAllowed', 0);
-         
+
       case 'RAFOS_RTC_TIME' % for TRAJ_AUX
          o_attributeStruct = struct('name', 'RAFOS_RTC_TIME', ...
             'longName', 'Time in seconds since the last time the RAFOS clock was reset.', ...
@@ -3900,7 +3788,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_INT', ...
             'adjAllowed', 0);
-         
+
       case 'RAFOS_CORRELATION_START_FLAG' % for TRAJ_AUX
          o_attributeStruct = struct('name', 'RAFOS_CORRELATION_START_FLAG', ...
             'longName', 'Start of RAFOS correlation', ...
@@ -3916,10 +3804,10 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_INT', ...
             'adjAllowed', 0);
-         
+
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TEMPORARY PARAMETERS
-         
+
       case 'SET_POINT' % for TRAJ_AUX
          o_attributeStruct = struct('name', 'SET_POINT', ...
             'longName', 'Aimed pressure before grounding', ...
@@ -3954,7 +3842,7 @@ while (again ~= 0)
 
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TEMPORARY PARAMETERS
-         
+
       case 'LIGHT442' % TEMPO (no output, decoder management only)
          o_attributeStruct = struct('name', 'LIGHT442', ...
             'longName', '', ...
@@ -3986,7 +3874,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'LIGHT676' % TEMPO (no output, decoder management only)
          o_attributeStruct = struct('name', 'LIGHT676', ...
             'longName', '', ...
@@ -4146,7 +4034,7 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'therm_sig' % TEMPO (no output, decoder management only)
          o_attributeStruct = struct('name', 'therm_sig', ...
             'longName', '', ...
@@ -4162,10 +4050,10 @@ while (again ~= 0)
             'paramType', 't', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TEMPORARY PARAMETERS
-         
+
       case 'BLUE_REF' % for PROF_AUX
          o_attributeStruct = struct('name', 'BLUE_REF', ...
             'longName', 'BlueRef from 082807 Apex floats (unknow parameter)', ...
@@ -4181,7 +4069,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-                  
+
       case 'NTU_REF' % for PROF_AUX
          o_attributeStruct = struct('name', 'NTU_REF', ...
             'longName', 'NtuRef from 082807 Apex floats (unknow parameter)', ...
@@ -4199,7 +4087,7 @@ while (again ~= 0)
             'adjAllowed', 0);
 
          % UVP PARAMETERS - START (all in PROF_AUX)
-         
+
       case 'NB_SIZE_SPECTRA_PARTICLES'
          o_attributeStruct = struct('name', 'NB_SIZE_SPECTRA_PARTICLES', ...
             'longName', 'Averaged number of particles per size class', ...
@@ -4215,7 +4103,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'GREY_SIZE_SPECTRA_PARTICLES'
          o_attributeStruct = struct('name', 'GREY_SIZE_SPECTRA_PARTICLES', ...
             'longName', 'Averaged grey level per size class', ...
@@ -4231,7 +4119,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'TEMP_PARTICLES'
          o_attributeStruct = struct('name', 'TEMP_PARTICLES', ...
             'longName', 'Internal temperature of the UVP6 sensor', ...
@@ -4247,7 +4135,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'NB_IMAGE_PARTICLES'
          o_attributeStruct = struct('name', 'NB_IMAGE_PARTICLES', ...
             'longName', 'Number of images analysed and averaged', ...
@@ -4263,7 +4151,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'BLACK_NB_SIZE_SPECTRA_PARTICLES'
          o_attributeStruct = struct('name', 'BLACK_NB_SIZE_SPECTRA_PARTICLES', ...
             'longName', 'Averaged number of particles per size class without light', ...
@@ -4278,8 +4166,8 @@ while (again ~= 0)
             'resolution', single(1), ...
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);         
-         
+            'adjAllowed', 0);
+
       case 'BLACK_TEMP_PARTICLES'
          o_attributeStruct = struct('name', 'BLACK_TEMP_PARTICLES', ...
             'longName', 'Internal temperature of the UVP6 sensor without light', ...
@@ -4295,7 +4183,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'PARAM_1'
          o_attributeStruct = struct('name', 'PARAM_1', ...
             'longName', 'Unused', ...
@@ -4311,7 +4199,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'PARAM_2'
          o_attributeStruct = struct('name', 'PARAM_2', ...
             'longName', 'Unused', ...
@@ -4327,7 +4215,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'PARAM_3'
          o_attributeStruct = struct('name', 'PARAM_3', ...
             'longName', 'Unused', ...
@@ -4343,11 +4231,11 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
          % UVP PARAMETERS - END (all in PROF_AUX)
-         
+
          % OPUS PARAMETERS - START (all in PROF_AUX)
-         
+
       case 'SPECTRUM_TYPE_NITRATE'
          o_attributeStruct = struct('name', 'SPECTRUM_TYPE_NITRATE', ...
             'longName', 'Type of the recorded intensity spectrum	(4:''raw'' or 2:''calibrated'')', ...
@@ -4363,7 +4251,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_INT', ...
             'adjAllowed', 0);
-         
+
       case 'AVERAGING_NITRATE'
          o_attributeStruct = struct('name', 'AVERAGING_NITRATE', ...
             'longName', 'Number of individual measurements which were averaged for the recorded spectrum', ...
@@ -4379,23 +4267,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_INT', ...
             'adjAllowed', 0);
-         
-      case 'BLACK_AVERAGING_NITRATE'
-         o_attributeStruct = struct('name', 'BLACK_AVERAGING_NITRATE', ...
-            'longName', 'Number of individual measurements which were averaged for the recorded spectrum', ...
-            'standardName', '', ...
-            'fillValue', int32(-1), ...
-            'units', 'count', ...
-            'validMin', int32(1), ...
-            'validMax', int32(3), ...
-            'axis', '', ...
-            'cFormat', '%d', ...
-            'fortranFormat', 'I', ...
-            'resolution', int32(1), ...
-            'paramType', 'i', ...
-            'paramNcType', 'NC_INT', ...
-            'adjAllowed', 0);
-         
+
       case 'FLASH_COUNT_NITRATE'
          o_attributeStruct = struct('name', 'FLASH_COUNT_NITRATE', ...
             'longName', 'Number of lamp flashes during the measurement', ...
@@ -4411,55 +4283,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_INT', ...
             'adjAllowed', 0);
-         
-      case 'BLACK_FLASH_COUNT_NITRATE'
-         o_attributeStruct = struct('name', 'BLACK_FLASH_COUNT_NITRATE', ...
-            'longName', 'Number of lamp flashes during the measurement', ...
-            'standardName', '', ...
-            'fillValue', int32(-1), ...
-            'units', 'count', ...
-            'validMin', int32(1), ...
-            'validMax', int32(19), ...
-            'axis', '', ...
-            'cFormat', '%d', ...
-            'fortranFormat', 'I', ...
-            'resolution', int32(1), ...
-            'paramType', 'i', ...
-            'paramNcType', 'NC_INT', ...
-            'adjAllowed', 0);
-         
-      case 'UV_INTENSITY_FULL_NITRATE'
-         o_attributeStruct = struct('name', 'UV_INTENSITY_FULL_NITRATE', ...
-            'longName', 'Intensity of ultra violet flux from nitrate sensor (full resolution part of the spectrum)', ...
-            'standardName', '', ...
-            'fillValue', single(99999), ...
-            'units', 'count', ...
-            'validMin', single(-500), ...
-            'validMax', single(65535), ...
-            'axis', '', ...
-            'cFormat', '%d', ...
-            'fortranFormat', 'I', ...
-            'resolution', single(1), ...
-            'paramType', 'i', ...
-            'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);
-         
-      case 'UV_INTENSITY_BINNED_NITRATE'
-         o_attributeStruct = struct('name', 'UV_INTENSITY_BINNED_NITRATE', ...
-            'longName', 'Intensity of ultra violet flux from nitrate sensor (binned subset part of the spectrum)', ...
-            'standardName', '', ...
-            'fillValue', single(99999), ...
-            'units', 'count', ...
-            'validMin', single(-500), ...
-            'validMax', single(65535), ...
-            'axis', '', ...
-            'cFormat', '%d', ...
-            'fortranFormat', 'I', ...
-            'resolution', single(1), ...
-            'paramType', 'i', ...
-            'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);
-         
+
       case 'UV_INTENSITY_DARK_NITRATE_AVG'
          o_attributeStruct = struct('name', 'UV_INTENSITY_DARK_NITRATE_AVG', ...
             'longName', 'Mean intensity of the ultra violet dark spectrum from the nitrate sensor', ...
@@ -4475,7 +4299,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'UV_INTENSITY_DARK_NITRATE_SD'
          o_attributeStruct = struct('name', 'UV_INTENSITY_DARK_NITRATE_SD', ...
             'longName', 'Intensity standard deviation of the ultra violet dark spectrum from the nitrate sensor', ...
@@ -4491,9 +4315,9 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
          % OPUS PARAMETERS - END (all in PROF_AUX)
-         
+
          % RAMSES PARAMETERS - START (all in PROF_AUX)
 
       case 'RAW_DOWNWELLING_IRRADIANCE'
@@ -4512,8 +4336,8 @@ while (again ~= 0)
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
 
-      case 'RADIOMETER_INTEGRATION_TIME'
-         o_attributeStruct = struct('name', 'RADIOMETER_INTEGRATION_TIME', ...
+      case 'RADIOMETER_DOWN_IRR_INTEGRATION_TIME'
+         o_attributeStruct = struct('name', 'RADIOMETER_DOWN_IRR_INTEGRATION_TIME', ...
             'longName', 'Integration time of the radiometer', ...
             'standardName', '', ...
             'fillValue', single(99999), ...
@@ -4527,7 +4351,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RADIOMETER_PRE_PRES'
          o_attributeStruct = struct('name', 'RADIOMETER_PRE_PRES', ...
             'longName', '', ...
@@ -4543,7 +4367,7 @@ while (again ~= 0)
             'paramType', 'i', ...
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
-         
+
       case 'RADIOMETER_POST_PRES'
          o_attributeStruct = struct('name', 'RADIOMETER_POST_PRES', ...
             'longName', '', ...
@@ -4560,8 +4384,8 @@ while (again ~= 0)
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
 
-      case 'RADIOMETER_TEMP'
-         o_attributeStruct = struct('name', 'RADIOMETER_TEMP', ...
+      case 'RADIOMETER_DOWN_IRR_TEMP'
+         o_attributeStruct = struct('name', 'RADIOMETER_DOWN_IRR_TEMP', ...
             'longName', 'The temperature during the last measurement in degree_Celsius as taken from the pressure sensor', ...
             'standardName', '', ...
             'fillValue', single(99999), ...
@@ -4576,46 +4400,14 @@ while (again ~= 0)
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
 
-      case 'RADIOMETER_PRES'
-         o_attributeStruct = struct('name', 'RADIOMETER_PRES', ...
+      case 'RADIOMETER_DOWN_IRR_PRES'
+         o_attributeStruct = struct('name', 'RADIOMETER_DOWN_IRR_PRES', ...
             'longName', 'The pressure during last measurement', ...
             'standardName', '', ...
             'fillValue', single(99999), ...
             'units', 'decibar', ...
             'validMin', single(0), ...
             'validMax', single(12000), ...
-            'axis', '', ...
-            'cFormat', '%.5f', ...
-            'fortranFormat', 'F.5', ...
-            'resolution', single(0.00001), ...
-            'paramType', 'i', ...
-            'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);
-
-      case 'RADIOMETER_PRE_INCLINATION'
-         o_attributeStruct = struct('name', 'RADIOMETER_PRE_INCLINATION', ...
-            'longName', 'The inclination angle (0-360) taken before the light measurement', ...
-            'standardName', '', ...
-            'fillValue', single(99999), ...
-            'units', 'degree', ...
-            'validMin', single(0), ...
-            'validMax', single(360), ...
-            'axis', '', ...
-            'cFormat', '%.5f', ...
-            'fortranFormat', 'F.5', ...
-            'resolution', single(0.00001), ...
-            'paramType', 'i', ...
-            'paramNcType', 'NC_FLOAT', ...
-            'adjAllowed', 0);
-
-      case 'RADIOMETER_POST_INCLINATION'
-         o_attributeStruct = struct('name', 'RADIOMETER_POST_INCLINATION', ...
-            'longName', 'The inclination angle (0-360) taken after the light measurement', ...
-            'standardName', '', ...
-            'fillValue', single(99999), ...
-            'units', 'degree', ...
-            'validMin', single(0), ...
-            'validMax', single(360), ...
             'axis', '', ...
             'cFormat', '%.5f', ...
             'fortranFormat', 'F.5', ...
@@ -4640,10 +4432,10 @@ while (again ~= 0)
             'paramNcType', 'NC_FLOAT', ...
             'adjAllowed', 0);
 
-         % RAMSES PARAMETERS - END (all in PROF_AUX)         
+         % RAMSES PARAMETERS - END (all in PROF_AUX)
 
       otherwise
-         
+
          if (again == 1)
             % names like <PARAM>2 or <PARAM>_2
             if (isletter(a_paramName(end-1)) && ~isletter(a_paramName(end)))
@@ -4681,7 +4473,7 @@ while (again ~= 0)
                paramName = a_paramName(1:pos-1);
                printWarning = 0;
             end
-            
+
             %             printWarning = 1;
             %             if (~isempty(paramName))
             %                [attStruct] = get_netcdf_param_attributes(paramName);
@@ -4689,11 +4481,11 @@ while (again ~= 0)
             %                   printWarning = 0;
             %                end
             %             end
-            
+
             if (printWarning == 1)
                fprintf('WARNING: Attribute list no yet defined for parameter %s\n', a_paramName);
             end
-            
+
             again = 0;
          end
    end
@@ -4720,8 +4512,8 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/15/2015 - RNU - creation

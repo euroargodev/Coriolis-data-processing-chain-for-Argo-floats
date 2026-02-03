@@ -19,7 +19,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -38,6 +38,9 @@ global g_decArgo_floatNum;
 
 % current cycle number
 global g_decArgo_cycleNum;
+
+% global default values
+global g_decArgo_presDef;
 
 % current cycle and pattern number
 global g_decArgo_cycleNumFloat;
@@ -119,36 +122,55 @@ for idP = 1:length(a_ctdData)
    
    % set the CTD cut-off pressure
    if (phaseNum == g_decArgo_phaseAscProf)
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % PROFILE CTD CUT OFF PRESSURE DETERMINATION
+
+      % retrieve the last pumped PRES transmitted in the CTD data
+      subSurfacePres = '';
+      presCutOffProf = g_decArgo_presDef;
+      fromConfigFlag = 0;
       if (~isempty(subSurfaceId))
-         % use the sub surface point transmitted in the CTD data
          subSurfaceMeas = a_ctdData{subSurfaceId}.data;
          if (any(subSurfaceMeas(2:end) ~= 0)) % subsurface PTS == 0 when not set (when the float didn't reach P > pump cut-off P)
-            profStruct.presCutOffProf = subSurfaceMeas(2);
-            profStruct.subSurfMeasReceived = 1;
-            o_presCutOffProf = subSurfaceMeas(2);
+            subSurfacePres = subSurfaceMeas(2);
+            presCutOffProf = subSurfacePres;
             o_subSurfaceMeas = subSurfaceMeas;
          end
       end
-      if (profStruct.subSurfMeasReceived == 0)
-         % get the pressure cut-off for CTD ascending profile (from the
-         % configuration)
-         configPresCutOffProf = config_get_value_ir_rudics_cts5(g_decArgo_cycleNumFloat, g_decArgo_patternNumFloat, 'CONFIG_APMT_SENSOR_01_P54');
-         if (~isempty(configPresCutOffProf) && ~isnan(configPresCutOffProf))
-            profStruct.presCutOffProf = configPresCutOffProf;
-            
-            fprintf('DEC_WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): PRES_CUT_OFF_PROF parameter is missing in apmt data - value retrieved from the configuration\n', ...
-               g_decArgo_floatNum, ...
-               g_decArgo_cycleNum, ...
-               g_decArgo_cycleNumFloat, ...
-               g_decArgo_patternNumFloat);
+      if (isempty(subSurfacePres))
+         % retrieve the CTD pump cut-off pressure from the configuration
+         presCutOffProfCfg = config_get_value_ir_rudics_cts5( ...
+            g_decArgo_cycleNumFloat, g_decArgo_patternNumFloat, 'CONFIG_APMT_SENSOR_01_P54');
+         if (~isempty(presCutOffProfCfg) && ~isnan(presCutOffProfCfg))
+            % CONFIG_APMT_SENSOR_01_P54 is CTD pump cut-off pressure we should add
+            % Poverlap = 0.5 dbar if it is not situated in a raw treatment
+            % type zone
+
+            % retrieve the treatment type associated to configPresCutOffProf
+            treatType = config_get_treatment_type_ir_rudics_cts5( ...
+               g_decArgo_cycleNumFloat, g_decArgo_patternNumFloat, presCutOffProfCfg);
+            if (~isempty(treatType) && ((treatType == 0) || (treatType == 8)))
+               % raw or decimated data Poverlap = 0
+               presCutOffProfConfig = presCutOffProfCfg;
+            else
+               % averaged data Poverlap = 0.5 dbar
+               presCutOffProfConfig = presCutOffProfCfg + 0.5;
+            end
+            presCutOffProf = presCutOffProfConfig;
+            fromConfigFlag = 1;
          else
-            fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): PRES_CUT_OFF_PROF parameter is missing in the configuration - CTD profile not split\n', ...
+            fprintf('ERROR: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): PRES_CUT_OFF_PROF parameter is missing in apmt data and in the configuration - CTD profile not split\n', ...
                g_decArgo_floatNum, ...
                g_decArgo_cycleNum, ...
                g_decArgo_cycleNumFloat, ...
                g_decArgo_patternNumFloat);
          end
       end
+
+      profStruct.presCutOffProf = presCutOffProf;
+      profStruct.presCutOffProfConfig = fromConfigFlag;
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    end
    
    % store data measurements

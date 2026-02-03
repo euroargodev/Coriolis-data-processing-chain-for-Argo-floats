@@ -24,7 +24,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/11/2018 - RNU - V 0.1: creation
@@ -47,6 +47,14 @@ g_cocm_netCDF4FlagForMonoProf = 0;
 % generate NetCDF-4 flag for multiple-profiles file
 global g_cocm_netCDF4FlagForMultiProf;
 g_cocm_netCDF4FlagForMultiProf = 1;
+
+% deflate level to use (0 to 9)
+% a deflate level of 1 is recomended in "EXPERIENCE WITH AN ENHANCED NETCDF DATA
+% MODEL AND INTERFACE FOR SCIENTIFIC DATA ACCESS" where we can read "In our
+% tests we notice that setting the deflate higher than one takes more time, but
+% has little benefit."
+global g_cocm_netCDF4DeflateLevel;
+g_cocm_netCDF4DeflateLevel = 1; 
 
 % list of floats to process (if empty, all encountered files of the DIR_INPUT_NC_FILES directory will be processed)
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
@@ -244,7 +252,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/08/2018 - RNU - creation
@@ -385,7 +393,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/25/2018 - RNU - creation

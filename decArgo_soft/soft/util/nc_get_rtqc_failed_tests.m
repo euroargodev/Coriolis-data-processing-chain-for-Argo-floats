@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/04/2019 - RNU - creation
@@ -26,7 +26,7 @@ FLOAT_LIST_FILE_NAME = '';
 % directory of Argo NetCDF files
 DIR_INPUT_NC_FILES = 'E:\201902-ArgoData\coriolis';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\Coriolis_deep_floats_20210205\';
-DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\tmp\';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -50,7 +50,7 @@ if (nargin == 0)
          fprintf('File not found: %s\n', FLOAT_LIST_FILE_NAME);
          return
       end
-      
+
       fprintf('Floats from list: %s\n', FLOAT_LIST_FILE_NAME);
       floatList = load(FLOAT_LIST_FILE_NAME);
    end
@@ -78,23 +78,23 @@ fprintf(fidOut, '%s;%s\n', header, testList(1:end-1));
 floatNum = 1;
 floatDir = dir(DIR_INPUT_NC_FILES);
 for idDir = 1:length(floatDir)
-   
+
    floatDirName = floatDir(idDir).name;
    floatDirPathName = [DIR_INPUT_NC_FILES '/' floatDirName];
    if ((exist(floatDirPathName, 'dir') == 7) && ~strcmp(floatDirName, '.') && ~strcmp(floatDirName, '..'))
-      
+
       [floatWmo, status] = str2num(floatDirName);
       if (status == 1)
-         
+
          if ((isempty(floatList)) || (~isempty(floatList) && ismember(floatWmo, floatList)))
-            
+
             if (isempty(floatList))
                fprintf('%03d/%03d %d\n', floatNum, length(floatDir)-2, floatWmo);
             else
                fprintf('%03d/%03d %d\n', floatNum, length(floatList), floatWmo);
             end
             g_ngrft_floatNum = floatWmo;
-            
+
             % process mono-profile files
             profDirPathName = [floatDirPathName '/profiles'];
             if (exist(profDirPathName, 'dir') == 7)
@@ -104,7 +104,7 @@ for idDir = 1:length(floatDir)
                   dir([profDirPathName '/' sprintf('B*%d_*.nc', floatWmo)]) ...
                   ];
                for idFile = 1:length(floatFiles)
-                  
+
                   floatFileName = floatFiles(idFile).name;
                   floatFilePathName = [floatDirPathName '/profiles/' floatFileName];
                   if (exist(floatFilePathName, 'file') == 2)
@@ -126,7 +126,7 @@ if (~isempty(g_ngrft_reportData.float))
       testFailedFlag = get_qctest_flag(g_ngrft_reportData.qcTestFailed{idL});
       testFailedFlag(26:56) = [];
       testFailedFlag = sprintf('%c;', testFailedFlag);
-      
+
       fprintf(fidOut, '%d;%s;%d;%s;%s;%s\n', ...
          g_ngrft_reportData.float(idL), ...
          [fileName fileExt], ...
@@ -136,7 +136,7 @@ if (~isempty(g_ngrft_reportData.float))
          testFailedFlag(1:end-1));
    end
 end
-        
+
 fclose(fidOut);
 
 ellapsedTime = toc;
@@ -160,7 +160,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/04/2019 - RNU - creation
@@ -173,7 +173,7 @@ global g_ngrft_reportData;
 
 
 if (exist(a_ncPathFileName, 'file') == 2)
-   
+
    % get information from the file
    wantedInputVars = [ ...
       {'FORMAT_VERSION'} ...
@@ -188,11 +188,11 @@ if (exist(a_ncPathFileName, 'file') == 2)
       ];
    [inputData] = get_data_from_nc_file(a_ncPathFileName, wantedInputVars);
    if (~isempty(inputData))
-      
+
       idVal = find(strcmp('FORMAT_VERSION', inputData(1:2:end)) == 1, 1);
       formatVersion = strtrim(inputData{2*idVal}');
       if (strcmp(formatVersion, '3.1'))
-         
+
          idVal = find(strcmp('STATION_PARAMETERS', inputData(1:2:end)) == 1, 1);
          stationParameters = inputData{2*idVal};
          [~, inputNParam, ~] = size(stationParameters);
@@ -209,20 +209,21 @@ if (exist(a_ncPathFileName, 'file') == 2)
          historyAction = inputData{2*idVal};
          idVal = find(strcmp('HISTORY_QCTEST', inputData(1:2:end)) == 1, 1);
          historyQcTest = inputData{2*idVal};
-         
+
          for idProf = 1:inputNProf
             profHistoDate = [];
             profHistoQcTest = [];
             for idHisto = 1:inputNHistory
                histoAct = deblank(historyAction(:, idProf, idHisto)');
                histoQctest = deblank(historyQcTest(:, idProf, idHisto)');
+               % if (strcmp(histoAct, 'QCF$') && ~strcmp(unique(histoQctest), '0'))
                if (strcmp(histoAct, 'QCF$') && ~strcmp(unique(histoQctest), '0'))
                   histoInst = deblank(historyInstitution(:, idProf, idHisto)');
                   histoStep = deblank(historyStep(:, idProf, idHisto)');
                   histoSoft = deblank(historySoftware(:, idProf, idHisto)');
                   histoDate = historyDate(:, idProf, idHisto)';
                   histoQctest = historyQcTest(:, idProf, idHisto)';
-                  
+
                   if (strcmp(histoInst, 'IF') && strcmp(histoStep, 'ARGQ') && strcmp(histoSoft, 'COQC'))
                      profHistoDate = [profHistoDate; histoDate];
                      profHistoQcTest = [profHistoQcTest; histoQctest];
@@ -235,7 +236,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
                   profHistoDate = profHistoDate(idMax, :);
                   profHistoQcTest = profHistoQcTest(idMax, :);
                end
-               
+
                paramList = [];
                for idParam = 1:inputNParam
                   paramName = deblank(stationParameters(:, idParam, idProf)');
@@ -243,7 +244,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
                      paramList{end+1} = paramName;
                   end
                end
-               
+
                g_ngrft_reportData.float = [g_ngrft_reportData.float g_ngrft_floatNum];
                g_ngrft_reportData.profFile = [g_ngrft_reportData.profFile {a_ncPathFileName}];
                g_ngrft_reportData.profId = [g_ngrft_reportData.profId idProf];
@@ -254,62 +255,6 @@ if (exist(a_ncPathFileName, 'file') == 2)
          end
       end
    end
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   03/04/2019 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         fprintf('WARNING: Variable %s not present in file : %s\n', ...
-            varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {''}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
 end
 
 return
@@ -329,7 +274,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/04/2019 - RNU - creation
@@ -346,42 +291,5 @@ end
 
 o_qcTestFlag = fliplr(o_qcTestFlag);
 o_qcTestFlag(1) = [];
-
-return
-
-% ------------------------------------------------------------------------------
-% Check if a given variable is present in a NetCDF file.
-%
-% SYNTAX :
-%  [o_present] = var_is_present_dec_argo(a_ncId, a_varName)
-%
-% INPUT PARAMETERS :
-%   a_ncId    : NetCDF file Id
-%   a_varName : variable name
-%
-% OUTPUT PARAMETERS :
-%   o_present : 1 if the variable is present (0 otherwise)
-%
-% EXAMPLES :
-%
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   05/27/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_present] = var_is_present_dec_argo(a_ncId, a_varName)
-
-o_present = 0;
-
-[nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(a_ncId);
-
-for idVar= 0:nbVars-1
-   [varName, varType, varDims, nbAtts] = netcdf.inqVar(a_ncId, idVar);
-   if (strcmp(varName, a_varName))
-      o_present = 1;
-      break
-   end
-end
 
 return

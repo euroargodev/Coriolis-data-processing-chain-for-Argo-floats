@@ -1,26 +1,26 @@
 % ------------------------------------------------------------------------------
-% Génération du code kml permettant de créer une ligne.
+% GÃ©nÃ©ration du code kml permettant de crÃ©er une ligne.
 %
 % SYNTAX :
 %  [o_kmlStr] = ge_create_line2(a_lon, a_lat, a_description, a_name, ...
 %    a_visibility, a_style, a_timeSpanStart, a_timeSpanEnd)
 %
 % INPUT PARAMETERS :
-%   a_lon, a_lat    : coordonnées de la ligne
+%   a_lon, a_lat    : coordonnÃ©es de la ligne
 %   a_description   : contenu du champ 'description'
 %   a_name          : contenu du champ 'name'
-%   a_visibility    : visibilité
-%   a_style         : style (prédéfini) utilisé pour la ligne
-%   a_timeSpanStart : date de début d'affichage de la ligne
+%   a_visibility    : visibilitÃ©
+%   a_style         : style (prÃ©dÃ©fini) utilisÃ© pour la ligne
+%   a_timeSpanStart : date de dÃ©but d'affichage de la ligne
 %   a_timeSpanEnd   : date de fin d'affichage de la ligne
 %
 % OUTPUT PARAMETERS :
-%   o_kmlStr : code kml généré
+%   o_kmlStr : code kml gÃ©nÃ©rÃ©
 %
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/31/2022 - RNU - creation

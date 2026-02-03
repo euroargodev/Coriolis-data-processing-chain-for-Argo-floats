@@ -1,6 +1,5 @@
 % ------------------------------------------------------------------------------
-% Retrieve data from World Ocean Atlas 2013 (file woa13_all_n00_01.nc which
-% should be in the Matlab path).
+% Retrieve data from World Ocean Atlas.
 %
 % SYNTAX :
 %  [o_profInfo] = get_WOA_data(a_profInfo)
@@ -14,21 +13,24 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/28/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_profInfo] = get_WOA_data(a_profInfo)
 
+% WOA file path name
+global g_decArgo_woaFile;
+
 % output parameters initialization
 o_profInfo = [];
 
 
-% check that World Ocean Atlas 2013 is available in the Matlab path
-WOA_FILE_NAME = 'woa13_all_n00_01.nc';
+% check that World Ocean Atlas is available
+WOA_FILE_NAME = g_decArgo_woaFile;
 if ~(exist(WOA_FILE_NAME, 'file') == 2)
-   fprintf('ERROR: World Ocean Atlas 2013 file not found in the Matlab path: %s - NITRATE data cannot be adjusted\n', WOA_FILE_NAME);
+   fprintf('ERROR: World Ocean Atlas file not found: %s - NITRATE data cannot be adjusted\n', WOA_FILE_NAME);
    return
 end
 
@@ -58,7 +60,7 @@ woaDataAtt = get_att_from_nc_file(WOA_FILE_NAME, wantedVarAtts);
 woaFillValue = get_att_from_name('n_an', '_FillValue', woaDataAtt);
 
 if (length(woaTime) ~= 1)
-   fprintf('ERROR: Time is expected to be unique in World Ocean Atlas 2013 file: %s - NITRATE data cannot be adjusted\n', WOA_FILE_NAME);
+   fprintf('ERROR: Time is expected to be unique in World Ocean Atlas file: %s - NITRATE data cannot be adjusted\n', WOA_FILE_NAME);
    return
 end
 
@@ -131,129 +133,5 @@ end
 
 % update output parameters
 o_profInfo = a_profInfo;
-
-return
-
-% ------------------------------------------------------------------------------
-% Get data from name in a {var_name}/{var_data} list.
-%
-% SYNTAX :
-%  [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
-%
-% INPUT PARAMETERS :
-%   a_dataName : name of the data to retrieve
-%   a_dataList : {var_name}/{var_data} list
-%
-% OUTPUT PARAMETERS :
-%   o_dataValues : concerned data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   06/28/2018 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
-
-% output parameters initialization
-o_dataValues = [];
-
-idVal = find(strcmp(a_dataName, a_dataList(1:2:end)) == 1, 1);
-if (~isempty(idVal))
-   o_dataValues = a_dataList{2*idVal};
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncDataAtt] = get_att_from_nc_file(a_ncPathFileName, a_wantedVarAtts)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVarAtts  : NetCDF variable names and attribute names to retrieve
-%                      from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncDataAtt : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   06/12/2018 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncDataAtt] = get_att_from_nc_file(a_ncPathFileName, a_wantedVarAtts)
-
-% output parameters initialization
-o_ncDataAtt = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve attributes from NetCDF file
-   for idVar = 1:2:length(a_wantedVarAtts)
-      varName = a_wantedVarAtts{idVar};
-      attName = a_wantedVarAtts{idVar+1};
-      
-      if (var_is_present_dec_argo(fCdf, varName) && att_is_present_dec_argo(fCdf, varName, attName))
-         attValue = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, varName), attName);
-         o_ncDataAtt = [o_ncDataAtt {varName} {attName} {attValue}];
-      else
-         o_ncDataAtt = [o_ncDataAtt {varName} {attName} {' '}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Get attribute data from variable name and attribute in a
-% {var_name}/{var_att}/{att_data} list.
-%
-% SYNTAX :
-%  [o_dataValues] = get_att_from_name(a_varName, a_attName, a_dataList)
-%
-% INPUT PARAMETERS :
-%   a_varName : name of the variable
-%   a_attName : name of the attribute
-%   a_dataList : {var_name}/{var_att}/{att_data} list
-%
-% OUTPUT PARAMETERS :
-%   o_dataValues : concerned data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   06/12/2018 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_dataValues] = get_att_from_name(a_varName, a_attName, a_dataList)
-
-% output parameters initialization
-o_dataValues = [];
-
-idVal = find(strcmp(a_varName, a_dataList(1:3:end)) & strcmp(a_attName, a_dataList(2:3:end)));
-if (~isempty(idVal))
-   o_dataValues = a_dataList{3*idVal};
-end
 
 return

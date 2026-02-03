@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/16/2013 - RNU - creation
@@ -42,23 +42,27 @@ switch (a_decoderId)
       o_platformType = 'PROVOR_III';
       
    case {121, 122, 123, 124, 125}
-      % PROVOR APMT-OSEAN (CTS5)
+      % PROVOR APM-OSEAN (CTS5)
       o_platformType = 'PROVOR_IV';
       
-   case {126, 127, 128}
-      % PROVOR APMT-USEA (CTS5)
+   case {126, 127, 128, 134, 136}
+      % PROVOR APM-USEA (CTS5)
       o_platformType = 'PROVOR_V';
 
-   case {129, 130, 131, 132, 133}
+   case {129, 130, 131, 132, 133, 135, 137, 138, 139, 140, 141}
       % PROVOR APMT-USEA JUMBO (CTS5)
       o_platformType = 'PROVOR_V_JUMBO';
       
-   case {201, 202, 203, 215, 216, 218, 221}
+   case {201, 202, 203, 215, 216, 218, 221, 228, 229, 230}
       % DEEP ARVOR
       o_platformType = 'ARVOR_D';
       
-   case {205, 204, 209, 210, 211, 212, 222, 224, 226}
+   case {205, 204, 209, 210, 211, 212, 222, 224, 226, 227, 231, 232}
       % ARVOR Iridium
+      o_platformType = 'ARVOR';
+
+   case {401, 402}
+      % ARVOR PFV2
       o_platformType = 'ARVOR';
       
    case {206, 207, 208, 213, 214, 225}
@@ -82,9 +86,9 @@ switch (a_decoderId)
       % Apex Argos
       o_platformType = 'APEX';
       
-   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, ...
+   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1115, ...
          1314, ...
-         1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, ...
+         1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132, ...
          1321, 1322, 1323}
       % Apex Iridium
       o_platformType = 'APEX';

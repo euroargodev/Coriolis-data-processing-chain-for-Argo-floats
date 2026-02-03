@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/18/2013 - RNU - creation
@@ -429,7 +429,7 @@ switch (a_decoderId)
             
       end
       
-   case {126, 127, 128, 129, 130, 131, 132, 133}
+   case {126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
       % PROVOR CTS5-USEA
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
@@ -482,13 +482,16 @@ switch (a_decoderId)
             
       end
       
-   case {201, 202, 203, 215, 216, 218, 221}
+   case {201, 202, 203, 215, 216, 218, 221, 228, 229, 230}
       % ARVOR DEEP 4000
       % ARVOR DEEP 3500
       % ARVOR DEEP 4000 with "Near Surface" & "In Air" measurements
       % Arvor-Deep-Ice Iridium 5.65
       % Arvor-Deep-Ice Iridium 5.66
       % Arvor-Deep-Ice Iridium 5.67
+      % Arvor-Deep-Ice Iridium 5.68 (3T prototype)
+      % Arvor-Deep-Ice Iridium 5.69 (2T prototype)
+      % Arvor-Deep-Ice Iridium 5.77 (2DO)
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
             
@@ -637,7 +640,7 @@ switch (a_decoderId)
             
       end
       
-   case {210, 211, 212, 222, 213, 214, 217, 223, 224, 225, 226}
+   case {210, 211, 212, 222, 213, 214, 217, 223, 224, 225, 226, 227, 231, 232}
       % ARVOR ARN Iridium
       % PROVOR ARN DO Iridium
       % Provor-ARN-Ice Iridium 5.45 & 5.47
@@ -647,6 +650,9 @@ switch (a_decoderId)
       % Provor-ARN-Ice RBR Iridium 5.49
       % Provor-ARN-DO-Ice Iridium 5.76
       % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
+      % Arvor-ARN-Ice RBR 1 Hz + auto corrected PSAL Iridium 5.52
+      % Arvor-ARN-Ice SBE Iridium 5.53
+      % Provor-ARN-Ice Iridium 5.54
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
             
@@ -777,6 +783,42 @@ switch (a_decoderId)
             
       end
       
+   case {401, 402}
+      % ARVOR PFV2
+      switch (a_paramName)
+         case {'PRES', 'PRES_ADJUSTED'}
+            
+            o_resolution = single(0.1);
+            
+         case {'PRES_ADJUSTED_ERROR'}
+            
+            o_resolution = single(0.1);
+
+         case {'JULD', 'JULD_ADJUSTED'}
+            
+            o_resolution = double(1/86400); % 1 second
+            
+         case {'JULD_DESCENT_START', ...
+               'JULD_FIRST_STABILIZATION', ...
+               'JULD_DESCENT_END', ...
+               'JULD_PARK_START', ...
+               'JULD_PARK_END', ...
+               'JULD_DEEP_DESCENT_END', ...
+               'JULD_DEEP_PARK_START', ...
+               'JULD_ASCENT_START', ...
+               'JULD_DEEP_ASCENT_START', ...
+               'JULD_ASCENT_END', ...
+               'JULD_TRANSMISSION_START', ...
+               'JULD_TRANSMISSION_END', ...
+               'JULD_FIRST_MESSAGE', ...
+               'JULD_FIRST_LOCATION', ...
+               'JULD_LAST_LOCATION', ...
+               'JULD_LAST_MESSAGE'}
+            
+            o_resolution = double(1/86400); % 1 second
+            
+      end
+
    case {1001, 1002, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 1013, ...
          1014, 1015, 1016}
       % Apex Argos
@@ -960,7 +1002,7 @@ switch (a_decoderId)
 
       end
       
-   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1314}
+   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1115, 1314}
       % Apex Iridium Rudics & Sbd
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}
@@ -972,7 +1014,7 @@ switch (a_decoderId)
                   g_MC_AST
                   g_MC_AscProfDeepestBin
                   g_MC_AET];
-            elseif (ismember(a_decoderId, [1101, 1105, 1110, 1111, 1112, 1114])) % Apex Iridium Rudics & Sbd with surface measurement
+            elseif (ismember(a_decoderId, [1101, 1105, 1110, 1111, 1112, 1114, 1115])) % Apex Iridium Rudics & Sbd with surface measurement
                listMc1 = [ ...
                   g_MC_AST
                   g_MC_AscProfDeepestBin
@@ -1014,7 +1056,7 @@ switch (a_decoderId)
             o_resolution = double(1/86400); % 1 second
       end
       
-   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1321, 1322, 1323}
+   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132, 1321, 1322, 1323}
       % Apex APF11 Iridium
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED'}

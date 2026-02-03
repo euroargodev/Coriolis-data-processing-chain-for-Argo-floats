@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -48,7 +48,7 @@ cycleList = [];
 cyclePatternList = [];
 payloadConfFileList = [];
 for idType = 1:size(g_decArgo_fileTypeListCts5, 1)
-   if (g_decArgo_fileTypeListCts5{idType, 1} ~= 2)
+   if ((g_decArgo_fileTypeListCts5{idType, 1} ~= 2) && (g_decArgo_fileTypeListCts5{idType, 1} ~= 10))
       files = dir([g_decArgo_archiveDirectory '/' [g_decArgo_filePrefixCts5 g_decArgo_fileTypeListCts5{idType, 2}]]);
    else
       files = dir([g_decArgo_archiveDirectory '/' g_decArgo_fileTypeListCts5{idType, 2}]);
@@ -73,7 +73,7 @@ for idType = 1:size(g_decArgo_fileTypeListCts5, 1)
             if (isempty(errmsg) && (count == 1))
                cycleList = [cycleList; val(1)];
             end
-         case 2
+         case {2, 10}
             % no cycle nor pattern in the name of the payload configuration
             % file
             fileName = [fileName(1:22) fileName(end-3:end)];

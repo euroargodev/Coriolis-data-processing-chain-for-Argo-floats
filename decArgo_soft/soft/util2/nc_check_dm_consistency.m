@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/10/2018 - RNU - creation
@@ -35,18 +35,18 @@ header = ['DAC; WMO; FILE; PI NAME; VERSION; N_PROF; PROF#; DATA_MODE; PARAMETER
 
 dacDir = dir(DIR_INPUT_NC_FILES);
 for idDir = 1:length(dacDir)
-   
+
    dacDirName = dacDir(idDir).name;
-   
+
    %    if (~strcmp(dacDirName, 'coriolis'))
    %       continue
    %    end
-   
+
    dacDirPathName = [DIR_INPUT_NC_FILES '/' dacDirName];
    if ((exist(dacDirPathName, 'dir') == 7) && ~strcmp(dacDirName, '.') && ~strcmp(dacDirName, '..'))
-      
+
       fprintf('\nProcessing directory: %s\n', dacDirName);
-      
+
       % create the CSV output file
       outputFileName = [DIR_LOG_CSV_FILE '/' 'nc_check_dm_consistency_' dacDirName '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
       fidOut = fopen(outputFileName, 'wt');
@@ -54,35 +54,35 @@ for idDir = 1:length(dacDir)
          return
       end
       fprintf(fidOut, '%s\n', header);
-      
+
       floatDir = dir(dacDirPathName);
       for idDir2 = 1:length(floatDir)
-         
+
          floatDirName = floatDir(idDir2).name;
-         
+
          %          if (~strcmp(floatDirName, '1900943'))
          %             continue
          %          end
-         
+
          floatDirPathName = [dacDirPathName '/' floatDirName];
          if (exist(floatDirPathName, 'dir') == 7)
-            
+
             floatProfDirPathName = [dacDirPathName '/' floatDirName '/profiles/'];
-            
+
             if (exist(floatProfDirPathName, 'dir') == 7)
-               
+
                fprintf('%03d/%03d %s\n', idDir2, length(floatDir), floatDirName);
-               
+
                profDir = dir(floatProfDirPathName);
                for idFProf = 1:length(profDir)
-                  
+
                   profFileName = profDir(idFProf).name;
                   if (profFileName(1) == 'M')
                      continue
                   end
                   profFilePathName = [floatProfDirPathName '/' profFileName];
                   if (exist(profFilePathName, 'file') == 2)
-                     
+
                      % retrieve information from profile file
                      wantedInputVars = [ ...
                         {'PI_NAME'} ...
@@ -91,12 +91,12 @@ for idDir = 1:length(dacDir)
                         {'PARAMETER_DATA_MODE'} ...
                         ];
                      [profData] = get_data_from_nc_file(profFilePathName, wantedInputVars);
-                     
+
                      piName = deblank(get_data_from_name('PI_NAME', profData)');
                      formatVersion = deblank(get_data_from_name('FORMAT_VERSION', profData)');
                      dataMode = get_data_from_name('DATA_MODE', profData)';
                      parameterDataMode = get_data_from_name('PARAMETER_DATA_MODE', profData)';
-                     
+
                      errorProf = [];
                      % check consistency between file name and DATA_MODE
                      if ((profFileName(1) == 'D') || (profFileName(2) == 'D')) && ...
@@ -105,7 +105,7 @@ for idDir = 1:length(dacDir)
                         errorProf = idF;
                         fprintf('   ERROR: %s\n', profFileName);
                      end
-                     
+
                      % check consistency between DATA_MODE and PARAMETER_DATA_MODE
                      for idProf = 1:size(parameterDataMode, 1)
                         if ((((dataMode(idProf) == 'D') && ...
@@ -138,94 +138,5 @@ ellapsedTime = toc;
 fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
 diary off;
-
-return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         %          fprintf('WARNING: Variable %s not present in file : %s\n', ...
-         %             varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {''}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Get data from name in a {var_name}/{var_data} list.
-%
-% SYNTAX :
-%  [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
-%
-% INPUT PARAMETERS :
-%   a_dataName : name of the data to retrieve
-%   a_dataList : {var_name}/{var_data} list
-%
-% OUTPUT PARAMETERS :
-%   o_dataValues : concerned data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   06/12/2018 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
-
-% output parameters initialization
-o_dataValues = [];
-
-idVal = find(strcmp(a_dataName, a_dataList(1:2:end)) == 1, 1);
-if (~isempty(idVal))
-   o_dataValues = a_dataList{2*idVal};
-end
 
 return

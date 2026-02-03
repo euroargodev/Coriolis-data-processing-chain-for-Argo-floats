@@ -1,59 +1,47 @@
 % ------------------------------------------------------------------------------
-% Selection (déplacement) des répertoires de fichiers traités associés à une
+% Selection (dÃ©placement) des rÃ©pertoires de fichiers traitÃ©s associÃ©s Ã  une
 % liste de flotteurs.
 %
 % SYNTAX :
 %   select_data_files ou select_data_files(6900189,7900118)
 %
 % INPUT PARAMETERS :
-%   varargin : éventuellement la liste des numéros de flotteurs à traiter
+%   varargin : Ã©ventuellement la liste des numÃ©ros de flotteurs Ã  traiter
 %
 % OUTPUT PARAMETERS :
 %
 % EXAMPLES :
 %
 % SEE ALSO : get_config
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   26/05/2008 - RNU - creation
 % ------------------------------------------------------------------------------
 function select_data_files()
 
-floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_all.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ConvertApexOldVersionsTo3.1\list\Apex_36.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_nova.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmpAll_nke_atlantos.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_argos_all.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_argos_all.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_sbd_090215.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_ir_rudics_all.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-sbd_all.txt';
-% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_all.txt';
-% floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nemo_all.txt';
-floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\lists_20230316\list_decId_2xx_all.txt';
-% floatListFileName = '\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_C_all.txt';
-% floatListFileName = '\Users\jprannou\_RNU\DecArgo_soft\lists\tmp.txt';
-% floatListFileName = '\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_all_decId_2xx.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\Argo\ActionsCoriolis\ANDRO_2_TRAJ-DM\Decomptes_20240621\arvor_in_andro.txt';
+floatListFileName = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\cts5_20240706.txt';
 
-inputDirName = 'C:\Users\jprannou\_DATA\201905-ArgoData\coriolis\';
-inputDirName = 'C:\Users\jprannou\_DATA\Conversion_en_3.1\IN\';
 inputDirName = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-inputDirName = 'E:\work_traj_32\nc_output_decArgo_traj_32\';
+inputDirName = 'C:\Users\jprannou\_DATA\TRAJ_DM_2024\snapshot-202401_nke_in_andro\';
+inputDirName = 'F:\snapshot-202405\incois\';
+inputDirName = 'C:\Users\jprannou\_DATA\CTS5_DESC_PROF\';
 
 fprintf('Floats from list: %s\n', floatListFileName);
 floatList = load(floatListFileName);
 
-% création du répertoire de destination
+% crÃ©ation du rÃ©pertoire de destination
 outputDirName = [inputDirName '/selected/'];
 if (exist(outputDirName, 'dir') == 7)
-   fprintf('Le répertoire %s existe déjà, arrêt du programme\n', outputDirName);
+   fprintf('Le rÃ©pertoire %s existe dÃ©jÃ , arrÃªt du programme\n', outputDirName);
    return
 else
    mkdir(outputDirName);
 end
 
-% déplacement des répertoires de fichiers TXT associés aux flotteurs de la liste
+% dÃ©placement des rÃ©pertoires de fichiers TXT associÃ©s aux flotteurs de la liste
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
    floatNum = floatList(idFloat);
@@ -63,7 +51,7 @@ for idFloat = 1:nbFloats
    fprintf('%03d/%03d %d', idFloat, nbFloats, floatNum);
 
    if ~(exist(txtDirName, 'dir') == 7)
-      fprintf(': répertoire absent: %s\n', txtDirName);
+      fprintf(': rÃ©pertoire absent: %s\n', txtDirName);
    else
       move_file(txtDirName, outputDirName);
       fprintf('\n');

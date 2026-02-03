@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/27/2013 - RNU - creation
@@ -77,19 +77,21 @@ for idFloat = 1:nbFloats
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
    
    % find the login name of the float
-   [logName] = find_login_name(floatNum, numWmo, loginName);
+   logName = find_login_name(floatNum, numWmo, loginName);
    if (isempty(logName))
       return
    end
    
-   % find the decoder ID of the float
+   % for MEDS CTS4 float #4902679 IMEI number replaces the login name in the
+   % input .bin file names
+   % find the IMEI of the float
    idF = find(floatNum == numWmo);
-   if (isempty(idF))
-      fprintf('No decoder Id for float : %d\n', floatNum);
-      return
+   floatImeiStr = num2str(listDelay(idF));
+   % be sure it is an IMEI number
+   if ~((length(floatImeiStr) == 15) && ~any(isletter(floatImeiStr)))
+      floatImeiStr = '';
    end
-   floatDecId = listDecId(idF);
-   
+
    % create the output directory of this float
    floatOutputDirName = [outputDirName '/' logName '_' floatNumStr];
    if ~(exist(floatOutputDirName, 'dir') == 7)
@@ -105,15 +107,27 @@ for idFloat = 1:nbFloats
       mkdir(unusedDirName);
    end
 
-   sbdFile = [dir([inputDirName '/' logName '/' sprintf('*_%s_*.b64', logName)]); ...
-      dir([inputDirName '/' logName '/' sprintf('*_%s_*.bin', logName)])];
+   sbdFile = [ ...
+      dir([inputDirName '/' logName '/*_*_*_*.b64']); ...
+      dir([inputDirName '/' logName '/*_*_*_*.bin'])];
 
    for idFile = 1:length(sbdFile)
-      %    for idFile = 1:min(100,length(sbdFile))
       sbdFileName = sbdFile(idFile).name;
       sbdFilePathName = [inputDirName '/' logName '/' sbdFileName];
+      sbdFileNameOut = sbdFileName;
+
+      % if the IMEI number replaces the login name in the file name
+      if (~any(strfind(sbdFileName, logName)))
+         idF = strfind(sbdFileName, '_');
+         imeiNum = sbdFileName(idF(2)+1:idF(3)-1);
+         if (strcmp(imeiNum, floatImeiStr))
+            sbdFileNameOut = [sbdFileName(1:idF(2)) logName sbdFileName(idF(3):end)];
+         else
+            continue
+         end
+      end
       
-      sbdFilePathNameOut = [floatOutputDirName '/' sbdFileName];
+      sbdFilePathNameOut = [floatOutputDirName '/' sbdFileNameOut];
       if (exist(sbdFilePathNameOut, 'file') == 2)
          % when the file already exists, check (with its date) if it needs to be
          % updated

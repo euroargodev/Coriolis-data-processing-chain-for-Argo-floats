@@ -1,5 +1,5 @@
 % ------------------------------------------------------------------------------
-% Conversion hexa d'une couleur donnée en RGB pour affichage dans GE.
+% Conversion hexa d'une couleur donnÃ©e en RGB pour affichage dans GE.
 %
 % SYNTAX :
 %   [o_color] = ge_rgb_2_hex(a_red, a_green, a_blue)
@@ -10,12 +10,12 @@
 %   a_blue  : valeur du bleu [0..1]
 %
 % OUTPUT PARAMETERS :
-%   o_color : valeur hexa de la couleur souhaitée
+%   o_color : valeur hexa de la couleur souhaitÃ©e
 %
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/01/2009 - RNU - creation

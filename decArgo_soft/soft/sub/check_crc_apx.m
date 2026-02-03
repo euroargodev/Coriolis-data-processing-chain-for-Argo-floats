@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/15/2007 - RNU - creation
@@ -44,7 +44,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO : hasard
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/15/2007 - RNU - creation
@@ -94,7 +94,7 @@ function test_crc()
 ckeckData = '8F 00 08 1C 8E 47 23 91 48 A4 D2 E9 74 3A 1D 0E 07 03 81 C0 60 30 98 4C 26 93 49 24 92 C9 64 B2';
 [val, count, errmsg, nextindex] = sscanf(ckeckData, '%x ');
 
-fprintf('CRC Données: %d\n', val(1));
-fprintf('CRC Calculé: %d\n', compute_crc(val(2:32)));
+fprintf('CRC DonnÃ©es: %d\n', val(1));
+fprintf('CRC CalculÃ©: %d\n', compute_crc(val(2:32)));
 
 return

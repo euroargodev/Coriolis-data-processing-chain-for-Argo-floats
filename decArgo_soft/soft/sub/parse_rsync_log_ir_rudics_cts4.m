@@ -14,12 +14,12 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/18/2013 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_floatSbdFiles] = parse_rsync_log_ir_rudics_cts4(a_rsyncLogName, a_floatLoginName)
+function [o_floatSbdFiles] = parse_rsync_log_ir_rudics_cts4(a_rsyncLogName, a_floatLoginName, a_floatImeiStr)
 
 % output parameters initialization
 o_floatSbdFiles = [];
@@ -55,6 +55,8 @@ for idL = 1:length(logData)
             if (length(idF) == 3)
                floatLogin = fileName(idF(2)+1:idF(3)-1);
                if (strcmp(floatLogin, a_floatLoginName))
+                  o_floatSbdFiles{end+1} = [ptn2 fileName];
+               elseif (strcmp(floatLogin, a_floatImeiStr))
                   o_floatSbdFiles{end+1} = [ptn2 fileName];
                end
             end

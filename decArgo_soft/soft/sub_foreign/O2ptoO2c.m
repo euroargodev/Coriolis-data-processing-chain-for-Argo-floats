@@ -5,7 +5,7 @@ function O2conc=O2ptoO2c(pO2,T,S,P, a_d0, a_d1, a_d2, a_d3, a_b0, a_b1, a_b2, a_
 %
 % inputs:
 %   pO2    - oxygen partial pressure in mbar
-%   T      - temperature in °C
+%   T      - temperature in Â°C
 %   S      - salinity (PSS-78)
 %   P      - hydrostatic pressure in dbar (default: 0 dbar)
 %
@@ -16,7 +16,7 @@ function O2conc=O2ptoO2c(pO2,T,S,P, a_d0, a_d1, a_d2, a_d3, a_b0, a_b1, a_b2, a_
 % for Oxygen and Other Biogeochemical Sensors on Floats and Gliders"
 %
 % Henry Bittig
-% Laboratoire d'Océanographie de Villefranche-sur-Mer, France
+% Laboratoire d'OcÃ©anographie de Villefranche-sur-Mer, France
 % bittig@obs-vlfr.fr
 % 28.10.2015
 

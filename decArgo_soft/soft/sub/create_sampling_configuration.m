@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/10/2018 - RNU - creation
@@ -56,6 +56,12 @@ for idPhase = 1:length(phaseNames)
                o_configSampVal{end+1} = num2str(sampInfo(idL, 3));
                o_configSampName{end+1} = ['CONFIG_SAMPLE_' phaseName '_' sensorName '_' num2str(idL) '_NumberOfSamples'];
                o_configSampVal{end+1} = num2str(sampInfo(idL, 5));
+               if (size(sampInfo, 2) > 5)
+                  if (sampInfo(idL, 6) ~= 0)
+                     o_configSampName{end+1} = ['CONFIG_SAMPLE_' phaseName '_' sensorName '_' num2str(idL) '_MaxNumberOfSamples'];
+                     o_configSampVal{end+1} = num2str(sampInfo(idL, 6));
+                  end
+               end
             end
          elseif (strcmp(sampType, 'PROFILE'))
             [~, sortId] = sort(sampInfo(:, 1));

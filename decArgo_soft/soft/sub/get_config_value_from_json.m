@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/01/2019 - RNU - creation
@@ -31,7 +31,10 @@ if (isfield(a_jsonMetaData, 'CONFIG_PARAMETER_NAME') && ...
    configNameList = struct2cell(a_jsonMetaData.CONFIG_PARAMETER_NAME);
    idF = find(strcmp(a_configName, configNameList));
    if (~isempty(idF))
-      o_configValue = str2double(a_jsonMetaData.CONFIG_PARAMETER_VALUE.(['CONFIG_PARAMETER_VALUE_' num2str(idF)]));
+      valueStr = a_jsonMetaData.CONFIG_PARAMETER_VALUE.(['CONFIG_PARAMETER_VALUE_' num2str(idF)]);
+      if (~isempty(strtrim(valueStr)))
+         o_configValue = str2double(valueStr);
+      end
    end
 end
 

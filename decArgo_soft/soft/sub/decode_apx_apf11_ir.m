@@ -62,7 +62,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/27/2018 - RNU - creation
@@ -224,11 +224,11 @@ if (~isempty(a_systemLogFileList))
 
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          
-      case {1128, 1129, 1130} % 2.15.2.R & 2.15.5.R, 2.16.0.R, 2.17.4.R
+      case {1128, 1129, 1130, 1131, 1132} % 2.15.2.R & 2.15.5.R, 2.16.0.R, 2.17.4.R, 2.18.1.R, 2.19.1.R
          
          [o_miscInfoSys, o_metaData, o_missionCfg, o_sampleCfg, o_techData, ...
             o_gpsDataSys, o_grounding, o_iceDetection, o_buoyancy, o_miscEvtsSys, o_cycleTimeData, o_presOffsetData] = ...
-            decode_system_log_apx_apf11_ir_1128_to_1130(a_systemLogFileList, o_cycleTimeData, o_presOffsetData, o_techData, a_decoderId);
+            decode_system_log_apx_apf11_ir_1128_to_1132(a_systemLogFileList, o_cycleTimeData, o_presOffsetData, o_techData, a_decoderId);
 
       otherwise
          
@@ -238,10 +238,14 @@ if (~isempty(a_systemLogFileList))
             a_decoderId);
    end   
    
-   % add PRES information to buoyancy events (and to AED when Ice has been
-   % detected)
-   [o_buoyancy, o_cycleTimeData] = add_pres_to_buoyancy_evts_apx_apf11_ir( ...
-      o_buoyancy, o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh, o_cycleTimeData);
+   % finalize data decoded from system_log files:
+   % set AED when profile has been aborted
+   % store ICE information in TECH data
+   % add PRES to buoyancy events
+   [o_buoyancy, o_cycleTimeData, o_iceDetection, o_techData] = ...
+      finalize_system_log_decoded_data_apx_apf11_ir( ...
+      o_buoyancy, o_cycleTimeData, o_iceDetection, o_techData, ...
+      o_profCtdP, o_profCtdPt, o_profCtdPts, o_profCtdPtsh);
 end
 
 if (~isempty(a_criticalLogFileList))

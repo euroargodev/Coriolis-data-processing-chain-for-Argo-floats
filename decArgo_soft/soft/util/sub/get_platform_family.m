@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/17/2015 - RNU - creation
@@ -41,15 +41,15 @@ switch (a_decoderId)
       % PROVOR CTS4
       o_platformFamily = 'FLOAT';
       
-   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133}
+   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
       % PROVOR CTS5
       o_platformFamily = 'FLOAT';
       
-   case {201, 202, 203, 215, 216, 218, 221}
+   case {201, 202, 203, 215, 216, 218, 221, 228, 229, 230}
       % DEEP ARVOR
       o_platformFamily = 'FLOAT_DEEP';
       
-   case {205, 204, 210, 211, 212, 222, 224, 226}
+   case {205, 204, 210, 211, 212, 222, 224, 226, 227, 231, 232, 401, 402}
       % ARVOR Iridium
       o_platformFamily = 'FLOAT';
       
@@ -69,7 +69,7 @@ switch (a_decoderId)
       % NOVA & DOVA
       o_platformFamily = 'FLOAT';
          
-   case {1321, 1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130}
+   case {1321, 1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132}
       % Apex APF11
       o_platformFamily = 'FLOAT';
 

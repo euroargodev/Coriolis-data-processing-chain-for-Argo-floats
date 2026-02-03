@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/01/2014 - RNU - creation
@@ -22,12 +22,14 @@ function generate_json_float_meta_prv_cts4_ir_sbd
 
 % meta-data file exported from Coriolis data base
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\export_DOXY_from_VB_20160518.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_CTS4_5906868.txt';
 
 % list of sensors mounted on floats
 SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
 
 % list of concerned floats
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_nke_rem_flbb_20160512.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
 
 % calibration coefficient file decoded from data
 CALIB_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
@@ -52,13 +54,15 @@ diary(logFileName);
 fprintf('Log file: %s\n', logFileName);
 
 % generate JSON meta-data files
+rtVersionFlag = 0;
 generate_json_float_meta_prv_cts4_ir_sbd_(...
    FLOAT_META_FILE_NAME, ...
    SENSOR_LIST_FILE_NAME, ...
    FLOAT_LIST_FILE_NAME, ...
    CALIB_FILE_NAME, ...
    CONFIG_DIR_NAME, ...
-   OUTPUT_DIR_NAME);
+   OUTPUT_DIR_NAME, ...
+   rtVersionFlag);
 
 diary off;
 

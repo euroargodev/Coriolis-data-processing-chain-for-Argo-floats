@@ -16,8 +16,8 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 107;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT;number of solenoid valve actions at the surface until the crossing of the GAP threshold
 108;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredDuringDescentToPark_cm^3;Oil volume transferred from the external bladder during the descent to park (between the second threshold of the buoyancy reduction phase and the end of the descent to park). This is the oil volume tranferred  during the NUMBER_ValveActionsDuringDescentToPark_COUNT valve actions.
 109;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringDescentToPark_COUNT;number of valve actions between the crossing  of the gap threshold and the end of descent at park pressure
-110;TECH_AUX;Date/heure de fin;TECH_AUX_CLOCK_EndGroundingTime_YYYYMMDDHHMMSS;Time when the float escaped from grounding.
-111;TECH;Volume huile transféré;VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3;Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded.
+110;TECH_AUX;End date/time;TECH_AUX_CLOCK_EndGroundingTime_YYYYMMDDHHMMSS;Time when the float escaped from grounding.
+111;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3;Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded. 
 112;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringPark_COUNT;number of valve actions during park phase
 113;TECH;Nb. pump actions;NUMBER_PumpActionsDuringPark_COUNT;number of pump actions while at park depth
 114;TECH;Nb. set point inputs;NUMBER_ParkDriftEntriesInParkMargin_COUNT;drift at park pressure: number of entries in margin around park pressure target - specifically, how many times the float enters the band of pressure surrounding the target park pressure (generally +/- 30db)
@@ -103,7 +103,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 203;TECH_AUX;"Type xxx among ""Early profile, Early surface, Abort profile, Abort cycle 0, Abort cycle 1, Go to deep, Standard speed, Lower speed""";TECH_AUX_STRING_FeedbackType;Type of the feedback.
 204;TECH_AUX;Nb. accepted;TECH_AUX_NUMBER_FeedbackAccepted_COUNT;Number of accepted feedbacks.
 205;TECH_AUX;Nb. refused;TECH_AUX_NUMBER_FeedbackRefused_COUNT;Number of refused feedbacks.
-210;TECH_AUX;Ice:;TECH_AUX_FLAG_IsaIceDetection_LOGICAL;Alarm raised when Ice is detected by ISA algorithm.
+210;TECH_AUX;Ice:;TECH_AUX_FLAG_IceIsaDetectionAlarm_LOGICAL;Alarm raised when Ice has been detected with ISA algorithm.
 174;TECH_AUX;Accrochage à la remontée;TECH_AUX_CLOCK_HangingAlarm_YYYYMMDDHHMMSS;Alarm raised when the float is hanged during ascent.
 175;TECH_AUX;Accrochage à la remontée;TECH_AUX_CLOCK_HangingEscapeAlarm_YYYYMMDDHHMMSS;Alarm raised when the float escaped from hanging during ascent.
 176;TECH;Remontée d'urgence;CLOCK_DateOfEmergencyAscent_YYYYMMDDHHMMSS;date of emergency ascent
@@ -114,3 +114,15 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 181;TECH_AUX;Date de detection de glace;TECH_AUX_CLOCK_IceDetection_YYYYMMDDHHMMSS;Time of ice detection.
 182;TECH_AUX;Immersion de detection de glace;TECH_AUX_PRES_IceDetection_dbar;Pressure of ice detection.
 183;TECH_AUX;End of life;TECH_AUX_CLOCK_EndOfLifeAlarm_YYYYMMDDHHMMSS;Alarm raised when the float switches to the End Of Life mode. When reported as a NUMBER, it provides the reason of the End Of Life (see float manual for details).
+211;TECH_AUX;;TECH_AUX_FLAG_IceAlgorithmActivated_LOGICAL;Was the Ice Algorithm (ISA or AC1) activated or not for this particular cycle? 0 = no, 1 = yes
+212;TECH_AUX;;TECH_AUX_FLAG_IceIsaAlgorithmActivated_LOGICAL;Was the Ice ISA Algorithm  activated or not for this particular cycle? 0 = no, 1 = yes
+213;TECH_AUX;;TECH_AUX_FLAG_IceAc1Activated_LOGICAL;Was the Ice AC1  activated or not for this particular cycle? 0 = no, 1 = yes
+214;TECH_AUX;;TECH_AUX_FLAG_IceIsaDetectionAlarm_LOGICAL;Alarm raised when Ice has been detected with ISA algorithm.
+215;TECH_AUX;ICE_D_DATE in payload data;TECH_AUX_CLOCK_IceIsaDetectionAlarm_YYYYMMDDHHMMSS;Alarm raised when Ice has been detected with ISA algorithm.
+216;TECH_AUX;;TECH_AUX_FLAG_IceNoSurfacePeriod_LOGICAL;Alarm raised when the float is still not surfacing (even without Ice detection) due to Ice advoidance algorithm.
+217;TECH_AUX;;TECH_AUX_FLAG_IceFeedbackCmdAccepted_LOGICAL;Was the float configured to accept profile abortion command for this particular cycle? 0 = no, 1 = yes
+218;TECH_AUX;;TECH_AUX_FLAG_IceProfileAbortAlarm_LOGICAL;Alarm raised when the profile has been aborted by Ice detection.
+221;TECH_AUX;;TECH_AUX_CLOCK_IceProfileAbortAlarm_YYYYMMDDHHMMSS;Alarm raised when the profile has been aborted by Ice detection.
+222;TECH;Abort pressure;PRES_IceAvoidance_dbar;Pressure when float avoids ice
+219;TECH;Last 8 profiles aborted flags;FLAG_IceDetected_bit;aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit.
+220;TECH_AUX;Digest of ICE information;TECH_AUX_FLAG_IceAlgorithmStatus_bit;ICE information digest: 11 bits information with, from LSB to MSB: bit#1: Transmission flag (the float succeeded to reach the GPS or Iridium satellites), #2: ICE algorithm activated flag (the ICE algorithm is enabled and switched on), #3: ICE surface avoidance flag (the ICE algorithm is able to act on float behavior), #4: Aborted profile flag (the ICE algorithm aborted the ascending profile), #5: ISA flag (the result of ISA check), #6: Breakup period flag (the ascending profile occured during the breakup period), #7: Hanging flag (the ICE algorithm detected a float hanging), #8: Satellite mask flag (the ICE algorithm detected that the float tried but failed to reach the GPS or Iridium satellites constellations), #9: Forced ascent flag (the ascending profile was forced to try to reach the surface), #10: AC1 activated flag (the AC1 (PROVOR_IV float) feature is activated), #11: ICE cycle performed flag (the (Apex APF11) float used at least one ICE cycle after the ascending profile).

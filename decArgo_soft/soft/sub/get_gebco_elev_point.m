@@ -19,7 +19,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/29/2020 - RNU - creation
@@ -64,112 +64,119 @@ if (isempty(fCdf))
    return
 end
 
-lonVarId = netcdf.inqVarID(fCdf, 'lon');
-latVarId = netcdf.inqVarID(fCdf, 'lat');
-elevVarId = netcdf.inqVarID(fCdf, 'elevation');
+try
 
-lon = netcdf.getVar(fCdf, lonVarId);
-lat = netcdf.getVar(fCdf, latVarId);
-minLon = min(lon);
-maxLon = max(lon);
+   lonVarId = netcdf.inqVarID(fCdf, 'lon');
+   latVarId = netcdf.inqVarID(fCdf, 'lat');
+   elevVarId = netcdf.inqVarID(fCdf, 'elevation');
 
-for idP = 1:length(a_lat)
+   lon = netcdf.getVar(fCdf, lonVarId);
+   lat = netcdf.getVar(fCdf, latVarId);
+   minLon = min(lon);
+   maxLon = max(lon);
 
-   if (isnan(a_lat(idP)) || isnan(a_lon(idP)))
-      continue
-   end
+   for idP = 1:length(a_lat)
 
-   idLigStart = find(lat <= a_lat(idP), 1, 'last');
-   if (isempty(idLigStart))
-      idLigStart = 1;
-   end
-   idLigEnd = find(lat >= a_lat(idP), 1, 'first');
-   if (isempty(idLigEnd))
-      idLigEnd = length(lat);
-   end
-   %    latVal = lat(fliplr(idLigStart:idLigEnd));
-   
-   % a_lon(idP) is in the [-180, 180[ interval
-   % it can be in 3 zones:
-   % case 1: [-180, minLon[
-   % case 2: [minLon, maxLon]
-   % case 3: ]maxLon, -180[
-   if ((a_lon(idP) >= minLon) && (a_lon(idP) <= maxLon))
-      % case 2
-      idColStart = find(lon <= a_lon(idP), 1, 'last');
-      idColEnd = find(lon >= a_lon(idP), 1, 'first');
-      
-      elev = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
-      for idL = idLigStart:idLigEnd
-         elev(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
+      if (isnan(a_lat(idP)) || isnan(a_lon(idP)))
+         continue
       end
-      
-      %       lonVal = lon(idColStart:idColEnd);
-   elseif (a_lon(idP) < minLon)
-      % case 1
-      elev1 = nan(length(idLigStart:idLigEnd), 1);
-      for idL = idLigStart:idLigEnd
-         elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
-      end
-      
-      %       lonVal1 = lon(end);
-      
-      elev2 = nan(length(idLigStart:idLigEnd), 1);
-      for idL = idLigStart:idLigEnd
-         elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
-      end
-      
-      %       lonVal2 = lon(1) + 360;
-      
-      elev = cat(2, elev1, elev2);
-      %       lonVal = cat(1, lonVal1, lonVal2);
-      clear elev1 elev2
-   elseif (a_lon(idP) > maxLon)
-      % case 3
-      elev1 = nan(length(idLigStart:idLigEnd), 1);
-      for idL = idLigStart:idLigEnd
-         elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
-      end
-      
-      %       lonVal1 = lon(end);
-      
-      elev2 = nan(length(idLigStart:idLigEnd), 1);
-      for idL = idLigStart:idLigEnd
-         elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
-      end
-      
-      %       lonVal2 = lon(1) + 360;
-      
-      elev = cat(2, elev1, elev2);
-      %       lonVal = cat(1, lonVal1, lonVal2);
-      clear elev1 elev2
-   end
 
-   if (~isempty(elev))
-      if (size(elev, 1) == 2)
-         if (size(elev, 2) == 2)
-            o_elev(idP, 1) = elev(2, 1);
-            o_elev(idP, 2) = elev(1, 1);
-            o_elev(idP, 3) = elev(2, 2);
-            o_elev(idP, 4) = elev(1, 2);
-         else
-            o_elev(idP, 1) = elev(2);
-            o_elev(idP, 2) = elev(1);
+      idLigStart = find(lat <= a_lat(idP), 1, 'last');
+      if (isempty(idLigStart))
+         idLigStart = 1;
+      end
+      idLigEnd = find(lat >= a_lat(idP), 1, 'first');
+      if (isempty(idLigEnd))
+         idLigEnd = length(lat);
+      end
+      %    latVal = lat(fliplr(idLigStart:idLigEnd));
+
+      % a_lon(idP) is in the [-180, 180[ interval
+      % it can be in 3 zones:
+      % case 1: [-180, minLon[
+      % case 2: [minLon, maxLon]
+      % case 3: ]maxLon, -180[
+      if ((a_lon(idP) >= minLon) && (a_lon(idP) <= maxLon))
+         % case 2
+         idColStart = find(lon <= a_lon(idP), 1, 'last');
+         idColEnd = find(lon >= a_lon(idP), 1, 'first');
+
+         elev = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
+         for idL = idLigStart:idLigEnd
+            elev(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
          end
-      else
-         if (size(elev, 2) == 2)
-            o_elev(idP, 1) = elev(1, 1);
-            o_elev(idP, 3) = elev(1, 2);
+
+         %       lonVal = lon(idColStart:idColEnd);
+      elseif (a_lon(idP) < minLon)
+         % case 1
+         elev1 = nan(length(idLigStart:idLigEnd), 1);
+         for idL = idLigStart:idLigEnd
+            elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
+         end
+
+         %       lonVal1 = lon(end);
+
+         elev2 = nan(length(idLigStart:idLigEnd), 1);
+         for idL = idLigStart:idLigEnd
+            elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
+         end
+
+         %       lonVal2 = lon(1) + 360;
+
+         elev = cat(2, elev1, elev2);
+         %       lonVal = cat(1, lonVal1, lonVal2);
+         clear elev1 elev2
+      elseif (a_lon(idP) > maxLon)
+         % case 3
+         elev1 = nan(length(idLigStart:idLigEnd), 1);
+         for idL = idLigStart:idLigEnd
+            elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
+         end
+
+         %       lonVal1 = lon(end);
+
+         elev2 = nan(length(idLigStart:idLigEnd), 1);
+         for idL = idLigStart:idLigEnd
+            elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
+         end
+
+         %       lonVal2 = lon(1) + 360;
+
+         elev = cat(2, elev1, elev2);
+         %       lonVal = cat(1, lonVal1, lonVal2);
+         clear elev1 elev2
+      end
+
+      if (~isempty(elev))
+         if (size(elev, 1) == 2)
+            if (size(elev, 2) == 2)
+               o_elev(idP, 1) = elev(2, 1);
+               o_elev(idP, 2) = elev(1, 1);
+               o_elev(idP, 3) = elev(2, 2);
+               o_elev(idP, 4) = elev(1, 2);
+            else
+               o_elev(idP, 1) = elev(2);
+               o_elev(idP, 2) = elev(1);
+            end
          else
-            o_elev(idP, 1) = elev;
+            if (size(elev, 2) == 2)
+               o_elev(idP, 1) = elev(1, 1);
+               o_elev(idP, 3) = elev(1, 2);
+            else
+               o_elev(idP, 1) = elev;
+            end
          end
       end
+
+      clear elev
    end
-   
-   clear elev
+
+   netcdf.close(fCdf);
+
+catch MException
+   netcdf.close(fCdf);
+   rethrow(MException)
 end
-
-netcdf.close(fCdf);
 
 clear lon lat
 

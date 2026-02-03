@@ -1,0 +1,885 @@
+% ------------------------------------------------------------------------------
+% Generate complementary meta data for Arvor APF2 floats.
+%
+% SYNTAX :
+%  generate_csv_meta_pfv2 or generate_csv_meta_pfv2(varargin)
+%
+% INPUT PARAMETERS :
+%   varargin : WMO number of floats to process
+%
+% OUTPUT PARAMETERS :
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/09/2024 - RNU - creation
+% ------------------------------------------------------------------------------
+function generate_csv_meta_pfv2(varargin)
+
+% to switch between Coriolis and JPR configurations
+CORIOLIS_CONFIGURATION_FLAG = 0;
+
+if (CORIOLIS_CONFIGURATION_FLAG)
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % CORIOLIS CONFIGURATION - START
+
+   % meta-data file exported from Coriolis data base
+   dataBaseFileName = '/home/idmtmp7/vincent/matlab/DB_export/new_iridium_meta.txt';
+
+   % directory to store the log and csv files
+   DIR_LOG_CSV_FILE = '/home/coriolis_exp/binlx/co04/co0414/co041402/data/log';
+
+   % CORIOLIS CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+else
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % JPR CONFIGURATION - START
+
+   % meta-data file exported from Coriolis data base
+   dataBaseFileName = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\6990728_PFV2_8.02_dbExport.txt';
+
+   % directory to store the log and csv files
+   DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';
+
+   % JPR CONFIGURATION - END
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+end
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% mode processing flags
+global g_decArgo_realtimeFlag;
+global g_decArgo_delayedModeFlag;
+
+% default values initialization
+init_default_values;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% retrieve FLOAT_LIST_FILE_NAME and FLOAT_INFORMATION_FILE_NAME from decoder
+% configuration file
+
+% configuration parameters
+configVar = [];
+configVar{end+1} = 'FLOAT_LIST_FILE_NAME';
+configVar{end+1} = 'FLOAT_INFORMATION_FILE_NAME';
+
+% get configuration parameters
+g_decArgo_realtimeFlag = 0;
+g_decArgo_delayedModeFlag = 0;
+[configVal, unusedVarargin, inputError] = get_config_dec_argo(configVar, []);
+floatListFileName = configVal{1};
+floatInformationFileName = configVal{2};
+
+if (nargin == 0)
+   
+   % floats to process come from floatListFileName
+   if ~(exist(floatListFileName, 'file') == 2)
+      fprintf('ERROR: File not found: %s\n', floatListFileName);
+      return
+   end
+   
+   fprintf('Floats from list: %s\n', floatListFileName);
+   floatList = load(floatListFileName);
+else
+   % floats to process come from input parameters
+   floatList = cell2mat(varargin);
+end
+
+% create and start log file recording
+if (nargin == 0)
+   [~, name, ~] = fileparts(floatListFileName);
+   name = ['_' name];
+else
+   name = sprintf('_%d', floatList);
+end
+
+logFile = [DIR_LOG_CSV_FILE '/' 'generate_csv_meta_pfv2' name '_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
+diary(logFile);
+tic;
+
+% create the CSV output file
+outputFileName = [DIR_LOG_CSV_FILE '/' 'generate_csv_meta_pfv2' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
+fidOut = fopen(outputFileName, 'wt');
+if (fidOut == -1)
+   return
+end
+header = 'PLATFORM_CODE;TECH_PARAMETER_ID;DIM_LEVEL;CORIOLIS_TECH_METADATA.PARAMETER_VALUE;TECH_PARAMETER_CODE';
+fprintf(fidOut, '%s\n', header);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% read meta file
+fprintf('Processing file: %s\n', dataBaseFileName);
+fId = fopen(dataBaseFileName, 'r');
+if (fId == -1)
+   fprintf('ERROR: Unable to open file: %s\n', dataBaseFileName);
+   return
+end
+metaFileContents = textscan(fId, '%s', 'delimiter', '\t');
+metaFileContents = metaFileContents{:};
+fclose(fId);
+
+metaFileContents = regexprep(metaFileContents, '"', '');
+metaData = reshape(metaFileContents, 5, size(metaFileContents, 1)/5)';
+metaWmoList = metaData(:, 1);
+S = sprintf('%s*', metaWmoList{:});
+metaWmoList = sscanf(S, '%f*');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% get floats information
+[listWmoNum, listDecId, listArgosId, listFrameLen, ...
+   listCycleTime, listDriftSamplingPeriod, listDelay, ...
+   listLaunchDate, listLaunchLon, listLaunchLat, ...
+   listRefDay, listEndDate, listDmFlag] = get_floats_info(floatInformationFileName);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% process the floats of the flist
+nbFloats = length(floatList);
+for idFloat = 1:nbFloats
+   
+   floatNum = floatList(idFloat);
+   g_decArgo_floatNum = floatNum;
+   fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
+   
+   % find decoder Id
+   idF = find(listWmoNum == floatNum, 1);
+   if (isempty(idF))
+      fprintf('ERROR: No information on float #%d - nothing done for this float\n', floatNum);
+      continue
+   end
+   floatDecId = listDecId(idF);
+   
+   % retrieve float version
+   [floatVersion] = get_float_version(floatNum, metaWmoList, metaData);
+   
+   [platformFamily] = get_platform_family_db(floatNum, floatDecId, metaWmoList, metaData);
+   fprintf(fidOut, '%d;2081;1;%s;PLATFORM_FAMILY;%s\n', floatNum, platformFamily, floatVersion);
+   
+   [platformType] = get_platform_type_db(floatNum, floatDecId, metaWmoList, metaData);
+   fprintf(fidOut, '%d;2209;1;%s;PLATFORM_TYPE;%s\n', floatNum, platformType, floatVersion);
+   
+   [wmoInstType] = get_wmo_inst_type_db(floatNum, floatDecId, metaWmoList, metaData);
+   fprintf(fidOut, '%d;13;1;%s;PR_PROBE_CODE;%s\n', floatNum, wmoInstType, floatVersion);
+   
+   % get the list of sensors for this float
+   [sensorList] = get_sensor_list_from_decoder_id(floatNum, floatDecId, metaWmoList, metaData);
+   if (isempty(sensorList))
+      continue
+   end
+   
+   % sensor information
+   for idSensor = 1:length(sensorList)
+      [sensorName, sensorDimLevel, sensorMaker, sensorModel, sensorSn] = ...
+         get_sensor_info(sensorList{idSensor}, floatNum, metaWmoList, metaData);
+      for idS = 1:length(sensorName)
+         fprintf(fidOut, '%d;408;%d;%s;SENSOR;%s\n', floatNum, sensorDimLevel(idS), sensorName{idS}, floatVersion);
+         fprintf(fidOut, '%d;409;%d;%s;SENSOR_MAKER;%s\n', floatNum, sensorDimLevel(idS), sensorMaker{idS}, floatVersion);
+         fprintf(fidOut, '%d;410;%d;%s;SENSOR_MODEL;%s\n', floatNum, sensorDimLevel(idS), sensorModel{idS}, floatVersion);
+         fprintf(fidOut, '%d;411;%d;%s;SENSOR_SERIAL_NO;%s\n', floatNum, sensorDimLevel(idS), sensorSn{idS}, floatVersion);
+      end
+   end
+   
+   % parameter information
+   for idSensor = 1:length(sensorList)
+      [paramName, paramDimLevel, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+         calibEquation, calibCoef, calibComment] = ...
+         get_parameter_info(sensorList{idSensor}, floatNum, metaWmoList, metaData);
+      for idP = 1:length(paramName)
+         fprintf(fidOut, '%d;415;%d;%s;PARAMETER;%s\n', floatNum, paramDimLevel(idP), paramName{idP}, floatVersion);
+         fprintf(fidOut, '%d;2100;%d;%s;PARAMETER_SENSOR;%s\n', floatNum, paramDimLevel(idP), paramSensor{idP}, floatVersion);
+         fprintf(fidOut, '%d;2206;%d;%s;PARAMETER_UNITS;%s\n', floatNum, paramDimLevel(idP), paramUnits{idP}, floatVersion);
+         fprintf(fidOut, '%d;2207;%d;%s;PARAMETER_ACCURACY;%s\n', floatNum, paramDimLevel(idP), paramAccuracy{idP}, floatVersion);
+         fprintf(fidOut, '%d;2208;%d;%s;PARAMETER_RESOLUTION;%s\n', floatNum, paramDimLevel(idP), paramResolution{idP}, floatVersion);
+
+         %          fprintf(fidOut, '%d;416;%d;%s;PREDEPLOYMENT_CALIB_EQUATION;%s\n', floatNum, paramDimLevel(idP), calibEquation{idP}, floatVersion);
+         %          fprintf(fidOut, '%d;417;%d;%s;PREDEPLOYMENT_CALIB_COEFFICIENT;%s\n', floatNum, paramDimLevel(idP), calibCoef{idP}, floatVersion);
+         %          fprintf(fidOut, '%d;418;%d;%s;PREDEPLOYMENT_CALIB_COMMENT;%s\n', floatNum, paramDimLevel(idP), calibComment{idP}, floatVersion);
+      end
+   end
+end
+
+fclose(fidOut);
+
+ellapsedTime = toc;
+fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
+
+diary off;
+
+return
+
+% ------------------------------------------------------------------------------
+% Retrieve float version ('PR_VERSION') from meta data.
+%
+% SYNTAX :
+% [o_floatVersion] = get_float_version(a_floatNum, a_metaWmoList, a_metaData)
+%
+% INPUT PARAMETERS :
+%   a_floatNum    : float WMO number
+%   a_metaWmoList : WMO number assigne to each meta data
+%   a_metaData    : meta data
+%
+% OUTPUT PARAMETERS :
+%   o_floatVersion : float version
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/09/2024 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_floatVersion] = get_float_version(a_floatNum, a_metaWmoList, a_metaData)
+
+o_floatVersion = [];
+
+% retrieve float meta data
+idForWmo = find(a_metaWmoList == a_floatNum);
+
+idF = find(strcmp(a_metaData(idForWmo, 5), 'PR_VERSION'));
+if (~isempty(idF))
+   o_floatVersion = a_metaData{idForWmo(idF), 4};
+else
+   fprintf('ERROR: Float version not found for float %d\n', ...
+      a_floatNum);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Retrieve platform family ('PLATFORM_FAMILY') from meta data and check it is
+% consistent with expected one for the concerned decoder Id.
+%
+% SYNTAX :
+% [o_platformFamily] = get_platform_family_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
+%
+% INPUT PARAMETERS :
+%   a_floatNum    : float WMO number
+%   a_decId       : decoder Id
+%   a_metaWmoList : WMO number assigne to each meta data
+%   a_metaData    : meta data
+%
+% OUTPUT PARAMETERS :
+%   o_platformFamily : platform family
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/09/2024 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_platformFamily] = get_platform_family_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
+   
+o_platformFamily = [];
+
+% retrieve default value
+defaultPlatformFamily = get_platform_family(a_decId);
+
+% retrieve float meta data
+idForWmo = find(a_metaWmoList == a_floatNum);
+
+idF = find(strcmp(a_metaData(idForWmo, 5), 'PLATFORM_FAMILY'));
+if (~isempty(idF))
+   o_platformFamily = a_metaData{idForWmo(idF), 4};
+end
+
+if (~isempty(o_platformFamily))
+   if (~strcmp(o_platformFamily, defaultPlatformFamily))
+      fprintf('WARNING: Float #%d decid #%d: DB platform family (%s) differs from default value (%s) - set to default value\n', ...
+         a_floatNum, a_decId, ...
+         o_platformFamily, defaultPlatformFamily);
+      o_platformFamily = defaultPlatformFamily;
+   end
+else
+   o_platformFamily = defaultPlatformFamily;
+   fprintf('INFO: Float #%d decid #%d: DB platform family is missing - set to default value (%s)\n', ...
+      a_floatNum, a_decId, ...
+      o_platformFamily);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Retrieve platform type ('PLATFORM_TYPE') from meta data and check it is
+% consistent with expected one for the concerned decoder Id.
+%
+% SYNTAX :
+% [o_platformType] = get_platform_type_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
+%
+% INPUT PARAMETERS :
+%   a_floatNum    : float WMO number
+%   a_decId       : decoder Id
+%   a_metaWmoList : WMO number assigne to each meta data
+%   a_metaData    : meta data
+%
+% OUTPUT PARAMETERS :
+%   o_platformType : platform type
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/09/2024 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_platformType] = get_platform_type_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
+   
+o_platformType = [];
+
+% retrieve default value
+defaultPlatformType = get_platform_type(a_decId);
+
+% retrieve float meta data
+idForWmo = find(a_metaWmoList == a_floatNum);
+
+idF = find(strcmp(a_metaData(idForWmo, 5), 'PLATFORM_TYPE'));
+if (~isempty(idF))
+   o_platformType = a_metaData{idForWmo(idF), 4};
+end
+
+if (~isempty(o_platformType))
+   if (~strcmp(o_platformType, defaultPlatformType))
+      fprintf('WARNING: Float #%d decid #%d: DB platform type (%s) differs from default value (%s) - set to default value\n', ...
+         a_floatNum, a_decId, ...
+         o_platformType, defaultPlatformType);
+      o_platformType = defaultPlatformType;
+   end
+else
+   o_platformType = defaultPlatformType;
+   fprintf('INFO: Float #%d decid #%d: DB platform type is missing - set to default value (%s)\n', ...
+      a_floatNum, a_decId, ...
+      o_platformType);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Retrieve WMO instrument type ('PR_PROBE_CODE') from meta data and check it is
+% consistent with expected one for the concerned decoder Id.
+%
+% SYNTAX :
+% [o_wmoInstType] = get_wmo_inst_type_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
+%
+% INPUT PARAMETERS :
+%   a_floatNum    : float WMO number
+%   a_decId       : decoder Id
+%   a_metaWmoList : WMO number assigne to each meta data
+%   a_metaData    : meta data
+%
+% OUTPUT PARAMETERS :
+%   o_wmoInstType : WMO intrument type
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/09/2024 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_wmoInstType] = get_wmo_inst_type_db(a_floatNum, a_decId, a_metaWmoList, a_metaData)
+   
+o_wmoInstType = [];
+
+% retrieve default value
+defaultWmoInstType = get_wmo_instrument_type(a_decId);
+
+% retrieve float meta data
+idForWmo = find(a_metaWmoList == a_floatNum);
+
+idF = find(strcmp(a_metaData(idForWmo, 5), 'PR_PROBE_CODE'));
+if (~isempty(idF))
+   o_wmoInstType = a_metaData{idForWmo(idF), 4};
+end
+
+if (~isempty(o_wmoInstType))
+   if (~strcmp(o_wmoInstType, defaultWmoInstType))
+      fprintf('WARNING: Float #%d decid #%d: DB WMO instrument type (%s) differs from default value (%s) - set to default value\n', ...
+         a_floatNum, a_decId, ...
+         o_wmoInstType, defaultWmoInstType);
+      o_wmoInstType = defaultWmoInstType;
+   end
+else
+   o_wmoInstType = defaultWmoInstType;
+   fprintf('INFO: Float #%d decid #%d: DB WMO instrument type is missing - set to default value (%s)\n', ...
+      a_floatNum, a_decId, ...
+      o_wmoInstType);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Retrieve the list of sensors for a given decoder Id.
+%
+% SYNTAX :
+% [o_sensorList] = get_sensor_list_from_decoder_id(a_floatNum, a_decId, a_metaWmoList, a_metaData)
+%
+% INPUT PARAMETERS :
+%   a_floatNum    : float WMO number
+%   a_decId       : decoder Id
+%   a_metaWmoList : WMO number assigne to each meta data
+%   a_metaData    : meta data
+%
+% OUTPUT PARAMETERS :
+%   o_sensorList : list of sensors
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/09/2024 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_sensorList] = get_sensor_list_from_decoder_id(a_floatNum, a_decId, a_metaWmoList, a_metaData)
+
+o_sensorList = [];
+
+% retrieve float meta data
+idForWmo = find(a_metaWmoList == a_floatNum);
+
+% get the list of sensors for this decoder Id
+switch a_decId
+
+   case {401, 402}
+
+      idF = find(strcmp(a_metaData(idForWmo, 5), 'SENSOR_MAKER'));
+      if (any(strcmp(a_metaData(idForWmo(idF), 4), 'RBR')))
+         o_sensorList = [{'CTD_RBR'}];
+      else
+         o_sensorList = [{'CTD'}];
+      end
+
+      idF = find(strcmp(a_metaData(idForWmo, 5), 'SENSOR'));
+      if (any(strcmp(a_metaData(idForWmo(idF), 4), 'OPTODE_DOXY')))
+         o_sensorList = [o_sensorList; {'OPTODE'}];
+      end
+
+   otherwise
+      fprintf('ERROR: Unknown sensor list for decId #%d - nothing done for this float\n', a_decId);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Retrieve sensor information for a given sensor name.
+%
+% SYNTAX :
+% [o_sensorName, o_sensorDimLevel, o_sensorMaker, o_sensorModel, o_sensorSn] = ...
+%   get_sensor_info(a_inputSensorName, a_floatNum, a_metaWmoList, a_metaData)
+%
+% INPUT PARAMETERS :
+%   a_inputSensorName : decoder sensor name
+%   a_floatNum        : float WMO number
+%   a_metaWmoList     : WMO number assigne to each meta data
+%   a_metaData        : meta data
+%
+% OUTPUT PARAMETERS :
+%   o_sensorName     : Argo sensor name
+%   o_sensorDimLevel : DB sensor dim level
+%   o_sensorMaker    : Argo sensor maker
+%   o_sensorModel    : Argo sensor model
+%   o_sensorSn       : sensor serial number
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/09/2024 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_sensorName, o_sensorDimLevel, o_sensorMaker, o_sensorModel, o_sensorSn] = ...
+   get_sensor_info(a_inputSensorName, a_floatNum, a_metaWmoList, a_metaData)
+
+o_sensorName = [];
+o_sensorDimLevel = [];
+o_sensorMaker = [];
+o_sensorModel = [];
+o_sensorSn = [];
+
+% set default values
+switch a_inputSensorName
+   case 'CTD'
+      o_sensorName = [ ...
+         {'CTD_PRES'} ...
+         {'CTD_TEMP'} ...
+         {'CTD_CNDC'} ...
+         ];
+      o_sensorDimLevel = [1 2 3];
+      ifEmptySensorMakerList = [ ...
+         {'SBE'} ...
+         {'SBE'} ...
+         {'SBE'} ...
+         ];
+      ifEmptySensorModelList = [ ...
+         {'SBE41CP'} ...
+         {'SBE41CP'} ...
+         {'SBE41CP'} ...
+         ];
+
+   case 'CTD_RBR'
+      o_sensorName = [ ...
+         {'CTD_PRES'} ...
+         {'CTD_TEMP'} ...
+         {'CTD_CNDC'} ...
+         ];
+      o_sensorDimLevel = [1 2 3];
+      ifEmptySensorMakerList = [ ...
+         {'RBR'} ...
+         {'RBR'} ...
+         {'RBR'} ...
+         ];
+      ifEmptySensorModelList = [ ...
+         {'RBR_PRES_A'} ...
+         {'RBR_ARGO3'} ...
+         {'RBR_ARGO3'} ...
+         ];
+
+   case 'OPTODE'
+      o_sensorName = [ ...
+         {'OPTODE_DOXY'} ...
+         ];
+      o_sensorDimLevel = [101];
+      ifEmptySensorMakerList = [ ...
+         {'AANDERAA'} ...
+         ];
+      ifEmptySensorModelList = [ ...
+         {'AANDERAA_OPTODE_4330'} ...
+         ];
+
+   otherwise
+      fprintf('ERROR: No sensor name for %s\n', a_inputName);
+end
+
+% update meta data
+[o_sensorMaker, o_sensorModel, o_sensorSn] = get_sensor_data( ...
+   o_sensorName, ifEmptySensorMakerList, ifEmptySensorModelList, a_floatNum, a_metaWmoList, a_metaData);
+
+return
+
+% ------------------------------------------------------------------------------
+% Update sensor information in meta data.
+%
+% SYNTAX :
+% [o_sensorMaker, o_sensorModel, o_sensorSn] = ...
+%   get_sensor_data(a_sensorName, a_ifEmptySensorMakerList, a_ifEmptySensorModelList, a_floatNum, a_metaWmoList, a_metaData)
+%
+% INPUT PARAMETERS :
+%   a_sensorName             : Argo sensor name
+%   a_ifEmptySensorMakerList : default sensor maker list
+%   a_ifEmptySensorModelList : default sensor model list
+%   a_floatNum               : float WMO number
+%   a_metaWmoList            : WMO number assigne to each meta data
+%   a_metaData               : meta data
+%
+% OUTPUT PARAMETERS :
+%   o_sensorMaker : updated sensor maker
+%   o_sensorModel : updated sensor model
+%   o_sensorSn    : updated sensor serial number
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/09/2024 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_sensorMaker, o_sensorModel, o_sensorSn] = ...
+   get_sensor_data(a_sensorName, a_ifEmptySensorMakerList, a_ifEmptySensorModelList, a_floatNum, a_metaWmoList, a_metaData)
+
+o_sensorMaker = [];
+o_sensorModel = [];
+o_sensorSn = [];
+
+% retrieve float meta data
+idForWmo = find(a_metaWmoList == a_floatNum);
+
+for idC = 1:length(a_sensorName)
+   
+   idF1 = find(strcmp(a_metaData(idForWmo, 5), 'SENSOR') & ...
+      strcmp(a_metaData(idForWmo, 4), a_sensorName{idC}));
+   if (~isempty(idF1))
+      dimLev = a_metaData(idForWmo(idF1), 3);
+      
+      % sensor maker
+      idF2 = find(strcmp(a_metaData(idForWmo, 5), 'SENSOR_MAKER') & ...
+         strcmp(a_metaData(idForWmo, 3), dimLev));
+      if (~isempty(idF2))
+         o_sensorMaker{end+1} = a_metaData{idForWmo(idF2), 4};
+      else
+         o_sensorMaker{end+1} = a_ifEmptySensorMakerList{idC};
+         
+         fprintf('INFO: SENSOR_MAKER is missing for sensor ''%s'' of float #%d - value set to ''%s''\n', ...
+            a_sensorName{idC}, a_floatNum, o_sensorMaker{end});
+      end
+   
+      % sensor model
+      idF2 = find(strcmp(a_metaData(idForWmo, 5), 'SENSOR_MODEL') & ...
+         strcmp(a_metaData(idForWmo, 3), dimLev));
+      if (~isempty(idF2))
+         o_sensorModel{end+1} = a_metaData{idForWmo(idF2), 4};
+      else
+         o_sensorModel{end+1} = a_ifEmptySensorModelList{idC};
+         
+         fprintf('INFO: SENSOR_MODEL is missing for sensor ''%s'' of float #%d - value set to ''%s''\n', ...
+            a_sensorName{idC}, a_floatNum, o_sensorModel{end});
+      end
+      
+      % sensor serial number
+      idF2 = find(strcmp(a_metaData(idForWmo, 5), 'SENSOR_SERIAL_NO') & ...
+         strcmp(a_metaData(idForWmo, 3), dimLev));
+      if (~isempty(idF2))
+         o_sensorSn{end+1} = a_metaData{idForWmo(idF2), 4};
+      else
+         o_sensorSn{end+1} = 'n/a';
+         
+         fprintf('INFO: SENSOR_SERIAL_NO is missing for sensor ''%s'' of float #%d - value set to ''%s''\n', ...
+            a_sensorName{idC}, a_floatNum, o_sensorSn{end});
+      end
+   else      
+      o_sensorMaker{end+1} = a_ifEmptySensorMakerList{idC};
+      o_sensorModel{end+1} = a_ifEmptySensorModelList{idC};
+      o_sensorSn{end+1} = 'n/a';
+      
+      fprintf('INFO: SENSOR ''%s'' is missing for float #%d - sensor created with default values (''%s'', ''%s'', ''%s'')\n', ...
+         a_sensorName{idC}, a_floatNum, ...
+         o_sensorMaker{end}, o_sensorModel{end}, o_sensorSn{end});
+   end
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Retrieve parameter information for a given sensor name.
+%
+% SYNTAX :
+% [o_paramName, o_paramDimLevel, o_paramSensor, ...
+%   o_paramUnits, o_paramAccuracy, o_paramResolution, ...
+%   o_predCalibEquation, o_predCalibCoefficient, o_predCalibComment] = ...
+%   get_parameter_info(a_inputSensorName, a_floatNum, a_metaWmoList, a_metaData)
+%
+% INPUT PARAMETERS :
+%   a_inputSensorName : decoder sensor name
+%   a_floatNum        : float WMO number
+%   a_metaWmoList     : WMO number assigne to each meta data
+%   a_metaData        : meta data
+%
+% OUTPUT PARAMETERS :
+%   o_paramName            : Argo parameter name
+%   o_paramDimLevel        : DB parameter dim level
+%   o_paramSensor          : parameter sensor
+%   o_paramUnits           : parameter accuracy or resolution units
+%   o_paramAccuracy        : parameter accuracy
+%   o_paramResolution      : parameter resolution
+%   o_predCalibEquation    : parameter predeployment calibration equation
+%   o_predCalibCoefficient : parameter predeployment calibration coefficient
+%   o_predCalibComment     : parameter predeployment calibration comment
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/09/2024 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_paramName, o_paramDimLevel, o_paramSensor, ...
+   o_paramUnits, o_paramAccuracy, o_paramResolution, ...
+   o_predCalibEquation, o_predCalibCoefficient, o_predCalibComment] = ...
+   get_parameter_info(a_inputSensorName, a_floatNum, a_metaWmoList, a_metaData)
+
+o_paramName = [];
+o_paramDimLevel = [];
+o_paramSensor = [];
+o_paramUnits = [];
+o_paramAccuracy = [];
+o_paramResolution = [];
+o_predCalibEquation = [];
+o_predCalibCoefficient = [];
+o_predCalibComment = [];
+
+switch a_inputSensorName
+   case 'CTD'
+      o_paramName = [ ...
+         {'PRES'} {'TEMP'} {'PSAL'} ...
+         ];
+      o_paramDimLevel = [1 2 3];
+      o_paramSensor = [ ...
+         {'CTD_PRES'} {'CTD_TEMP'} {'CTD_CNDC'} ...
+         ];
+      o_paramUnits = [ ...
+         {'decibar'} {'degree_Celsius'} {'psu'} ...
+         ];
+
+   case 'CTD_RBR'
+      o_paramName = [ ...
+         {'PRES'} {'TEMP'} {'PSAL'} {'TEMP_CNDC'} ...
+         ];
+      o_paramDimLevel = [1 2 3 4];
+      o_paramSensor = [ ...
+         {'CTD_PRES'} {'CTD_TEMP'} {'CTD_CNDC'} {'CTD_CNDC'} ...
+         ];
+      o_paramUnits = [ ...
+         {'decibar'} {'degree_Celsius'} {'psu'}  {'degree_Celsius'} ...
+         ];
+
+   case 'OPTODE'
+      o_paramName = [ ...
+         {'C1PHASE_DOXY'} {'C2PHASE_DOXY'} {'TEMP_DOXY'} {'DOXY'} {'PPOX_DOXY'} ...
+         ];
+      o_paramDimLevel = [101 102 103 104 109];
+      o_paramSensor = [ ...
+         {'OPTODE_DOXY'} {'OPTODE_DOXY'} {'OPTODE_DOXY'} {'OPTODE_DOXY'} {'OPTODE_DOXY'} ...
+         ];
+      o_paramUnits = [ ...
+         {'degree'} {'degree'} {'degree_Celsius'} {'micromole/kg'} {'millibar'} ...
+         ];
+      
+   otherwise
+      fprintf('ERROR: No sensor parameters for sensor %s\n', a_inputName);
+end
+
+% update meta data
+for idP = 1:length(o_paramName)
+   [o_paramAccuracy{end+1}, ...
+      o_paramResolution{end+1}, ...
+      o_predCalibEquation{end+1}, ...
+      o_predCalibCoefficient{end+1}, ...
+      o_predCalibComment{end+1}] = get_parameter_data(o_paramName{idP}, a_floatNum, a_metaWmoList, a_metaData);
+end
+o_paramAccuracy = o_paramAccuracy';
+o_paramResolution = o_paramResolution';
+o_predCalibEquation = o_predCalibEquation';
+o_predCalibCoefficient = o_predCalibCoefficient';
+o_predCalibComment = o_predCalibComment';
+
+return
+
+% ------------------------------------------------------------------------------
+% Update parameter information in meta data.
+%
+% SYNTAX :
+% [o_paramAccuracy, o_paramResolution, ...
+%   o_predCalibEquation, o_predCalibCoefficient, o_predCalibComment] = ...
+%   get_parameter_data(a_paramName, a_floatNum, a_metaWmoList, a_metaData)
+%
+% INPUT PARAMETERS :
+%   a_paramName   : Argo parameter name
+%   a_floatNum    : float WMO number
+%   a_metaWmoList : WMO number assigne to each meta data
+%   a_metaData    : meta data
+%
+% OUTPUT PARAMETERS :
+%   o_paramAccuracy        : parameter accuracy
+%   o_paramResolution      : parameter resolution
+%   o_predCalibEquation    : parameter predeployment calibration equation
+%   o_predCalibCoefficient : parameter predeployment calibration coefficient
+%   o_predCalibComment     : parameter predeployment calibration comment
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/09/2024 - RNU - creation
+% ------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------
+function [o_paramAccuracy, o_paramResolution, ...
+   o_predCalibEquation, o_predCalibCoefficient, o_predCalibComment] = ...
+   get_parameter_data(a_paramName, a_floatNum, a_metaWmoList, a_metaData)
+
+o_paramAccuracy = [];
+o_paramResolution = [];
+o_predCalibEquation = [];
+o_predCalibCoefficient = [];
+o_predCalibComment = [];
+
+% retrieve float meta data
+idForWmo = find(a_metaWmoList == a_floatNum);
+
+idF1 = find(strcmp(a_metaData(idForWmo, 4), a_paramName) & ...
+   strcmp(a_metaData(idForWmo, 5), 'PARAMETER'));
+if (~isempty(idF1))
+   dimLevel = a_metaData(idForWmo(idF1), 3);
+   
+   idF2 = find(strcmp(a_metaData(idForWmo, 3), dimLevel) & ...
+      strcmp(a_metaData(idForWmo, 5), 'PARAMETER_ACCURACY'));
+   if (~isempty(idF2))
+      o_paramAccuracy = a_metaData{idForWmo(idF2), 4};
+   end
+   if (isempty(o_paramAccuracy))
+      if (strcmp(a_paramName, 'PRES'))
+         o_paramAccuracy = '2.4';
+         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing - set to ''%s''\n', a_paramName, o_paramAccuracy);
+      elseif (strcmp(a_paramName, 'TEMP'))
+         o_paramAccuracy = '0.002';
+         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing - set to ''%s''\n', a_paramName, o_paramAccuracy);
+      elseif (strcmp(a_paramName, 'PSAL'))
+         o_paramAccuracy = '0.005';
+         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing - set to ''%s''\n', a_paramName, o_paramAccuracy);
+      elseif (strcmp(a_paramName, 'DOXY'))
+         o_paramAccuracy = '10%';
+         fprintf('INFO: ''%s'' PARAMETER_ACCURACY is missing - set to ''%s''\n', a_paramName, o_paramAccuracy);
+      end
+   end
+   
+   idF3 = find(strcmp(a_metaData(idForWmo, 3), dimLevel) & ...
+      strcmp(a_metaData(idForWmo, 5), 'PARAMETER_RESOLUTION'));
+   if (~isempty(idF3))
+      o_paramResolution = a_metaData{idForWmo(idF3), 4};
+   end
+   if (isempty(o_paramResolution))
+      if (strcmp(a_paramName, 'PRES'))
+         o_paramResolution = '1';
+         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing - set to ''%s''\n', a_paramName, o_paramResolution);
+      elseif (strcmp(a_paramName, 'TEMP'))
+         o_paramResolution = '0.001';
+         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing - set to ''%s''\n', a_paramName, o_paramResolution);
+      elseif (strcmp(a_paramName, 'PSAL'))
+         o_paramResolution = '0.001';
+         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing - set to ''%s''\n', a_paramName, o_paramResolution);
+      elseif (strcmp(a_paramName, 'DOXY'))
+         o_paramResolution = '0.001';
+         fprintf('INFO: ''%s'' PARAMETER_RESOLUTION is missing - set to ''%s''\n', a_paramName, o_paramResolution);
+      end
+   end
+   
+   idF4 = find(strcmp(a_metaData(idForWmo, 3), dimLevel) & ...
+      strcmp(a_metaData(idForWmo, 5), 'PREDEPLOYMENT_CALIB_EQUATION'));
+   if (~isempty(idF4))
+      o_predCalibEquation = regexprep(a_metaData{idForWmo(idF4), 4}, ';', ',');
+   else
+      o_predCalibEquation = 'n/a';
+   end
+   
+   idF5 = find(strcmp(a_metaData(idForWmo, 3), dimLevel) & ...
+      strcmp(a_metaData(idForWmo, 5), 'PREDEPLOYMENT_CALIB_COEFFICIENT'));
+   if (~isempty(idF5))
+      o_predCalibCoefficient = regexprep(a_metaData{idForWmo(idF5), 4}, ';', ',');
+   else
+      o_predCalibCoefficient = 'n/a';
+   end
+   
+   idF6 = find(strcmp(a_metaData(idForWmo, 3), dimLevel) & ...
+      strcmp(a_metaData(idForWmo, 5), 'PREDEPLOYMENT_CALIB_COMMENT'));
+   if (~isempty(idF6))
+      o_predCalibComment = regexprep(a_metaData{idForWmo(idF6), 4}, ';', ',');
+   else
+      o_predCalibComment = '';
+   end
+end
+
+return

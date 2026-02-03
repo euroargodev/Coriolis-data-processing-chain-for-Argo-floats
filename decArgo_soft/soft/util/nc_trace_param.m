@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/03/2014 - RNU - creation
@@ -33,34 +33,8 @@ global g_NTP_PROF_NUM;
 global g_NTP_NAME_PARAM1;
 global g_NTP_NAME_PARAM2;
 
-% g_NTP_NAME_PARAM1 = 'TURBIDITY';
-% g_NTP_NAME_PARAM1 = 'CHLA';
-% g_NTP_NAME_PARAM1 = 'BPHASE_DOXY';
-% g_NTP_NAME_PARAM1 = 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660';
-% g_NTP_NAME_PARAM1 = 'DOWNWELLING_PAR';
-% g_NTP_NAME_PARAM1 = 'FLUORESCENCE_CDOM';
-% g_NTP_NAME_PARAM1 = 'TEMP_DOXY';
-% g_NTP_NAME_PARAM1 = 'NITRATE';
-% g_NTP_NAME_PARAM1 = 'FREQUENCY_DOXY';
-% g_NTP_NAME_PARAM1 = 'PH_IN_SITU_FREE';
-% g_NTP_NAME_PARAM1 = 'DOXY';
-% g_NTP_NAME_PARAM1 = 'CHLA';
-% g_NTP_NAME_PARAM1 = 'BBP700';
 g_NTP_NAME_PARAM1 = 'TEMP';
 
-% g_NTP_NAME_PARAM2 = 'TURBIDITY';
-% g_NTP_NAME_PARAM2 = 'BBP700';
-% g_NTP_NAME_PARAM2 = 'TEMP_DOXY';
-% g_NTP_NAME_PARAM2 = 'PSAL';
-% g_NTP_NAME_PARAM2 = 'DOWNWELLING_PAR2';
-% g_NTP_NAME_PARAM2 = 'CDOM';
-% g_NTP_NAME_PARAM2 = 'NITRATE';
-% g_NTP_NAME_PARAM2 = 'DOXY';
-% g_NTP_NAME_PARAM2 = 'PH_IN_SITU_TOTAL';
-% g_NTP_NAME_PARAM2 = 'CHLA';
-% g_NTP_NAME_PARAM2 = 'CP660';
-% g_NTP_NAME_PARAM2 = 'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660';
-% g_NTP_NAME_PARAM2 = 'BISULFIDE';
 g_NTP_NAME_PARAM2 = 'PSAL';
 
 % top directory of NetCDF files to plot
@@ -155,7 +129,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/03/2014 - RNU - creation
@@ -204,6 +178,8 @@ global g_decArgo_qcStrInterpolated;
 global g_decArgo_qcStrMissing;
 
 
+PROF_DIR = 'A';
+
 g_NTP_idCycle = a_idCycle;
 
 figure(g_NTP_FIG_HANDLE);
@@ -224,15 +200,15 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
    floatNumStr = num2str(floatNum);
    
    % which param in which file
-   paramPres = get_netcdf_param_attributes_3_1('PRES');
-   param1Struct = get_netcdf_param_attributes_3_1(g_NTP_NAME_PARAM1);
+   paramPres = get_netcdf_param_attributes('PRES');
+   param1Struct = get_netcdf_param_attributes(g_NTP_NAME_PARAM1);
    g_NTP_UNITS_PARAM1 = param1Struct.units;
    if ((param1Struct.paramType == 'c') || (param1Struct.paramType == 'j'))
       param1File = 'c';
    else
       param1File = 'b';
    end
-   param2Struct = get_netcdf_param_attributes_3_1(g_NTP_NAME_PARAM2);
+   param2Struct = get_netcdf_param_attributes(g_NTP_NAME_PARAM2);
    g_NTP_UNITS_PARAM2 = param2Struct.units;
    if ((param2Struct.paramType == 'c') || (param2Struct.paramType == 'j'))
       param2File = 'c';
@@ -357,7 +333,7 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                end
             end
 
-            idProf = find(profDir == 'A');
+            idProf = find(profDir == PROF_DIR);
             tabCycles1 = cycleNumberProf(idProf);
             tabPres1 = profPres(:, idProf);
             tabPres1Qc = profPresQc(:, idProf);
@@ -387,7 +363,7 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                end
             end
 
-            idProf = find(profDir == 'A');
+            idProf = find(profDir == PROF_DIR);
             tabCycles2 = cycleNumberProf(idProf);
             tabPres2 = profPres(:, idProf);
             tabPres2Qc = profPresQc(:, idProf);
@@ -473,7 +449,7 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                      break
                   end
                end
-               if ((~isempty(profNum)) && (profDir(profNum) == 'A'))
+               if ((~isempty(profNum)) && (profDir(profNum) == PROF_DIR))
                   tabCycles1 = [tabCycles1; cycleNumberProf(profNum)];
                   pres1 = profPres(:, profNum);
                   pres1Qc = profPresQc(:, profNum);
@@ -561,7 +537,7 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                %                      end
                %                   end
 
-               if ((~isempty(profNum)) && (profDir(profNum) == 'A'))
+               if ((~isempty(profNum)) && (profDir(profNum) == PROF_DIR))
                   tabCycles2 = [tabCycles2; cycleNumberProf(profNum)];
                   pres2 = profPres(:, profNum);
                   pres2Qc = profPresQc(:, profNum);
@@ -667,10 +643,12 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                idVal = find(strcmp([g_NTP_NAME_PARAM1 '_ADJUSTED_QC'], profData(1:2:end)) == 1, 1);
                profParamAdj1Qc = profData{2*idVal};
 
-               for idProf = 1:size(profParam1, 2)
-                  if (any(profParamAdj1(:, idProf) ~= param1Struct.fillValue))
-                     profParam1(:, idProf) = profParam1(:, idProf);
-                     profParam1Qc(:, idProf) = profParamAdj1Qc(:, idProf);
+               if (~isempty(profParamAdj1))
+                  for idProf = 1:size(profParam1, 2)
+                     if (any(profParamAdj1(:, idProf) ~= param1Struct.fillValue))
+                        profParam1(:, idProf) = profParam1(:, idProf);
+                        profParam1Qc(:, idProf) = profParamAdj1Qc(:, idProf);
+                     end
                   end
                end
 
@@ -688,7 +666,7 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                      break
                   end
                end
-               if ((~isempty(profNum)) && (profDir(profNum) == 'A'))
+               if ((~isempty(profNum)) && (profDir(profNum) == PROF_DIR))
                   tabCycles1 = [tabCycles1; cycleNumberProf(profNum)];
                   pres1 = profPres(:, profNum);
 %                   pres1Qc = profPresQc(:, profNum);
@@ -754,10 +732,12 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                idVal = find(strcmp([g_NTP_NAME_PARAM2 '_ADJUSTED_QC'], profData(1:2:end)) == 1, 1);
                profParamAdj2Qc = profData{2*idVal};
 
-               for idProf = 1:size(profParam2, 2)
-                  if (any(profParamAdj2(:, idProf) ~= param1Struct.fillValue))
-                     profParam2(:, idProf) = profParam2(:, idProf);
-                     profParam2Qc(:, idProf) = profParamAdj2Qc(:, idProf);
+               if (~isempty(profParamAdj2))
+                  for idProf = 1:size(profParam2, 2)
+                     if (any(profParamAdj2(:, idProf) ~= param1Struct.fillValue))
+                        profParam2(:, idProf) = profParam2(:, idProf);
+                        profParam2Qc(:, idProf) = profParamAdj2Qc(:, idProf);
+                     end
                   end
                end
 
@@ -778,7 +758,7 @@ if (a_idFloat ~= g_NTP_ID_FLOAT)
                end
                %                end
                
-               if ((~isempty(profNum)) && (profDir(profNum) == 'A'))
+               if ((~isempty(profNum)) && (profDir(profNum) == PROF_DIR))
                   tabCycles2 = [tabCycles2; cycleNumberProf(profNum)];
                   pres2 = profPres(:, profNum);
 %                   pres2Qc = profPresQc(:, profNum);
@@ -1171,17 +1151,17 @@ end
 return
 
 % ------------------------------------------------------------------------------
-% Callback de gestion des tracés:
-%   - escape     : arrêt
-%   - leftArrow  : flotteur précédent
+% Callback de gestion des tracÃ©s:
+%   - escape     : arrÃªt
+%   - leftArrow  : flotteur prÃ©cÃ©dent
 %   - rightArrow : flotteur suivant
-%   - upArrow    : lot de profils précédent
+%   - upArrow    : lot de profils prÃ©cÃ©dent
 %   - downArrow  : lot de profils suivant
-%   - "-"        : diminution du nombre de profils tracés par lot
-%   - "+"        : augmentation du nombre de profils tracés par lot
-%   - "a"        : tracé de tous les profils du flotteur
-%   - "d"        : retour au tracé par lots par défaut
-%   - "p"        : impression du tracé dans un fichier pdf
+%   - "-"        : diminution du nombre de profils tracÃ©s par lot
+%   - "+"        : augmentation du nombre de profils tracÃ©s par lot
+%   - "a"        : tracÃ© de tous les profils du flotteur
+%   - "d"        : retour au tracÃ© par lots par dÃ©faut
+%   - "p"        : impression du tracÃ© dans un fichier pdf
 %   - "h"        : affichage de l'aide et de la configuration courante
 %
 % SYNTAX :
@@ -1189,14 +1169,14 @@ return
 %
 % INPUT PARAMETERS :
 %   a_src       : objet source
-%   a_eventData : évènement déclencheur
+%   a_eventData : Ã©vÃ¨nement dÃ©clencheur
 %
 % OUTPUT PARAMETERS :
 %
 % EXAMPLES :
 %
 % SEE ALSO : plot_pt_ps
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   20/11/2008 - RNU - creation
@@ -1244,7 +1224,7 @@ fprintf('Escape: exit\n\n');
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/03/2014 - RNU - creation
@@ -1357,4 +1337,3 @@ elseif (strcmp(a_eventData.Key, 'h'))
 end
 
 return
-

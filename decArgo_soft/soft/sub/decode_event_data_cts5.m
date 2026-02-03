@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -304,6 +304,15 @@ if (~isempty(idF))
       g_MC_TET, 'JULD', ...
       'Transmission end date', transmissionEndTime, ...
       a_cyNum, a_ptnNum);
+end
+
+% transmission timeout
+idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 120);
+if (~isempty(idF))
+   transmissionTimeout = max([g_decArgo_eventData{idFCyPtn(idF), 6}]);
+
+   g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
+      'TRANSMISSION TIMEOUT', 'JULD', transmissionTimeout, []);
 end
 
 % GPS locations
@@ -939,7 +948,7 @@ if (~isempty(idF))
    end
 end
 
-% ice detection (ISA)
+% ice detection (ISA) - in CTS5-OSEAN
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 111);
 if (~isempty(idF))
    if (length(idF) > 1)
@@ -953,7 +962,7 @@ if (~isempty(idF))
    g_decArgo_eventDataTech{end}.func1 = '@(x) adjust_time_cts5(x)';
 end
 
-% ice detection
+% ice detection - in CTS5-OSEAN
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 113);
 if (~isempty(idF))
    if (length(idF) > 1)
@@ -993,6 +1002,43 @@ if (~isempty(idF))
       173, 'Accepted feedback time', 1);
 end
 
+% Rx abort cycle
+% Tx abort cycle ack
+idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 182);
+if (~isempty(idF))
+   idF2 = find(contains([g_decArgo_eventData{idFCyPtn(idF), 5}], 'Rx=ABORTCYCLE'), 1, 'first');
+   if (~isempty(idF2))
+      g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
+         'RX ABORT CYCLE RX', 'JULD', g_decArgo_eventData{idFCyPtn(idF(idF2)), 6}, []);
+   end
+   idF3 = find(contains([g_decArgo_eventData{idFCyPtn(idF), 5}], 'Tx=ABORTCYCLEACK:0'), 1, 'last');
+   if (~isempty(idF3))
+      g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
+         'ABORT CYCLE ACK 0', 'JULD', g_decArgo_eventData{idFCyPtn(idF(idF3)), 6}, []);
+   end
+   idF4 = find(contains([g_decArgo_eventData{idFCyPtn(idF), 5}], 'Tx=ABORTCYCLEACK:1'), 1, 'last');
+   if (~isempty(idF4))
+      g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
+         'ABORT CYCLE ACK 1', 'JULD', g_decArgo_eventData{idFCyPtn(idF(idF4)), 6}, []);
+   end
+end
+
+% SYSTEM.P8 modification (used in ICE algorithm but sometimes not reported in
+% APMT.ini file, ex: 6902953)
+idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 141);
+if (~isempty(idF))
+   evtInfo = [g_decArgo_eventData{idFCyPtn(idF'), 5}];
+   paramNum = cell2mat(evtInfo(1:3:end));
+   section = evtInfo(2:3:end);
+   idF2 = find(strcmp(section, 'SYSTEM') & (paramNum == 8), 1, 'last');
+   if (~isempty(idF2))
+      values = evtInfo(3:3:end);
+      value = str2num(values{idF2});
+      g_decArgo_eventDataMeta{end+1} = get_cts5_tech_data_init_struct(...
+         -1, 'SYSTEM.P8 changed', value);
+   end
+end
+
 % end of life
 idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 115);
 if (~isempty(idF))
@@ -1027,16 +1073,88 @@ if (~isempty(idF))
       172, 'Emergency ascent flag', 1);
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ICE information - in CTS5-USEA
+% "Ice detected (Collision)" => hanging
+idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 284);
+if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
+   g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
+      'HANGING DETECTION START TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
+   g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
+      262, 'Ice hanging detection start time', g_decArgo_eventData{idFCyPtn(idF), 6});
+   g_decArgo_eventDataTech{end}.func = '@(x) format_date_yyyymmddhhmiss_dec_argo(x)';
+   g_decArgo_eventDataTech{end}.func1 = '@(x) adjust_time_cts5(x)';
+end
+% "Ice detected (ISA)" => ISA
+idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 285);
+if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
+   g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
+      'ISA DETECTION START TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
+   g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
+      263, 'Ice ISA detection start time', g_decArgo_eventData{idFCyPtn(idF), 6});
+   g_decArgo_eventDataTech{end}.func = '@(x) format_date_yyyymmddhhmiss_dec_argo(x)';
+   g_decArgo_eventDataTech{end}.func1 = '@(x) adjust_time_cts5(x)';
+end
+% "Ice detected (Cover)" => sat_mask
+idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 286);
+if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
+   g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
+      'COVER DETECTION START TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
+   g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
+      265, 'Ice sat mask detection start time', g_decArgo_eventData{idFCyPtn(idF), 6});
+   g_decArgo_eventDataTech{end}.func = '@(x) format_date_yyyymmddhhmiss_dec_argo(x)';
+   g_decArgo_eventDataTech{end}.func1 = '@(x) adjust_time_cts5(x)';
+end
+% "Force abort" => breakup
+idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 289);
+if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
+   g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
+      'BREAKUP DETECTION START TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
+   g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
+      264, 'Ice breakup detection start time', g_decArgo_eventData{idFCyPtn(idF), 6});
+   g_decArgo_eventDataTech{end}.func = '@(x) format_date_yyyymmddhhmiss_dec_argo(x)';
+   g_decArgo_eventDataTech{end}.func1 = '@(x) adjust_time_cts5(x)';
+end
+% "Force surface" => forced ascent
+idF = find([g_decArgo_eventData{idFCyPtn, 4}] == 291);
+if (~isempty(idF))
+   if (length(idF) > 1)
+      idF = idF(1); % in case of incomplete SYSTEM file times of folowing cycles may be in the selection
+   end
+   g_decArgo_eventDataTime{end+1} = get_cts5_time_data_init_struct(...
+      'FORCED ASCENT START TIME', 'JULD', g_decArgo_eventData{idFCyPtn(idF), 6}, []);
+   g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
+      267, 'Ice forced ascent profile start time', g_decArgo_eventData{idFCyPtn(idF), 6});
+   g_decArgo_eventDataTech{end}.func = '@(x) format_date_yyyymmddhhmiss_dec_argo(x)';
+   g_decArgo_eventDataTech{end}.func1 = '@(x) adjust_time_cts5(x)';
+   g_decArgo_eventDataTech{end+1} = get_cts5_tech_data_init_struct(...
+      266, 'Ice forced ascent profile flag', 1);
+end
+
 % update output value of TECH data
 for idEvt = 1:length(g_decArgo_eventDataTech)
    if (isempty(g_decArgo_eventDataTech{idEvt}.func))
       g_decArgo_eventDataTech{idEvt}.valueOutput = num2str(g_decArgo_eventDataTech{idEvt}.valueRaw);
    else
-      f = eval(g_decArgo_eventDataTech{idEvt}.func);
-      g_decArgo_eventDataTech{idEvt}.valueOutput = f(g_decArgo_eventDataTech{idEvt}.valueRaw);
-      if (isempty(g_decArgo_eventDataTech{idEvt}.func1))
-         f = eval(g_decArgo_eventDataTech{idEvt}.func1);
-         g_decArgo_eventDataTech{idEvt}.valueOutput = f(g_decArgo_eventDataTech{idEvt}.valueOutput);
+      if (~isempty(g_decArgo_eventDataTech{idEvt}.func1))
+         f1 = eval(g_decArgo_eventDataTech{idEvt}.func1);
+         f = eval(g_decArgo_eventDataTech{idEvt}.func);
+         g_decArgo_eventDataTech{idEvt}.valueOutput = f(f1(g_decArgo_eventDataTech{idEvt}.valueRaw));
+      else
+         f = eval(g_decArgo_eventDataTech{idEvt}.func);
+         g_decArgo_eventDataTech{idEvt}.valueOutput = f(g_decArgo_eventDataTech{idEvt}.valueRaw);
       end
    end
 end
@@ -1089,7 +1207,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -1131,7 +1249,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -1169,7 +1287,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation

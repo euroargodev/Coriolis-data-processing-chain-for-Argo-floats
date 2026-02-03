@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/15/2009 - RNU - creation
@@ -91,7 +91,7 @@ for idFloat = 1:nbFloats
    
    % FICHIER NETCDF DE META-DONNEES
    
-   % lecture du contenu du fichier de meta données
+   % lecture du contenu du fichier de meta donnÃ©es
    metaFileName = [DIR_INPUT_NC_FILES '/' floatNumStr '/' floatNumStr '_meta.nc'];
    [nCyclesMeta, nParamMeta, ...
       platformNumberMeta, pttMeta, transSystemMeta, transSystemIdMeta, transFrequencyMeta, ...
@@ -123,7 +123,7 @@ for idFloat = 1:nbFloats
       if (length(launchDateVector) == 6)
          launchDateStr = datestr(launchDateVector', 'yyyy/mm/dd HH:MM:SS');
       else
-         fprintf('ATTENTION: Flotteur #%d launchDateMeta mal formattée\n', floatNum);
+         fprintf('ATTENTION: Flotteur #%d launchDateMeta mal formattÃ©e\n', floatNum);
       end
    end
    startDateStr = '';
@@ -135,14 +135,14 @@ for idFloat = 1:nbFloats
       if (length(startDateVector) == 6)
          startDateStr = datestr(startDateVector', 'yyyy/mm/dd HH:MM:SS');
       else
-         fprintf('ATTENTION: Flotteur #%d startDateMeta mal formattée\n', floatNum);
+         fprintf('ATTENTION: Flotteur #%d startDateMeta mal formattÃ©e\n', floatNum);
       end
    end
    
    floatFormatTech = -1;
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % écriture du fichier csv de sortie
+   % Ã©criture du fichier csv de sortie
    
    idLig = idLig + 1;
    
@@ -150,19 +150,19 @@ for idFloat = 1:nbFloats
    for idMission = 1:nCyclesMeta
       
       if (idMission == 1)
-         % numéro et format du flotteur
+         % numÃ©ro et format du flotteur
          fprintf(fidOut, '%d;%d;%d;', idLig, floatNum, floatFormatTech);
       else
          fprintf(fidOut, ';;;');
       end
       
-      % paramètres théoriques (issus des méta données)
+      % paramÃ¨tres thÃ©oriques (issus des mÃ©ta donnÃ©es)
       fprintf(fidOut, '%d;%d;%.1f;%.1f;%.1f;', idMission, ...
          repetitionRateMeta(idMission), cycleTimeMeta(idMission), ...
          parkingPressureMeta(idMission), ...
          deepestPressureMeta(idMission));
       
-      % paramètres théoriques (issus des méta données)
+      % paramÃ¨tres thÃ©oriques (issus des mÃ©ta donnÃ©es)
       if (idMission == 1)
          fprintf(fidOut, ' %s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\n', ...
             deblank(pttMeta), ...

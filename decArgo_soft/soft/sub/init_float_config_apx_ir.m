@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -64,7 +64,7 @@ end
 g_decArgo_rtOffsetInfo = get_rt_adj_info_from_meta_data(g_decArgo_jsonMetaData);
 
 % add DO calibration coefficients
-if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1114, 1201]))
+if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1114, 1115, 1201]))
    
    % read the calibration coefficients in the json meta-data file
 
@@ -178,7 +178,7 @@ if (ismember(a_decoderId, [1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1114,
             g_decArgo_calibInfo.OPTODE.TabDoxyCoef = tabDoxyCoef;
          end         
          
-      case {1107, 1112, 1113}
+      case {1107, 1112, 1113, 1115}
          
          if (isfield(g_decArgo_calibInfo, 'OPTODE'))
             calibData = g_decArgo_calibInfo.OPTODE;

@@ -17,7 +17,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -190,8 +190,10 @@ if (~isempty(techDataAll))
       {'Imu'} ...
       {'Wave'} ...
       {'ExtTrig'} ...
+      {'Pal'} ...
+      {'Tridente'} ...
       ];
-   specificTechIdList = 216:221; % TECH Ids for witch a sensor of noArgoSensorNameList need a change (+ 1000) of TECH label
+   specificTechIdList = [216:221 274 275]; % TECH Ids for witch a sensor of noArgoSensorNameList need a change (+ 1000) of TECH label
    for idT = 1:size(o_techNcParamIndex, 1)
       if (~isempty(techDataAll{idT, 7}))
          if (ismember(o_techNcParamIndex(idT, 5), specificTechIdList) && ...

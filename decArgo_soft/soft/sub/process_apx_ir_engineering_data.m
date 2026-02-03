@@ -20,7 +20,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -88,7 +88,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -335,11 +335,19 @@ switch (a_engName)
       if (valueStr(end) == 'C')
          valueStr = valueStr(1:end-1);
       end
-      o_techInfo = get_apx_misc_data_init_struct('Tech', a_engRecordNum, [], []);
-      o_techInfo.label = a_engName;
-      o_techInfo.value = valueStr;
-      o_techInfo.format = '%s';
-      o_techInfo.unit = 'degree_Celsius';
+      if (str2double(valueStr) < realmax("single"))
+         o_techInfo = get_apx_misc_data_init_struct('Tech', a_engRecordNum, [], []);
+         o_techInfo.label = a_engName;
+         o_techInfo.value = valueStr;
+         o_techInfo.format = '%s';
+         o_techInfo.unit = 'degree_Celsius';
+
+         o_techData = get_apx_tech_data_init_struct(1);
+         o_techData.label = a_engName;
+         o_techData.techId = 1041;
+         o_techData.value = valueStr;
+         o_techData.cyNum = g_decArgo_cycleNum;
+      end
    case 'IceMLSample'
       o_techInfo = get_apx_misc_data_init_struct('Tech', a_engRecordNum, [], []);
       o_techInfo.label = a_engName;

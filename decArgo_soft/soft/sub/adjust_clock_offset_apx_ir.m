@@ -9,7 +9,7 @@
 %    o_profEndAdjDateMsg, ...
 %    o_nearSurfData, ...
 %    o_surfDataBladderDeflated, o_surfDataBladderInflated, ...
-%    o_timeDataLog] = ...
+%    o_timeDataLog, o_iceDetection] = ...
 %    adjust_clock_offset_apx_ir(a_surfDataLog, ...
 %    a_pMarkDataLog, ...
 %    a_driftData, a_parkData, ...
@@ -17,7 +17,7 @@
 %    a_profEndDateMsg, ...
 %    a_nearSurfData, ...
 %    a_surfDataBladderDeflated, a_surfDataBladderInflated, ...
-%    a_timeDataLog, ...
+%    a_timeDataLog, a_iceDetection, ...
 %    a_clockOffsetData)
 %
 % INPUT PARAMETERS :
@@ -31,6 +31,7 @@
 %   a_surfDataBladderDeflated : input surface data
 %   a_surfDataBladderInflated : input surface data
 %   a_timeDataLog             : input cycle timings from log file
+%   a_iceDetection            : input ice detection data
 %   a_clockOffsetData         : clock offset information
 %
 % OUTPUT PARAMETERS :
@@ -44,11 +45,12 @@
 %   o_surfDataBladderDeflated : output surface data
 %   o_surfDataBladderInflated : output surface data
 %   o_timeDataLog             : output cycle timings from log file
+%   o_iceDetection            : output ice detection data
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -60,7 +62,7 @@ function [o_surfDataLog, ...
    o_profEndAdjDateMsg, ...
    o_nearSurfData, ...
    o_surfDataBladderDeflated, o_surfDataBladderInflated, ...
-   o_timeDataLog] = ...
+   o_timeDataLog, o_iceDetection] = ...
    adjust_clock_offset_apx_ir(a_surfDataLog, ...
    a_pMarkDataLog, ...
    a_driftData, a_parkData, ...
@@ -68,7 +70,7 @@ function [o_surfDataLog, ...
    a_profEndDateMsg, ...
    a_nearSurfData, ...
    a_surfDataBladderDeflated, a_surfDataBladderInflated, ...
-   a_timeDataLog, ...
+   a_timeDataLog, a_iceDetection, ...
    a_clockOffsetData)
 
 % output parameters initialization
@@ -82,12 +84,16 @@ o_nearSurfData = a_nearSurfData;
 o_surfDataBladderDeflated = a_surfDataBladderDeflated;
 o_surfDataBladderInflated = a_surfDataBladderInflated;
 o_timeDataLog = a_timeDataLog;
+o_iceDetection = a_iceDetection;
 
 % current float WMO number
 global g_decArgo_floatNum;
 
 % current cycle number
 global g_decArgo_cycleNum;
+
+% default values
+global g_decArgo_dateDef;
 
 
 if (isempty(a_clockOffsetData.clockOffsetCycleNum))
@@ -137,6 +143,26 @@ if (~isempty(o_timeDataLog))
    [o_timeDataLog.ascentStartAdjDate] = adjust_time(o_timeDataLog.ascentStartDate, clockOffsetJuldUtc, clockOffsetValue);
    [o_timeDataLog.ascentEndAdjDate] = adjust_time(o_timeDataLog.ascentEndDate, clockOffsetJuldUtc, clockOffsetValue);
    [o_timeDataLog.ascentEnd2AdjDate] = adjust_time(o_timeDataLog.ascentEnd2Date, clockOffsetJuldUtc, clockOffsetValue);
+end
+
+% clock adjustment of ICE times of the current cycle
+if (~isempty(o_iceDetection))
+   if (~isempty(o_iceDetection.mlSample))
+      for idP = 1:length(o_iceDetection.mlSample)
+         if (o_iceDetection.mlSample(idP).sampleTime ~= g_decArgo_dateDef)
+            [o_iceDetection.mlSample(idP).sampleTimeAdj] = adjust_time(o_iceDetection.mlSample(idP).sampleTime, clockOffsetJuldUtc, clockOffsetValue);
+         end
+      end
+   end
+   if (o_iceDetection.isaTime ~= g_decArgo_dateDef)
+      [o_iceDetection.isaTimeAdj] = adjust_time(o_iceDetection.isaTime, clockOffsetJuldUtc, clockOffsetValue);
+   end
+   if (o_iceDetection.evasionTime ~= g_decArgo_dateDef)
+      [o_iceDetection.evasionTimeAdj] = adjust_time(o_iceDetection.evasionTime, clockOffsetJuldUtc, clockOffsetValue);
+   end
+   if (o_iceDetection.evasionPerigeeTime ~= g_decArgo_dateDef)
+      [o_iceDetection.evasionPerigeeTimeAdj] = adjust_time(o_iceDetection.evasionPerigeeTime, clockOffsetJuldUtc, clockOffsetValue);
+   end
 end
 
 % clock adjustment of information from the previous cycle
@@ -384,7 +410,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -441,7 +467,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation

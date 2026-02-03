@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/21/2015 - RNU - creation
@@ -24,7 +24,7 @@ function [o_qcValues] = set_qc(a_qcValues, a_newQcValue)
 o_qcValues = a_qcValues;
 
 if (~isempty(a_qcValues))
-   o_qcValues = char(max(a_qcValues, repmat(a_newQcValue, size(a_qcValues))));
+   o_qcValues = char(max(a_qcValues, double(repmat(a_newQcValue, size(a_qcValues)))));
 end
 
 return

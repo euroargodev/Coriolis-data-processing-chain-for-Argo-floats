@@ -563,19 +563,11 @@
    {
       "TECH_PARAM_DEC_ID" : "233",
       "TECH_PARAM_MSG_ID" : "42",
-      "TECH_PARAM_MSG_LABEL" : "Ice detection flag (1:ISA, 2:Sat Mask, 4:Ascent hanging)",
-      "TECH_PARAM_NAME" : "FLAG_IceDetected_bit",
-      "TECH_PARAM_DESCRIPTION" : "aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit."
+      "TECH_PARAM_MSG_LABEL" : "Ice detection flag (1:ISA, 2:Sat Mask (during previous cycle), 3:ISA & Sat Mask (during previous cycle), 4:Ascent hanging)",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_FloatIceDetected_NUMBER",
+      "TECH_PARAM_DESCRIPTION" : "Ice detection flag reported by the float (1:ISA, 2:Sat Mask (during previous cycle), 3:ISA & Sat Mask (during previous cycle), 4:Ascent hanging). Note that the Satellite mask flag is generally (but not always, depending on float firmware version) transmitted the next cycle."
    },
    "TECH_PARAM_72" :
-   {
-      "TECH_PARAM_DEC_ID" : "1010",
-      "TECH_PARAM_MSG_ID" : "42",
-      "TECH_PARAM_MSG_LABEL" : "Ice detection flag (1:ISA, 2:Sat Mask, 4:Ascent hanging)",
-      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceDetection_NUMBER",
-      "TECH_PARAM_DESCRIPTION" : "The ice detection flag reported by the float (0: no detection, 1: ISA detection, 2: satellite mask detection, 4: ascent hanging detection) - see float manual for details."
-   },
-   "TECH_PARAM_73" :
    {
       "TECH_PARAM_DEC_ID" : "1001",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -583,7 +575,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_DescentIridiumPacketsReceived_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit sensor data collected during the descent phases (from surface to the parking depth and from the parking depth to the profile depth)."
    },
-   "TECH_PARAM_74" :
+   "TECH_PARAM_73" :
    {
       "TECH_PARAM_DEC_ID" : "1002",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -591,7 +583,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_ParkIridiumPacketsReceived_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit sensor data collected during the drift at park depth."
    },
-   "TECH_PARAM_75" :
+   "TECH_PARAM_74" :
    {
       "TECH_PARAM_DEC_ID" : "1003",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -599,7 +591,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_AscentIridiumPacketsReceived_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit sensor data collected during the ascent from the profile depth to the surface."
    },
-   "TECH_PARAM_76" :
+   "TECH_PARAM_75" :
    {
       "TECH_PARAM_DEC_ID" : "1004",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -607,7 +599,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_HydraulicIridiumPacketsReceived_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit hydraulic data recorded during the cycle."
    },
-   "TECH_PARAM_77" :
+   "TECH_PARAM_76" :
    {
       "TECH_PARAM_DEC_ID" : "1005",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -615,7 +607,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_TechnicalMessage1Received_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of times technical message #1 has been received."
    },
-   "TECH_PARAM_78" :
+   "TECH_PARAM_77" :
    {
       "TECH_PARAM_DEC_ID" : "1006",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -623,7 +615,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_TechnicalMessage2Received_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of times technical message #2 has been received."
    },
-   "TECH_PARAM_79" :
+   "TECH_PARAM_78" :
    {
       "TECH_PARAM_DEC_ID" : "1007",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -631,7 +623,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_ParameterMessageReceived_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of times parameter message has been received."
    },
-   "TECH_PARAM_80" :
+   "TECH_PARAM_79" :
    {
       "TECH_PARAM_DEC_ID" : "1008",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -639,7 +631,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_NearSurfaceIridiumPacketsReceived_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit sensor data collected during the near surface measurement phase."
    },
-   "TECH_PARAM_81" :
+   "TECH_PARAM_80" :
    {
       "TECH_PARAM_DEC_ID" : "1009",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -647,7 +639,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_InAirIridiumPacketsReceived_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of Iridium packets received to transmit sensor data collected during the in air measurement phase."
    },
-   "TECH_PARAM_82" :
+   "TECH_PARAM_81" :
    {
       "TECH_PARAM_DEC_ID" : "1013",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -655,7 +647,7 @@
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_DeepCycleTransmission_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Reported flag = 1 when the concerned transmission session occured after a deep cycle (i.e. a subsurface) one, = 0 when the float is programed to stay at the surface before the concerned transmission session."
    },
-   "TECH_PARAM_83" :
+   "TECH_PARAM_82" :
    {
       "TECH_PARAM_DEC_ID" : "1014",
       "TECH_PARAM_MSG_ID" : "-1",
@@ -663,12 +655,92 @@
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_TransmissionDelayed_NUMBER",
       "TECH_PARAM_DESCRIPTION" : "When the float is not able to transmit the cycle data in real time, the transmission of (part or all of) the data is delayed. Reported flag = 0 when all the cycle data have been transmitted in real time (i.e. during the transmission session of the same cycle), = 1 when the float didn't surface because of ice detection (all cycle data are stored until next transmission session), = 2 when some data transmission has been delayed due to transmission issue (after fail of first transmission attemps data was stored until next transmission session),."
    },
-   "TECH_PARAM_84" :
+   "TECH_PARAM_83" :
    {
       "TECH_PARAM_DEC_ID" : "1015",
       "TECH_PARAM_MSG_ID" : "-1",
       "TECH_PARAM_MSG_LABEL" : "Buffer completness",
       "TECH_PARAM_NAME" : "TECH_AUX_FLAG_TransmissionCompleted_LOGICAL",
       "TECH_PARAM_DESCRIPTION" : "Before processing the received data, the decoder checks that all expected data has been received. If not, it waits for following transmission sessions. Finally, if after a given number (decoder configuration parameter) of transmission sessions, missing data still remain, the cycle data are decoder. Reported flag = 1 if all expected cycle data have been received, = 0 otherwise."
+   },
+   "TECH_PARAM_84" :
+   {
+      "TECH_PARAM_DEC_ID" : "400",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "ISA detection by ICE algorithm",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceIsaDetectionAlarm_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when Ice has been detected with ISA algorithm."
+   },
+   "TECH_PARAM_85" :
+   {
+      "TECH_PARAM_DEC_ID" : "401",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Hanging detection by ICE algorithm",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceHangingDetectionAlarm_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when Ice has been detected with a collision (float hanging)."
+   },
+   "TECH_PARAM_86" :
+   {
+      "TECH_PARAM_DEC_ID" : "402",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Ascent aborted by ICE algorithm because in breakup period",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceNoSurfacePeriod_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float is still not surfacing (even without Ice detection) due to Ice advoidance algorithm."
+   },
+   "TECH_PARAM_87" :
+   {
+      "TECH_PARAM_DEC_ID" : "403",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Forced ascent",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceForcedAscentAlarm_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when irrespective of other tests (e.g. ISA), the ice algorithm forced ascent to the surface."
+   },
+   "TECH_PARAM_88" :
+   {
+      "TECH_PARAM_DEC_ID" : "404",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Sat_mask detection by ICE algorithm",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceSatMaskDetectionAlarm_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when Ice has been detected with the satellite mask."
+   },
+   "TECH_PARAM_89" :
+   {
+      "TECH_PARAM_DEC_ID" : "405",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Ice algo profile aborted",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceProfileAbortAlarm_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when the profile has been aborted by Ice detection."
+   },
+   "TECH_PARAM_90" :
+   {
+      "TECH_PARAM_DEC_ID" : "406",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Abort pressure (min PRES meas available)",
+      "TECH_PARAM_NAME" : "PRES_IceAvoidance_dbar",
+      "TECH_PARAM_DESCRIPTION" : "Pressure when float avoids ice"
+   },
+   "TECH_PARAM_91" :
+   {
+      "TECH_PARAM_DEC_ID" : "407",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Last 8 profiles aborted flags",
+      "TECH_PARAM_NAME" : "FLAG_IceDetected_bit",
+      "TECH_PARAM_DESCRIPTION" : "aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit."
+   },
+   "TECH_PARAM_92" :
+   {
+      "TECH_PARAM_DEC_ID" : "408",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Digest of ICE information",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceAlgorithmStatus_bit",
+      "TECH_PARAM_DESCRIPTION" : "ICE information digest: 11 bits information with, from LSB to MSB: bit#1: Transmission flag (the float succeeded to reach the GPS or Iridium satellites), #2: ICE algorithm activated flag (the ICE algorithm is enabled and switched on), #3: ICE surface avoidance flag (the ICE algorithm is able to act on float behavior), #4: Aborted profile flag (the ICE algorithm aborted the ascending profile), #5: ISA flag (the result of ISA check), #6: Breakup period flag (the ascending profile occured during the breakup period), #7: Hanging flag (the ICE algorithm detected a float hanging), #8: Satellite mask flag (the ICE algorithm detected that the float tried but failed to reach the GPS or Iridium satellites constellations), #9: Forced ascent flag (the ascending profile was forced to try to reach the surface), #10: AC1 activated flag (the AC1 (PROVOR_IV float) feature is activated), #11: ICE cycle performed flag (the (Apex APF11) float used at least one ICE cycle after the ascending profile)."
+   },
+   "TECH_PARAM_93" :
+   {
+      "TECH_PARAM_DEC_ID" : "409",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Pressure sensor offset (not sampled at the surface)",
+      "TECH_PARAM_NAME" : "TECH_AUX_PRES_OffsetNotSampledAtSurface_dbar",
+      "TECH_PARAM_DESCRIPTION" : "Pressure offset not necessarily sampled at the surface but originally used to correct PRES data provided by the float (copy of PRES_SurfaceOffsetCorrectedNotResetNegative_1cBarResolution_dbar in case of erroneous resetoffset)."
    }
 }

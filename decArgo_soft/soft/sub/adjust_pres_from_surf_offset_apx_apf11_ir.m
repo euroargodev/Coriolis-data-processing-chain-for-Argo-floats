@@ -58,7 +58,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2018 - RNU - creation
@@ -146,23 +146,20 @@ if (~isempty(presOffset))
       o_grounding(idG, 4) = adjust_value(o_grounding(idG, 3), presOffset);
    end
    
-   for idI = 1:length(o_iceDetection)
-      iceDetection = o_iceDetection{idI};
-      
-      for idM = 1:length(iceDetection.thermalDetect.samplePres)
-         iceDetection.thermalDetect.samplePresAdj(idM) = ...
-            adjust_value(iceDetection.thermalDetect.samplePres(idM), presOffset);
+   if (~isempty(o_iceDetection))
+      for idT = 1:length(o_iceDetection.thermalDetect)
+         for idS = 1:length(o_iceDetection.thermalDetect(idT).samplePres)
+            o_iceDetection.thermalDetect(idT).samplePresAdj(idS) = ...
+               adjust_value(o_iceDetection.thermalDetect(idT).samplePres(idS), presOffset);
+         end
+         o_iceDetection.thermalDetect(idT).detectPresAdj = ...
+            adjust_value(o_iceDetection.thermalDetect(idT).detectPres, presOffset);
       end
-      if (~isempty(iceDetection.thermalDetect.detectPres))
-         iceDetection.thermalDetect.detectPresAdj = ...
-            adjust_value(iceDetection.thermalDetect.detectPres, presOffset);
+      for id = 1:length(o_iceDetection.capDetect)
+         o_iceDetection.capDetect(id).detectPresAdj = ...
+            adjust_value(o_iceDetection.capDetect(id).detectPres, presOffset);
       end
-      if (~isempty(iceDetection.thermalDetect.detectMedianPres))
-         iceDetection.thermalDetect.detectMedianPresAdj = ...
-            adjust_value(iceDetection.thermalDetect.detectMedianPres, presOffset);
-      end
-      
-      o_iceDetection{idI} = iceDetection;
+      o_iceDetection.ascentPerigeePresAdj = adjust_value(o_iceDetection.ascentPerigeePres, presOffset);
    end
    
    for idB =1:size(o_buoyancy, 1)
@@ -216,7 +213,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2018 - RNU - creation
@@ -256,7 +253,7 @@ if (~isempty(idCycleStruct))
    else
       idF = find(ismember(a_cycleNum:-1:a_cycleNum-5, [a_presOffsetData.cycleNum]));
       if ((length(idF) == 6) && ~any(abs(a_presOffsetData.cyclePresOffset(idF)) <= 20))
-         fprintf('WARNING: Float #%d should be put on the grey list because of pressure error\n', ...
+         fprintf('WARNING: Float #%d should be put on the exclusion list because of pressure error\n', ...
             g_decArgo_floatNum);
       end
    end
@@ -287,7 +284,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2018 - RNU - creation
@@ -340,7 +337,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/27/2018 - RNU - creation

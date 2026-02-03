@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/21/2017 - RNU - creation
@@ -46,6 +46,9 @@ if (CORIOLIS_CONFIGURATION_FLAG)
    % directory of SUNA calibration files
    SUNA_CALIB_DIR_NAME = '/home/coriolis_dev/gestion/exploitation/argo/flotteurs-coriolis/Bgc-Argo/CTS5/meta_remocean_www/suna_calibration_file';
 
+   % directory of RAMSES calibration files
+   RAMSES_CALIB_DIR_NAME = '/home/coriolis_dev/gestion/exploitation/argo/flotteurs-coriolis/Bgc-Argo/CTS5/meta_remocean_www/ramses_calibration_file';
+
    % directory of individual json float meta-data files
    OUTPUT_DIR_NAME = ['/home/idmtmp7/vincent/matlab/generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];
 
@@ -61,36 +64,37 @@ else
    % JPR CONFIGURATION - START
 
    % meta-data file exported from Coriolis data base
-   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB\new_rem_meta.txt';
-   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_4903784_7.18.txt';
-   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_Jumbo.txt';
-   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5-USEA_6903069.txt';
-   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_USEA_6903093.txt';
-   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_CTS5_UVP_6902968.txt';
-   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\dbExport_UVP.txt';
+   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB\dbexport.txt';
+   % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_CTS5_7.24_OGS_tridente_pal.txt';
+   % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_CTS5_USEA_HB_6904117_v2.txt';
+   % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_CTS5_7.25_7901133.txt';
+   % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_CTS5_7902334_tridente.txt';
+   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_7.26_1902660.txt';
 
    % list of sensors mounted on floats
-   SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB\float_sensor_list.txt';
+   SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB\float_sensor_list.txt';
    SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
 
    % list of concerned floats
-   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB\new_rem.txt';
-   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_UVP_6904240.txt';
-   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_UVP_6903069.txt';
-   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_UVP_6903093.txt';
-   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_UVP_6902968.txt';
-   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_UVP_ko.txt';
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB\new_rem.txt';
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
+   % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_cts57.24_OGS_tridente_pal.txt';
 
    % calibration coefficient file decoded from data
-   CALIB_FILE_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB\calib_coef.txt';
+   CALIB_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB\calib_coef.txt';
    CALIB_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\DataFromFloatToMeta\CalibCoef\calib_coef.txt';
 
    % directory of launch configuration for each float
-   CONFIG_DIR_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB\';
+   CONFIG_DIR_NAME = 'C:\Users\jprannou\Desktop\SOS_VB\';
    CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\ConfigAtLaunch\';
 
    % directory of SUNA calibration files
+   SUNA_CALIB_DIR_NAME = 'C:\Users\jprannou\Desktop\SOS_VB\';
    SUNA_CALIB_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\meta_CTS5_www\suna_calibration_file\';
+
+   % directory of RAMSES calibration files
+   RAMSES_CALIB_DIR_NAME = 'C:\Users\jprannou\Desktop\SOS_VB\';
+   RAMSES_CALIB_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_config\meta_CTS5_www\ramses_calibration_file\';
 
    % directory of individual json float meta-data files
    OUTPUT_DIR_NAME = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];
@@ -125,6 +129,7 @@ generate_json_float_meta_prv_cts5_ir_rudics_(...
    CALIB_FILE_NAME, ...
    CONFIG_DIR_NAME, ...
    SUNA_CALIB_DIR_NAME, ...
+   RAMSES_CALIB_DIR_NAME, ...
    OUTPUT_DIR_NAME, ...
    DIR_LOG_FILE, ...
    rtVersionFlag);

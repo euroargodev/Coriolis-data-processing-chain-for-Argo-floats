@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/16/2013 - RNU - creation
@@ -56,6 +56,14 @@ global g_decArgo_processModeRedecode;
 global g_decArgo_inputFloatWmo;
 global g_decArgo_inputFloatWmoList;
 
+% temporary directory used to store generated NetCDF files
+global g_decArgo_ncTempDir;
+g_decArgo_ncTempDir = '';
+
+% list of NetCDF files to move at the end of the run
+global g_decArgo_filesToMove;
+g_decArgo_filesToMove = [];
+
 
 logFileName = [];
 
@@ -63,34 +71,37 @@ try
 
    % startTime
    ticStartTime = tic;
-   
+
    % store the start time of the run
    currentTime = datestr(now, 'yyyymmddTHHMMSSZ');
-   
+
    % default values initialization
    init_default_values;
-   
+
    % init the XML report
    init_xml_report(currentTime);
-   
+
    % check and analyse common input parameters
    [unusedVarargin, inputError] = parse_input_param_common(varargin);
-   
+
    if (inputError == 0)
       % configuration values initialization
       [unusedVarargin, inputError] = init_config_values(unusedVarargin);
    end
-   
+
    if (inputError == 0)
-      
+
       % log file creation
       if (~isempty(g_decArgo_xmlReportFileName))
          logFileName = [g_decArgo_dirOutputLogFile '/decode_argo_2_nc_rt_' g_decArgo_xmlReportFileName(10:end-4) '.log'];
       else
          logFileName = [g_decArgo_dirOutputLogFile '/decode_argo_2_nc_rt_' currentTime '.log'];
       end
-      diary(logFileName);   
-            
+      diary(logFileName);
+
+      % create NetCDF temporary directory
+      [stopProcess] = create_nc_temp_dir(currentTime);
+
       % print input parameters
       fprintf('CURRENT TIME: %s\n\n', currentTime);
       fprintf('INPUT PARAMETERS:\n');
@@ -110,67 +121,70 @@ try
       end
       fprintf('\n');
 
-      % measurement codes initialization
-      init_measurement_codes;
-      
-      if (g_decArgo_floatTransType == 1)
-         
-         % Argos
-         
-         % check and analyse input parameters
-         [stopProcess] = parse_input_param_argos(unusedVarargin);
-         
-         if (stopProcess == 0)
-            if (g_decArgo_processModeRedecode == 0)
-               [floatList, stopProcess] = rename_argos_input_file;
-            elseif (g_decArgo_processModeRedecode == 1)
-               if (~isempty(g_decArgo_inputFloatWmo))
-                  floatList = str2num(g_decArgo_inputFloatWmo);
-               elseif (~isempty(g_decArgo_inputFloatWmoList))
-                  floatList = load(g_decArgo_inputFloatWmoList);
+      if (stopProcess == 0)
+
+         % measurement codes initialization
+         init_measurement_codes;
+
+         if (g_decArgo_floatTransType == 1)
+
+            % Argos
+
+            % check and analyse input parameters
+            [stopProcess] = parse_input_param_argos(unusedVarargin);
+
+            if (stopProcess == 0)
+               if (g_decArgo_processModeRedecode == 0)
+                  [floatList, stopProcess] = rename_argos_input_file;
+               elseif (g_decArgo_processModeRedecode == 1)
+                  if (~isempty(g_decArgo_inputFloatWmo))
+                     floatList = str2num(g_decArgo_inputFloatWmo);
+                  elseif (~isempty(g_decArgo_inputFloatWmoList))
+                     floatList = load(g_decArgo_inputFloatWmoList);
+                  end
                end
             end
-         end
-         
-      elseif (g_decArgo_floatTransType == 2)
-         
-         % Iridium Rudics
-         
-         % check and analyse input parameters
-         [floatList, stopProcess] = ...
-            parse_input_param_iridium_rudics_rt(unusedVarargin);
-         
-      elseif (g_decArgo_floatTransType == 3)
-         
-         % Iridium SBD
-         
-         % check and analyse input parameters
-         [floatList, stopProcess] = ...
-            parse_input_param_iridium_sbd_rt(unusedVarargin);
-         
-      elseif (g_decArgo_floatTransType == 4)
-         
-         % Iridium SBD ProvBioII floats
-         
-         % check and analyse input parameters
-         [floatList, stopProcess] = ...
-            parse_input_param_iridium_sbd2_rt(unusedVarargin);
 
+         elseif (g_decArgo_floatTransType == 2)
+
+            % Iridium Rudics
+
+            % check and analyse input parameters
+            [floatList, stopProcess] = ...
+               parse_input_param_iridium_rudics_rt(unusedVarargin);
+
+         elseif (g_decArgo_floatTransType == 3)
+
+            % Iridium SBD
+
+            % check and analyse input parameters
+            [floatList, stopProcess] = ...
+               parse_input_param_iridium_sbd_rt(unusedVarargin);
+
+         elseif (g_decArgo_floatTransType == 4)
+
+            % Iridium SBD ProvBioII floats
+
+            % check and analyse input parameters
+            [floatList, stopProcess] = ...
+               parse_input_param_iridium_sbd2_rt(unusedVarargin);
+
+         end
       end
-      
+
       % empty CSV file Id
       g_decArgo_outputCsvFileId = [];
-      
+
       if (stopProcess == 0)
          % decode the floats of the list
          decode_argo(floatList);
       end
-      
+
       diary off;
-      
+
       % finalize XML report
       [status] = finalize_xml_report(ticStartTime, logFileName, []);
-      
+
    else
       status = 'nok';
    end
@@ -186,6 +200,9 @@ catch MException
          MException.stack(idS). name);
    end
 
+   % clean the list of NetCDF files to move
+   g_decArgo_filesToMove = [];
+
    diary off;
 
    % finalize XML report
@@ -193,7 +210,20 @@ catch MException
 
 end
 
-% delete the temporary sub-directory
+% move the generated NetCDF files the their output directory
+for idFile = 1:size(g_decArgo_filesToMove, 1)
+   move_file(g_decArgo_filesToMove{idFile, 2}, g_decArgo_filesToMove{idFile, 3});
+end
+
+% delete the temporary sub-directories
+if (~isempty(g_decArgo_ncTempDir) && (exist(g_decArgo_ncTempDir, 'dir') == 7))
+   [statusRmdir, message, messageId] = rmdir(g_decArgo_ncTempDir, 's');
+   if (statusRmdir == 0)
+      fprintf('ERROR: Error while deleting the %s directory (%s)\n', ...
+         g_decArgo_ncTempDir, ...
+         message);
+   end
+end
 if (~isempty(g_decArgo_tmpArgosIdDirectory) && (exist(g_decArgo_tmpArgosIdDirectory, 'dir') == 7))
    [statusRmdir, message, messageId] = rmdir(g_decArgo_tmpArgosIdDirectory, 's');
    if (statusRmdir == 0)

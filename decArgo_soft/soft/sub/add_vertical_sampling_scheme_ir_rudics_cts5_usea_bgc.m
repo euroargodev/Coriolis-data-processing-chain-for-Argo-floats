@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -54,7 +54,7 @@ for idP = 1:length(a_tabProfiles)
             if (~isempty(configValue))
                threshold(id) = configValue;
             else
-               fprintf('ERROR: Float #%dA: (Cy,Ptn)=(%d,%d): Configuration parameter value is missing for ''%s''\n', ...
+               fprintf('ERROR: Float #%d: (Cy,Ptn)=(%d,%d): Configuration parameter value is missing for ''%s''\n', ...
                   g_decArgo_floatNum, prof.cycleNumber, prof.profileNumber, configName);
             end
          end
@@ -231,7 +231,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation

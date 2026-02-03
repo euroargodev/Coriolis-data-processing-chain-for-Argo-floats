@@ -27,7 +27,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -68,9 +68,6 @@ global g_decArgo_outputNcParamIndex;
 
 % output NetCDF technical parameter values
 global g_decArgo_outputNcParamValue;
-
-% output NetCDF technical parameter labels
-global g_decArgo_outputNcParamLabelBis;
 
 % default values
 global g_decArgo_janFirst1950InMatlab;
@@ -198,6 +195,13 @@ global g_decArgo_floatConfig;
 % TRAJ 3.2 file generation flag
 global g_decArgo_generateNcTraj32;
 
+% to store ICE data used to simulate ICE algorithm
+global g_decArgo_iceData;
+g_decArgo_iceData = [];
+
+% json meta-data
+global g_decArgo_jsonMetaData;
+
 
 % create the float directory
 floatIriDirName = [g_decArgo_iridiumDataDirectory '/' a_floatLoginName '_' num2str(a_floatNum) '/'];
@@ -242,7 +246,6 @@ mkdir(floatTmpDirName);
 if (isempty(g_decArgo_outputCsvFileId))
    g_decArgo_outputNcParamIndex = [];
    g_decArgo_outputNcParamValue = [];
-   g_decArgo_outputNcParamLabelBis = [];
 end
 
 % inits for output CSV file
@@ -338,6 +341,24 @@ end
 ok = get_event_data_cts5(g_decArgo_cyclePatternNumFloat, a_launchDate, a_decoderId);
 if (~ok)
    return
+end
+
+% check APMT version (event #20)
+if (~isempty(g_decArgo_eventData))
+   idF = find([g_decArgo_eventData{:, 4}] == 5);
+   if (~isempty(idF))
+      apmtVersion = unique([g_decArgo_eventData{idF, 5}]);
+      if (isscalar(apmtVersion))
+         apmtVersion = apmtVersion{:};
+         if (isfield(g_decArgo_jsonMetaData, 'FIRMWARE_VERSION') && ~isempty(g_decArgo_jsonMetaData.FIRMWARE_VERSION))
+            if (~strcmp(apmtVersion, g_decArgo_jsonMetaData.FIRMWARE_VERSION))
+               fprintf('WARNING: Float #%d: FIRMWARE_VERSION is non consistent with float data: ''%s'' in META.json and ''%s'' in float transmitted data - updating the META.json data\n', ...
+                  g_decArgo_floatNum, apmtVersion, g_decArgo_jsonMetaData.FIRMWARE_VERSION);
+               g_decArgo_jsonMetaData.FIRMWARE_VERSION = apmtVersion;
+            end
+         end
+      end
+   end
 end
 
 % process available files
@@ -634,7 +655,7 @@ if (isempty(g_decArgo_outputCsvFileId))
          o_tabProfiles(idFProfCtd) = [];
          
          % merge profiles (all data from a given sensor together)
-         [tabProfilesPayload] = merge_profile_meas_ir_rudics_cts5_from_payload(tabProfilesPayload);
+         [tabProfilesPayload] = merge_profile_cts5_from_payload(tabProfilesPayload);
          
          % add the vertical sampling scheme from configuration information
          [tabProfilesPayload] = add_vertical_sampling_scheme_ir_rudics_cts5_from_payload(tabProfilesPayload);
@@ -671,7 +692,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabTrajNMeas, o_tabTrajNCycle);
    
    % cut CTD profile at the cut-off pressure of the CTD pump
-   [o_tabProfiles] = cut_ctd_profile_ir_rudics(o_tabProfiles);
+   [o_tabProfiles] = cut_ctd_profile_ir_rudics(o_tabProfiles, a_decoderId);
    
    % create output float configuration
    [o_structConfig] = create_output_float_config_ir_rudics_cts5(a_decoderId);
@@ -753,7 +774,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -882,6 +903,7 @@ typeOrderList = [2 3 4 6 7 5 9 1];
 % process the files
 fprintf('DEC_INFO: decoding files:\n');
 apmtCtd = [];
+apmtTech2 = [];
 payloadData = [];
 techDataFromApmtTech = [];
 trajDataFromApmtTech = [];
@@ -981,6 +1003,7 @@ for typeNum = typeOrderList
                [apmtTech, apmtTimeFromTech, ...
                   ncApmtTech, apmtTrajFromTech, apmtMetaFromTech] = ...
                   read_apmt_technical_file([fileNameInfo{4} fileNameInfo{1}], a_decoderId, 0);
+               apmtTech2{end+1} = apmtTech;
                g_decArgo_apmtMetaFromTech = [g_decArgo_apmtMetaFromTech apmtMetaFromTech];
                if (~isempty(g_decArgo_patternNumFloat))
                   g_decArgo_apmtTimeFromTech = cat(1, g_decArgo_apmtTimeFromTech, ...
@@ -1131,7 +1154,12 @@ if (~isempty(fileNames))
       length(fileNames));
 end
 
+% store ICE information
+store_ice_information_cts5_osean(payloadData, g_decArgo_apmtTimeFromTech, apmtCtd, apmtTech2);
+
 if (~isempty(g_decArgo_outputCsvFileId))
+
+   % o_tabProfiles = [];
    
    % print time data in csv file
    print_dates_in_csv_file_ir_rudics_cts5(timeDataFromApmtTech, apmtCtd, payloadData);
@@ -1151,36 +1179,36 @@ if (isempty(g_decArgo_outputCsvFileId) && (~payloadConfigFileOnly))
    subSurfaceMeas = [];
    presCutOffProf = [];
    if (~isempty(apmtCtd))
-      
+
       % create profiles (as they are transmitted)
       [tabProfiles, tabDriftApmt, subSurfaceMeas, presCutOffProf] = process_profiles_ir_rudics_cts5_from_apmt( ...
          apmtCtd, apmtTimeFromTech, g_decArgo_gpsData);
       tabDrift = [tabDrift tabDriftApmt];
-      
+
       % merge profiles (all data from a given sensor together)
-      [tabProfiles] = merge_profile_meas_ir_rudics_cts5_from_apmt(tabProfiles);
-      
+      [tabProfiles] = merge_profile_cts5_from_apmt(tabProfiles);
+
       % add the vertical sampling scheme from configuration information
       [tabProfiles] = add_vertical_sampling_scheme_ir_rudics_cts5_from_apmt(tabProfiles);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfiles];
    end
-   
+
    % process profile data from payload
    if (~isempty(payloadData) && ~emptyPayloadData)
-      
+
       % create profiles (as they are transmitted)
       [tabProfiles, tabDriftPayload, tabSurf, ...
          tabProfilesRaw, tabDriftRaw, tabSurfRaw] = process_profiles_ir_rudics_cts5_from_payload( ...
          payloadData, g_decArgo_apmtTimeFromTech, g_decArgo_gpsData, presCutOffProf, o_tabProfiles, trajDataFromApmtTech);
       tabDrift = [tabDrift tabDriftPayload];
-      
+
       % merge profiles (all data from a given sensor together)
-      [tabProfiles] = merge_profile_meas_ir_rudics_cts5_from_payload(tabProfiles);
-      
+      [tabProfiles] = merge_profile_cts5_from_payload(tabProfiles);
+
       % add the vertical sampling scheme from configuration information
       [tabProfiles] = add_vertical_sampling_scheme_ir_rudics_cts5_from_payload(tabProfiles);
-            
+
       cycleProfileIds = 1:length(tabProfiles);
       if (g_decArgo_dataPayloadCorrectedCycle == 1)
          cycleProfileIds = find(([tabProfiles.cycleNumber] == g_decArgo_cycleNumFloat) & ...
@@ -1190,10 +1218,10 @@ if (isempty(g_decArgo_outputCsvFileId) && (~payloadConfigFileOnly))
       otherCycleProfileIds = setdiff(1:length(tabProfiles), cycleProfileIds);
 
       o_tabProfiles = [o_tabProfiles tabProfiles(cycleProfileIds)]; % we should first add the CTD profile in the list before computing derived parameters
-      
+
       % compute derived parameters of the profiles
       [o_tabProfiles] = compute_profile_derived_parameters_ir_rudics(o_tabProfiles, a_decoderId);
-      
+
       o_tabProfiles = [o_tabProfiles tabProfiles(otherCycleProfileIds)];
 
       % we don't process derived parameters for raw data (because we don't have
@@ -1304,7 +1332,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation

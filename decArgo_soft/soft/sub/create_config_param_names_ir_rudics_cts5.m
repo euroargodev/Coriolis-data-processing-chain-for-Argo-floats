@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -43,21 +43,29 @@ switch (a_decoderId)
       
       [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = create_config_param_names_ir_rudics_cts5_124_125;
       
-   case {126}
+   case {126, 136}
       
-      [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = create_config_param_names_ir_rudics_cts5_126;
+      [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = create_config_param_names_ir_rudics_cts5_126_136;
       
-   case {127}
+   case {127, 134}
       
-      [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = create_config_param_names_ir_rudics_cts5_127;
+      [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = create_config_param_names_ir_rudics_cts5_127_134;
 
    case {128}
       
       [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = create_config_param_names_ir_rudics_cts5_128;
 
-   case {129, 130, 131, 132, 133}
+   case {129, 130, 131, 132, 133, 137, 141}
       
-      [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = create_config_param_names_ir_rudics_cts5_129_to_133;
+      [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = create_config_param_names_ir_rudics_cts5_129_to_133_137_141;
+
+   case {135, 138}
+      
+      [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = create_config_param_names_ir_rudics_cts5_135_138;
+      
+   case {139, 140}
+      
+      [o_decArgoConfParamNames, o_ncConfParamNames, o_ncConfParamIds] = create_config_param_names_ir_rudics_cts5_139_140;
       
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet in create_config_param_names_ir_rudics_cts5 for decoderId #%d\n', ...

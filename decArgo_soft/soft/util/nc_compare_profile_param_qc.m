@@ -5,7 +5,7 @@
 % '048a' version of the decoder.
 %
 % SYNTAX :
-%   nc_compare_profile_param_qc or 
+%   nc_compare_profile_param_qc or
 %   nc_compare_profile_param_qc(6900189, 7900118)
 %
 % INPUT PARAMETERS :
@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/21/2022 - RNU - creation
@@ -205,7 +205,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/21/2022 - RNU - creation
@@ -273,7 +273,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/21/2022 - RNU - creation
@@ -337,7 +337,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/11/2016 - RNU - creation
@@ -349,62 +349,36 @@ o_ncVarList = [];
 
 
 if (exist(a_ncPathFileName, 'file') == 2)
-   
+
    % open NetCDF file
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
       return
    end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         varInfo = ncinfo(a_ncPathFileName, varName);
-         o_ncVarList = [o_ncVarList {varName} {varValue}];
-      else
-         o_ncVarList = [o_ncVarList {varName} {[]}];
+
+   try
+
+      % retrieve variables from NetCDF file
+      for idVar = 1:length(a_wantedVars)
+         varName = a_wantedVars{idVar};
+
+         if (var_is_present_dec_argo(fCdf, varName))
+            varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+            varInfo = ncinfo(a_ncPathFileName, varName);
+            o_ncVarList = [o_ncVarList {varName} {varValue}];
+         else
+            o_ncVarList = [o_ncVarList {varName} {[]}];
+         end
+
       end
-      
+
+      netcdf.close(fCdf);
+
+   catch MException
+      netcdf.close(fCdf);
+      rethrow(MException)
    end
-   
-   netcdf.close(fCdf);
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Get data from name in a {name}/{data} list.
-%
-% SYNTAX :
-%  [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
-%
-% INPUT PARAMETERS :
-%   a_dataName : name of the data to retrieve
-%   a_dataList : {name}/{data} list
-%
-% OUTPUT PARAMETERS :
-%   o_dataValues : concerned data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/21/2015 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
-
-% output parameters initialization
-o_dataValues = [];
-
-idVal = find(strcmp(a_dataName, a_dataList) == 1, 1);
-if (~isempty(idVal))
-   o_dataValues = a_dataList{idVal+1};
 end
 
 return

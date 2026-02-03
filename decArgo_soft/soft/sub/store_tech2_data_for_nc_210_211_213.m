@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/04/2016 - RNU - creation
@@ -98,8 +98,8 @@ if (a_deepCycle == 1)
       g_decArgo_cycleNum 211];
    g_decArgo_outputNcParamValue{end+1} = tabTech2(14+ID_OFFSET);
    
-   pres = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(tabTech2(15+ID_OFFSET));
-   temp = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(tabTech2(16+ID_OFFSET));
+   pres = sensor_2_value_for_pressure_2xx_2_10_to_14_17_22_to_27_31_32(tabTech2(15+ID_OFFSET));
+   temp = sensor_2_value_for_temp_2xx_4_to_14_17_19_20_22_to_27_31_32(tabTech2(16+ID_OFFSET));
    psal = tabTech2(17+ID_OFFSET)/1000;
    if (any([pres temp psal] ~= 0))
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
@@ -161,7 +161,7 @@ if (a_deepCycle == 1)
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 224];
-      g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(tabTech2(34+ID_OFFSET));
+      g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_pressure_2xx_2_10_to_14_17_22_to_27_31_32(tabTech2(34+ID_OFFSET));
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 225];
@@ -239,6 +239,14 @@ if (a_deepCycle == 1)
    g_decArgo_outputNcParamValue{end+1} = tabTech2(57+ID_OFFSET);
    
 else
+      
+   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+      g_decArgo_cycleNum 204];
+   g_decArgo_outputNcParamValue{end+1} = tabTech2(7+ID_OFFSET);
+      
+   g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
+      g_decArgo_cycleNum 211];
+   g_decArgo_outputNcParamValue{end+1} = tabTech2(14+ID_OFFSET);
    
    offset = 10000;
 

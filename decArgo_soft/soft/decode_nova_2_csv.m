@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/04/2016 - RNU - creation
@@ -38,7 +38,6 @@ global g_decArgo_outputCsvFileId;
 % configuration values
 global g_decArgo_floatListFileName;
 global g_decArgo_dirOutputLogFile;
-global g_decArgo_dirOutputCsvFile;
 
 global g_decArgo_generateNcTraj31;
 global g_decArgo_generateNcTraj32;
@@ -76,14 +75,9 @@ end
 logFileName = [g_decArgo_dirOutputLogFile '/decode_nova_2_csv' name '_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
 diary(logFileName);
 
-% output CSV file creation
-outputFileName = [g_decArgo_dirOutputCsvFile '/nova_decoded_data' name '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
-fidOut = fopen(outputFileName, 'wt');
-if (fidOut == -1)
-   fprintf('ERROR: Unable to create CSV output file: %s\n', outputFileName);
-   return
-end
-g_decArgo_outputCsvFileId = fidOut;
+% not empty CSV file Id (but not assigned yet)
+g_decArgo_outputCsvFileId = -1;
+
 g_decArgo_generateNcTraj31 = 0;
 g_decArgo_generateNcTraj32 = 0;
 g_decArgo_generateNcMultiProf = 0;
@@ -93,8 +87,6 @@ g_decArgo_generateNcMeta = 0;
 
 % decode the floats of the list
 decode_nova(floatList);
-
-fclose(g_decArgo_outputCsvFileId);
 
 diary off;
 

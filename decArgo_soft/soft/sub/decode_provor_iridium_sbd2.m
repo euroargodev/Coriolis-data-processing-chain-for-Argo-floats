@@ -33,7 +33,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/01/2014 - RNU - creation
@@ -67,9 +67,6 @@ global g_decArgo_outputNcParamIndex;
 
 % output NetCDF technical parameter values
 global g_decArgo_outputNcParamValue;
-
-% output NetCDF technical parameter labels
-global g_decArgo_outputNcParamLabelBis;
 
 % default values
 global g_decArgo_janFirst1950InMatlab;
@@ -216,7 +213,6 @@ ncConfParamNames = [];
 if (isempty(g_decArgo_outputCsvFileId))
    g_decArgo_outputNcParamIndex = [];
    g_decArgo_outputNcParamValue = [];
-   g_decArgo_outputNcParamLabelBis = [];
    
    if (g_decArgo_generateNcMeta ~= 0)
       % create the configuration parameter names for the META NetCDF file
@@ -878,7 +874,7 @@ if (isempty(g_decArgo_outputCsvFileId))
       o_tabTrajNMeas, o_tabTrajNCycle);
    
    % cut CTD profile at the cut-off pressure of the CTD pump
-   [o_tabProfiles] = cut_ctd_profile_ir_sbd2(o_tabProfiles);
+   [o_tabProfiles] = cut_ctd_profile_ir_sbd2(o_tabProfiles, a_decoderId);
    
    % create output float configuration
    [o_structConfig] = create_output_float_config_ir_sbd2( ...
@@ -975,7 +971,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/01/2014 - RNU - creation

@@ -31,7 +31,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/14/2014 - RNU - creation
@@ -69,9 +69,6 @@ global g_decArgo_outputNcParamIndex;
 
 % output NetCDF technical parameter values
 global g_decArgo_outputNcParamValue;
-
-% output NetCDF technical parameter labels
-global g_decArgo_outputNcParamLabelBis;
 
 % default values
 global g_decArgo_janFirst1950InMatlab;
@@ -203,7 +200,6 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    g_decArgo_outputNcParamIndex = [];
    g_decArgo_outputNcParamValue = [];
-   g_decArgo_outputNcParamLabelBis = [];
    
    % create the configuration parameter names for the META NetCDF file
    [decArgoConfParamNames, ncConfParamNames] = create_config_param_names_ir_sbd(a_decoderId);
@@ -424,7 +420,7 @@ if (g_decArgo_realtimeFlag)
    bufferMailFileDates = [];
 end
 for idSpoolFile = 1:length(tabAllFileNames)
-      
+
    if (g_decArgo_realtimeFlag)
       bufferMailFileNames{end+1} = tabAllFileNames{idSpoolFile};
       bufferMailFileDates(end+1) = tabAllFileDates(idSpoolFile);
@@ -927,7 +923,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/14/2014 - RNU - creation
@@ -1063,7 +1059,7 @@ switch (a_decoderId)
    case {201, 203} % Arvor-deep 4000
       
       % decode the collected data
-      [tabTech, dataCTD, dataCTDO, evAct, pumpAct, floatParam, deepCycle] = ...
+      [tabTech, dataCTD, dataCTDO, evAct, pumpAct, floatParam, deepCycleFlag] = ...
          decode_prv_data_ir_sbd_201_203(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone, a_decoderId);
       
       completedBuffer = a_completedBuffer;
@@ -1077,7 +1073,7 @@ switch (a_decoderId)
          is_buffer_completed_ir_sbd(1, a_decoderId);
       end
       
-      if (deepCycle == 1)
+      if (deepCycleFlag == 1)
          g_decArgo_firstDeepCycleDone = 1;
       end
       
@@ -1087,7 +1083,7 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if ((deepCycle == 1) || (g_decArgo_cycleNum == g_decArgo_firstDeepCycleNumber-1))
+      if ((deepCycleFlag == 1) || (g_decArgo_cycleNum == g_decArgo_firstDeepCycleNumber-1))
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
@@ -1105,14 +1101,14 @@ switch (a_decoderId)
       
       % convert counts to physical values
       if (~isempty(dataCTD))
-         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_201_203_215_216_218_221(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_201_to_203_215_216_218_221(dataCTD(:, 47:61));
-         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_201_to_203_215_216_218_221(dataCTD(:, 62:76));
+         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_201_203_215_216_218_221_228_229_230(dataCTD(:, 32:46));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_2xx_1_to_3_15_16_18_21_28_29_30(dataCTD(:, 47:61));
+         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_2xx_1_to_3_15_16_18_21_28_29_30(dataCTD(:, 62:76));
       end
       if (~isempty(dataCTDO))
-         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_201_203_215_216_218_221(dataCTDO(:, 16:22));
-         [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_201_to_203_215_216_218_221(dataCTDO(:, 23:29));
-         [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_201_to_203_215_216_218_221(dataCTDO(:, 30:36));
+         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_201_203_215_216_218_221_228_229_230(dataCTDO(:, 16:22));
+         [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_2xx_1_to_3_15_16_18_21_28_29_30(dataCTDO(:, 23:29));
+         [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_2xx_1_to_3_15_16_18_21_28_29_30(dataCTDO(:, 30:36));
          [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2phase_ir_sbd_2xx(dataCTDO(:, 37:50));
          [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_ir_sbd_2xx(dataCTDO(:, 51:57));
       end
@@ -1121,7 +1117,7 @@ switch (a_decoderId)
       [parkDate, parkTransDate, ...
          parkPres, parkTemp, parkSal, ...
          parkC1PhaseDoxy, parkC2PhaseDoxy, parkTempDoxy] = ...
-         create_prv_drift_201_to_203_215_216_218_221(dataCTD, dataCTDO, 1);
+         create_prv_drift_201_to_203_215_216_218_221_228(dataCTD, dataCTDO, 1);
       
       % create descending and ascending profiles
       [descProfDate, descProfPres, descProfTemp, descProfSal, ...
@@ -1135,13 +1131,13 @@ switch (a_decoderId)
       parkDoxy = [];
       ascProfDoxy = [];
       if (~isempty(dataCTDO))
-         [descProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+         [descProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
             descProfC1PhaseDoxy, descProfC2PhaseDoxy, descProfTempDoxy, ...
             descProfPres, descProfTemp, descProfSal);
-         [parkDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+         [parkDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
             parkC1PhaseDoxy, parkC2PhaseDoxy, parkTempDoxy, ...
             parkPres, parkTemp, parkSal);
-         [ascProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+         [ascProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
             ascProfC1PhaseDoxy, ascProfC2PhaseDoxy, ascProfTempDoxy, ...
             ascProfPres, ascProfTemp, ascProfSal);
       end
@@ -1264,7 +1260,7 @@ switch (a_decoderId)
          
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle, tabTechAuxNMeas] = process_trajectory_data_201_203( ...
-            g_decArgo_cycleNum, deepCycle, ...
+            g_decArgo_cycleNum, deepCycleFlag, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
             descentToParkStartDate, firstStabDate, firstStabPres, descentToParkEndDate, ...
@@ -1289,12 +1285,10 @@ switch (a_decoderId)
          
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          % TECH NetCDF file
-         
+
          % store information on received Iridium packet types
-         if (deepCycle == 1)
-            store_received_packet_type_info_for_nc(a_decoderId);
-         end
-         
+         store_received_packet_type_info_for_nc(a_decoderId, deepCycleFlag);
+
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
          
@@ -1311,7 +1305,7 @@ switch (a_decoderId)
    case {202} % Arvor-deep 3500
       
       % decode the collected data
-      [tabTech, dataCTD, dataCTDO, evAct, pumpAct, floatParam, deepCycle] = ...
+      [tabTech, dataCTD, dataCTDO, evAct, pumpAct, floatParam, deepCycleFlag] = ...
          decode_prv_data_ir_sbd_202(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       
       completedBuffer = a_completedBuffer;
@@ -1325,16 +1319,16 @@ switch (a_decoderId)
          is_buffer_completed_ir_sbd(1, a_decoderId);
       end
       
-      if ((deepCycle == 0) && ...
+      if ((deepCycleFlag == 0) && ...
             (g_decArgo_cycleNumPrev ~= -1) && ...
             (g_decArgo_cycleNumPrev ~= g_decArgo_cycleNum))
          % a new cycle number is a deep cycle even if the float didn't dive
          % (Ex: 6901031 #3)
-         deepCycle = 1;
+         deepCycleFlag = 1;
       end
       g_decArgo_cycleNumPrev = g_decArgo_cycleNum;
       
-      if (deepCycle == 1)
+      if (deepCycleFlag == 1)
          g_decArgo_firstDeepCycleDone = 1;
       end
       
@@ -1344,7 +1338,7 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if ((deepCycle == 1) || (g_decArgo_cycleNum == g_decArgo_firstDeepCycleNumber-1))
+      if ((deepCycleFlag == 1) || (g_decArgo_cycleNum == g_decArgo_firstDeepCycleNumber-1))
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
@@ -1352,7 +1346,7 @@ switch (a_decoderId)
       if (~isempty(floatParam))
          update_float_config_ir_sbd(floatParam, a_decoderId);
       end
-      
+
       % store GPS data and compute JAMSTEC QC for the GPS locations of the
       % current cycle
       store_gps_data_ir_sbd(tabTech, g_decArgo_cycleNum, a_decoderId);
@@ -1362,14 +1356,14 @@ switch (a_decoderId)
       
       % convert counts to physical values
       if (~isempty(dataCTD))
-         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_201_to_203_215_216_218_221(dataCTD(:, 47:61));
-         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_201_to_203_215_216_218_221(dataCTD(:, 62:76));
+         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_2xx_2_10_to_14_17_22_to_27_31_32(dataCTD(:, 32:46));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_2xx_1_to_3_15_16_18_21_28_29_30(dataCTD(:, 47:61));
+         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_2xx_1_to_3_15_16_18_21_28_29_30(dataCTD(:, 62:76));
       end
       if (~isempty(dataCTDO))
-         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(dataCTDO(:, 16:22));
-         [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_201_to_203_215_216_218_221(dataCTDO(:, 23:29));
-         [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_201_to_203_215_216_218_221(dataCTDO(:, 30:36));
+         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_2xx_2_10_to_14_17_22_to_27_31_32(dataCTDO(:, 16:22));
+         [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_2xx_1_to_3_15_16_18_21_28_29_30(dataCTDO(:, 23:29));
+         [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_2xx_1_to_3_15_16_18_21_28_29_30(dataCTDO(:, 30:36));
          [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2phase_ir_sbd_2xx(dataCTDO(:, 37:50));
          [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_ir_sbd_2xx(dataCTDO(:, 51:57));
       end
@@ -1378,7 +1372,7 @@ switch (a_decoderId)
       [parkDate, parkTransDate, ...
          parkPres, parkTemp, parkSal, ...
          parkC1PhaseDoxy, parkC2PhaseDoxy, parkTempDoxy] = ...
-         create_prv_drift_201_to_203_215_216_218_221(dataCTD, dataCTDO, 1);
+         create_prv_drift_201_to_203_215_216_218_221_228(dataCTD, dataCTDO, 1);
       
       % create descending and ascending profiles
       [descProfDate, descProfPres, descProfTemp, descProfSal, ...
@@ -1521,7 +1515,7 @@ switch (a_decoderId)
          
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle, tabTechAuxNMeas] = process_trajectory_data_202( ...
-            g_decArgo_cycleNum, deepCycle, ...
+            g_decArgo_cycleNum, deepCycleFlag, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
             descentToParkStartDate, firstStabDate, firstStabPres, descentToParkEndDate, ...
@@ -1548,9 +1542,7 @@ switch (a_decoderId)
          % TECH NetCDF file
          
          % store information on received Iridium packet types
-         if (deepCycle == 1)
-            store_received_packet_type_info_for_nc(a_decoderId);
-         end
+         store_received_packet_type_info_for_nc(a_decoderId, deepCycleFlag);
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
@@ -1568,7 +1560,7 @@ switch (a_decoderId)
    case {204} % Arvor Iridium 5.4
       
       % decode the collected data
-      [tabTech, dataCTD, floatParam, deepCycle] = ...
+      [tabTech, dataCTD, floatParam, deepCycleFlag] = ...
          decode_prv_data_ir_sbd_204(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       
       completedBuffer = a_completedBuffer;
@@ -1590,15 +1582,15 @@ switch (a_decoderId)
          end
       end
       
-      if ((deepCycle == 0) && ...
+      if ((deepCycleFlag == 0) && ...
             (g_decArgo_cycleNumPrev ~= -1) && ...
             (g_decArgo_cycleNumPrev ~= g_decArgo_cycleNum))
          % a new cycle number is a deep cycle even if the float didn't dive
-         deepCycle = 1;
+         deepCycleFlag = 1;
       end
       g_decArgo_cycleNumPrev = g_decArgo_cycleNum;
       
-      if (deepCycle == 1)
+      if (deepCycleFlag == 1)
          g_decArgo_firstDeepCycleDone = 1;
       end
       
@@ -1608,7 +1600,7 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if (deepCycle == 1)
+      if (deepCycleFlag == 1)
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
@@ -1636,7 +1628,7 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTD))
          [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTD(:, 47:61));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_2xx_4_to_14_17_19_20_22_to_27_31_32(dataCTD(:, 47:61));
          [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTD(:, 62:76));
       end
       
@@ -1663,7 +1655,7 @@ switch (a_decoderId)
          gpsDate, ...
          firstGroundingDate, firstGroundingPres, ...
          firstEmergencyAscentDate, firstEmergencyAscentPres, refDay] = ...
-         compute_prv_dates_204_to_209(tabTech, deepCycle, g_decArgo_julD2FloatDayOffset, lastMsgDateOfPrevCycle, a_launchDate, dataCTD);
+         compute_prv_dates_204_to_209(tabTech, deepCycleFlag, g_decArgo_julD2FloatDayOffset, lastMsgDateOfPrevCycle, a_launchDate, dataCTD);
       if (refDay ~= g_decArgo_julD2FloatDayOffset)
          
          g_decArgo_julD2FloatDayOffset = refDay;
@@ -1768,7 +1760,7 @@ switch (a_decoderId)
          
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_204_205( ...
-            g_decArgo_cycleNum, deepCycle, ...
+            g_decArgo_cycleNum, deepCycleFlag, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
             descentToParkStartDate, firstStabDate, firstStabPres, descentToParkEndDate, ...
@@ -1792,9 +1784,7 @@ switch (a_decoderId)
          % TECH NetCDF file
          
          % store information on received Iridium packet types
-         if (deepCycle == 1)
-            store_received_packet_type_info_for_nc(a_decoderId);
-         end
+         store_received_packet_type_info_for_nc(a_decoderId, deepCycleFlag);
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
@@ -1811,7 +1801,7 @@ switch (a_decoderId)
    case {205} % Arvor Iridium 5.41 & 5.42
       
       % decode the collected data
-      [tabTech, dataCTD, floatParam, deepCycle] = ...
+      [tabTech, dataCTD, floatParam, deepCycleFlag] = ...
          decode_prv_data_ir_sbd_205(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       
       completedBuffer = a_completedBuffer;
@@ -1833,15 +1823,15 @@ switch (a_decoderId)
          end
       end
       
-      if ((deepCycle == 0) && ...
+      if ((deepCycleFlag == 0) && ...
             (g_decArgo_cycleNumPrev ~= -1) && ...
             (g_decArgo_cycleNumPrev ~= g_decArgo_cycleNum))
          % a new cycle number is a deep cycle even if the float didn't dive
-         deepCycle = 1;
+         deepCycleFlag = 1;
       end
       g_decArgo_cycleNumPrev = g_decArgo_cycleNum;
       
-      if (deepCycle == 1)
+      if (deepCycleFlag == 1)
          g_decArgo_firstDeepCycleDone = 1;
       end
       
@@ -1851,7 +1841,7 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if (deepCycle == 1)
+      if (deepCycleFlag == 1)
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
@@ -1879,7 +1869,7 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTD))
          [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTD(:, 47:61));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_2xx_4_to_14_17_19_20_22_to_27_31_32(dataCTD(:, 47:61));
          [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTD(:, 62:76));
       end
       
@@ -1906,7 +1896,7 @@ switch (a_decoderId)
          gpsDate, ...
          firstGroundingDate, firstGroundingPres, ...
          firstEmergencyAscentDate, firstEmergencyAscentPres, refDay] = ...
-         compute_prv_dates_204_to_209(tabTech, deepCycle, g_decArgo_julD2FloatDayOffset, lastMsgDateOfPrevCycle, a_launchDate, dataCTD);
+         compute_prv_dates_204_to_209(tabTech, deepCycleFlag, g_decArgo_julD2FloatDayOffset, lastMsgDateOfPrevCycle, a_launchDate, dataCTD);
       if (refDay ~= g_decArgo_julD2FloatDayOffset)
          
          g_decArgo_julD2FloatDayOffset = refDay;
@@ -2012,7 +2002,7 @@ switch (a_decoderId)
          
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_204_205( ...
-            g_decArgo_cycleNum, deepCycle, ...
+            g_decArgo_cycleNum, deepCycleFlag, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
             descentToParkStartDate, firstStabDate, firstStabPres, descentToParkEndDate, ...
@@ -2036,9 +2026,7 @@ switch (a_decoderId)
          % TECH NetCDF file
          
          % store information on received Iridium packet types
-         if (deepCycle == 1)
-            store_received_packet_type_info_for_nc(a_decoderId);
-         end
+         store_received_packet_type_info_for_nc(a_decoderId, deepCycleFlag);
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
@@ -2055,7 +2043,7 @@ switch (a_decoderId)
    case {206, 207, 208} % Provor-DO Iridium 5.71 & 5.7 & 5.72
       
       % decode the collected data
-      [tabTech, dataCTDO, floatParam, deepCycle] = ...
+      [tabTech, dataCTDO, floatParam, deepCycleFlag] = ...
          decode_prv_data_ir_sbd_206_207_208(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       
       completedBuffer = a_completedBuffer;
@@ -2077,15 +2065,15 @@ switch (a_decoderId)
          end
       end
       
-      if ((deepCycle == 0) && ...
+      if ((deepCycleFlag == 0) && ...
             (g_decArgo_cycleNumPrev ~= -1) && ...
             (g_decArgo_cycleNumPrev ~= g_decArgo_cycleNum))
          % a new cycle number is a deep cycle even if the float didn't dive
-         deepCycle = 1;
+         deepCycleFlag = 1;
       end
       g_decArgo_cycleNumPrev = g_decArgo_cycleNum;
       
-      if (deepCycle == 1)
+      if (deepCycleFlag == 1)
          g_decArgo_firstDeepCycleDone = 1;
       end
       
@@ -2095,7 +2083,7 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if (deepCycle == 1)
+      if (deepCycleFlag == 1)
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
@@ -2123,7 +2111,7 @@ switch (a_decoderId)
       % convert counts to physical values
       if (~isempty(dataCTDO))
          [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 16:22));
-         [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTDO(:, 23:29));
+         [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_2xx_4_to_14_17_19_20_22_to_27_31_32(dataCTDO(:, 23:29));
          [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 30:36));
          [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2phase_ir_sbd_2xx(dataCTDO(:, 37:50));
          [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_ir_sbd_2xx(dataCTDO(:, 51:57));
@@ -2151,13 +2139,13 @@ switch (a_decoderId)
             case {206}
                % Provor-DO Iridium 5.71
                % C1/2PHASE_DOXY -> DOXY using third method: "Stern-Volmer equation"
-               [descProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+               [descProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
                   descProfC1PhaseDoxy, descProfC2PhaseDoxy, descProfTempDoxy, ...
                   descProfPres, descProfTemp, descProfSal);
-               [parkDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+               [parkDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
                   parkC1PhaseDoxy, parkC2PhaseDoxy, parkTempDoxy, ...
                   parkPres, parkTemp, parkSal);
-               [ascProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+               [ascProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
                   ascProfC1PhaseDoxy, ascProfC2PhaseDoxy, ascProfTempDoxy, ...
                   ascProfPres, ascProfTemp, ascProfSal);
             case {207}
@@ -2204,7 +2192,7 @@ switch (a_decoderId)
          gpsDate, ...
          firstGroundingDate, firstGroundingPres, ...
          firstEmergencyAscentDate, firstEmergencyAscentPres, refDay] = ...
-         compute_prv_dates_204_to_209(tabTech, deepCycle, g_decArgo_julD2FloatDayOffset, lastMsgDateOfPrevCycle, a_launchDate, dataCTDO);
+         compute_prv_dates_204_to_209(tabTech, deepCycleFlag, g_decArgo_julD2FloatDayOffset, lastMsgDateOfPrevCycle, a_launchDate, dataCTDO);
       if (refDay ~= g_decArgo_julD2FloatDayOffset)
          
          g_decArgo_julD2FloatDayOffset = refDay;
@@ -2318,7 +2306,7 @@ switch (a_decoderId)
          
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_206_207_208( ...
-            g_decArgo_cycleNum, deepCycle, ...
+            g_decArgo_cycleNum, deepCycleFlag, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
             descentToParkStartDate, firstStabDate, firstStabPres, descentToParkEndDate, ...
@@ -2343,9 +2331,7 @@ switch (a_decoderId)
          % TECH NetCDF file
          
          % store information on received Iridium packet types
-         if (deepCycle == 1)
-            store_received_packet_type_info_for_nc(a_decoderId);
-         end
+         store_received_packet_type_info_for_nc(a_decoderId, deepCycleFlag);
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
@@ -2363,7 +2349,7 @@ switch (a_decoderId)
    case {209} % Arvor-2DO Iridium 5.73
       
       % decode the collected data
-      [tabTech, dataCTDO, floatParam, deepCycle] = ...
+      [tabTech, dataCTDO, floatParam, deepCycleFlag] = ...
          decode_prv_data_ir_sbd_209(sbdDataData, sbdDataDate, 1, g_decArgo_firstDeepCycleDone);
       
       completedBuffer = a_completedBuffer;
@@ -2385,15 +2371,15 @@ switch (a_decoderId)
          end
       end
       
-      if ((deepCycle == 0) && ...
+      if ((deepCycleFlag == 0) && ...
             (g_decArgo_cycleNumPrev ~= -1) && ...
             (g_decArgo_cycleNumPrev ~= g_decArgo_cycleNum))
          % a new cycle number is a deep cycle even if the float didn't dive
-         deepCycle = 1;
+         deepCycleFlag = 1;
       end
       g_decArgo_cycleNumPrev = g_decArgo_cycleNum;
       
-      if (deepCycle == 1)
+      if (deepCycleFlag == 1)
          g_decArgo_firstDeepCycleDone = 1;
       end
       
@@ -2403,7 +2389,7 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if (deepCycle == 1)
+      if (deepCycleFlag == 1)
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
@@ -2436,26 +2422,26 @@ switch (a_decoderId)
             case 2
                % CTD only
                [dataCTDO(:, 32:46)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 32:46));
-               [dataCTDO(:, 47:61)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTDO(:, 47:61));
+               [dataCTDO(:, 47:61)] = sensor_2_value_for_temp_2xx_4_to_14_17_19_20_22_to_27_31_32(dataCTDO(:, 47:61));
                [dataCTDO(:, 62:76)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 62:76));
             case 1
                % CTD + Aanderaa 4330
                [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 16:22));
-               [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTDO(:, 23:29));
+               [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_2xx_4_to_14_17_19_20_22_to_27_31_32(dataCTDO(:, 23:29));
                [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 30:36));
                [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2phase_ir_sbd_2xx(dataCTDO(:, 37:50));
                [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_ir_sbd_2xx(dataCTDO(:, 51:57));
             case 4
                % CTD + SBE 63
                [dataCTDO(:, 20:28)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 20:28));
-               [dataCTDO(:, 29:37)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTDO(:, 29:37));
+               [dataCTDO(:, 29:37)] = sensor_2_value_for_temp_2xx_4_to_14_17_19_20_22_to_27_31_32(dataCTDO(:, 29:37));
                [dataCTDO(:, 38:46)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 38:46));
                [dataCTDO(:, 47:55)] = sensor_2_value_for_phase_delay_doxy_209(dataCTDO(:, 47:55));
                [dataCTDO(:, 56:64)] = sensor_2_value_for_temp_doxy_ir_sbd_2xx(dataCTDO(:, 56:64));
             case 5
                % CTD + Aanderaa 4330 + SBE 63
                [dataCTDO(:, 12:16)] = sensor_2_value_for_pressure_204_to_209_219_220(dataCTDO(:, 12:16));
-               [dataCTDO(:, 17:21)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTDO(:, 17:21));
+               [dataCTDO(:, 17:21)] = sensor_2_value_for_temp_2xx_4_to_14_17_19_20_22_to_27_31_32(dataCTDO(:, 17:21));
                [dataCTDO(:, 22:26)] = sensor_2_value_for_salinity_204_to_209(dataCTDO(:, 22:26));
                [dataCTDO(:, 27:36)] = sensor_2_value_for_C1C2phase_ir_sbd_2xx(dataCTDO(:, 27:36));
                [dataCTDO(:, 37:41)] = sensor_2_value_for_temp_doxy_ir_sbd_2xx(dataCTDO(:, 37:41));
@@ -2494,17 +2480,17 @@ switch (a_decoderId)
          % Aanderaa
          % C1/2PHASE_DOXY -> DOXY using third method: "Stern-Volmer equation"
          if (~isempty(descProfC1PhaseDoxy))
-            [descProfDoxyAa] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+            [descProfDoxyAa] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
                descProfC1PhaseDoxy, descProfC2PhaseDoxy, descProfTempDoxyAa, ...
                descProfPres, descProfTemp, descProfSal);
          end
          if (~isempty(parkC1PhaseDoxy))
-            [parkDoxyAa] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+            [parkDoxyAa] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
                parkC1PhaseDoxy, parkC2PhaseDoxy, parkTempDoxyAa, ...
                parkPres, parkTemp, parkSal);
          end
          if (~isempty(ascProfC1PhaseDoxy))
-            [ascProfDoxyAa] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+            [ascProfDoxyAa] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
                ascProfC1PhaseDoxy, ascProfC2PhaseDoxy, ascProfTempDoxyAa, ...
                ascProfPres, ascProfTemp, ascProfSal);
          end
@@ -2539,7 +2525,7 @@ switch (a_decoderId)
          gpsDate, ...
          firstGroundingDate, firstGroundingPres, ...
          firstEmergencyAscentDate, firstEmergencyAscentPres, refDay] = ...
-         compute_prv_dates_204_to_209(tabTech, deepCycle, g_decArgo_julD2FloatDayOffset, lastMsgDateOfPrevCycle, a_launchDate, dataCTDO);
+         compute_prv_dates_204_to_209(tabTech, deepCycleFlag, g_decArgo_julD2FloatDayOffset, lastMsgDateOfPrevCycle, a_launchDate, dataCTDO);
       if (refDay ~= g_decArgo_julD2FloatDayOffset)
          
          g_decArgo_julD2FloatDayOffset = refDay;
@@ -2667,7 +2653,7 @@ switch (a_decoderId)
          
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle] = process_trajectory_data_209( ...
-            g_decArgo_cycleNum, deepCycle, ...
+            g_decArgo_cycleNum, deepCycleFlag, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
             descentToParkStartDate, firstStabDate, firstStabPres, descentToParkEndDate, ...
@@ -2694,9 +2680,7 @@ switch (a_decoderId)
          % TECH NetCDF file
          
          % store information on received Iridium packet types
-         if (deepCycle == 1)
-            store_received_packet_type_info_for_nc(a_decoderId);
-         end
+         store_received_packet_type_info_for_nc(a_decoderId, deepCycleFlag);
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
@@ -2714,7 +2698,7 @@ switch (a_decoderId)
       
       % decode the collected data
       [tabTech1, tabTech2, dataCTD, evAct, pumpAct, floatParam, irSessionNum, ...
-         deepCycle, resetDetected] = ...
+         deepCycleFlag, resetDetected] = ...
          decode_prv_data_ir_sbd_210_211(sbdDataData, sbdDataDate, 1, a_decoderId);
       
       completedBuffer = a_completedBuffer;
@@ -2734,7 +2718,7 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if (((g_decArgo_cycleNum > 0) && (deepCycle == 1)) || (resetDetected == 1))
+      if (((g_decArgo_cycleNum > 0) && (deepCycleFlag == 1)) || (resetDetected == 1))
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
@@ -2757,9 +2741,9 @@ switch (a_decoderId)
       
       % convert counts to physical values
       if (~isempty(dataCTD))
-         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTD(:, 47:61));
-         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_210_to_214_217_220_222_to_226(dataCTD(:, 62:76));
+         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_2xx_2_10_to_14_17_22_to_27_31_32(dataCTD(:, 32:46));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_2xx_4_to_14_17_19_20_22_to_27_31_32(dataCTD(:, 47:61));
+         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_2xx_10_to_14_17_20_22_to_27_31_32(dataCTD(:, 62:76));
       end
       
       % create drift data set
@@ -2790,14 +2774,14 @@ switch (a_decoderId)
          secondGroundingDate, secondGroundingPres, ...
          eolStartDate, ...
          firstEmergencyAscentDate, firstEmergencyAscentPres] = ...
-         compute_prv_dates_210_211_213(tabTech1, tabTech2, deepCycle, a_refDay);
+         compute_prv_dates_210_211_213(tabTech1, tabTech2, deepCycleFlag, a_refDay);
       
       if (~isempty(g_decArgo_outputCsvFileId))
          
          % output CSV file
          
          % print float technical messages in CSV file
-         print_tech_data_in_csv_file_210_211(tabTech1, tabTech2, deepCycle);
+         print_tech_data_in_csv_file_210_211(tabTech1, tabTech2, deepCycleFlag);
          
          % print dated data in CSV file
          print_dates_in_csv_file_210_211_213( ...
@@ -2897,7 +2881,7 @@ switch (a_decoderId)
          
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle, tabTechAuxNMeas] = process_trajectory_data_210_211( ...
-            g_decArgo_cycleNum, deepCycle, irSessionNum, ...
+            g_decArgo_cycleNum, deepCycleFlag, irSessionNum, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
             descentToParkStartDate, firstStabDate, firstStabPres, descentToParkEndDate, ...
@@ -2924,13 +2908,11 @@ switch (a_decoderId)
          % TECH NetCDF file
          
          % store information on received Iridium packet types
-         if (deepCycle == 1)
-            store_received_packet_type_info_for_nc(a_decoderId);
-         end
+         store_received_packet_type_info_for_nc(a_decoderId, deepCycleFlag);
          
          % store NetCDF technical data
-         store_tech1_data_for_nc_210_to_212(tabTech1, deepCycle);
-         store_tech2_data_for_nc_210_211_213(tabTech2, deepCycle);
+         store_tech1_data_for_nc_210_to_212(tabTech1, deepCycleFlag);
+         store_tech2_data_for_nc_210_211_213(tabTech2, deepCycleFlag);
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
@@ -2955,7 +2937,7 @@ switch (a_decoderId)
 
       % decode the collected data
       [tabTech1, tabTech2, dataCTDO, evAct, pumpAct, floatParam, ...
-         irSessionNum, deepCycle, resetDetected] = ...
+         irSessionNum, deepCycleFlag, resetDetected] = ...
          decode_prv_data_ir_sbd_213(sbdDataData, sbdDataDate, 1, a_decoderId);
       
       completedBuffer = a_completedBuffer;
@@ -2975,7 +2957,7 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if (((g_decArgo_cycleNum > 0) && (deepCycle == 1)) || (resetDetected == 1))
+      if (((g_decArgo_cycleNum > 0) && (deepCycleFlag == 1)) || (resetDetected == 1))
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
@@ -2998,9 +2980,9 @@ switch (a_decoderId)
       
       % convert counts to physical values
       if (~isempty(dataCTDO))
-         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(dataCTDO(:, 16:22));
-         [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(dataCTDO(:, 23:29));
-         [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_210_to_214_217_220_222_to_226(dataCTDO(:, 30:36));
+         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_2xx_2_10_to_14_17_22_to_27_31_32(dataCTDO(:, 16:22));
+         [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_2xx_4_to_14_17_19_20_22_to_27_31_32(dataCTDO(:, 23:29));
+         [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_2xx_10_to_14_17_20_22_to_27_31_32(dataCTDO(:, 30:36));
          [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2phase_ir_sbd_2xx(dataCTDO(:, 37:50));
          [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_ir_sbd_2xx(dataCTDO(:, 51:57));
       end
@@ -3031,24 +3013,24 @@ switch (a_decoderId)
       if (~isempty(dataCTDO))
          
          % C1/2PHASE_DOXY -> DOXY using third method: "Stern-Volmer equation"
-         [descProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+         [descProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
             descProfC1PhaseDoxy, descProfC2PhaseDoxy, descProfTempDoxy, ...
             descProfPres, descProfTemp, descProfSal);
-         [parkDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+         [parkDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
             parkC1PhaseDoxy, parkC2PhaseDoxy, parkTempDoxy, ...
             parkPres, parkTemp, parkSal);
-         [ascProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+         [ascProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
             ascProfC1PhaseDoxy, ascProfC2PhaseDoxy, ascProfTempDoxy, ...
             ascProfPres, ascProfTemp, ascProfSal);
          
          % compute PPOX_DOXY from C1PHASE_DOXY and C2PHASE_DOXY using the Stern-Volmer equation
-         [nearSurfPpoxDoxy] = compute_PPOX_DOXY_213_to_218_221_223_225( ...
+         [nearSurfPpoxDoxy] = compute_PPOX_DOXY_213_to_218_221_223_225_230_232( ...
             nearSurfC1PhaseDoxy, nearSurfC2PhaseDoxy, nearSurfTempDoxy, ...
             g_decArgo_c1C2PhaseDoxyDef, g_decArgo_c1C2PhaseDoxyDef, g_decArgo_tempDoxyDef, ...
             nearSurfPres, nearSurfTemp, ...
             g_decArgo_presDef, g_decArgo_tempDef, ...
             g_decArgo_doxyDef);
-         [inAirPpoxDoxy] = compute_PPOX_DOXY_213_to_218_221_223_225( ...
+         [inAirPpoxDoxy] = compute_PPOX_DOXY_213_to_218_221_223_225_230_232( ...
             inAirC1PhaseDoxy, inAirC2PhaseDoxy, inAirTempDoxy, ...
             g_decArgo_c1C2PhaseDoxyDef, g_decArgo_c1C2PhaseDoxyDef, g_decArgo_tempDoxyDef, ...
             inAirPres, inAirTemp, ...
@@ -3072,14 +3054,14 @@ switch (a_decoderId)
          secondGroundingDate, secondGroundingPres, ...
          eolStartDate, ...
          firstEmergencyAscentDate, firstEmergencyAscentPres] = ...
-         compute_prv_dates_210_211_213(tabTech1, tabTech2, deepCycle, a_refDay);
+         compute_prv_dates_210_211_213(tabTech1, tabTech2, deepCycleFlag, a_refDay);
       
       if (~isempty(g_decArgo_outputCsvFileId))
          
          % output CSV file
          
          % print float technical messages in CSV file
-         print_tech_data_in_csv_file_213(tabTech1, tabTech2, deepCycle);
+         print_tech_data_in_csv_file_213(tabTech1, tabTech2, deepCycleFlag);
          
          % print dated data in CSV file
          print_dates_in_csv_file_210_211_213( ...
@@ -3184,7 +3166,7 @@ switch (a_decoderId)
          
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle, tabTechAuxNMeas] = process_trajectory_data_213( ...
-            g_decArgo_cycleNum, deepCycle, irSessionNum, ...
+            g_decArgo_cycleNum, deepCycleFlag, irSessionNum, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
             descentToParkStartDate, firstStabDate, firstStabPres, descentToParkEndDate, ...
@@ -3214,13 +3196,11 @@ switch (a_decoderId)
          % TECH NetCDF file
          
          % store information on received Iridium packet types
-         if (deepCycle == 1)
-            store_received_packet_type_info_for_nc(a_decoderId);
-         end
+         store_received_packet_type_info_for_nc(a_decoderId, deepCycleFlag);
          
          % store NetCDF technical data
-         store_tech1_data_for_nc_213_214_217(tabTech1, deepCycle);
-         store_tech2_data_for_nc_210_211_213(tabTech2, deepCycle);
+         store_tech1_data_for_nc_213_214_217(tabTech1, deepCycleFlag);
+         store_tech2_data_for_nc_210_211_213(tabTech2, deepCycleFlag);
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);
@@ -3238,7 +3218,7 @@ switch (a_decoderId)
    case {215} % Arvor-deep 4000 with "Near Surface" & "In Air" measurements
       
       % decode the collected data
-      [tabTech, dataCTD, dataCTDO, evAct, pumpAct, floatParam, deepCycle] = ...
+      [tabTech, dataCTD, dataCTDO, evAct, pumpAct, floatParam, deepCycleFlag] = ...
          decode_prv_data_ir_sbd_215(sbdDataData, sbdDataDate, 1, a_decoderId);
       
       completedBuffer = a_completedBuffer;
@@ -3258,7 +3238,7 @@ switch (a_decoderId)
       end
       
       % assign the current configuration to the decoded cycle
-      if (deepCycle == 1)
+      if (deepCycleFlag == 1)
          set_float_config_ir_sbd(g_decArgo_cycleNum);
       end
       
@@ -3281,14 +3261,14 @@ switch (a_decoderId)
       
       % convert counts to physical values
       if (~isempty(dataCTD))
-         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_201_203_215_216_218_221(dataCTD(:, 32:46));
-         [dataCTD(:, 47:61)] = sensor_2_value_for_temperature_201_to_203_215_216_218_221(dataCTD(:, 47:61));
-         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_201_to_203_215_216_218_221(dataCTD(:, 62:76));
+         [dataCTD(:, 32:46)] = sensor_2_value_for_pressure_201_203_215_216_218_221_228_229_230(dataCTD(:, 32:46));
+         [dataCTD(:, 47:61)] = sensor_2_value_for_temp_2xx_1_to_3_15_16_18_21_28_29_30(dataCTD(:, 47:61));
+         [dataCTD(:, 62:76)] = sensor_2_value_for_salinity_2xx_1_to_3_15_16_18_21_28_29_30(dataCTD(:, 62:76));
       end
       if (~isempty(dataCTDO))
-         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_201_203_215_216_218_221(dataCTDO(:, 16:22));
-         [dataCTDO(:, 23:29)] = sensor_2_value_for_temperature_201_to_203_215_216_218_221(dataCTDO(:, 23:29));
-         [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_201_to_203_215_216_218_221(dataCTDO(:, 30:36));
+         [dataCTDO(:, 16:22)] = sensor_2_value_for_pressure_201_203_215_216_218_221_228_229_230(dataCTDO(:, 16:22));
+         [dataCTDO(:, 23:29)] = sensor_2_value_for_temp_2xx_1_to_3_15_16_18_21_28_29_30(dataCTDO(:, 23:29));
+         [dataCTDO(:, 30:36)] = sensor_2_value_for_salinity_2xx_1_to_3_15_16_18_21_28_29_30(dataCTDO(:, 30:36));
          [dataCTDO(:, 37:50)] = sensor_2_value_for_C1C2phase_ir_sbd_2xx(dataCTDO(:, 37:50));
          [dataCTDO(:, 51:57)] = sensor_2_value_for_temp_doxy_ir_sbd_2xx(dataCTDO(:, 51:57));
       end
@@ -3297,7 +3277,7 @@ switch (a_decoderId)
       [parkDate, parkTransDate, ...
          parkPres, parkTemp, parkSal, ...
          parkC1PhaseDoxy, parkC2PhaseDoxy, parkTempDoxy] = ...
-         create_prv_drift_201_to_203_215_216_218_221(dataCTD, dataCTDO, 1);
+         create_prv_drift_201_to_203_215_216_218_221_228(dataCTD, dataCTDO, 1);
       
       % create descending and ascending profiles
       [descProfDate, descProfPres, descProfTemp, descProfSal, ...
@@ -3308,7 +3288,7 @@ switch (a_decoderId)
          nearSurfC1PhaseDoxy, nearSurfC2PhaseDoxy, nearSurfTempDoxy, ...
          inAirDate, inAirTransDate, inAirPres, inAirTemp, inAirSal, ...
          inAirC1PhaseDoxy, inAirC2PhaseDoxy, inAirTempDoxy] = ...
-         create_prv_profile_215_216_218_221(dataCTD, dataCTDO, 1);
+         create_prv_profile_215_216_218_221_228(dataCTD, dataCTDO, 1);
       
       % compute DOXY
       descProfDoxy = [];
@@ -3319,24 +3299,24 @@ switch (a_decoderId)
       if (~isempty(dataCTDO))
          
          % C1/2PHASE_DOXY -> DOXY using third method: "Stern-Volmer equation"
-         [descProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+         [descProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
             descProfC1PhaseDoxy, descProfC2PhaseDoxy, descProfTempDoxy, ...
             descProfPres, descProfTemp, descProfSal);
-         [parkDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+         [parkDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
             parkC1PhaseDoxy, parkC2PhaseDoxy, parkTempDoxy, ...
             parkPres, parkTemp, parkSal);
-         [ascProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225( ...
+         [ascProfDoxy] = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232( ...
             ascProfC1PhaseDoxy, ascProfC2PhaseDoxy, ascProfTempDoxy, ...
             ascProfPres, ascProfTemp, ascProfSal);
          
          % compute PPOX_DOXY from C1PHASE_DOXY and C2PHASE_DOXY using the Stern-Volmer equation
-         [nearSurfPpoxDoxy] = compute_PPOX_DOXY_213_to_218_221_223_225( ...
+         [nearSurfPpoxDoxy] = compute_PPOX_DOXY_213_to_218_221_223_225_230_232( ...
             nearSurfC1PhaseDoxy, nearSurfC2PhaseDoxy, nearSurfTempDoxy, ...
             g_decArgo_c1C2PhaseDoxyDef, g_decArgo_c1C2PhaseDoxyDef, g_decArgo_tempDoxyDef, ...
             nearSurfPres, nearSurfTemp, ...
             g_decArgo_presDef, g_decArgo_tempDef, ...
             g_decArgo_doxyDef);
-         [inAirPpoxDoxy] = compute_PPOX_DOXY_213_to_218_221_223_225( ...
+         [inAirPpoxDoxy] = compute_PPOX_DOXY_213_to_218_221_223_225_230_232( ...
             inAirC1PhaseDoxy, inAirC2PhaseDoxy, inAirTempDoxy, ...
             g_decArgo_c1C2PhaseDoxyDef, g_decArgo_c1C2PhaseDoxyDef, g_decArgo_tempDoxyDef, ...
             inAirPres, inAirTemp, ...
@@ -3471,7 +3451,7 @@ switch (a_decoderId)
          
          % process trajectory data for TRAJ NetCDF file
          [tabTrajNMeas, tabTrajNCycle, tabTechAuxNMeas] = process_trajectory_data_215( ...
-            g_decArgo_cycleNum, deepCycle, ...
+            g_decArgo_cycleNum, deepCycleFlag, ...
             g_decArgo_gpsData, g_decArgo_iridiumMailData, ...
             cycleStartDate, ...
             descentToParkStartDate, firstStabDate, firstStabPres, descentToParkEndDate, ...
@@ -3502,9 +3482,7 @@ switch (a_decoderId)
          % TECH NetCDF file
          
          % store information on received Iridium packet types
-         if (deepCycle == 1)
-            store_received_packet_type_info_for_nc(a_decoderId);
-         end
+         store_received_packet_type_info_for_nc(a_decoderId, deepCycleFlag);
          
          % update NetCDF technical data
          update_technical_data_argos_sbd(a_decoderId);

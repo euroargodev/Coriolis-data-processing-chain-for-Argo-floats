@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/28/2021 - RNU - creation
@@ -26,7 +26,7 @@ global g_decArgo_provorArvorHydraulicTypeCheckFlag;
 
 
 decIdListProvorWithHydraulicTypeInfo = [213, 214, 225];
-decIdListArvorWithHydraulicTypeInfo = [210:212, 217, 222:224, 226];
+decIdListArvorWithHydraulicTypeInfo = [210:212, 217, 222:224, 226, 227, 231, 232];
 
 if ((ismember(a_decoderId, decIdListProvorWithHydraulicTypeInfo) && (a_hydraulicType == 0)) || ...
       (ismember(a_decoderId, decIdListArvorWithHydraulicTypeInfo) && (a_hydraulicType == 1)))

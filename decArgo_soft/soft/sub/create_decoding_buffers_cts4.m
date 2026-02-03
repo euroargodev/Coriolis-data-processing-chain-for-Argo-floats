@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/10/2019 - RNU - creation
@@ -39,6 +39,7 @@ global g_decArgo_processRemainingBuffers;
 global g_decArgo_phasePreMission;
 global g_decArgo_phaseSurfWait;
 global g_decArgo_phaseSatTrans;
+global g_decArgo_phaseEndOfProf;
 global g_decArgo_phaseEndOfLife;
 
 % ICE float firmware
@@ -57,7 +58,7 @@ NB_SESSION_MAX = 3;
 
 % specific
 if (ismember(g_decArgo_floatNum, ...
-      [6903247, 6904182, 7901001]))
+      [6903247, 6904182, 7901001, 6903091, 6904114]))
    switch g_decArgo_floatNum
       case 6903247
 
@@ -111,11 +112,35 @@ if (ismember(g_decArgo_floatNum, ...
          return
       case 7901001
          % the float has been reset at sea after cycle (72, 0) and cycle numbers
-         %started from 1
+         % started from 1
          tabCyNumRaw = [a_decodedData.cyNumRaw];
          tabPhaseNumRaw = [a_decodedData.phaseNumRaw];
          idStart = find((tabCyNumRaw == 1) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait), 1, 'last');
          a_decodedData(idStart:end) = update_cycle_number(a_decodedData(idStart:end), 71);
+      case 6903091
+         % the float has been reset at sea after cycle (127, 0) and cycle numbers
+         % started from 1
+         % the float has been reset at sea after cycle (165, 0) and cycle numbers
+         % started from 1
+         tabCyNumRaw = [a_decodedData.cyNumRaw];
+         tabPhaseNumRaw = [a_decodedData.phaseNumRaw];
+         idReset = find((tabCyNumRaw == 1) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait));
+         idReset1 = idReset(2);
+         idReset2 = idReset(3);
+         idStart = find((tabCyNumRaw == 1) & (tabPhaseNumRaw == g_decArgo_phaseSatTrans));
+         idStart1 = idStart(2);
+         idStart2 = idStart(3);
+         a_decodedData(idReset1) = update_cycle_number(a_decodedData(idReset1), 127);
+         a_decodedData(idStart1:idReset2-1) = update_cycle_number(a_decodedData(idStart1:idReset2-1), 127);
+         a_decodedData(idReset2) = update_cycle_number(a_decodedData(idReset2), 165);
+         a_decodedData(idStart2:end) = update_cycle_number(a_decodedData(idStart2:end), 165);
+      case 6904114
+         % the float has been reset at sea after cycle (196, 0) and cycle numbers
+         % started from 1
+         tabCyNumRaw = [a_decodedData.cyNumRaw];
+         tabPhaseNumRaw = [a_decodedData.phaseNumRaw];
+         idStart = find((tabCyNumRaw == 1) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait), 1, 'last');
+         a_decodedData(idStart:end) = update_cycle_number(a_decodedData(idStart:end), 196);
    end
 end
 
@@ -419,7 +444,7 @@ tabRank(idSurfVectorPres) = -1;
 if (ismember(g_decArgo_floatNum, ...
       [6903249, 6902906, 6903551, 3902122, 2902239, 3902121, 2902242, 3902124, ...
       6903130, 6903549, 6903129, 7901001, 4903643, 2902238, 2902241, 2902244, ...
-      6903247, 6903592]))
+      6903247, 6903592, 5907088, 6903091, 6904235, 6990639, 6904114, 6903876]))
    switch g_decArgo_floatNum
 
       case 6903249
@@ -596,7 +621,7 @@ if (ismember(g_decArgo_floatNum, ...
          tabDone(idDel) = 1;
          % during cycle (52, 0) transmission, the float
          % transmitted old memorized data
-         idLastForCycle52 = find((tabCyNumRaw == 53) & (tabProfNumRaw == 0) & (tabPackType == 253), 1, 'last');
+         idLastForCycle52 = find((tabCyNumRaw == 53) & (tabProfNumRaw == 0) & (tabPackType == 253), 1, 'first');
          idDel = find((tabCyNumRaw == 52) & (tabProfNumRaw == 0));
          idDel(find(idDel <= idLastForCycle52)) = [];
          tabRank(idDel) = -1;
@@ -605,6 +630,8 @@ if (ismember(g_decArgo_floatNum, ...
          % transmission for unknown reason!)
          idF = find((tabCyNumRaw == 52) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 0), 1, 'first');
          tabExpNbDesc(idF) = 255;
+
+         tabDone(tabRank == -1) = 1;     
 
       case 7901001
          % the float has been reset at sea after cycle (72, 0) and cycle numbers
@@ -820,8 +847,206 @@ if (ismember(g_decArgo_floatNum, ...
 
         tabRank(42955:42961) = tabRank(42954);
 
-         idF = find(ismember(tabCyNumRaw, [109:117 120 126 129 134 135 138:142 146:152]) & (tabProfNumRaw == 0) & (tabDeep == 1));
-         tabDeep(idF) = 0;
+        % 20240918
+
+        tabRank(43103:43106) = -1;
+
+        tabCyNumOut(43114) = 152;
+
+        idToDel = setdiff(43638:43827, [43649, 43668, 43687, 43706, 43725, 43744, 43763, 43782, 43801, 43820]);
+        tabRank(idToDel) = -1;
+
+        tabRank(43980:43983) = -1;
+        tabRank(43999:44002) = -1;
+
+        tabRank(44589:44592) = -1;
+        tabRank(44608:44611) = -1;
+
+        tabRank(45258:45261) = -1;
+
+        tabRank(63132:63138) = -1;
+
+        tabRank(71153:71175) = -1;
+        tabRank(72064:72093) = -1;
+        tabRank(72314:72323) = -1;
+
+        tabDone(68554:69135) = 1;
+        tabDone(69156:70053) = 1;
+        tabDone(70059:70283) = 1;
+        tabDone(70581:71155) = 1;
+        tabDone(71176:72063) = 1;
+        tabDone(72094:72313) = 1;
+
+        idF = find(ismember(tabCyNumRaw, [109:117 120 126 129 134 135 138:142 146:152 155:175 179 183 ]) & (tabProfNumRaw == 0) & (tabDeep == 1));
+        tabDeep(idF) = 0;
+
+      case 5907088
+         % during cycle (21, 0) transmission, the float
+         % transmitted old memorized data
+         id21 = find((tabCyNumRaw == 21) & (tabProfNumRaw == 0) & (tabPackType == 253));
+         idOk = find((tabCyNumRaw == 21) & (tabProfNumRaw == 0) & ((tabRank == tabRank(id21(1))) | (tabRank == tabRank(id21(2)))));
+         idAll = find((tabCyNumRaw == 21) & (tabProfNumRaw == 0));
+         idDel = setdiff(idAll, idOk);
+         tabRank(idDel) = -1;
+         tabDone(idDel) = 1;
+         allList = idOk(1):idOk(end);
+         koList = allList(tabRank(allList) == -1);
+         tabDone(koList) = 1;
+
+         id21bis = find((tabCyNumRaw == 22) & (tabProfNumRaw == 0) & (tabPackType == 253) & (tabPhaseNumRaw == 1), 1, 'first');
+         idAll = find(tabRank == tabRank(id21bis));
+         idDel = setdiff(idAll, id21bis);
+         tabRank(idDel) = -1;
+         tabDone(idDel) = 1;
+         
+         idFirst = find((tabCyNumRaw == 22) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 1) & (tabPackType == 253));
+         idLast = find((tabCyNumRaw == 22) & (tabProfNumRaw == 0) & (tabPhaseNumRaw == 12) & (tabPackType == 253));
+         allList = idFirst:idLast-1;
+         koList = allList(tabRank(allList) == -1);
+         tabDone(koList) = 1;
+
+      case 6903091
+         % do not consider packets received during float resets
+         idDelStart = find((tabCyNumRaw == 127) & (tabPhaseNumRaw == g_decArgo_phaseEndOfProf), 1, 'first');
+         idDelStop = find((tabCyNumRaw == 127) & (tabPackType == 248), 1, 'last');
+         tabRank(idDelStart:idDelStop) = -1;
+         tabDone(idDelStart:idDelStop) = 1;
+
+         tabRank(28859:28871) = -1;
+         tabDone(28859:28871) = 1;
+
+         tabRank(28903:28916) = -1;
+         tabDone(28903:28916) = 1;
+
+         tabRank(28917:28929) = -1;
+         tabDone(28917:28929) = 1;
+
+         id = find((tabCyNumRaw == 38) & (tabPackType == 250));
+         tabDone(id) = 1;
+
+         % remove progamation packets transmitted twice
+         % idDelStart = find((tabCyNumRaw == 7) & (tabPackType == 249) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait), 1, 'first');
+         % idDelStop = find((tabCyNumRaw == 8) & (tabPackType == 248), 1, 'first');
+         % tabRank(idDelStart:idDelStop) = -1;
+         % tabDone(idDelStart:idDelStop) = 1;
+         % 
+         % idDelStart = find((tabCyNumRaw == 39) & (tabPackType == 249) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait), 1, 'first');
+         % idDelStop = find((tabCyNumRaw == 40) & (tabPackType == 248), 1, 'first');
+         % tabRank(idDelStart:idDelStop) = -1;
+         % tabDone(idDelStart:idDelStop) = 1;
+         % 
+         % idDelStart = find((tabCyNumRaw == 67) & (tabPackType == 249) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait), 1, 'first');
+         % idDelStop = find((tabCyNumRaw == 68) & (tabPackType == 248), 1, 'first');
+         % tabRank(idDelStart:idDelStop) = -1;
+         % tabDone(idDelStart:idDelStop) = 1;
+         % 
+         % idDelStart = find((tabCyNumRaw == 75) & (tabPackType == 249) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait), 1, 'first');
+         % idDelStop = find((tabCyNumRaw == 76) & (tabPackType == 248), 1, 'first');
+         % tabRank(idDelStart:idDelStop) = -1;
+         % tabDone(idDelStart:idDelStop) = 1;
+         % 
+         % idDelStart = find((tabCyNumRaw == 106) & (tabPackType == 249) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait), 1, 'first');
+         % idDelStop = find((tabCyNumRaw == 107) & (tabPackType == 248), 1, 'first');
+         % tabRank(idDelStart:idDelStop) = -1;
+         % tabDone(idDelStart:idDelStop) = 1;
+         % 
+         % idDelStart = find((tabCyNumRaw == 155) & (tabPackType == 249) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait), 1, 'first');
+         % idDelStop = find((tabCyNumRaw == 156) & (tabPackType == 248), 1, 'first');
+         % tabRank(idDelStart:idDelStop) = -1;
+         % tabDone(idDelStart:idDelStop) = 1;
+         % 
+         % idDelStart = find((tabCyNumRaw == 159) & (tabPackType == 249) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait), 1, 'first');
+         % idDelStop = find((tabCyNumRaw == 160) & (tabPackType == 248), 1, 'first');
+         % tabRank(idDelStart:idDelStop) = -1;
+         % tabDone(idDelStart:idDelStop) = 1;
+         % 
+         % idDelStart = find((tabCyNumRaw == 162) & (tabPackType == 249) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait), 1, 'first');
+         % idDelStop = find((tabCyNumRaw == 163) & (tabPackType == 248), 1, 'first');
+         % tabRank(idDelStart:idDelStop) = -1;
+         % tabDone(idDelStart:idDelStop) = 1;
+         % 
+         % tabRank(28859:28871) = -1;
+         % tabDone(28859:28871) = 1;
+         % 
+         % tabRank(28903:28915) = -1;
+         % tabDone(28903:28915) = 1;
+         % 
+         % tabRank(28917:28929) = -1;
+         % tabDone(28917:28929) = 1;
+         % 
+         % idDelStart = find((tabCyNumRaw == 167) & (tabPackType == 249) & (tabPhaseNumRaw == g_decArgo_phaseSurfWait), 1, 'first');
+         % idDelStop = find((tabCyNumRaw == 168) & (tabPackType == 248), 1, 'first');
+         % tabRank(idDelStart:idDelStop) = -1;
+         % tabDone(idDelStart:idDelStop) = 1;
+
+      case 6904235
+         % OCR data of cycle 124,0 have been transmitted twice
+         id = find((tabCyNumRaw == 124) & (tabProfNumRaw == 0));
+         tabRank(id) = tabRank(id(1));
+         tabDelayed(id) = 1;
+         % id = find((tabCyNumRaw == 125) & (tabProfNumRaw == 0) & (tabPackType == 253) & (tabPhaseNumRaw == 1));
+         % tabRank(id) = -1;
+         % id = find((tabCyNumRaw == 124) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 2));
+         % tabRank(id(2)) = -1;
+         id = find((tabCyNumRaw == 124) & (tabProfNumRaw == 0) & (tabCyNumFile > 124));
+         tabRank(id) = -1;
+
+         % OCR data of cycle 125,0 have been transmitted twice
+         id = find((tabCyNumRaw == 125) & (tabProfNumRaw == 0));
+         tabRank(id) = tabRank(id(2));
+         tabDelayed(id) = 1;
+         tabDeep(id) = 1;
+         id = find((tabCyNumRaw == 125) & (tabProfNumRaw == 0) & (tabPackType == 253) & (tabPhaseNumRaw == 1));
+         tabRank(id) = -1;
+         % id = find((tabCyNumRaw == 124) & (tabProfNumRaw == 0) & (tabPackType == 250) & (tabSensorType == 2));
+         % tabRank(id(2)) = -1;
+         id = find((tabCyNumRaw == 125) & (tabProfNumRaw == 0) & (tabCyNumFile > 125) & (tabPackType == 250));
+         tabRank(id) = -1;
+
+         id = find((tabCyNumRaw == 126) & (tabProfNumRaw == 0) & (tabPackType == 253) & (tabPhaseNumRaw == 1));
+         tabRank(id) = -1;
+
+      case 6990639
+         % cycle 1 missed for unknown reason
+         idRank = find(tabRank ~= -1);
+         tabRank(idRank) = tabRank(idRank) + 1;
+         idF = find(tabCyNumRaw == 1);
+         tabRank(idF) = 1;
+         tabDone(idF) = 1;
+
+         % cycle 5 missed for unknown reason
+         idF4 = find(tabCyNumRaw == 4, 1);
+         idRank = find((tabRank ~= -1) & (tabRank > tabRank(idF4)));
+         tabRank(idRank) = tabRank(idRank) + 1;
+         idF = find(tabCyNumRaw == 5);
+         tabRank(idF) = tabRank(idF4) + 1;
+         tabDone(idF) = 1;
+
+      case 6904114
+         % the float has been reset at sea after cycle (196, 0) and cycle numbers
+         % started from 1
+
+         % change the cycle number of useful EOL data (to remove unused ones)
+         id = find((tabCyNumRaw == 196) & (tabPackType == 253) & (tabPhaseNumRaw == g_decArgo_phaseEndOfLife));
+         tabCyNumRaw(id) = 195;
+
+         % remove unused data
+         id = find((tabCyNumRaw == 196) & (tabPhaseNumRaw ~= g_decArgo_phaseSurfWait));
+         tabRank(id) = -1;
+
+      case 6903876
+         % during cycle #189 transmissions, already transmitted data are transmitted once again
+         id = find((tabCyNumFile == 189) & (tabDone == 0));
+         tabDone(id) = 1;
+         id2 = find((tabCyNumRaw ~= 189) & (tabSession == tabSession(id(end))));
+         tabRank(id2) = -1;
+
+         id = find((tabCyNumFile == 190) & (tabDone == 0));
+         tabDone(id) = 1;
+         id2 = find((tabCyNumRaw == 190) & (tabPhaseNumRaw == 1), 1, 'first');
+         id3 = find((tabPhaseNumRaw ~= 1) & (tabPhaseNumRaw ~= -1) & (tabSession == tabSession(id2)));
+         tabRank(id3) = -1;
+   
    end
 end
 
@@ -1040,7 +1265,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/10/2019 - RNU - creation
@@ -1314,7 +1539,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/10/2019 - RNU - creation
@@ -1384,7 +1609,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/10/2019 - RNU - creation
@@ -1469,7 +1694,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/10/2019 - RNU - creation
@@ -1538,7 +1763,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/10/2019 - RNU - creation
@@ -1585,7 +1810,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/10/2019 - RNU - creation
@@ -1641,7 +1866,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/25/2022 - RNU - creation
@@ -1696,7 +1921,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/03/20236 - RNU - creation
@@ -1747,7 +1972,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/04/2022 - RNU - creation

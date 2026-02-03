@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/06/2018 - RNU - creation
@@ -20,35 +20,29 @@
 function generate_json_float_meta_apx_apf11_iridium_rudics()
 
 % meta-data file exported from Coriolis data base
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\APF11_2.11.3.R_finlande.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\APF11_2.11.3.R_7900562.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\APF11_DBexport_7900559_7900560.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_ApexRudics_Norway_APF11_2.13.1.R_from_vb_20200528.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.12.3.R_7900566.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.15.0.R_6903552.txt';
-% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_6903567_test.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.15.0.R_7900973_RAFOS.txt';
-% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.14.3.R_7900563_RAMSES.txt';
-% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.15.2.R_7900586_7900587.txt';
-% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.15.2.R_6904113.txt';
-% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\db_export_APF11_Rafos_20220408.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\new_apex_meta_apf11_2.16.0.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DBexport_Apex2.17.4.R.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB_apx_olaf\dbExport_Olaf.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB_HISTO\SOS_VB_apx_olaf2\dbexport_ApexOlaf2.txt';
+% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\db_export_APF11_2.18.1_7900989.txt';
+% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\dbexport_7900563_pour_ramses.txt';
 
 % list of sensors mounted on floats
 SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
 
 % list of concerned floats
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.11.3_finlande.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB_apx_olaf\_apex_olaf.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB_HISTO\SOS_VB_apx_olaf2\_apex_olaf2.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_2.15.2.R.txt';
 
 % calibration coefficient file
 CALIB_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\_CalibCoef\calib_coef.txt';
 
 % directory of configuration files at launch
-CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\_ConfigAtLaunch\';
+CONFIG_DIR_NAME = 'C:\Users\jprannou\Desktop\SOS_VB_apx_olaf\';
+CONFIG_DIR_NAME = 'C:\Users\jprannou\Desktop\SOS_VB_HISTO\SOS_VB_apx_olaf2\ConfigAtLaunch\';
+% CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\_ConfigAtLaunch\';
+
+% directory of RAMSES calibration files
+RAMSES_CALIB_DIR_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\_ramses_calibration_file\';
 
 % directory of individual json float meta-data files
 OUTPUT_DIR_NAME = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];
@@ -78,6 +72,7 @@ generate_json_float_meta_apx_apf11_iridium_(...
    FLOAT_LIST_FILE_NAME, ...
    CALIB_FILE_NAME, ...
    CONFIG_DIR_NAME, ...
+   RAMSES_CALIB_DIR_NAME, ...
    OUTPUT_DIR_NAME, ...
    DIR_CSV_FILE, ...
    rudicsFlag, ...

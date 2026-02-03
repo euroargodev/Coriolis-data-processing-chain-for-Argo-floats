@@ -4,25 +4,26 @@
 %
 % SYNTAX :
 %  generate_json_float_meta_nemo_ir_sbd_( ...
-%    a_floatMetaFileName, a_floatListFileName, a_outputDirName)
+%    a_floatMetaFileName, a_floatListFileName, a_outputDirName, a_rtVersionFlag)
 %
 % INPUT PARAMETERS :
 %   a_floatMetaFileName : meta-data file exported from Coriolis data base
 %   a_floatListFileName : list of concerned floats
 %   a_outputDirName     : directory of individual json float meta-data files
+%   a_rtVersionFlag     : 1 if it is the RT version of the tool, 0 otherwise
 %
 % OUTPUT PARAMETERS :
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/03/2020 - RNU - creation
 % ------------------------------------------------------------------------------
 function generate_json_float_meta_nemo_ir_sbd_( ...
-   a_floatMetaFileName, a_floatListFileName, a_outputDirName)
+   a_floatMetaFileName, a_floatListFileName, a_outputDirName, a_rtVersionFlag)
 
 % report information structure
 global g_cogj_reportData;
@@ -172,6 +173,7 @@ for idFloat = 1:length(floatList)
       {'SENSOR_MAKER'} ...
       {'SENSOR_MODEL'} ...
       {'SENSOR_SERIAL_NO'} ...
+      {'SENSOR_FIRMWARE_VERSION'} ...
       ];
    [metaStruct] = add_multi_dim_data( ...
       itemList, ...
@@ -312,7 +314,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/03/2020 - RNU - creation
@@ -351,7 +353,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/03/2020 - RNU - creation
@@ -388,7 +390,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/03/2020 - RNU - creation
@@ -427,6 +429,7 @@ o_metaStruct = struct( ...
    'CONTROLLER_BOARD_SERIAL_NO_PRIMARY', 'CONTROLLER_BOARD_SERIAL_NO_PRIMA', ...
    'CONTROLLER_BOARD_SERIAL_NO_SECONDARY', 'CONTROLLER_BOARD_SERIAL_NO_SECON', ...
    'SPECIAL_FEATURES', 'SPECIAL_FEATURES', ...
+   'PROGRAM_NAME', 'PROGRAM_NAME', ...
    'FLOAT_OWNER', 'FLOAT_OWNER', ...
    'OPERATING_INSTITUTION', 'OPERATING_INSTITUTION', ...
    'CUSTOMISATION', 'CUSTOMISATION', ...

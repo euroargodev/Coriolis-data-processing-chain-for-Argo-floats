@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/17/2018 - RNU - creation
@@ -42,7 +42,13 @@ o_decodeData = struct( ...
    'rankByDate', -1, ... % number of the decoding buffer (sorted by SBD transmission date)
    'deep', -1, ... % 1 for a deep cycle, 0 otherwise
    'iceDelayed', -1, ... % 1 for a Ice delayed cycle, 0 otherwise
-   'reset', -1 ... % 1 if a reset has been detected, 0 otherwise
+   'reset', -1, ... % 1 if a reset has been detected, 0 otherwise
+   'expNbDesc3T', -1, ... % expected number of 3T packets for descending data
+   'expNbDrift3T', -1, ... % expected number of 3T packets for drift data
+   'expNbAsc3T', -1, ... % expected number of 3T packets for ascending data
+   'expNbDesc2T', -1, ... % expected number of 2T packets for descending data
+   'expNbDrift2T', -1, ... % expected number of 2T packets for drift data
+   'expNbAsc2T', -1 ... % expected number of 2T packets for ascending data
    );
 
 return

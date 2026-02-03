@@ -18,7 +18,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -42,7 +42,9 @@ end
 % parse msg file information
 [gpsLocDate, gpsLocLon, gpsLocLat, ...
    gpsLocNbSat, gpsLocAcqTime, ...
-   gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_gps_fix(a_gpsFixDataStr);
+   gpsLocFailedAcqTime, ...
+   gpsLocFailedIceEvasion, gpsLocFailedIceCap, gpsLocFailedIceBreakup] = ...
+   parse_apx_ir_gps_fix(a_gpsFixDataStr);
 
 % store GPS fixes
 gpsFixStruct = get_apx_gps_fix_init_struct(g_decArgo_cycleNum);
@@ -58,8 +60,11 @@ end
 
 % store GPS misc information
 o_gpsInfo.FailedAcqTime = gpsLocFailedAcqTime;
-o_gpsInfo.FailedIce = gpsLocFailedIce;
+o_gpsInfo.FailedIceEvasion = gpsLocFailedIceEvasion;
+o_gpsInfo.FailedIceCap = gpsLocFailedIceCap;
+o_gpsInfo.FailedIceBreakup = gpsLocFailedIceBreakup;
 
+% store TECH information
 if (~isempty(gpsLocFailedAcqTime))
    for idF = 1:length(gpsLocFailedAcqTime)
       techData = get_apx_tech_data_init_struct(1);
@@ -78,12 +83,47 @@ if (~isempty(gpsLocFailedAcqTime))
    end
 end
 
-if (~isempty(gpsLocFailedIce))
-   for idF = 1:length(gpsLocFailedIce)
+if (~isempty(gpsLocFailedIceEvasion))
+   for idF = 1:length(gpsLocFailedIceEvasion)
       techData = get_apx_tech_data_init_struct(1);
-      techData.label = 'Ice evasion initiated at P';
-      techData.techId = 1041;
-      techData.value = num2str(gpsLocFailedIce{idF});
+      techData.label = 'Ice evasion initiated at P: flag';
+      techData.techId = 1042;
+      techData.value = num2str(1);
+      techData.cyNum = g_decArgo_cycleNum;
+      o_techData{end+1} = techData;
+      techData.techId = 1044;
+      o_techData{end+1} = techData;
+
+      techData = get_apx_tech_data_init_struct(1);
+      techData.label = 'Ice evasion initiated at P: dbar';
+      techData.techId = 1043;
+      techData.value = num2str(gpsLocFailedIceEvasion{idF});
+      techData.cyNum = g_decArgo_cycleNum;
+      o_techData{end+1} = techData;
+      techData.techId = 1045;
+      o_techData{end+1} = techData;
+      techData.techId = 1046;
+      o_techData{end+1} = techData;
+   end
+end
+
+if (~isempty(gpsLocFailedIceCap))
+   for idF = 1:length(gpsLocFailedIceCap)
+      techData = get_apx_tech_data_init_struct(1);
+      techData.label = 'Ice cap evasion initiated';
+      techData.techId = 1047;
+      techData.value = num2str(1);
+      techData.cyNum = g_decArgo_cycleNum;
+      o_techData{end+1} = techData;
+   end
+end
+
+if (~isempty(gpsLocFailedIceBreakup))
+   for idF = 1:length(gpsLocFailedIceBreakup)
+      techData = get_apx_tech_data_init_struct(1);
+      techData.label = 'Leads or break-up of surface ice detected';
+      techData.techId = 1048;
+      techData.value = num2str(1);
       techData.cyNum = g_decArgo_cycleNum;
       o_techData{end+1} = techData;
    end

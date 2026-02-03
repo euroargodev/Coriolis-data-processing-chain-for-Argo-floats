@@ -24,7 +24,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %  10/14/2014 - RNU - creation
@@ -42,28 +42,38 @@ o_tabTechAuxNMeas = [];
 
 
 % duplicate cycleNumber in outputCycleNumber in the profile structures
-for id = 1:length(a_tabProfiles)
-   a_tabProfiles(id).outputCycleNumber = a_tabProfiles(id).cycleNumber;
+if (~isempty(a_tabProfiles))
+   cyNumList = [a_tabProfiles.cycleNumber];
+   cyNumList = num2cell(cyNumList);
+   [a_tabProfiles.outputCycleNumber] = deal(cyNumList{:});
 end
 
 % duplicate cycleNumber in outputCycleNumber in the N_MEASUREMENT traj structures
-for id = 1:length(a_tabTrajNMeas)
-   a_tabTrajNMeas(id).outputCycleNumber = a_tabTrajNMeas(id).cycleNumber;
+if (~isempty(a_tabTrajNMeas))
+   cyNumList = [a_tabTrajNMeas.cycleNumber];
+   cyNumList = num2cell(cyNumList);
+   [a_tabTrajNMeas.outputCycleNumber] = deal(cyNumList{:});
 end
 
 % duplicate cycleNumber in outputCycleNumber in the N_CYCLE structures
-for id = 1:length(a_tabTrajNCycle)
-   a_tabTrajNCycle(id).outputCycleNumber = a_tabTrajNCycle(id).cycleNumber;
+if (~isempty(a_tabTrajNCycle))
+   cyNumList = [a_tabTrajNCycle.cycleNumber];
+   cyNumList = num2cell(cyNumList);
+   [a_tabTrajNCycle.outputCycleNumber] = deal(cyNumList{:});
 end
 
 % duplicate cycleNumber in outputCycleNumber in the N_MEASUREMENT tech structures
-for id = 1:length(a_tabTechNMeas)
-   a_tabTechNMeas(id).outputCycleNumber = a_tabTechNMeas(id).cycleNumber;
+if (~isempty(a_tabTechNMeas))
+   cyNumList = [a_tabTechNMeas.cycleNumber];
+   cyNumList = num2cell(cyNumList);
+   [a_tabTechNMeas.outputCycleNumber] = deal(cyNumList{:});
 end
 
 % duplicate cycleNumber in outputCycleNumber in the N_MEASUREMENT tech AUX structures
-for id = 1:length(a_tabTechAuxNMeas)
-   a_tabTechAuxNMeas(id).outputCycleNumber = a_tabTechAuxNMeas(id).cycleNumber;
+if (~isempty(a_tabTechAuxNMeas))
+   cyNumList = [a_tabTechAuxNMeas.cycleNumber];
+   cyNumList = num2cell(cyNumList);
+   [a_tabTechAuxNMeas.outputCycleNumber] = deal(cyNumList{:});
 end
 
 % update output parameters

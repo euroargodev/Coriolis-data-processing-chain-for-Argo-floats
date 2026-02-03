@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/15/2014 - RNU - creation
@@ -54,9 +54,16 @@ for idBSN = 1:length(metaStructNames)
                fprintf(fidOut, '         {\n');
                fieldSubVal2 = fieldnames(fieldVal.(fieldSubVal{idDim1}));
                for idDim2 = 1:size(fieldSubVal2, 1)
-                  fprintf(fidOut, '            "%s" : %s', ...
-                     fieldSubVal2{idDim2}, ...
-                     fieldVal.(fieldSubVal{idDim1}).(fieldSubVal2{idDim2}));
+                  if (~ismember(fieldSubVal{idDim1}, [{'RAMSES'} {'RAMSES_ARC'}]))
+                     fprintf(fidOut, '            "%s" : %s', ...
+                        fieldSubVal2{idDim2}, ...
+                        fieldVal.(fieldSubVal{idDim1}).(fieldSubVal2{idDim2}));
+                  else
+                     % use char to manage nan values
+                     fprintf(fidOut, '            "%s" : "%s"', ...
+                        fieldSubVal2{idDim2}, ...
+                        fieldVal.(fieldSubVal{idDim1}).(fieldSubVal2{idDim2}));
+                  end
                   if (idDim2 < size(fieldSubVal2, 1))
                      fprintf(fidOut, ',\n');
                   else

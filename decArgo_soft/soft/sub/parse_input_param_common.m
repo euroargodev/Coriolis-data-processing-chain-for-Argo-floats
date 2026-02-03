@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/27/2014 - RNU - creation
@@ -34,6 +34,9 @@ g_decArgo_xmlReportFileName = [];
 % DOM node of XML report
 global g_decArgo_xmlReportDOMNode;
 
+% decoder version
+global g_decArgo_decoderVersion;
+
 
 % ignore empty input parameters
 idDel = [];
@@ -49,7 +52,10 @@ configFileInputParam = 0;
 xmlReportInputParam = 0;
 idDel = [];
 if (~isempty(a_varargin))
-   if (rem(length(a_varargin), 2) ~= 0)
+   if ((length(a_varargin) == 1) && strcmpi(a_varargin{id}, 'version'))
+      fprintf('Coriolis decoder version: %s\n', g_decArgo_decoderVersion);
+      o_inputError = 1;
+   elseif (rem(length(a_varargin), 2) ~= 0)
       fprintf('ERROR: expecting an even number of input arguments (e.g. (''argument_name'', ''argument_value'') - exit\n');
       o_inputError = 1;
       return

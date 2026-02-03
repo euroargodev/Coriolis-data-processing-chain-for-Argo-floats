@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -42,9 +42,9 @@ end
 
 switch (a_decoderId)
    
-   case {1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1114} % 030410 & 020212 & 030512 & 062813_1 & 092813 & 073014 & 102815 & 110216 & 073014_2
+   case {1101, 1104, 1105, 1107, 1110, 1111, 1112, 1113, 1114, 1115} % 030410 & 020212 & 030512 & 062813_1 & 092813 & 073014 & 102815 & 110216 & 073014_2 & 073014_3
       
-      [o_driftData] = parse_apx_ir_drift_data_1_4_5_7_10_to_14(a_driftMeasDataStr);
+      [o_driftData] = parse_apx_ir_drift_data_1_4_5_7_10_to_15(a_driftMeasDataStr);
       
    case {1314} % 090215
       
@@ -70,7 +70,7 @@ return
 % Parse Apex Iridium Rudics drift data.
 %
 % SYNTAX :
-%  [o_driftData] = parse_apx_ir_drift_data_1_4_5_7_10_to_14(a_driftMeasDataStr)
+%  [o_driftData] = parse_apx_ir_drift_data_1_4_5_7_10_to_15(a_driftMeasDataStr)
 %
 % INPUT PARAMETERS :
 %   a_driftMeasDataStr : input ASCII drift data
@@ -81,12 +81,12 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_driftData] = parse_apx_ir_drift_data_1_4_5_7_10_to_14(a_driftMeasDataStr)
+function [o_driftData] = parse_apx_ir_drift_data_1_4_5_7_10_to_15(a_driftMeasDataStr)
 
 % output parameters initialization
 o_driftData = [];
@@ -200,7 +200,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/20/2017 - RNU - creation
@@ -298,7 +298,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -427,7 +427,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -551,8 +551,8 @@ paramSal = get_netcdf_param_attributes('PSAL');
 paramTPhaseDoxy = get_netcdf_param_attributes('TPHASE_DOXY');
 paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
 paramRPhaseDoxy = get_netcdf_param_attributes('RPHASE_DOXY');
-paramPhaseDelayDoxy = get_netcdf_param_attributes('PHASE_DELAY_DOXY2');
-paramTempDoxy2 = get_netcdf_param_attributes('TEMP_DOXY2');
+paramPhaseDelayDoxy = get_netcdf_param_attributes('PHASE_DELAY_DOXY_2');
+paramTempDoxy2 = get_netcdf_param_attributes('TEMP_DOXY_2');
 
 % store drift data
 o_driftData = get_apx_profile_data_init_struct;

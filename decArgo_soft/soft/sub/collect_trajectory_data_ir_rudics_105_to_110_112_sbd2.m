@@ -42,7 +42,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/06/2013 - RNU - creation
@@ -499,7 +499,7 @@ end
 
 % the unpumped part of the profile should not be duplicated in the TRAJ file
 % anymore (whatever the value of CONFIG_OptodeMeasurementsInAir_LOGICAL is)
-% see specification in "NOTE ON ìNEAR SURFACEî AND ìIN AIRî DATA PROCESSING IN
+% see specification in "NOTE ON ‚ÄúNEAR SURFACE‚Äù AND ‚ÄúIN AIR‚Äù DATA PROCESSING IN
 % THE CORIOLIS MATLAB DECODER" (V1.0 dated 29/06/2018)
 
 % create IN AIR measurement profile (PPOX_DOXY)
@@ -562,7 +562,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/06/2013 - RNU - creation
@@ -594,7 +594,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/06/2013 - RNU - creation
@@ -653,7 +653,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/17/2014 - RNU - creation

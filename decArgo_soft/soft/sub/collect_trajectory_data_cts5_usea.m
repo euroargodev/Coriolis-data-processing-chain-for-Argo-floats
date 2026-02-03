@@ -21,7 +21,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -456,7 +456,7 @@ if (~isempty(profInfo))
          datedMeasStruct.sensorNumber = profile.sensorNumber;
          
          o_tabTrajIndex = [o_tabTrajIndex;
-            measCode  cyNum profNum profile.phaseNumber];
+            measCode cyNum profNum profile.phaseNumber];
          o_tabTrajData = [o_tabTrajData; {{datedMeasStruct}}];
       end
    end
@@ -475,7 +475,7 @@ if (~isempty(a_subSurfaceMeas))
    subSurfMeas.psal = a_subSurfaceMeas(4);
    
    o_tabTrajIndex = [o_tabTrajIndex;
-      g_MC_LastAscPumpedCtd  g_decArgo_cycleNumFloat g_decArgo_patternNumFloat -1];
+      g_MC_LastAscPumpedCtd g_decArgo_cycleNumFloat g_decArgo_patternNumFloat -1];
    o_tabTrajData = [o_tabTrajData; {{subSurfMeas}}];
 end
 
@@ -520,7 +520,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation

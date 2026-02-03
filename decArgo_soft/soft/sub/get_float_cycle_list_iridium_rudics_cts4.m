@@ -14,8 +14,8 @@
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/27/2013 - RNU - creation
@@ -50,8 +50,11 @@ if (g_decArgo_realtimeFlag == 0)
          [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.b64');
       elseif (strcmp(sbdFileName(end-3:end), '.bin'))
          [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.bin');
+         if (~isempty(errmsg))
+            [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%9c_%d.bin');
+         end
       end
-      if (isempty(errmsg))
+      if (isempty(errmsg) && (count == 4))
          existingCycles = [existingCycles; id(end)];
       end
    end
@@ -64,8 +67,11 @@ else
          [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.b64');
       elseif (strcmp(sbdFileName(end-3:end), '.bin'))
          [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.bin');
+         if (~isempty(errmsg))
+            [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%9c_%d.bin');
+         end
       end
-      if (isempty(errmsg))
+      if (isempty(errmsg) && (count == 4))
          existingCycles = [existingCycles; id(end)];
       end
    end
@@ -77,8 +83,11 @@ else
          [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.b64');
       elseif (strcmp(sbdFileName(end-3:end), '.bin'))
          [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%10c_%d.bin');
+         if (~isempty(errmsg))
+            [id, count, errmsg, nextIndex] = sscanf(sbdFileName, '%d_%d_%9c_%d.bin');
+         end
       end
-      if (isempty(errmsg))
+      if (isempty(errmsg) && (count == 4))
          existingCycles = [existingCycles; id(end)];
       end
    end
@@ -111,8 +120,8 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/02/2010 - RNU - creation

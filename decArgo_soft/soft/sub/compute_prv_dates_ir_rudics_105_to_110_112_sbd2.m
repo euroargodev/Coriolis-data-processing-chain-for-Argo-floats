@@ -36,7 +36,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/13/2013 - RNU - creation
@@ -87,10 +87,6 @@ for idP = 1:size(a_tabTech, 1)
    
    cycleNum = a_tabTech(idP, 4);
    profileNum = a_tabTech(idP, 5);
-
-   % if ((cycleNum == 465) || (cycleNum == 466))
-   %    a=1
-   % end
 
    % set the current reference day for this cycle and prof number
    refDay = a_refDay;

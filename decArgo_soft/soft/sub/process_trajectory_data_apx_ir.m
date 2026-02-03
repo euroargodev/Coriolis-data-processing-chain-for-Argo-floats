@@ -10,7 +10,7 @@
 %    a_profLrData, a_profHrData, ...
 %    a_nearSurfData, ...
 %    a_surfDataBladderDeflated, a_surfDataBladderInflated, a_surfDataMsg, ...
-%    a_timeDataLog, a_gpsData, ...
+%    a_timeDataLog, a_iceDetectionLog, a_gpsData, ...
 %    a_profEndDateMsg, a_profEndAdjDateMsg, ...
 %    a_clockOffsetData, o_presOffsetData, ...
 %    a_tabTrajNMeas, a_tabTrajNCycle, ...
@@ -31,6 +31,7 @@
 %   a_surfDataBladderInflated : surface data (bladder inflated)
 %   a_surfDataMsg             : surface data from engineering data
 %   a_timeDataLog             : cycle timings from log file
+%   a_iceDetection            : ice detection data
 %   a_gpsData                 : GPS data
 %   a_profEndDateMsg          : profile end date
 %   a_profEndAdjDateMsg       : profile end adjusted date
@@ -48,7 +49,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -61,7 +62,7 @@ function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_apx_ir( ...
    a_profLrData, a_profHrData, ...
    a_nearSurfData, ...
    a_surfDataBladderDeflated, a_surfDataBladderInflated, a_surfDataMsg, ...
-   a_timeDataLog, a_gpsData, ...
+   a_timeDataLog, a_iceDetectionLog, a_gpsData, ...
    a_profEndDateMsg, a_profEndAdjDateMsg, ...
    a_clockOffsetData, o_presOffsetData, ...
    a_tabTrajNMeas, a_tabTrajNCycle, ...
@@ -70,6 +71,9 @@ function [o_tabTrajNMeas, o_tabTrajNCycle] = process_trajectory_data_apx_ir( ...
 % output parameters initialization
 o_tabTrajNMeas = a_tabTrajNMeas;
 o_tabTrajNCycle = a_tabTrajNCycle;
+
+% current cycle number
+global g_decArgo_cycleNum;
 
 % global measurement codes
 global g_MC_CycleStart;
@@ -83,6 +87,8 @@ global g_MC_RPP;
 global g_MC_AST;
 global g_MC_AscProfDeepestBin;
 global g_MC_AscProf;
+global g_MC_MedianValueInAscProf;
+global g_MC_IceAscentAbort;
 global g_MC_AET;
 global g_MC_TST;
 global g_MC_Surface;
@@ -104,6 +110,7 @@ global g_RPP_STATUS_4;
 
 % default values
 global g_decArgo_dateDef;
+global g_decArgo_presDef;
 
 % float configuration
 global g_decArgo_floatConfig;
@@ -902,6 +909,79 @@ if (~isempty(finalProf))
    end
    
    trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ICE data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if (~isempty(a_iceDetectionLog))
+   paramPres = get_netcdf_param_attributes('PRES');
+   paramTemp = get_netcdf_param_attributes('TEMP');
+
+   % PT measurements of thermal detection algorithm: (JULD, P, T) stored in TRAJ
+   % with MC=590
+   if (~isempty(a_iceDetectionLog.mlSample))
+      for idP = 1:length(a_iceDetectionLog.mlSample)
+         [measStruct, ~] = create_one_meas_float_time_bis( ...
+            g_MC_AET - 10, ...
+            a_iceDetectionLog.mlSample(idP).sampleTime, ...
+            a_iceDetectionLog.mlSample(idP).sampleTimeAdj, ...
+            g_JULD_STATUS_2);
+         measStruct.paramList = [paramPres paramTemp];
+         measStruct.paramData = [a_iceDetectionLog.mlSample(idP).samplePres a_iceDetectionLog.mlSample(idP).sampleTemp];
+         if (a_iceDetectionLog.mlSample(idP).samplePresAdj ~= g_decArgo_presDef)
+            measStruct.paramDataMode = 'A ';
+            measStruct.paramDataAdj = [a_iceDetectionLog.mlSample(idP).samplePresAdj paramTemp.fillValue];
+         end
+
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+      end
+   end
+
+   % median value of PT measurements of thermal detection algorithm: (JULD, T)
+   % stored in TRAJ with MC=595
+   if (~isempty(a_iceDetectionLog.evasionMlt))
+      [measStruct, ~] = create_one_meas_float_time_bis( ...
+         g_MC_MedianValueInAscProf, ...
+         a_iceDetectionLog.evasionTime, ...
+         a_iceDetectionLog.evasionTimeAdj, ...
+         g_JULD_STATUS_2);
+      if (isempty(measStruct))
+         % some Ice events have been recovered from system_log file even without
+         % timestamp
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.measCode = g_MC_MedianValueInAscProf;
+      end
+      measStruct.paramList = paramTemp;
+      measStruct.paramData = a_iceDetectionLog.evasionMlt;
+
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+   end
+
+   % ICE ascent aborted time (with pressure if available, with shallowest PRE
+   % measurement if not) stored in TRAJ with MC=593
+   if (a_iceDetectionLog.evasionPerigeePres ~= g_decArgo_presDef)
+      [measStruct, ~] = create_one_meas_float_time_bis( ...
+         g_MC_IceAscentAbort, ...
+         a_iceDetectionLog.evasionPerigeeTime, ...
+         a_iceDetectionLog.evasionPerigeeTimeAdj, ...
+         g_JULD_STATUS_2);
+      if (isempty(measStruct))
+         % some Ice events have been recovered from system_log file even without
+         % timestamp
+         measStruct = get_traj_one_meas_init_struct();
+         measStruct.measCode = g_MC_IceAscentAbort;
+      end
+      measStruct.paramList = paramPres;
+      measStruct.paramData = a_iceDetectionLog.evasionPerigeePres;
+      if (a_iceDetectionLog.evasionPerigeePresAdj ~= g_decArgo_presDef)
+         measStruct.paramDataMode = 'A';
+         measStruct.paramDataAdj = a_iceDetectionLog.evasionPerigeePresAdj;
+      end
+
+      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

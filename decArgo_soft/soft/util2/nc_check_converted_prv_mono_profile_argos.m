@@ -8,14 +8,14 @@
 %   nc_check_converted_prv_mono_profile_argos ou nc_check_converted_prv_mono_profile_argos(6900189, 7900118)
 %
 % INPUT PARAMETERS :
-%   varargin : éventuellement la liste des numéros de flotteurs à traiter
+%   varargin : Ã©ventuellement la liste des numÃ©ros de flotteurs Ã  traiter
 %
 % OUTPUT PARAMETERS :
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/15/2021 - RNU - creation
@@ -63,10 +63,10 @@ logFile = [DIR_LOG_FILE '/' 'nc_check_converted_prv_mono_profile_argos' name '_'
 diary(logFile);
 tic;
 
-paramJuld = get_netcdf_param_attributes_3_1('JULD');
-paramLat = get_netcdf_param_attributes_3_1('LATITUDE');
-paramLon = get_netcdf_param_attributes_3_1('LONGITUDE');
-paramPres = get_netcdf_param_attributes_3_1('PRES');
+paramJuld = get_netcdf_param_attributes('JULD');
+paramLat = get_netcdf_param_attributes('LATITUDE');
+paramLon = get_netcdf_param_attributes('LONGITUDE');
+paramPres = get_netcdf_param_attributes('PRES');
 
 % process the floats
 nbFloats = length(floatList);

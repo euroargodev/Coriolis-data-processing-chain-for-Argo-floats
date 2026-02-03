@@ -10,7 +10,7 @@
 %    o_profLrData, o_profHrData, ...
 %    o_nearSurfData, ...
 %    o_surfDataBladderDeflated, o_surfDataBladderInflated, o_surfDataMsg, ...
-%    o_timeDataLog, ...
+%    o_timeDataLog, o_iceDetection, ...
 %    o_presOffsetData] = ...
 %    adjust_pres_from_surf_offset_apx_ir(a_surfDataLog, ...
 %    a_pMarkDataMsg, a_pMarkDataLog, ...
@@ -18,7 +18,7 @@
 %    a_profLrData, a_profHrData, ...
 %    a_nearSurfData, ...
 %    a_surfDataBladderDeflated, a_surfDataBladderInflated, a_surfDataMsg, ...
-%    a_timeDataLog, ...
+%    a_timeDataLog, a_iceDetection, ...
 %    a_presOffsetData)
 %
 % INPUT PARAMETERS :
@@ -35,6 +35,7 @@
 %   a_surfDataBladderInflated : input surface data
 %   a_surfDataMsg             : input surface data from engineering data
 %   a_timeDataLog             : input cycle timings from log file
+%   a_iceDetection            : input ice detection data
 %   a_presOffsetData          : input pressure offset information
 %
 % OUTPUT PARAMETERS :
@@ -52,12 +53,13 @@
 %   o_surfDataBladderInflated : output surface data
 %   o_surfDataMsg             : output surface data from engineering data
 %   o_timeDataLog             : output cycle timings from log file
+%   o_iceDetection            : output ice detection data
 %   o_presOffsetData          : updated pressure offset information
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -69,7 +71,7 @@ function [o_surfPresInfo, ...
    o_profLrData, o_profHrData, ...
    o_nearSurfData, ...
    o_surfDataBladderDeflated, o_surfDataBladderInflated, o_surfDataMsg, ...
-   o_timeDataLog, ...
+   o_timeDataLog, o_iceDetection, ...
    o_presOffsetData] = ...
    adjust_pres_from_surf_offset_apx_ir(a_surfDataLog, ...
    a_pMarkDataMsg, a_pMarkDataLog, ...
@@ -77,7 +79,7 @@ function [o_surfPresInfo, ...
    a_profLrData, a_profHrData, ...
    a_nearSurfData, ...
    a_surfDataBladderDeflated, a_surfDataBladderInflated, a_surfDataMsg, ...
-   a_timeDataLog, ...
+   a_timeDataLog, a_iceDetection, ...
    a_presOffsetData)
 
 % output parameters initialization
@@ -95,6 +97,7 @@ o_surfDataBladderDeflated = a_surfDataBladderDeflated;
 o_surfDataBladderInflated = a_surfDataBladderInflated;
 o_surfDataMsg = a_surfDataMsg;
 o_timeDataLog = a_timeDataLog;
+o_iceDetection = a_iceDetection;
 o_presOffsetData = a_presOffsetData;
 
 % output CSV file Id
@@ -102,6 +105,9 @@ global g_decArgo_outputCsvFileId;
 
 % current cycle number
 global g_decArgo_cycleNum;
+
+% default values
+global g_decArgo_presDef;
 
 
 % select the pressure offset value to use
@@ -157,6 +163,24 @@ if (~isempty(presOffset))
          o_timeDataLog.ascentEndAdjPres = o_timeDataLog.ascentEndPres - presOffset;
       end
    end
+   if (~isempty(o_iceDetection))
+      if (~isempty(o_iceDetection.mlSample))
+         for idP = 1:length(o_iceDetection.mlSample)
+            if (o_iceDetection.mlSample(idP).samplePres ~= g_decArgo_presDef)
+               o_iceDetection.mlSample(idP).samplePresAdj = o_iceDetection.mlSample(idP).samplePres - presOffset;
+            end
+         end
+      end
+      if (o_iceDetection.isaPres ~= g_decArgo_presDef)
+         o_iceDetection.isaPresAdj = o_iceDetection.isaPres - presOffset;
+      end
+      if (o_iceDetection.evasionPres ~= g_decArgo_presDef)
+         o_iceDetection.evasionPresAdj = o_iceDetection.evasionPres - presOffset;
+      end
+      if (o_iceDetection.evasionPerigeePres ~= g_decArgo_presDef)
+         o_iceDetection.evasionPerigeePresAdj = o_iceDetection.evasionPerigeePres - presOffset;
+      end
+   end
 end
 
 return
@@ -178,7 +202,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -214,7 +238,7 @@ if (~isempty(idCycleStruct))
    else
       idF = find(ismember(a_cycleNum:-1:a_cycleNum-5, [a_presOffsetData.cycleNum]));
       if ((length(idF) == 6) && ~any(abs(a_presOffsetData.cyclePresOffset(idF)) <= 20))
-         fprintf('WARNING: Float #%d should be put on the grey list because of pressure error\n', ...
+         fprintf('WARNING: Float #%d should be put on the exclusion list because of pressure error\n', ...
             g_decArgo_floatNum);
       end
    end
@@ -245,7 +269,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -282,7 +306,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation

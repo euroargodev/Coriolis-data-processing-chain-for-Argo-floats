@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/23/2014 - RNU - creation
@@ -26,6 +26,7 @@ o_measCodeName = '';
 global g_MC_FillValue;
 global g_MC_Launch;
 global g_MC_CycleStart;
+global g_MC_CycleStartBis;
 global g_MC_DST;
 global g_MC_PressureOffset
 global g_MC_MinPresInDriftAtParkSupportMeas;
@@ -61,6 +62,7 @@ global g_MC_SpyInAscProf;
 global g_MC_AscProf;
 global g_MC_MedianValueInAscProf;
 global g_MC_LastAscPumpedCtd;
+global g_MC_IceAscentAbort;
 global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_AET_Float;
@@ -90,8 +92,8 @@ switch (a_measCode)
    case g_MC_Launch
       o_measCodeName = sprintf('%03d: FLOAT_LAUNCH', a_measCode);
       
-   case g_MC_CycleStart
-      o_measCodeName = sprintf('%03d: CYCLE_START', a_measCode);
+   case {g_MC_CycleStart, g_MC_CycleStartBis}
+      o_measCodeName = sprintf('%03d: CYCLE_START/BUOY_ACTION_TO_DESC_TO_PARK', a_measCode);
       
    case g_MC_PressureOffset
       o_measCodeName = sprintf('%03d: PRESSURE_OFFSET', a_measCode);
@@ -159,7 +161,7 @@ switch (a_measCode)
    case g_MC_RPP
       o_measCodeName = sprintf('%03d: REPRESENTATIVE_PARK_MEAS', a_measCode);
       
-   case g_MC_SpyInDescToProf
+   case {g_MC_SpyInDescToProf, g_MC_DPST-11}
       o_measCodeName = sprintf('%03d: BUOY_ACTION_DESC_TO_PROF', a_measCode);
       
    case g_MC_MaxPresInDescToProf
@@ -203,7 +205,10 @@ switch (a_measCode)
       
    case g_MC_LastAscPumpedCtd
       o_measCodeName = sprintf('%03d: LAST_PUMPED_CTD_MEAS', a_measCode);
-      
+
+   case g_MC_IceAscentAbort
+      o_measCodeName = sprintf('%03d: ICE_ASCENT_ABORT', a_measCode);
+
    case g_MC_AET
       o_measCodeName = sprintf('%03d: ASCENT_END', a_measCode);
       
@@ -252,7 +257,7 @@ switch (a_measCode)
    case {g_MC_DET-11, g_MC_PST-11, g_MC_PET-11, g_MC_DDET-11, g_MC_AST-11, g_MC_AET-11}
       o_measCodeName = sprintf('%03d: BUOYANCY_ACTION', a_measCode);
       
-   case {g_MC_TET-10, g_MC_DST-10, g_MC_DET-10, g_MC_PST-10, g_MC_PET-10, g_MC_DDET-10, g_MC_AST-10, g_MC_AET-10}
+   case {g_MC_TET-10, g_MC_DST-10, g_MC_DET-10, g_MC_PST-10, g_MC_PET-10, g_MC_DDET-10, g_MC_DPST-10, g_MC_AST-10, g_MC_AET-10}
       o_measCodeName = sprintf('%03d: SERIES_OF_MEAS', a_measCode);
       
    otherwise

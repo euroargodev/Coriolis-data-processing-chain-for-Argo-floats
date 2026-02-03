@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/29/2014 - RNU - creation
@@ -32,7 +32,7 @@
 %      - 1 bug while computing PROFILE_PARAM_QC
 %      - 2 'on the fly' corrections of input DM data:
 %         #1- from Argo Quality Control Manual V2.9.1: Please note that whenever
-%             PARAM_ADJUSTED_QC = ‘4’, both PARAM_ADJUSTED and
+%             PARAM_ADJUSTED_QC = â€˜4â€™, both PARAM_ADJUSTED and
 %             PARAM_ADJUSTED_ERROR should be set to FillValue
 %         #2- if PRES_QC = '0' set PRES_QC = '1'
 %   06/08/2015 - RNU - V 2.4:
@@ -325,7 +325,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/29/2014 - RNU - creation
@@ -524,7 +524,7 @@ else
    nParamDimCOutput = 0;
    nParamDimBOutput = 1;
    for idP = 1:length(inputDmParamList)
-      param = get_netcdf_param_attributes_3_1(inputDmParamList{idP});
+      param = get_netcdf_param_attributes(inputDmParamList{idP});
       if ((param.paramType == 'c') || (param.paramType == 'j'))
          nParamDimCOutput = nParamDimCOutput + 1;
       else
@@ -793,6 +793,8 @@ for idFile = 1:nbOutputFiles
       return
    end
    
+   try
+
    netcdf.reDef(fCdf);
    
    % retrieve the creation date of the input DM file
@@ -1197,7 +1199,7 @@ for idFile = 1:nbOutputFiles
                      for idParam = 1:nParamDimInput
                         param = deblank(parameterValue(:, idParam, idCalib, 1)');
                         if (~strcmp(param, 'PRES'))
-                           paramStruct = get_netcdf_param_attributes_3_1(param);
+                           paramStruct = get_netcdf_param_attributes(param);
                            if (idFile == 1)
                               if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                                  continue
@@ -1323,7 +1325,7 @@ for idFile = 1:nbOutputFiles
       julDateCreation = datenum(dateCreation', 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
       
       julD = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'JULD'));
-      paramStruct = get_netcdf_param_attributes_3_1('JULD');
+      paramStruct = get_netcdf_param_attributes('JULD');
       julD = julD(find(julD ~= paramStruct.fillValue));
       if (any(julD > julDateCreation))
          julDateCreationNew = max(julD);
@@ -1362,7 +1364,7 @@ for idFile = 1:nbOutputFiles
       paramNamePrefix = inputRtParamList{idParam};
       
       if (~strcmp(paramNamePrefix, 'PRES'))
-         paramStruct = get_netcdf_param_attributes_3_1(paramNamePrefix);
+         paramStruct = get_netcdf_param_attributes(paramNamePrefix);
          if (idFile == 1)
             if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                continue
@@ -1389,7 +1391,7 @@ for idFile = 1:nbOutputFiles
             end
          end
          
-         paramStruct = get_netcdf_param_attributes_3_1(paramNamePrefix);
+         paramStruct = get_netcdf_param_attributes(paramNamePrefix);
          if (~isempty(paramStruct) && (paramStruct.adjAllowed == 0) && (idS > 2))
             continue
          end
@@ -1409,7 +1411,7 @@ for idFile = 1:nbOutputFiles
             
             % input DM data correction #1
             % from Argo Quality Control Manual V2.9.1
-            % Please note that whenever PARAM_ADJUSTED_QC = ‘4’, both
+            % Please note that whenever PARAM_ADJUSTED_QC = â€˜4â€™, both
             % PARAM_ADJUSTED and PARAM_ADJUSTED_ERROR should be set to FillValue.
             if ((idS == 3) || (idS == 5))
                
@@ -1745,10 +1747,10 @@ for idFile = 1:nbOutputFiles
          idVal = find(strcmp('PSAL', ouputDmCMeas(1:2:end)) == 1, 1);
          psalOutputCMeas = ouputDmCMeas{2*idVal};
          
-         presParam = get_netcdf_param_attributes_3_1('PRES');
-         tempParam = get_netcdf_param_attributes_3_1('TEMP');
-         psalParam = get_netcdf_param_attributes_3_1('PSAL');
-         molarDoxyParam = get_netcdf_param_attributes_3_1('MOLAR_DOXY');
+         presParam = get_netcdf_param_attributes('PRES');
+         tempParam = get_netcdf_param_attributes('TEMP');
+         psalParam = get_netcdf_param_attributes('PSAL');
+         molarDoxyParam = get_netcdf_param_attributes('MOLAR_DOXY');
          
          for idProf = 1:size(presOutputCMeas, 2)
             ok = 1;
@@ -1825,11 +1827,11 @@ for idFile = 1:nbOutputFiles
          
          molarDoxyOutputBMeas = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'MOLAR_DOXY'));
          
-         presParam = get_netcdf_param_attributes_3_1('PRES');
-         tempParam = get_netcdf_param_attributes_3_1('TEMP');
-         psalParam = get_netcdf_param_attributes_3_1('PSAL');
-         molarDoxyParam = get_netcdf_param_attributes_3_1('MOLAR_DOXY');
-         doxyParam = get_netcdf_param_attributes_3_1('DOXY');
+         presParam = get_netcdf_param_attributes('PRES');
+         tempParam = get_netcdf_param_attributes('TEMP');
+         psalParam = get_netcdf_param_attributes('PSAL');
+         molarDoxyParam = get_netcdf_param_attributes('MOLAR_DOXY');
+         doxyParam = get_netcdf_param_attributes('DOXY');
          
          for idProf = 1:size(presOutputCMeas, 2)
             
@@ -1915,6 +1917,11 @@ for idFile = 1:nbOutputFiles
    end
    
    netcdf.close(fCdf);
+
+      catch MException
+      netcdf.close(fCdf);
+      rethrow(MException)
+   end
 end
 
 o_ok = 1;
@@ -1944,7 +1951,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   29/07/2014 - RNU - creation
@@ -2064,7 +2071,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/09/2014 - RNU - creation
@@ -2270,7 +2277,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/09/2014 - RNU - creation
@@ -2318,7 +2325,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/26/2014 - RNU - creation

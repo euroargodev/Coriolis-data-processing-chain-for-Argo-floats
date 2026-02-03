@@ -70,7 +70,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2018 - RNU - creation
@@ -148,31 +148,31 @@ for idG = 1:size(o_grounding, 1)
 end
 
 % clock adjustment of ice information
-for idI = 1:length(o_iceDetection)
-   iceDetection = o_iceDetection{idI};
-   
-   for idM = 1:length(iceDetection.thermalDetect.sampleTime)
-      iceDetection.thermalDetect.sampleTimeAdj(idM) = ...
-         adjust_time(iceDetection.thermalDetect.sampleTime(idM), o_cycleClockOffset);
+if (~isempty(o_iceDetection))
+   for idT = 1:length(o_iceDetection.thermalDetect)
+      for idS = 1:length(o_iceDetection.thermalDetect(idT).samplePres)
+         o_iceDetection.thermalDetect(idT).sampleTimeAdj(idS) = ...
+            adjust_time(o_iceDetection.thermalDetect(idT).sampleTime(idS), o_cycleClockOffset);
+      end
+      o_iceDetection.thermalDetect(idT).medianTempTimeAdj = ...
+         adjust_time(o_iceDetection.thermalDetect(idT).medianTempTime, o_cycleClockOffset);
+      o_iceDetection.thermalDetect(idT).detectTimeAdj = ...
+         adjust_time(o_iceDetection.thermalDetect(idT).detectTime, o_cycleClockOffset);
    end
-   if (~isempty(iceDetection.thermalDetect.medianTempTime))
-      iceDetection.thermalDetect.medianTempTimeAdj = ...
-         adjust_time(iceDetection.thermalDetect.medianTempTime, o_cycleClockOffset);
+   for id = 1:length(o_iceDetection.breakupDetect)
+      o_iceDetection.breakupDetect(id).detectTimeAdj = ...
+         adjust_time(o_iceDetection.breakupDetect(id).detectTime, o_cycleClockOffset);
    end
-   if (~isempty(iceDetection.thermalDetect.detectTime))
-      iceDetection.thermalDetect.detectTimeAdj = ...
-         adjust_time(iceDetection.thermalDetect.detectTime, o_cycleClockOffset);
+   for id = 1:length(o_iceDetection.capDetect)
+      o_iceDetection.capDetect(id).detectTimeAdj = ...
+         adjust_time(o_iceDetection.capDetect(id).detectTime, o_cycleClockOffset);
    end
-   for idM = 1:length(iceDetection.breakupDetect.detectTime)
-      iceDetection.breakupDetect.detectTimeAdj(idM) = ...
-         adjust_time(iceDetection.breakupDetect.detectTime(idM), o_cycleClockOffset);
+   if (~isempty(o_iceDetection.ascentAbort))
+      o_iceDetection.ascentAbort.abortTypeTimeAdj = ...
+         adjust_time(o_iceDetection.ascentAbort.abortTypeTime, o_cycleClockOffset);
    end
-   if (~isempty(iceDetection.ascent.abortTypeTime))
-      iceDetection.ascent.abortTypeTimeAdj = ...
-         adjust_time(iceDetection.ascent.abortTypeTime, o_cycleClockOffset);
-   end
-   
-   o_iceDetection{idI} = iceDetection;
+   o_iceDetection.ascentPerigeeTimeAdj = ...
+      adjust_time(o_iceDetection.ascentPerigeeTime, o_cycleClockOffset);
 end
 
 % clock adjustment of buoyancy information
@@ -261,7 +261,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/27/2018 - RNU - creation
@@ -300,7 +300,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/27/2018 - RNU - creation

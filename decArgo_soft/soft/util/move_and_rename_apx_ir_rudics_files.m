@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -158,7 +158,9 @@ if (STEP_1)
                [driftData] = parse_apx_ir_drift_data(driftMeasDataStr, decId);
                [gpsLocDate, gpsLocLon, gpsLocLat, ...
                   gpsLocNbSat, gpsLocAcqTime, ...
-                  gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_gps_fix(gpsFixDataStr);
+                  gpsLocFailedAcqTime, ...
+                  gpsLocFailedIceEvasion, gpsLocFailedIceCap, gpsLocFailedIceBreakup] = ...
+                  parse_apx_ir_gps_fix(gpsFixDataStr);
                
                dates = [];
                if (~isempty(profInfo) && isfield(profInfo, 'ProfTime'))
@@ -603,7 +605,9 @@ if (STEP_5)
                
                [gpsLocDate, gpsLocLon, gpsLocLat, ...
                   gpsLocNbSat, gpsLocAcqTime, ...
-                  gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_gps_fix(gpsFixDataStr);
+                  gpsLocFailedAcqTime, ...
+                  gpsLocFailedIceEvasion, gpsLocFailedIceCap, gpsLocFailedIceBreakup] = ...
+                  parse_apx_ir_gps_fix(gpsFixDataStr);
                
                floatWmo = [];
                dates = [];
@@ -889,7 +893,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -939,7 +943,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -989,7 +993,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation

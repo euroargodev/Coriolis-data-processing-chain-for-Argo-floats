@@ -1,5 +1,5 @@
 % ------------------------------------------------------------------------------
-% Initialisation des valeurs des flags utilisés dans le format DEP.
+% Initialisation des valeurs des flags utilisÃ©s dans le format DEP.
 %
 % SYNTAX :
 %   init_valflag
@@ -11,7 +11,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   13/05/2007 - RNU - creation
@@ -187,7 +187,7 @@ g_dateFlagModifProg = 6;
 g_dateFlagAddNeedClockDriftCor = 10;
 g_dateFlagAddClockDriftLaunchCor = 20;
 g_dateFlagAddClockDriftCor = 40;
-g_dateFlagAddDoubtfulDate = 80; %uniquement utilisée dans les DEP2
+g_dateFlagAddDoubtfulDate = 80; %uniquement utilisÃ©e dans les DEP2
 
 g_posDef = 99;
 g_posLacher = 0;
@@ -233,7 +233,7 @@ g_rppQcMinMax = 5;
 g_rppQcMetaNoCy = 6;
 g_rppQcMetaNoMeas = 7;
 
-% date utilisée pour effectuer la limitation temporelle du jeu de données
+% date utilisÃ©e pour effectuer la limitation temporelle du jeu de donnÃ©es
 g_dataSetEndDate = '2013/04/15 00:00:00'; % pour ANDRO 2013
 % g_dataSetEndDate = '2013/11/15 00:00:00'; % pour misc andro 2013 (APEX IR)
 % g_dataSetEndDate = '2009/01/01 00:00:00';

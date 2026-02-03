@@ -548,24 +548,24 @@
       "CONF_PARAM_DEC_ID" : "263",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
       "CONF_PARAM_MSG_LABEL" : "Maximum duration period without trying a transmission session (s)",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDetectionMaxMonthNoTransmission_NUMBER",
-      "CONF_PARAM_DESCRIPTION" : "Maximum delay (in month) of no transmission due to the ice detection algorithm. This parameter is used to disable the ice detection algorithmand force the float to surface even if ice is detected."
+      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDetectionMaxDurationNoTransmission_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Maximum delay (in seconds) of no transmission due to the ice detection algorithm. This parameter is used to disable the ice detection algorithmand force the float to surface even if ice is detected."
    },
    "CONF_PARAM_70" :
    {
       "CONF_PARAM_DEC_ID" : "264",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
       "CONF_PARAM_MSG_LABEL" : "Systematic abort profile period after ISA detection (s)",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDetectionSpringInhibitionDelaySinceLastIsaDetection_days",
-      "CONF_PARAM_DESCRIPTION" : "Maximum delay (in days) since the last ice evasion date due to an ISA detection.  This is often called the 'Spring', where the float stays underwater for a time even though the temperature has warmed."
+      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDetectionSpringInhibitionDelaySinceLastIsaDetection_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Maximum delay (in seconds) since the last ice evasion date due to an ISA detection.  This is often called the 'Spring', where the float stays underwater for a time even though the temperature has warmed."
    },
    "CONF_PARAM_71" :
    {
       "CONF_PARAM_DEC_ID" : "265",
       "CONF_PARAM_TYPE" : "CONFIG_AUX",
       "CONF_PARAM_MSG_LABEL" : "Systematic abort profile period after collision or cover detection (s)",
-      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDetectionSpringInhibitionDelaySinceLastSurfaceIceCapDetection_days",
-      "CONF_PARAM_DESCRIPTION" : "Maximum delay (in days) since the last ice evasion date due to a surface Ice cap detection."
+      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDetectionSpringInhibitionDelaySinceLastSurfaceIceCapDetection_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Maximum delay (in seconds) since the last ice evasion date due to a surface Ice cap detection."
    },
    "CONF_PARAM_72" :
    {
@@ -1878,5 +1878,37 @@
       "CONF_PARAM_MSG_LABEL" : "Payload sensor miscellaneous static configuration parameter",
       "CONF_PARAM_NAME" : "CONFIG_SunaWithScoop_LOGICAL",
       "CONF_PARAM_DESCRIPTION" : "Suna with scoop which redirects flow through Suna optics"
+   },
+   "CONF_PARAM_236" :
+   {
+      "CONF_PARAM_DEC_ID" : "1111001",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Payload sensor miscellaneous static configuration parameter",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesAccDarkPixelBegin_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "First pixel used to compute average of background calibration coefficients over dark pixels for RAMSES_ACC sensor."
+   },
+   "CONF_PARAM_237" :
+   {
+      "CONF_PARAM_DEC_ID" : "1111002",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Payload sensor miscellaneous static configuration parameter",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesAccDarkPixelEnd_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Last pixel used to compute average of background calibration coefficients over dark pixels for RAMSES_ACC sensor."
+   },
+   "CONF_PARAM_238" :
+   {
+      "CONF_PARAM_DEC_ID" : "1112001",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Payload sensor miscellaneous static configuration parameter",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesArcDarkPixelBegin_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "First pixel used to compute average of background calibration coefficients over dark pixels for RAMSES_ARC sensor."
+   },
+   "CONF_PARAM_239" :
+   {
+      "CONF_PARAM_DEC_ID" : "1112002",
+      "CONF_PARAM_TYPE" : "CONFIG_AUX",
+      "CONF_PARAM_MSG_LABEL" : "Payload sensor miscellaneous static configuration parameter",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesArcDarkPixelEnd_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Last pixel used to compute average of background calibration coefficients over dark pixels for RAMSES_ARC sensor."
    }
 }

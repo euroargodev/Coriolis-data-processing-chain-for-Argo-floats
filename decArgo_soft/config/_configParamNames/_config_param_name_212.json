@@ -35,7 +35,7 @@
    {
       "CONF_PARAM_DEC_ID" : "MC04",
       "CONF_PARAM_LABEL" : "Reference Day",
-      "CONF_PARAM_DEFINITION" : "Reference day (number of days) The floatís internal clock day number is set to zero when the mission starts. When this float day number equals the reference day ìMC4î, the float performs its first profile. Thus, as this parameter defines a particular day on which the first profile is to be made, it allows you to configure a group of floats so that they all conduct their first profile at the same time. When setting the reference day, it is recommended to allow enough time between the deployment and reach of profiling depth. Using a reference day of at least 2 will ensure the first profile to be completed.",
+      "CONF_PARAM_DEFINITION" : "Reference day (number of days) The float‚Äôs internal clock day number is set to zero when the mission starts. When this float day number equals the reference day ‚ÄúMC4‚Äù, the float performs its first profile. Thus, as this parameter defines a particular day on which the first profile is to be made, it allows you to configure a group of floats so that they all conduct their first profile at the same time. When setting the reference day, it is recommended to allow enough time between the deployment and reach of profiling depth. Using a reference day of at least 2 will ensure the first profile to be completed.",
       "CONF_PARAM_NAME" : "CONFIG_FloatReferenceDay_FloatDay",
       "CONF_PARAM_DESCRIPTION" : "Profiler configuration - Reference day, for PROVOR and ARVOR floats this is: The day number on which the first profile is to be made. The day when the mission starts is zero."
    },
@@ -131,7 +131,7 @@
    {
       "CONF_PARAM_DEC_ID" : "MC22",
       "CONF_PARAM_LABEL" : "Iridium End Of life period",
-      "CONF_PARAM_DEFINITION" : "Iridium End of life transmission period (minutes) Transmission period (in hours) once float is in ìend of life modeî (all programmed cycles have been reached. Float send Technical SBD message.",
+      "CONF_PARAM_DEFINITION" : "Iridium End of life transmission period (minutes) Transmission period (in hours) once float is in ‚Äúend of life mode‚Äù (all programmed cycles have been reached. Float send Technical SBD message.",
       "CONF_PARAM_NAME" : "CONFIG_TransmissionPeriodEndOfLife_minutes",
       "CONF_PARAM_DESCRIPTION" : "Period of the Iridium transmission when in End Of Life mode (in minutes)."
    },
@@ -170,31 +170,31 @@
    "CONF_PARAM_22" :
    {
       "CONF_PARAM_DEC_ID" : "MC29",
-      "CONF_PARAM_LABEL" : "ìIn Air acquisitionî cycle periodicity",
-      "CONF_PARAM_DEFINITION" : "ìIn Air acquisitionî cycle periodicity Cycle periodicity for ìIn Air acquisition to be executed. 0 means no ìIn Air acquisition 1 means ìIn Air acquisitionî every cycle X means ìIn Air acquisitionî one cycle every ìxî cycles",
+      "CONF_PARAM_LABEL" : "‚ÄúIn Air acquisition‚Äù cycle periodicity",
+      "CONF_PARAM_DEFINITION" : "‚ÄúIn Air acquisition‚Äù cycle periodicity Cycle periodicity for ‚ÄúIn Air acquisition to be executed. 0 means no ‚ÄúIn Air acquisition 1 means ‚ÄúIn Air acquisition‚Äù every cycle X means ‚ÄúIn Air acquisition‚Äù one cycle every ‚Äúx‚Äù cycles",
       "CONF_PARAM_NAME" : "CONFIG_InAirMeasurementPeriodicity_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Cycle periodicity of the in air measurement phase: - 0 means no in air acquisition - 1 means in air acquisition every cycle - N means in air acquisition one cycle every N cycles"
    },
    "CONF_PARAM_23" :
    {
       "CONF_PARAM_DEC_ID" : "MC30",
-      "CONF_PARAM_LABEL" : "ìIn Air acquisitionî sampling period",
-      "CONF_PARAM_DEFINITION" : "ìIn Air acquisitionî sampling period (seconds) Delay between each CTD sample acquired during ìIn Air acquisitionî phase",
+      "CONF_PARAM_LABEL" : "‚ÄúIn Air acquisition‚Äù sampling period",
+      "CONF_PARAM_DEFINITION" : "‚ÄúIn Air acquisition‚Äù sampling period (seconds) Delay between each CTD sample acquired during ‚ÄúIn Air acquisition‚Äù phase",
       "CONF_PARAM_NAME" : "CONFIG_InAirMeasurementSamplingPeriod_seconds",
       "CONF_PARAM_DESCRIPTION" : "Sampling period during the in air measurement phase."
    },
    "CONF_PARAM_24" :
    {
       "CONF_PARAM_DEC_ID" : "MC31",
-      "CONF_PARAM_LABEL" : "ìIn Air acquisitionî total duration",
-      "CONF_PARAM_DEFINITION" : "ìIn Air acquisitionî total duration (minutes) Total duration for ìIn Airî acquisition",
+      "CONF_PARAM_LABEL" : "‚ÄúIn Air acquisition‚Äù total duration",
+      "CONF_PARAM_DEFINITION" : "‚ÄúIn Air acquisition‚Äù total duration (minutes) Total duration for ‚ÄúIn Air‚Äù acquisition",
       "CONF_PARAM_NAME" : "CONFIG_InAirMeasurementTime_minutes",
       "CONF_PARAM_DESCRIPTION" : "Duration of the in air measurement phase."
    },
    "CONF_PARAM_25" :
    {
       "CONF_PARAM_DEC_ID" : "TC00",
-      "CONF_PARAM_LABEL" : "DurÈe maxi d'activation ev en surface (utilisÈe pour P < palier1)",
+      "CONF_PARAM_LABEL" : "Dur√©e maxi d'activation ev en surface (utilis√©e pour P < palier1)",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_SurfaceValveMaxTimeAdditionalActions_csec",
       "CONF_PARAM_DESCRIPTION" : "Maximum duration of the additional valve actions performed at the surface during the buoyancy reduction phase (in centi-seconds)."
@@ -202,7 +202,7 @@
    "CONF_PARAM_26" :
    {
       "CONF_PARAM_DEC_ID" : "TC01",
-      "CONF_PARAM_LABEL" : "Volume transfÈrÈ par l'ev maxi autorisÈ en profondeur",
+      "CONF_PARAM_LABEL" : "Volume transf√©r√© par l'ev maxi autoris√© en profondeur",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_OilVolumeMaxPerValveAction_cm^3",
       "CONF_PARAM_DESCRIPTION" : "This information is used as a threshold for the valve action durations. The valve flow is known for each float and CONFIG_OilVolumeMaxPerValveAction_cm^3 is converted to a maxDurationOfValveAction.  During descent phases the float regularly computes a valve duration to sink to the target depth. In some specific cases the result can be a huge valve action duration and the result must be thresholded by maxDurationOfValveAction. So yes, this information is a configuration parameter (and for Remocean float it can be modified via remote controls, but of course by specialist in PROVOR vector configuration)."
@@ -210,7 +210,7 @@
    "CONF_PARAM_27" :
    {
       "CONF_PARAM_DEC_ID" : "TC02",
-      "CONF_PARAM_LABEL" : "DurÈe maxi d'activation pompe en profondeur",
+      "CONF_PARAM_LABEL" : "Dur√©e maxi d'activation pompe en profondeur",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PumpActionMaxTimeReposition_csec",
       "CONF_PARAM_DESCRIPTION" : "Maximum duration of the pump action for a drift readjustment (in centi-seconds)."
@@ -218,7 +218,7 @@
    "CONF_PARAM_28" :
    {
       "CONF_PARAM_DEC_ID" : "TC03",
-      "CONF_PARAM_LABEL" : "DurÈe maxi d'activation pompe en remontÈe",
+      "CONF_PARAM_LABEL" : "Dur√©e maxi d'activation pompe en remont√©e",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PumpActionMaxTimeAscent_csec",
       "CONF_PARAM_DESCRIPTION" : "Maximum duration of a pump action during ascent (in centi-seconds)."
@@ -226,7 +226,7 @@
    "CONF_PARAM_29" :
    {
       "CONF_PARAM_DEC_ID" : "TC04",
-      "CONF_PARAM_LABEL" : "DurÈe nominale d'activation pompe en Èmergence",
+      "CONF_PARAM_LABEL" : "Dur√©e nominale d'activation pompe en √©mergence",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PumpActionTimeBuoyancyAcquisition_csec",
       "CONF_PARAM_DESCRIPTION" : "Duration of the last pump action of the buoyancy acquisition phase (in centi-seconds)."
@@ -234,7 +234,7 @@
    "CONF_PARAM_30" :
    {
       "CONF_PARAM_DEC_ID" : "TC05",
-      "CONF_PARAM_LABEL" : "TolÈrance sur l'atteinte de la pression de consigne (+/-)",
+      "CONF_PARAM_LABEL" : "Tol√©rance sur l'atteinte de la pression de consigne (+/-)",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PressureTargetToleranceForStabilisation_dbar",
       "CONF_PARAM_DESCRIPTION" : "Defines the target pressure interval for float stabilisation at parking or profile depth (in dbars)."
@@ -242,7 +242,7 @@
    "CONF_PARAM_31" :
    {
       "CONF_PARAM_DEC_ID" : "TC06",
-      "CONF_PARAM_LABEL" : "Pression maxi ‡ ne pas dÈpasser",
+      "CONF_PARAM_LABEL" : "Pression maxi √† ne pas d√©passer",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PressureMaxBeforeEmergencyAscent_dbar",
       "CONF_PARAM_DESCRIPTION" : "Emergency ascent phase start pressure (in dbars)."
@@ -250,7 +250,7 @@
    "CONF_PARAM_32" :
    {
       "CONF_PARAM_DEC_ID" : "TC07",
-      "CONF_PARAM_LABEL" : "Pression de dÈbut de rÈduction de la durÈe d'activation ev en surface",
+      "CONF_PARAM_LABEL" : "Pression de d√©but de r√©duction de la dur√©e d'activation ev en surface",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_BuoyancyReductionFirstThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "First threshold of the buoyancy reduction phase (in dbars). From the surface to this first threshold, the float performs one initial valve action (of a computed duration) and N1 additional valve actions (of fixed durations) until the crossing of this first threshold."
@@ -258,7 +258,7 @@
    "CONF_PARAM_33" :
    {
       "CONF_PARAM_DEC_ID" : "TC08",
-      "CONF_PARAM_LABEL" : "CritËre de pression de dÈbut de plongÈe",
+      "CONF_PARAM_LABEL" : "Crit√®re de pression de d√©but de plong√©e",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_BuoyancyReductionSecondThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "Second threshold of the buoyancy reduction phase (in dbars). From the first threshold to this second threshold, the float performs N2 additional valve actions (of computed durations) until the crossing of this second threshold. The descent to park phase starts at the crossing of this second threshold."
@@ -266,7 +266,7 @@
    "CONF_PARAM_34" :
    {
       "CONF_PARAM_DEC_ID" : "TC09",
-      "CONF_PARAM_LABEL" : "Nbre de positions hors tolÈrance autorisÈ en dÈrive conduisant ‡ repositionnement",
+      "CONF_PARAM_LABEL" : "Nbre de positions hors tol√©rance autoris√© en d√©rive conduisant √† repositionnement",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_NumberOfOutOfTolerancePresBeforeReposition_COUNT",
       "CONF_PARAM_DESCRIPTION" : "Number of consecutive pressure measurements outside the target pressure interval before performing a drift readjustment."
@@ -274,7 +274,7 @@
    "CONF_PARAM_35" :
    {
       "CONF_PARAM_DEC_ID" : "TC10",
-      "CONF_PARAM_LABEL" : "CritËre d'Èchouage: volume cumulÈ",
+      "CONF_PARAM_LABEL" : "Crit√®re d'√©chouage: volume cumul√©",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_OilVolumeMinForGroundingDetection_cm^3",
       "CONF_PARAM_DESCRIPTION" : "This information is a threshold used to detect a grounding of the float. If there is no vertical motion after having tranfered CONFIG_OilVolumeMinForGroundingDetection_cm^3 through the valve, the gounded flag is activated and the float acts as configurated by the CONFIG_GroundingMode_LOGICAL parameter.So, yes it is a configuration parameter (and I can easily understand that it can be modified via remote control since some PROVOR floats have experienced erroneous grounding detection (under study but perhaps due to in-situ conditions)."
@@ -282,7 +282,7 @@
    "CONF_PARAM_36" :
    {
       "CONF_PARAM_DEC_ID" : "TC11",
-      "CONF_PARAM_LABEL" : "Pression en dessous de laquelle le flotteur reste posÈ en attente profil remontÈe",
+      "CONF_PARAM_LABEL" : "Pression en dessous de laquelle le flotteur reste pos√© en attente profil remont√©e",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_GroundingModeMinPresThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "If in grounding mode 0, the float changes its drift pressure only if its current pressure is greater than this value."
@@ -290,7 +290,7 @@
    "CONF_PARAM_37" :
    {
       "CONF_PARAM_DEC_ID" : "TC12",
-      "CONF_PARAM_LABEL" : "TolÈrance sur maintien de la pression de consigne (+/-)",
+      "CONF_PARAM_LABEL" : "Tol√©rance sur maintien de la pression de consigne (+/-)",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PressureTargetToleranceDuringDrift_dbar",
       "CONF_PARAM_DESCRIPTION" : "Defines the target pressure interval for float drift at parking or profile depth (in dbars)."
@@ -306,7 +306,7 @@
    "CONF_PARAM_39" :
    {
       "CONF_PARAM_DEC_ID" : "TC15",
-      "CONF_PARAM_LABEL" : "Pression de fin de remontÈe.",
+      "CONF_PARAM_LABEL" : "Pression de fin de remont√©e.",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_AscentEndThreshold_dbar",
       "CONF_PARAM_DESCRIPTION" : "Threshold used by the float to stop ascent speed control and pump actions."
@@ -314,7 +314,7 @@
    "CONF_PARAM_40" :
    {
       "CONF_PARAM_DEC_ID" : "TC16",
-      "CONF_PARAM_LABEL" : "Vitesse moyenne de remontÈe.",
+      "CONF_PARAM_LABEL" : "Vitesse moyenne de remont√©e.",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_AscentSpeed_mm/s",
       "CONF_PARAM_DESCRIPTION" : "ascent speed during upcast in mm/s or cm/s (can be used to estimate the profile duration)"
@@ -322,7 +322,7 @@
    "CONF_PARAM_41" :
    {
       "CONF_PARAM_DEC_ID" : "TC17",
-      "CONF_PARAM_LABEL" : "PÈriode de mesure de la pression en remontÈe (pÈriode du contrÙle de la vitesse de remontÈe).",
+      "CONF_PARAM_LABEL" : "P√©riode de mesure de la pression en remont√©e (p√©riode du contr√¥le de la vitesse de remont√©e).",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PressureCheckTimeAscent_minutes",
       "CONF_PARAM_DESCRIPTION" : "Period of the pressure checks during the float ascent to surface (in minutes)."
@@ -330,7 +330,7 @@
    "CONF_PARAM_42" :
    {
       "CONF_PARAM_DEC_ID" : "TC18",
-      "CONF_PARAM_LABEL" : "Ecart de pression pour stabilisation en remontÈe (tous les TC17, si |DP|  < TC18 => action de pompe).",
+      "CONF_PARAM_LABEL" : "Ecart de pression pour stabilisation en remont√©e (tous les TC17, si |DP|  < TC18 => action de pompe).",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_AscentVerticalThresholdForBuoyancyAction_dbar",
       "CONF_PARAM_DESCRIPTION" : "If the float vertical motion, during CONFIG_PressureCheckTimeAscent_minutes, is less than this threshold, the float makes buoyancy adjustments."
@@ -362,7 +362,7 @@
    "CONF_PARAM_46" :
    {
       "CONF_PARAM_DEC_ID" : "TC22",
-      "CONF_PARAM_LABEL" : "Duration Pump during for surfacing with ìIn Air Acquî",
+      "CONF_PARAM_LABEL" : "Duration Pump during for surfacing with ‚ÄúIn Air Acqu‚Äù",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_PumpActionTimeBuoyancyAcquisitionForInAirMeasCycle_csec",
       "CONF_PARAM_DESCRIPTION" : "Duration of the last pump action of the buoyancy acquisition phase when a in air measurement phase is programmed (in centi-seconds). [For a cycle without in air measurement phase it is CONFIG_PumpActionTimeBuoyancyAcquisition_csec]."
@@ -378,7 +378,7 @@
    "CONF_PARAM_48" :
    {
       "CONF_PARAM_DEC_ID" : "TC24",
-      "CONF_PARAM_LABEL" : "Coefficient de calibrage pression Coeff A (coefficient de calibration utilisÈ pour convertir la pression interne).",
+      "CONF_PARAM_LABEL" : "Coefficient de calibrage pression Coeff A (coefficient de calibration utilis√© pour convertir la pression interne).",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_InternalPressureCalibrationCoef1_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "First coefficient used to compute float internal pressure in mBars from sensor counts."
@@ -386,7 +386,7 @@
    "CONF_PARAM_49" :
    {
       "CONF_PARAM_DEC_ID" : "TC25",
-      "CONF_PARAM_LABEL" : "Coefficient de calibrage pression Coeff B (coefficient de calibration utilisÈ pour convertir la pression interne).",
+      "CONF_PARAM_LABEL" : "Coefficient de calibrage pression Coeff B (coefficient de calibration utilis√© pour convertir la pression interne).",
       "CONF_PARAM_DEFINITION" : "TBD",
       "CONF_PARAM_NAME" : "CONFIG_InternalPressureCalibrationCoef2_NUMBER",
       "CONF_PARAM_DESCRIPTION" : "Second coefficient used to compute float internal pressure in mBars from sensor counts."
@@ -492,7 +492,7 @@
       "CONF_PARAM_DEC_ID" : "IC12",
       "CONF_PARAM_LABEL" : "Delay before ascent blocking detection",
       "CONF_PARAM_DEFINITION" : "TBD",
-      "CONF_PARAM_NAME" : "CONFIG_IceDetectionNoVerticalMotionTimeOut_csec",
+      "CONF_PARAM_NAME" : "CONFIG_IceDetectionNoVerticalMotionTimeOut_minutes",
       "CONF_PARAM_DESCRIPTION" : "When the float is in ice detection mode if, despite of pump actions, no vertical motion is detected during this delay, the cycle is aborted."
    },
    "CONF_PARAM_63" :

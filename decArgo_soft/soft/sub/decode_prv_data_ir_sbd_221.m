@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/06/2019 - RNU - creation
@@ -41,6 +41,9 @@ global g_decArgo_tempCountsDef;
 global g_decArgo_salCountsDef;
 global g_decArgo_c1C2PhaseDoxyCountsDef;
 global g_decArgo_tempDoxyCountsDef;
+
+% offset between float days and julian days
+global g_decArgo_julD2FloatDayOffset;
 
 
 % packet type
@@ -419,6 +422,44 @@ switch (packType)
          end
       end
       
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % specific
+      if (ismember(g_decArgo_floatNum, [6902815, 6902893]))
+         if (g_decArgo_floatNum == 6902815)
+            if (cycleNum == 37)
+               % too long drift phase (roll over each intmax('int16') = 32767
+               % minutes)
+               if (~isempty(tabEvAct))
+                  if (min(tabEvAct(:, 3)+g_decArgo_julD2FloatDayOffset) > gregorian_2_julian_dec_argo('2023/08/09 00:00:00'))
+                     tabEvAct(:, 3) = tabEvAct(:, 3) + 2*double(intmax('int16'))/1440;
+                  end
+               end
+               if (~isempty(tabPumpAct))
+                  if (min(tabPumpAct(:, 3)+g_decArgo_julD2FloatDayOffset) > gregorian_2_julian_dec_argo('2023/08/09 00:00:00'))
+                     tabPumpAct(:, 3) = tabPumpAct(:, 3) + 2*double(intmax('int16'))/1440;
+                  end
+               end
+            end
+         end
+         if (g_decArgo_floatNum == 6902893)
+            if (cycleNum == 69)
+               % too long drift phase (roll over each intmax('int16') = 32767
+               % minutes)
+               if (~isempty(tabEvAct))
+                  if (min(tabEvAct(:, 3)+g_decArgo_julD2FloatDayOffset) > gregorian_2_julian_dec_argo('2023/08/19 00:00:00'))
+                     tabEvAct(:, 3) = tabEvAct(:, 3) + 4*double(intmax('int16'))/1440;
+                  end
+               end
+               if (~isempty(tabPumpAct))
+                  if (min(tabPumpAct(:, 3)+g_decArgo_julD2FloatDayOffset) > gregorian_2_julian_dec_argo('2023/08/19 00:00:00'))
+                     tabPumpAct(:, 3) = tabPumpAct(:, 3) + 4*double(intmax('int16'))/1440;
+                  end
+               end
+            end
+         end
+      end
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
       decodedData.decData = {{tabEvAct} {tabPumpAct}};
       decodedData.cyNumRaw = cycleNum;
       

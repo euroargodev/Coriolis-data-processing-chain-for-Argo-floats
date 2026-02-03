@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/16/2018 - RNU - creation
@@ -21,6 +21,9 @@ function decode_nemo(a_floatList)
 
 % current float WMO number
 global g_decArgo_floatNum;
+
+% configuration values
+global g_decArgo_dirOutputCsvFile;
 
 % output CSV file Id
 global g_decArgo_outputCsvFileId;
@@ -118,6 +121,9 @@ global g_decArgo_dirInputJsonFloatMetaDataFile;
 % json meta-data
 global g_decArgo_jsonMetaData;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 
 % get floats information
 if (g_decArgo_realtimeFlag == 0)
@@ -159,6 +165,8 @@ for idFloat = 1:nbFloats
    g_decArgo_addParamListRadiometry = [];
    g_decArgo_addParamListCp = [];
    g_decArgo_addParamListTurbidity = [];
+   
+   g_decArgo_sensorMountedOnFloat = [];
    
    floatNum = a_floatList(idFloat);
    g_decArgo_floatNum = floatNum;
@@ -223,6 +231,18 @@ for idFloat = 1:nbFloats
       continue
    end
 
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % output CSV file creation
+   if (~isempty(g_decArgo_outputCsvFileId))
+      outputFileName = [g_decArgo_dirOutputCsvFile '/nemo_decoded_data_' num2str(floatNum) '_' datestr(now, 'yyyymmddTHHMMSS') '.csv'];
+      fidOut = fopen(outputFileName, 'wt');
+      if (fidOut == -1)
+         fprintf('ERROR: Unable to create CSV output file: %s\n', outputFileName);
+         continue
+      end
+      g_decArgo_outputCsvFileId = fidOut;
+   end
+
    % read meta-data file
    g_decArgo_jsonMetaData = loadjson(jsonInputFileName);
    
@@ -251,13 +271,14 @@ for idFloat = 1:nbFloats
    
    % decode float cycles
    if (g_decArgo_floatTransType == 2)
-      
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % Iridium RUDICS floats
       
       floatCycleList = [];
       if (g_decArgo_realtimeFlag == 0)
          % create list of cycles to decode
-         [floatCycleList, ~] = get_float_cycle_list(floatNum, floatArgosId, floatLaunchDate, floatDecId);
+         [floatCycleList, ~] = get_float_cycle_list(floatNum, floatArgosId, floatLaunchDate, floatEndDate, floatDecId);
          
          if ((isempty(g_decArgo_outputCsvFileId) && (g_decArgo_applyRtqc == 1)))
             % initialize data structure to store report information
@@ -287,6 +308,9 @@ for idFloat = 1:nbFloats
          floatLaunchDate, floatEndDate);
       
    end
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % generate NetCDF files
    
    if (isempty(g_decArgo_outputCsvFileId))
       
@@ -343,12 +367,14 @@ for idFloat = 1:nbFloats
       if (g_decArgo_generateNcMeta ~= 0)
          create_nc_meta_file(floatDecId, structConfig);
       end
-   end
-   
-   if (isempty(g_decArgo_outputCsvFileId) && (g_decArgo_applyRtqc == 1))
+
       % apply RTQC to NetCDF profile files
-      add_rtqc_flags_to_netcdf_profile_and_trajectory_data( ...
-         g_decArgo_reportStruct, floatDecId);
+      if (g_decArgo_applyRtqc == 1)
+         add_rtqc_flags_to_netcdf_profile_and_trajectory_data( ...
+            g_decArgo_reportStruct, floatDecId);
+      end
+   else
+      fclose(g_decArgo_outputCsvFileId);
    end
    
    % store the information for the XML report

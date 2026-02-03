@@ -11,7 +11,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/19/2016 - RNU - creation
@@ -21,6 +21,7 @@ function nc_collect_tech_labels(varargin)
 % top directory of input NetCDF tech files
 DIR_INPUT_NC_FILES = 'H:\archive_201603\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\test_update_format_tech\';
+DIR_INPUT_NC_FILES = 'F:\snapshot-202405\';
 
 % directory to store the log and the csv files
 DIR_LOG_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
@@ -50,6 +51,11 @@ g_couf_searchedLabelList = [ ...
    {'PRES_SurfaceOffsetCorrectedNotReset_1cBarResolution_dbar'} ...
    ];
 
+g_couf_searchedLabelList = [ ...
+   {'FLAG_IceDetected_bit'} ...
+   ];
+
+
 % output CSV file header
 header = ['File; PLATFORM_NUMBER; FORMAT_VERSION; DATA_CENTRE; TECHNICAL_PARAMETER_NAME'];
 
@@ -60,9 +66,9 @@ for idDir = 1:length(dacDir)
    %    if (~strcmp(dacDirName, 'jma') && ~strcmp(dacDirName, 'kma') && ...
    %          ~strcmp(dacDirName, 'kordi') && ~strcmp(dacDirName, 'meds') && ...
    %          ~strcmp(dacDirName, 'nmdis'))
-   %    if (~strcmp(dacDirName, 'coriolis'))
-   %       continue
-   %    end
+   if (~strcmp(dacDirName, 'coriolis'))
+      continue
+   end
    dacDirPathName = [DIR_INPUT_NC_FILES '/' dacDirName];
    if ((exist(dacDirPathName, 'dir') == 7) && ~strcmp(dacDirName, '.') && ~strcmp(dacDirName, '..'))
       
@@ -153,57 +159,3 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 diary off;
 
 return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         %          fprintf('WARNING: Variable %s not present in file : %s\n', ...
-         %             varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {''}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
-end

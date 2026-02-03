@@ -18,7 +18,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -31,12 +31,12 @@ o_driftData = a_driftData;
 o_profLrData = a_profLrData;
 
 
-idDriftPhaseDelayDoxy  = find(strcmp({o_driftData.paramList.name}, 'PHASE_DELAY_DOXY2') == 1, 1);
-idDriftTempDoxy2 = find(strcmp({o_driftData.paramList.name}, 'TEMP_DOXY2') == 1, 1);
-idProfPhaseDelayDoxy  = find(strcmp({o_profLrData.paramList.name}, 'PHASE_DELAY_DOXY2') == 1, 1);
-idProfTempDoxy2 = find(strcmp({o_profLrData.paramList.name}, 'TEMP_DOXY2') == 1, 1);
-idSbe63PhaseDelayDoxy  = find(strcmp({a_sbe63ParseIssueData.paramList.name}, 'PHASE_DELAY_DOXY2') == 1, 1);
-idSbe63TempDoxy2 = find(strcmp({a_sbe63ParseIssueData.paramList.name}, 'TEMP_DOXY2') == 1, 1);
+idDriftPhaseDelayDoxy  = find(strcmp({o_driftData.paramList.name}, 'PHASE_DELAY_DOXY_2') == 1, 1);
+idDriftTempDoxy2 = find(strcmp({o_driftData.paramList.name}, 'TEMP_DOXY_2') == 1, 1);
+idProfPhaseDelayDoxy  = find(strcmp({o_profLrData.paramList.name}, 'PHASE_DELAY_DOXY_2') == 1, 1);
+idProfTempDoxy2 = find(strcmp({o_profLrData.paramList.name}, 'TEMP_DOXY_2') == 1, 1);
+idSbe63PhaseDelayDoxy  = find(strcmp({a_sbe63ParseIssueData.paramList.name}, 'PHASE_DELAY_DOXY_2') == 1, 1);
+idSbe63TempDoxy2 = find(strcmp({a_sbe63ParseIssueData.paramList.name}, 'TEMP_DOXY_2') == 1, 1);
 
 idDriftDef = find((o_driftData.data(:, idDriftPhaseDelayDoxy) == o_driftData.paramList(idDriftPhaseDelayDoxy).fillValue) & ...
    (o_driftData.data(:, idDriftTempDoxy2) == o_driftData.paramList(idDriftTempDoxy2).fillValue));

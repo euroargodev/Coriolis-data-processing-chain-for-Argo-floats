@@ -25,7 +25,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/11/2018 - RNU - V 0.1: creation
@@ -58,7 +58,7 @@
 %   04/05/2022 - RNU - V 1.12: includes version 01.04.2022 of ARGO_simplified_profile
 %   06/10/2022 - RNU - V 1.13: includes version 09.06.2022 of ARGO_simplified_profile
 %   08/23/2022 - RNU - V 1.14: CP660_MED and _STD remained in 'b' type in
-%                              get_netcdf_param_attributes_3_1, set to 'i'
+%                              get_netcdf_param_attributes, set to 'i'
 %   09/13/2022 - RNU - V 1.15: report ERROR message and don't generate S-PROF
 %                              file if PRES profiles are not consistent between
 %                              core and B files
@@ -67,21 +67,34 @@
 %                              parameter).
 %   12/04/2023 - RNU - V 1.17: includes version 01.12.2023 of ARGO_simplified_profile
 %   01/19/2024 - RNU - V 1.18: includes version 11.01.2024 of ARGO_simplified_profile
+%   05/19/2025 - RNU - V 1.19: includes version 12.05.2025 of ARGO_simplified_profile
+%   12/03/2025 - RNU - V 1.20: get_netcdf_param_attributes replaced by
+%                              get_netcdf_param_attributes_extended to manage
+%                              parameter names still like <PARAM>N (instead of 
+%                              <PARAM>_N) coming from other DACs.
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile(varargin)
 
 % generate NetCDF-4 flag for mono-profile file
 global g_cocs_netCDF4FlagForMonoProf;
-g_cocs_netCDF4FlagForMonoProf = 0;
+g_cocs_netCDF4FlagForMonoProf = 1;
 
 % generate NetCDF-4 flag for multiple-profiles file
 global g_cocs_netCDF4FlagForMultiProf;
 g_cocs_netCDF4FlagForMultiProf = 1;
 
+% deflate level to use (0 to 9)
+% a deflate level of 1 is recomended in "EXPERIENCE WITH AN ENHANCED NETCDF DATA
+% MODEL AND INTERFACE FOR SCIENTIFIC DATA ACCESS" where we can read "In our
+% tests we notice that setting the deflate higher than one takes more time, but
+% has little benefit."
+global g_cocs_netCDF4DeflateLevel;
+g_cocs_netCDF4DeflateLevel = 1;
+
 % list of floats to process (if empty, all encountered files of the DIR_INPUT_NC_FILES directory will be processed)
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp_pb_S-prof.txt';
-% FLOAT_LIST_FILE_NAME = '';
+FLOAT_LIST_FILE_NAME = '';
 
 % top directory of input NetCDF files
 DIR_INPUT_NC_FILES = 'H:\archive_201801\coriolis\';
@@ -89,10 +102,12 @@ DIR_INPUT_NC_FILES = 'H:\archive_201801\aoml\';
 DIR_INPUT_NC_FILES = 'H:\archive_201801\CSIRO\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\SYNTHETIC_PROFILE\';
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
+DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\NAVIS_US_BGC\DATA\NAVIS_US_BGC_DATA\OUT\';
 
 % top directory of output NetCDF files
 % DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TEST_S-PROF\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\NAVIS_US_BGC\DATA\NAVIS_US_BGC_DATA\OUT\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -125,9 +140,9 @@ CREATE_MULTI_PROF_FLAG = 0;
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.18 (version 11.01.2024 for ARGO_simplified_profile)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.20 (version 12.05.2025 for ARGO_simplified_profile)';
 
-% current float and cycle identification
+% current float identification
 global g_cocs_floatNum;
 
 % output CSV file Id
@@ -161,13 +176,13 @@ floatList = [];
 if (isempty(floatWmo))
    if (~isempty(FLOAT_LIST_FILE_NAME))
       floatListFileName = FLOAT_LIST_FILE_NAME;
-      
+
       % floats to process come from floatListFileName
       if ~(exist(floatListFileName, 'file') == 2)
          fprintf('ERROR: File not found: %s\n', floatListFileName);
          errorFlag = 1;
       end
-      
+
       fprintf('Floats from list: %s\n', floatListFileName);
       floatList = load(floatListFileName);
    end
@@ -221,63 +236,63 @@ if (~isempty(DIR_CSV_FILE))
 end
 
 if (errorFlag == 0)
-   
+
    % output CSV file name
    [~, logFileName, ~] = fileparts(logFile);
    csvFileName = [DIR_CSV_FILE '/' logFileName '.csv'];
-   
+
    % create CSV file
    g_cocs_fidCsvFile = fopen(csvFileName, 'wt');
    if (g_cocs_fidCsvFile == -1)
       fprintf('ERROR: Unable to create output CSV file: %s\n', csvFileName);
       return
    end
-   
+
    % put header
    %    header = 'dac, type, float code, cycle number, message, file';
    %    fprintf(g_cocs_fidCsvFile, '%s\n', header);
 
    if (~isempty(floatList))
-      
+
       % process floats of the FLOAT_LIST_FILE_NAME file (or provided in input
       % parameters)
-      
+
       floatNum = 1;
       for idFloat = 1:length(floatList)
          g_cocs_floatNum = floatList(idFloat);
          floatDirPathName = [DIR_INPUT_NC_FILES '/' num2str(g_cocs_floatNum) '/'];
          if (exist(floatDirPathName, 'dir') == 7)
-            
+
             fprintf('%03d/%03d %d\n', idFloat, length(floatList), g_cocs_floatNum);
-            
+
             process_one_float(floatDirPathName, DIR_OUTPUT_NC_FILES, ...
                CREATE_MULTI_PROF_FLAG, MONO_PROF_REF_PROFILE_FILE, MULTI_PROF_REF_PROFILE_FILE, DIR_TMP);
-            
+
             floatNum = floatNum + 1;
          else
             fprintf('ERROR: No directory for float #%d\n', g_cocs_floatNum);
          end
       end
    else
-      
+
       % process floats encountered in the DIR_INPUT_NC_FILES directory
-      
+
       floatNum = 1;
       floatDirs = dir(DIR_INPUT_NC_FILES);
       for idDir = 1:length(floatDirs)
-         
+
          floatDirName = floatDirs(idDir).name;
          floatDirPathName = [DIR_INPUT_NC_FILES '/' floatDirName];
          if ((exist(floatDirPathName, 'dir') == 7) && ~strcmp(floatDirName, '.') && ~strcmp(floatDirName, '..'))
-            
+
             [g_cocs_floatNum, status] = str2num(floatDirName);
             if (status == 1)
-               
+
                fprintf('%03d/%03d %d\n', floatNum, length(floatDirs)-2, g_cocs_floatNum);
-               
+
                process_one_float(floatDirPathName, DIR_OUTPUT_NC_FILES, ...
                   CREATE_MULTI_PROF_FLAG, MONO_PROF_REF_PROFILE_FILE, MULTI_PROF_REF_PROFILE_FILE, DIR_TMP);
-               
+
                floatNum = floatNum + 1;
             end
          end
@@ -316,7 +331,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/08/2018 - RNU - creation
@@ -348,7 +363,7 @@ floatWmoStr = num2str(g_cocs_floatNum);
 metaFileName = [a_floatDir '/' floatWmoStr '_meta.nc'];
 if ~(exist(metaFileName, 'file') == 2)
    fprintf('ERROR: Float %d: META file not found: %s\n', g_cocs_floatNum, metaFileName);
-   
+
    % CSV output
    msgType = 'error';
    message = 'File not found.';
@@ -391,24 +406,24 @@ cyNumList = unique(cyNumList);
 
 % process PROF files
 for idCy = 1:length(cyNumList)
-   
+
    g_cocs_cycleNum = cyNumList(idCy);
    g_cocs_cycleNumStr = num2str(g_cocs_cycleNum);
-   
+
    createMultiProfFlag = 0;
    if (idCy == length(cyNumList))
       createMultiProfFlag = a_createMultiProfFlag;
    end
-   
+
    % process descending and ascending profiles
    for idDir = 1:2
-      
+
       if (idDir == 1)
          g_cocs_cycleDir = 'D';
       else
          g_cocs_cycleDir = '';
       end
-      
+
       cProfFileName = '';
       bProfFileName = '';
       if (exist([profileDir '/' sprintf('D%d_%03d%c.nc', g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir)], 'file') == 2)
@@ -421,12 +436,12 @@ for idCy = 1:length(cyNumList)
       elseif (exist([profileDir '/' sprintf('BR%d_%03d%c.nc', g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir)], 'file') == 2)
          bProfFileName = [profileDir '/' sprintf('BR%d_%03d%c.nc', g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir)];
       end
-      
+
       if (~isempty(cProfFileName) || ~isempty(bProfFileName))
-         
+
          fprintf('   %02d/%02d: Float #%d Cycle #%d%c\n', ...
             idCy, length(cyNumList), g_cocs_floatNum, g_cocs_cycleNum, g_cocs_cycleDir);
-         
+
          % generate S-PROF file
          nc_create_synthetic_profile_( ...
             0, ...
@@ -435,7 +450,7 @@ for idCy = 1:length(cyNumList)
             a_outputDir, ...
             a_monoProfRefFile, a_multiProfRefFile, ...
             a_tmpDir, bgcFloatFlag);
-         
+
       end
    end
 end
@@ -461,7 +476,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/25/2018 - RNU - creation
@@ -539,7 +554,7 @@ if (~isempty(addPresCore))
       g_cocs_addPresCoreFlag = str2double(addPresCore);
    end
 end
-      
+
 return
 
 % ------------------------------------------------------------------------------
@@ -558,7 +573,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/15/2018 - RNU - creation
@@ -591,7 +606,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/15/2018 - RNU - creation
@@ -611,12 +626,12 @@ global g_cocs_inputFile;
 
 
 if (exist(a_ncPathFileName, 'file') == 2)
-   
+
    % open NetCDF file
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      
+
       % CSV output
       msgType = 'error';
       message = 'Unable to open file.';
@@ -624,26 +639,73 @@ if (exist(a_ncPathFileName, 'file') == 2)
       g_cocs_inputFile  = [fileName fileExt];
       fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
          g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
-      
+
       return
    end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         %          fprintf('WARNING: Variable %s not present in file : %s\n', ...
-         %             varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {' '}];
+
+   try
+
+      % retrieve the list of variables that are present in the file
+      varFlagList = vars_are_present_dec_argo(fCdf, a_wantedVars);
+
+      % retrieve variables from NetCDF file
+      for idVar = 1:length(a_wantedVars)
+         if (varFlagList(idVar) == 1)
+            varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, a_wantedVars{idVar}));
+            o_ncData = [o_ncData {a_wantedVars{idVar}} {varValue}];
+         else
+            %          fprintf('WARNING: Variable %s not present in file : %s\n', ...
+            %             varName, a_ncPathFileName);
+            o_ncData = [o_ncData {a_wantedVars{idVar}} {''}];
+         end
+
       end
-      
+
+      netcdf.close(fCdf);
+
+   catch MException
+      netcdf.close(fCdf);
+      rethrow(MException)
    end
-   
-   netcdf.close(fCdf);
+end
+
+return
+
+% ------------------------------------------------------------------------------
+% Check if a given list of variables are present in a NetCDF file.
+%
+% SYNTAX :
+%  [o_varFlagList] = vars_are_present_dec_argo(a_ncId, a_varNameList)
+%
+% INPUT PARAMETERS :
+%   a_ncId        : NetCDF file Id
+%   a_varNameList : list of variable names
+%
+% OUTPUT PARAMETERS :
+%   o_varFlagList : 1 if the variable is present (0 otherwise)
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/06/2025 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_varFlagList] = vars_are_present_dec_argo(a_ncId, a_varNameList)
+
+o_varFlagList = ones(size(a_varNameList));
+
+[~, nbVars, ~, ~] = netcdf.inq(a_ncId);
+
+valList = cell(nbVars, 1);
+for idVar = 0:nbVars-1
+   [valList{idVar+1}, ~, ~, ~] = netcdf.inqVar(a_ncId, idVar);
+end
+
+notPresentList = setdiff(a_varNameList, valList);
+for idVar = 1:length(notPresentList)
+   o_varFlagList(strcmp(notPresentList{idVar}, a_varNameList)) = 0;
 end
 
 return

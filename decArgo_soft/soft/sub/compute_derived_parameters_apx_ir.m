@@ -46,7 +46,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -193,7 +193,54 @@ switch (a_decoderId)
       g_decArgo_cycleNumPrev = g_decArgo_cycleNum;
       g_decArgo_profLrCtdDataPrev = profLrCtdData;
       g_decArgo_profHrCtdDataPrev = profHrCtdData;
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   case {1115}
       
+      % compute DOXY
+      o_parkData = compute_doxy(o_parkData, a_decoderId);
+      o_parkDataEng = compute_doxy(o_parkDataEng, a_decoderId);
+      if (~isempty(o_timeDataLog))
+         o_timeDataLog.parkEndMeas = compute_doxy(o_timeDataLog.parkEndMeas, a_decoderId);
+      end
+      o_profLrData = compute_doxy(o_profLrData, a_decoderId);
+      
+      % compute PPOX_DOXY
+      o_surfDataLog = compute_ppox_doxy(o_surfDataLog, a_decoderId);
+      o_surfDataMsg = compute_ppox_doxy(o_surfDataMsg, a_decoderId);
+      
+      % compute CHLA
+      o_surfDataLog = compute_chla(o_surfDataLog);
+      o_parkData = compute_chla(o_parkData);
+      o_parkDataEng = compute_chla(o_parkDataEng);
+      if (~isempty(o_timeDataLog))
+         o_timeDataLog.parkEndMeas = compute_chla(o_timeDataLog.parkEndMeas);
+      end
+      o_profLrData = compute_chla(o_profLrData);
+      o_surfDataMsg = compute_chla(o_surfDataMsg);
+      
+      % compute BBP700
+      profLrCtdData = get_ctd(o_profLrData);
+      profHrCtdData = get_ctd(o_profHrData);
+      if ((g_decArgo_floatNumPrev == g_decArgo_floatNum) && ...
+            (g_decArgo_cycleNumPrev == g_decArgo_cycleNum - 1))
+         o_surfDataLog = compute_bbp700(o_surfDataLog, g_decArgo_profLrCtdDataPrev, g_decArgo_profHrCtdDataPrev);
+      else
+         o_surfDataLog = compute_bbp700(o_surfDataLog, [], []);
+      end
+      o_parkData = compute_bbp700(o_parkData, [], []);
+      o_parkDataEng = compute_bbp700(o_parkDataEng, [], []);
+      if (~isempty(o_timeDataLog))
+         o_timeDataLog.parkEndMeas = compute_bbp700(o_timeDataLog.parkEndMeas, [], []);
+      end
+      o_profLrData = compute_bbp700(o_profLrData, [], []);
+      o_surfDataMsg = compute_bbp700(o_surfDataMsg, profLrCtdData, profHrCtdData);
+      
+      g_decArgo_floatNumPrev = g_decArgo_floatNum;
+      g_decArgo_cycleNumPrev = g_decArgo_cycleNum;
+      g_decArgo_profLrCtdDataPrev = profLrCtdData;
+      g_decArgo_profHrCtdDataPrev = profHrCtdData;
+
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    case {1201}
       
@@ -243,7 +290,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -704,7 +751,7 @@ switch (a_decoderId)
       end
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {1107, 1112, 1113, 1201}
+   case {1107, 1112, 1113, 1115, 1201}
       
       paramPres = get_netcdf_param_attributes('PRES');
       paramTemp = get_netcdf_param_attributes('TEMP');
@@ -726,7 +773,7 @@ switch (a_decoderId)
                   ~isempty(idTPhaseDoxy) && ~isempty(idTempDoxy))
                
                % compute DOXY
-               doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
+               doxy = compute_DOXY_1009_1107_1112_1113_1115_1201( ...
                   dataStruct.data(:, idTPhaseDoxy), ...
                   dataStruct.data(:, idTempDoxy), ...
                   paramTPhaseDoxy.fillValue, ...
@@ -759,7 +806,7 @@ switch (a_decoderId)
                % there is no need to compute derived parameters with PRES_ADJUSTED
                %                if (~isempty(dataStruct.dataAdj))
                %                   % compute DOXY
-               %                   doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
+               %                   doxy = compute_DOXY_1009_1107_1112_1113_1115_1201( ...
                %                      dataStruct.dataAdj(:, idTPhaseDoxy), ...
                %                      dataStruct.dataAdj(:, idTempDoxy), ...
                %                      paramTPhaseDoxy.fillValue, ...
@@ -796,7 +843,7 @@ switch (a_decoderId)
                ~isempty(idTPhaseDoxy) && ~isempty(idTempDoxy))
             
             % compute DOXY
-            doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
+            doxy = compute_DOXY_1009_1107_1112_1113_1115_1201( ...
                dataStruct.data(:, idTPhaseDoxy), ...
                dataStruct.data(:, idTempDoxy), ...
                paramTPhaseDoxy.fillValue, ...
@@ -830,7 +877,7 @@ switch (a_decoderId)
             % there is no need to compute derived parameters with PRES_ADJUSTED
             %             if (~isempty(dataStruct.dataAdj))
             %                % compute DOXY
-            %                doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
+            %                doxy = compute_DOXY_1009_1107_1112_1113_1115_1201( ...
             %                   dataStruct.dataAdj(:, idTPhaseDoxy), ...
             %                   dataStruct.dataAdj(:, idTempDoxy), ...
             %                   paramTPhaseDoxy.fillValue, ...
@@ -883,7 +930,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -934,7 +981,7 @@ switch (a_decoderId)
                   
                   % compute DOXY
                   dataCtd = repmat(ctdData, size(dataStruct.data, 1), 1);
-                  doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
+                  doxy = compute_DOXY_1009_1107_1112_1113_1115_1201( ...
                      dataStruct.data(:, idTPhaseDoxy), ...
                      dataStruct.data(:, idTempDoxy), ...
                      paramTPhaseDoxy.fillValue, ...
@@ -968,7 +1015,7 @@ switch (a_decoderId)
                   %                   if (~isempty(dataStruct.dataAdj) && ~isempty(ctdDataAdj))
                   %                      % compute DOXY
                   %                      dataAdjCtd = repmat(ctdDataAdj, size(dataStruct.dataAdj, 1), 1);
-                  %                      doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
+                  %                      doxy = compute_DOXY_1009_1107_1112_1113_1115_1201( ...
                   %                         dataStruct.dataAdj(:, idTPhaseDoxy), ...
                   %                         dataStruct.dataAdj(:, idTempDoxy), ...
                   %                         paramTPhaseDoxy.fillValue, ...
@@ -1004,7 +1051,7 @@ switch (a_decoderId)
                
                % compute DOXY
                dataCtd = repmat(ctdData, size(dataStruct.data, 1), 1);
-               doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
+               doxy = compute_DOXY_1009_1107_1112_1113_1115_1201( ...
                   dataStruct.data(:, idTPhaseDoxy), ...
                   dataStruct.data(:, idTempDoxy), ...
                   paramTPhaseDoxy.fillValue, ...
@@ -1038,7 +1085,7 @@ switch (a_decoderId)
                %                if (~isempty(dataStruct.dataAdj) && ~isempty(ctdDataAdj))
                %                   % compute DOXY
                %                   dataAdjCtd = repmat(ctdDataAdj, size(dataStruct.dataAdj, 1), 1);
-               %                   doxy = compute_DOXY_1009_1107_1112_1113_1201( ...
+               %                   doxy = compute_DOXY_1009_1107_1112_1113_1115_1201( ...
                %                      dataStruct.dataAdj(:, idTPhaseDoxy), ...
                %                      dataStruct.dataAdj(:, idTempDoxy), ...
                %                      paramTPhaseDoxy.fillValue, ...
@@ -1090,7 +1137,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -1119,9 +1166,9 @@ switch (a_decoderId)
       paramPres = get_netcdf_param_attributes('PRES');
       paramTemp = get_netcdf_param_attributes('TEMP');
       paramSal = get_netcdf_param_attributes('PSAL');
-      paramPhaseDelayDoxy = get_netcdf_param_attributes('PHASE_DELAY_DOXY2');
+      paramPhaseDelayDoxy = get_netcdf_param_attributes('PHASE_DELAY_DOXY_2');
       paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
-      paramDoxy = get_netcdf_param_attributes('DOXY2');
+      paramDoxy = get_netcdf_param_attributes('DOXY_2');
       
       if (iscell(o_outputData))
          for idS = 1:length(o_outputData)
@@ -1129,8 +1176,8 @@ switch (a_decoderId)
             idPres = find(strcmp({dataStruct.paramList.name}, 'PRES') == 1);
             idTemp = find(strcmp({dataStruct.paramList.name}, 'TEMP') == 1);
             idPsal = find(strcmp({dataStruct.paramList.name}, 'PSAL') == 1);
-            idPhaseDelayDoxy = find(strcmp({dataStruct.paramList.name}, 'PHASE_DELAY_DOXY2') == 1);
-            idTempDoxy = find(strcmp({dataStruct.paramList.name}, 'TEMP_DOXY2') == 1);
+            idPhaseDelayDoxy = find(strcmp({dataStruct.paramList.name}, 'PHASE_DELAY_DOXY_2') == 1);
+            idTempDoxy = find(strcmp({dataStruct.paramList.name}, 'TEMP_DOXY_2') == 1);
             
             if (~isempty(idPres) && ~isempty(idTemp) && ~isempty(idPsal) && ...
                   ~isempty(idPhaseDelayDoxy) && ~isempty(idTempDoxy))
@@ -1199,8 +1246,8 @@ switch (a_decoderId)
          idPres = find(strcmp({dataStruct.paramList.name}, 'PRES') == 1);
          idTemp = find(strcmp({dataStruct.paramList.name}, 'TEMP') == 1);
          idPsal = find(strcmp({dataStruct.paramList.name}, 'PSAL') == 1);
-         idPhaseDelayDoxy = find(strcmp({dataStruct.paramList.name}, 'PHASE_DELAY_DOXY2') == 1);
-         idTempDoxy = find(strcmp({dataStruct.paramList.name}, 'TEMP_DOXY2') == 1);
+         idPhaseDelayDoxy = find(strcmp({dataStruct.paramList.name}, 'PHASE_DELAY_DOXY_2') == 1);
+         idTempDoxy = find(strcmp({dataStruct.paramList.name}, 'TEMP_DOXY_2') == 1);
          
          if (~isempty(idPres) && ~isempty(idTemp) && ~isempty(idPsal) && ...
                ~isempty(idPhaseDelayDoxy) && ~isempty(idTempDoxy))
@@ -1290,7 +1337,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -1590,7 +1637,7 @@ switch (a_decoderId)
       end      
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {1112, 1201}
+   case {1112, 1115, 1201}
       
       paramPres = get_netcdf_param_attributes('PRES');
       paramTPhaseDoxy = get_netcdf_param_attributes('TPHASE_DOXY');
@@ -1608,7 +1655,7 @@ switch (a_decoderId)
                   ~isempty(idTPhaseDoxy) && ~isempty(idTempDoxy))
                
                % compute PPOX_DOXY
-               ppoxDoxy = compute_PPOX_DOXY_1009_1112_1201( ...
+               ppoxDoxy = compute_PPOX_DOXY_1009_1112_1115_1201( ...
                   dataStruct.data(:, idTPhaseDoxy), ...
                   dataStruct.data(:, idTempDoxy), ...
                   paramTPhaseDoxy.fillValue, ...
@@ -1639,7 +1686,7 @@ switch (a_decoderId)
                % there is no need to compute derived parameters with PRES_ADJUSTED
                %                if (~isempty(dataStruct.dataAdj))
                %                   % compute PPOX_DOXY
-               %                   ppoxDoxy = compute_PPOX_DOXY_1009_1112_1201( ...
+               %                   ppoxDoxy = compute_PPOX_DOXY_1009_1112_1115_1201( ...
                %                      dataStruct.dataAdj(:, idTPhaseDoxy), ...
                %                      dataStruct.dataAdj(:, idTempDoxy), ...
                %                      paramTPhaseDoxy.fillValue, ...
@@ -1672,7 +1719,7 @@ switch (a_decoderId)
                ~isempty(idTPhaseDoxy) && ~isempty(idTempDoxy))
             
             % compute PPOX_DOXY
-            ppoxDoxy = compute_PPOX_DOXY_1009_1112_1201( ...
+            ppoxDoxy = compute_PPOX_DOXY_1009_1112_1115_1201( ...
                dataStruct.data(:, idTPhaseDoxy), ...
                dataStruct.data(:, idTempDoxy), ...
                paramTPhaseDoxy.fillValue, ...
@@ -1703,7 +1750,7 @@ switch (a_decoderId)
             % there is no need to compute derived parameters with PRES_ADJUSTED
             %             if (~isempty(dataStruct.dataAdj))
             %                % compute PPOX_DOXY
-            %                ppoxDoxy = compute_PPOX_DOXY_1009_1112_1201( ...
+            %                ppoxDoxy = compute_PPOX_DOXY_1009_1112_1115_1201( ...
             %                   dataStruct.dataAdj(:, idTPhaseDoxy), ...
             %                   dataStruct.dataAdj(:, idTempDoxy), ...
             %                   paramTPhaseDoxy.fillValue, ...
@@ -1751,7 +1798,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -1777,7 +1824,7 @@ if (iscell(o_outputData))
       
       if (~isempty(idFluorescenceChla))
          % compute CHLA
-         chla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
+         chla = compute_CHLA_301_1015_1101_1105_1110_1111_1112_1114_1115( ...
             dataStruct.data(:, idFluorescenceChla), ...
             paramFluorescenceChla.fillValue, paramChla.fillValue);
          
@@ -1811,7 +1858,7 @@ else
    
    if (~isempty(idFluorescenceChla))
       % compute CHLA
-      chla = compute_CHLA_301_1015_1101_1105_1110_1111_1112( ...
+      chla = compute_CHLA_301_1015_1101_1105_1110_1111_1112_1114_1115( ...
          dataStruct.data(:, idFluorescenceChla), ...
          paramFluorescenceChla.fillValue, paramChla.fillValue);
       
@@ -1859,7 +1906,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -1910,7 +1957,7 @@ if (iscell(o_outputData))
          
          if (~isempty(ctdData))
             % compute BBP700
-            bbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
+            bbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112_1114_1115( ...
                dataStruct.data(:, idBetaBackscattering700), ...
                paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
                ctdData, ...
@@ -1938,7 +1985,7 @@ if (iscell(o_outputData))
             % there is no need to compute derived parameters with PRES_ADJUSTED
             %             if (~isempty(dataStruct.dataAdj))
             %                % compute BBP700
-            %                bbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
+            %                bbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112_1114_1115( ...
             %                   dataStruct.dataAdj(:, idBetaBackscattering700), ...
             %                   paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
             %                   ctdDataAdj, ...
@@ -1988,7 +2035,7 @@ else
       
       if (~isempty(ctdData))
          % compute BBP700
-         bbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
+         bbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112_1114_1115( ...
             dataStruct.data(:, idBetaBackscattering700), ...
             paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
             ctdData, ...
@@ -2016,7 +2063,7 @@ else
          % there is no need to compute derived parameters with PRES_ADJUSTED
          %          if (~isempty(dataStruct.dataAdj))
          %             % compute BBP700
-         %             bbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112( ...
+         %             bbp700 = compute_BBP700_301_1015_1101_1105_1110_1111_1112_1114_1115( ...
          %                dataStruct.dataAdj(:, idBetaBackscattering700), ...
          %                paramBetaBackscattering700.fillValue, paramBbp700.fillValue, ...
          %                ctdDataAdj, ...
@@ -2057,7 +2104,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -2136,7 +2183,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation

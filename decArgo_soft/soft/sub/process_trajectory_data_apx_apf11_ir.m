@@ -47,7 +47,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2018 - RNU - creation
@@ -79,7 +79,7 @@ global g_MC_DDET;
 global g_MC_AST;
 global g_MC_AscProfDeepestBin;
 global g_MC_MedianValueInAscProf;
-global g_MC_IceThermalDetectionTrue;
+global g_MC_IceAscentAbort;
 global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_TST;
@@ -142,7 +142,7 @@ trajNCycleStruct.clockOffset = cycleClockOffset/86400;
 idF = find(o_presOffsetData.cycleNumAdjPres == a_cycleNum, 1);
 if (~isempty(idF))
    presOffset = o_presOffsetData.presOffset(idF);
-   
+
    param = 'PRES';
    equation = 'PRES_ADJUSTED = PRES - Surface Pressure';
    coefficient = ['For cycle #' num2str(a_cycleNum) ': Surface Pressure = ' num2str(presOffset) ' dbar'];
@@ -168,7 +168,6 @@ paramGpsTimeToFix = get_netcdf_param_attributes('GPS_TIME_TO_FIX');
 paramGpsNbSat = get_netcdf_param_attributes('GPS_NB_SATELLITE');
 paramValveFlag = get_netcdf_param_attributes('VALVE_ACTION_FLAG');
 paramPumpFlag = get_netcdf_param_attributes('PUMP_ACTION_FLAG');
-paramNbSampleIceDetect = get_netcdf_param_attributes('NB_SAMPLE_ICE_DETECTION');
 paramRafosCorStartFlag = get_netcdf_param_attributes('RAFOS_CORRELATION_START_FLAG');
 
 
@@ -242,7 +241,7 @@ if (~isempty(descentStartDate))
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-      
+
       trajNCycleStruct.juldDescentStart = nCycleTime;
       trajNCycleStruct.juldDescentStartStatus = g_JULD_STATUS_2;
    end
@@ -270,7 +269,7 @@ if (~isempty(descentEndDate))
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-      
+
       trajNCycleStruct.juldDescentEnd = nCycleTime;
       trajNCycleStruct.juldDescentEndStatus = g_JULD_STATUS_3;
    end
@@ -298,7 +297,7 @@ if (~isempty(parkStartDate))
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-      
+
       trajNCycleStruct.juldParkStart = nCycleTime;
       trajNCycleStruct.juldParkStartStatus = g_JULD_STATUS_2;
    end
@@ -326,7 +325,7 @@ if (~isempty(parkEndDate))
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-      
+
       trajNCycleStruct.juldParkEnd = nCycleTime;
       trajNCycleStruct.juldParkEndStatus = g_JULD_STATUS_2;
    end
@@ -354,7 +353,7 @@ if (~isempty(deepDescentEndDate))
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-      
+
       trajNCycleStruct.juldDeepDescentEnd = nCycleTime;
       trajNCycleStruct.juldDeepDescentEndStatus = g_JULD_STATUS_3;
    end
@@ -382,7 +381,7 @@ if (~isempty(ascentStartDate))
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-      
+
       trajNCycleStruct.juldAscentStart = nCycleTime;
       trajNCycleStruct.juldAscentStartStatus = g_JULD_STATUS_2;
    end
@@ -410,7 +409,7 @@ if (~isempty(ascentEndDate))
          end
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-      
+
       trajNCycleStruct.juldAscentEnd = nCycleTime;
       trajNCycleStruct.juldAscentEndStatus = g_JULD_STATUS_2;
    end
@@ -430,7 +429,7 @@ if (~isempty(transStartDate))
       g_JULD_STATUS_2);
    if (~isempty(measStruct))
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-      
+
       trajNCycleStruct.juldTransmissionStart = nCycleTime;
       trajNCycleStruct.juldTransmissionStartStatus = g_JULD_STATUS_2;
    end
@@ -452,11 +451,11 @@ if (~isempty(transEndDate))
       if (a_cycleNum > 0)
          if (isempty(o_tabTrajNMeas) || ~any([o_tabTrajNMeas.cycleNumber] == max(a_cycleNum-1, 0)))
             % no N_MEAS array for the previous cycle
-            
+
             % create N_MEAS array
             trajNMeasStructNew = get_traj_n_meas_init_struct(max(a_cycleNum-1, 0), -1);
             trajNMeasStructNew.tabMeas = [trajNMeasStructNew.tabMeas; measStruct];
-            
+
             % create N_CYCLE array
             trajNCycleStructNew = get_traj_n_cycle_init_struct(max(a_cycleNum-1, 0), -1);
             trajNCycleStructNew.grounded = 'U'; % grounding status is unknown
@@ -466,7 +465,7 @@ if (~isempty(transEndDate))
             end
             trajNCycleStructNew.juldTransmissionEnd = nCycleTime;
             trajNCycleStructNew.juldTransmissionEndStatus = g_JULD_STATUS_2;
-            
+
             % add configuration mission number
             if (max(a_cycleNum-1, 0) > 0) % we don't assign any configuration to cycle #0 data
                idF = find(g_decArgo_floatConfig.USE.CYCLE <= max(a_cycleNum-1, 0));
@@ -477,7 +476,7 @@ if (~isempty(transEndDate))
                   end
                end
             end
-            
+
             o_tabTrajNMeas = [o_tabTrajNMeas; trajNMeasStructNew];
             o_tabTrajNCycle = [o_tabTrajNCycle; trajNCycleStructNew];
          else
@@ -492,7 +491,7 @@ if (~isempty(transEndDate))
             else
                o_tabTrajNMeas(idCyNMeas).tabMeas = [o_tabTrajNMeas(idCyNMeas).tabMeas; measStruct];
             end
-            
+
             idCyNCycle = find([o_tabTrajNCycle.cycleNumber] == max(a_cycleNum-1, 0));
             o_tabTrajNCycle(idCyNCycle).juldTransmissionEnd = nCycleTime;
             o_tabTrajNCycle(idCyNCycle).juldTransmissionEndStatus = g_JULD_STATUS_2;
@@ -622,7 +621,7 @@ if (~isempty(phaseDates))
             end
             profData = a_profRafos;
       end
-            
+
       % some CTD_P have no timestamp (see 7900580 #45)
       idDel = find(profData.dates == paramJuld.fillValue);
       if (~isempty(idDel))
@@ -641,11 +640,11 @@ if (~isempty(phaseDates))
             profData.dataRed(idDel, :) = [];
          end
       end
-      
+
       if (isempty(profData.dates))
          continue
       end
-      
+
       for idPhase = 1:length(phaseDates)+1
          if ((a_cycleNum == 0) && ~isempty(preludeStartDate) && ~isempty(activatedPressure))
             if (idPhase == length(phaseDates)+1)
@@ -683,7 +682,7 @@ if (~isempty(phaseDates))
          for idM = 1:length(idData)
             idMeas = idData(idM);
             time = profData.dates(idMeas);
-            
+
             timeAdj = g_decArgo_dateDef;
             if (~isempty(profData.datesAdj))
                timeAdj = profData.datesAdj(idMeas);
@@ -704,7 +703,7 @@ if (~isempty(phaseDates))
             end
 
             if (~isempty(measStruct))
-               
+
                measStruct.paramList = profData.paramList;
                measStruct.paramDataMode = profData.paramDataMode;
                measStruct.paramNumberWithSubLevels = profData.paramNumberWithSubLevels;
@@ -713,18 +712,18 @@ if (~isempty(phaseDates))
                if (~isempty(profData.ptsForDoxy))
                   measStruct.ptsForDoxy = profData.ptsForDoxy(idMeas, :);
                end
-               
+
                if (ismember(measList{idML}, [{'RAMSES'} {'RAFOS_RTC'} {'RAFOS'}]))
                   measStruct.sensorNumber = 999;
                end
-               
+
                % if DO dates have been estimated by the decoder, set PRES_QC to '2'
                if ((doDataFlag) && (profData.temporaryDates))
                   measStruct.paramDataQc = ones(size(measStruct.paramData))*g_decArgo_qcDef;
                   idPres = find(strcmp({measStruct.paramList.name}, 'PRES'), 1);
                   measStruct.paramDataQc(:, idPres) = g_decArgo_qcProbablyGood;
                end
-               
+
                if (~isempty(profData.dataAdj))
                   measStruct.paramDataAdj = profData.dataAdj(idMeas, :);
                   % if DO dates have been estimated by the decoder, set PRES_QC to '2'
@@ -733,7 +732,7 @@ if (~isempty(phaseDates))
                      idPres = find(strcmp({measStruct.paramList.name}, 'PRES'), 1);
                      measStruct.paramDataAdjQc(:, idPres) = g_decArgo_qcProbablyGood;
                   end
-                  
+
                   deleteFlag = 1;
                   for idParam = 1:length(measStruct.paramList)
                      if (measStruct.paramDataMode(idParam) == 'A')
@@ -767,11 +766,11 @@ trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructTab];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if (~isempty(parkStartDate) && ~isempty(parkEndDate))
-   
+
    % RPP measurements
    measStruct = get_traj_one_meas_init_struct();
    measStruct.measCode = g_MC_RPP;
-   
+
    paramList = [];
    paramDataMode = [];
    paramDataStruct = [];
@@ -820,14 +819,14 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
             end
             profData = a_profOcr504I;
       end
-      
+
       if (isempty(profData.dates) || ~any(profData.dates ~= paramJuld.fillValue))
          continue
       end
-      
+
       idData = find((profData.dates >= parkStartDate) & ...
          (profData.dates <= parkEndDate));
-      
+
       if (~isempty(idData))
          for idParam = 1:length(profData.paramList)
             paramName = profData.paramList(idParam).name;
@@ -864,7 +863,7 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
          end
       end
    end
-   
+
    if (~isempty(paramList))
       measStruct.paramList = paramList;
       measStruct.paramDataMode = paramDataMode;
@@ -881,7 +880,7 @@ if (~isempty(parkStartDate) && ~isempty(parkEndDate))
          measStruct.paramDataAdj = [];
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-      
+
       idPres = find(strcmp({measStruct.paramList.name}, 'PRES') == 1);
       if (~isempty(idPres))
          if (~isempty(measStruct.paramDataAdj))
@@ -900,7 +899,7 @@ end
 
 if (~isempty(ascentStartDate) && ...
       ~isempty(ascentEndDate))
-   
+
    profMax = [];
    presMax = [];
    presMaxTime = g_decArgo_dateDef;
@@ -950,14 +949,14 @@ if (~isempty(ascentStartDate) && ...
             end
             profData = a_profCtdCpH;
       end
-      
+
       if (isempty(profData.dates))
          idData = 1:size(profData.data, 1);
       else
          idData = find((profData.dates >= ascentStartDate) & ...
             (profData.dates <= ascentEndDate));
       end
-      
+
       if (~isempty(idData))
          idPres = find(strcmp({profData.paramList.name}, 'PRES'));
          if (~isempty(idPres))
@@ -1000,7 +999,7 @@ if (~isempty(ascentStartDate) && ...
          end
       end
    end
-   
+
    % create the N_MEAS
    if (~isempty(profMax))
       if (~isempty(presMaxTime))
@@ -1069,103 +1068,76 @@ if (~isempty(ascentStartDate) && ...
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ICE DETECTION DATA
+% ICE data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
-for idI = 1:length(a_iceDetection)
-   iceDetection = a_iceDetection{idI};
-   
-   % NOTE that, due to float issue, Ice information may have erroneous
-   % timestamps in the system_log (Ex: 6903695 #40) file and then are not dated
-   
-   % PT measurements of thermal detection algorithm: (JULD, P, T) stored in TRAJ
-   % with MC=590
-   for idMeas = 1:length(iceDetection.thermalDetect.sampleTime)
-      time = iceDetection.thermalDetect.sampleTime(idMeas);
-      timeAdj = iceDetection.thermalDetect.sampleTimeAdj(idMeas);
-      [measStruct, ~] = create_one_meas_float_time_bis( ...
-         g_MC_AET - 10, ...
-         time, ...
-         timeAdj, ...
-         g_JULD_STATUS_2);
-      if (isempty(measStruct))
-         % some Ice events have been recovered from system_log file even without
-         % timestamp
-         measStruct = get_traj_one_meas_init_struct();
-         measStruct.measCode = g_MC_AET - 10;
+
+if (~isempty(a_iceDetection))
+
+   for idT = 1:length(a_iceDetection.thermalDetect)
+
+      % PT measurements of thermal detection algorithm: (JULD, P, T) stored in TRAJ
+      % with MC=590
+      for idS = 1:length(a_iceDetection.thermalDetect(idT).sampleTemp)
+         [measStruct, ~] = create_one_meas_float_time_bis( ...
+            g_MC_AET - 10, ...
+            a_iceDetection.thermalDetect(idT).sampleTime(idS), ...
+            a_iceDetection.thermalDetect(idT).sampleTimeAdj(idS), ...
+            g_JULD_STATUS_2);
+         if (isempty(measStruct))
+            % some Ice events have been recovered from system_log file even without
+            % timestamp
+            measStruct = get_traj_one_meas_init_struct();
+            measStruct.measCode = g_MC_AET - 10;
+         end
+         measStruct.paramList = [paramPres paramTemp];
+         measStruct.paramData = [a_iceDetection.thermalDetect(idT).samplePres(idS) a_iceDetection.thermalDetect(idT).sampleTemp(idS)];
+         if (a_iceDetection.thermalDetect(idT).samplePresAdj(idS) ~= g_decArgo_presDef)
+            measStruct.paramDataMode = 'A ';
+            measStruct.paramDataAdj = [a_iceDetection.thermalDetect(idT).samplePresAdj(idS) paramTemp.fillValue];
+         end
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       end
-      measStruct.paramList = [paramPres paramTemp];
-      measStruct.paramData = [iceDetection.thermalDetect.samplePres(idMeas) iceDetection.thermalDetect.sampleTemp(idMeas)];
-      if (iceDetection.thermalDetect.samplePresAdj(idMeas) ~= g_decArgo_presDef)
-         measStruct.paramDataAdj = [iceDetection.thermalDetect.samplePresAdj(idMeas) paramTemp.fillValue];
-         measStruct.paramDataMode = 'A ';
+
+      % median value of PT measurements of thermal detection algorithm: (JULD, T)
+      % stored in TRAJ with MC=595
+      if (~isempty(a_iceDetection.thermalDetect(idT).medianTemp))
+         [measStruct, ~] = create_one_meas_float_time_bis( ...
+            g_MC_MedianValueInAscProf, ...
+            a_iceDetection.thermalDetect(idT).medianTempTime, ...
+            a_iceDetection.thermalDetect(idT).medianTempTimeAdj, ...
+            g_JULD_STATUS_2);
+         if (isempty(measStruct))
+            % some Ice events have been recovered from system_log file even without
+            % timestamp
+            measStruct = get_traj_one_meas_init_struct();
+            measStruct.measCode = g_MC_MedianValueInAscProf;
+         end
+         measStruct.paramList = paramTemp;
+         measStruct.paramData = a_iceDetection.thermalDetect(idT).medianTemp;
+
+         trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       end
-      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    end
-   
-   % median value of PT measurements of thermal detection algorithm: (JULD, T)
-   % stored in TRAJ with MC=595
-   if (~isempty(iceDetection.thermalDetect.medianTempTime)) % for versions which provide always median value
-      time = iceDetection.thermalDetect.medianTempTime;
-      timeAdj = iceDetection.thermalDetect.medianTempTimeAdj;
+
+   % ICE ascent aborted time and pressure (perigee) stored in TRAJ with MC=593
+   if (~isempty(a_iceDetection.ascentPerigeeTime))
       [measStruct, ~] = create_one_meas_float_time_bis( ...
-         g_MC_MedianValueInAscProf, ...
-         time, ...
-         timeAdj, ...
+         g_MC_IceAscentAbort, ...
+         a_iceDetection.ascentPerigeeTime, ...
+         a_iceDetection.ascentPerigeeTimeAdj, ...
          g_JULD_STATUS_2);
       if (isempty(measStruct))
-         % some Ice events have been recovered from system_log file even without
-         % timestamp
          measStruct = get_traj_one_meas_init_struct();
-         measStruct.measCode = g_MC_MedianValueInAscProf;
+         measStruct.measCode = g_MC_IceAscentAbort;
       end
-      measStruct.paramList = paramTemp;
-      measStruct.paramData = iceDetection.thermalDetect.medianTemp;
+      measStruct.paramList = paramPres;
+      measStruct.paramData = a_iceDetection.ascentPerigeePres;
+      if (a_iceDetection.ascentPerigeePresAdj ~= g_decArgo_presDef)
+         measStruct.paramDataMode = 'A';
+         measStruct.paramDataAdj = a_iceDetection.ascentPerigeePresAdj;
+      end
+
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-   elseif (~isempty(iceDetection.thermalDetect.detectTime)) % for versions which provide median value only when detection is TRUE
-      time = iceDetection.thermalDetect.detectTime;
-      timeAdj = iceDetection.thermalDetect.detectTimeAdj;
-      [measStruct, ~] = create_one_meas_float_time_bis( ...
-         g_MC_MedianValueInAscProf, ...
-         time, ...
-         timeAdj, ...
-         g_JULD_STATUS_2);
-      if (isempty(measStruct))
-         % some Ice events have been recovered from system_log file even without
-         % timestamp
-         measStruct = get_traj_one_meas_init_struct();
-         measStruct.measCode = g_MC_MedianValueInAscProf;
-      end
-      measStruct.paramList = paramTemp;
-      measStruct.paramData = iceDetection.thermalDetect.medianTemp;
-      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-   end
-   
-   % when thermal detection is TRUE: (JULD, P, NB_SAMPLE_ICE_DETECTION) stored in TRAJ_AUX
-   % with MC=599
-   if (~isempty(iceDetection.thermalDetect.detectTime) && ...
-         ~isempty(iceDetection.thermalDetect.detectNbSample))
-      time = iceDetection.thermalDetect.detectTime;
-      timeAdj = iceDetection.thermalDetect.detectTimeAdj;
-      [measStructAux, ~] = create_one_meas_float_time_bis( ...
-         g_MC_IceThermalDetectionTrue, ...
-         time, ...
-         timeAdj, ...
-         g_JULD_STATUS_2);
-      if (isempty(measStructAux))
-         % some Ice events have been recovered from system_log file even without
-         % timestamp
-         measStructAux = get_traj_one_meas_init_struct();
-         measStructAux.measCode = g_MC_IceThermalDetectionTrue;
-      end
-      measStructAux.sensorNumber = 101; % so that it will be stored in TRAJ_AUX file
-      measStructAux.paramList = [paramPres paramNbSampleIceDetect];
-      measStructAux.paramData = [iceDetection.thermalDetect.detectPres iceDetection.thermalDetect.detectNbSample];
-      if (iceDetection.thermalDetect.detectPresAdj ~= g_decArgo_presDef)
-         measStructAux.paramDataAdj = [iceDetection.thermalDetect.detectPresAdj paramNbSampleIceDetect.fillValue];
-         measStructAux.paramDataMode = 'A ';
-      end
-      trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
    end
 end
 
@@ -1174,7 +1146,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if (~isempty(a_buoyancy))
-   
+
    phaseDates = [];
    phaseMeasCode = [];
    if (~isempty(descentEndDate))
@@ -1211,7 +1183,7 @@ if (~isempty(a_buoyancy))
    end
    [phaseDates, idSort] = sort(phaseDates);
    phaseMeasCode = phaseMeasCode(idSort);
-   
+
    buoyDates = a_buoyancy(:, 1);
    for idPhase = 1:length(phaseDates)
       if (idPhase > 1)
@@ -1221,7 +1193,7 @@ if (~isempty(a_buoyancy))
          idData = find(buoyDates <= phaseDates(idPhase));
       end
       refMeasCode = phaseMeasCode(idPhase);
-      
+
       for idB = 1:length(idData)
          idBuoy = idData(idB);
          time = buoyDates(idBuoy);
@@ -1233,7 +1205,7 @@ if (~isempty(a_buoyancy))
             g_JULD_STATUS_2);
          if (~isempty(measStruct))
             measStructTechNMeas = measStruct;
-            
+
             measStruct.paramList = paramPres;
             measStruct.paramData = a_buoyancy(idBuoy, 3);
             if (a_buoyancy(idBuoy, 4) ~= g_decArgo_presDef)
@@ -1241,7 +1213,7 @@ if (~isempty(a_buoyancy))
                measStruct.paramDataMode = 'A';
             end
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-            
+
             if (a_buoyancy(idBuoy, 5) == 0)
                measStructTechNMeas.paramList = paramValveFlag;
             else
@@ -1252,12 +1224,12 @@ if (~isempty(a_buoyancy))
          end
       end
    end
-   
+
    % manage Ice cycles
    if (~isempty(a_cycleTimeData.iceDescentStartDateSci))
-      
+
       for idC = 1:length(a_cycleTimeData.iceDescentStartDateSci)
-         
+
          % Descent Start Time
          time = a_cycleTimeData.iceDescentStartDateSci(idC);
          timeAdj = g_decArgo_dateDef;
@@ -1281,7 +1253,7 @@ if (~isempty(a_buoyancy))
             end
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
          end
-         
+
          % Descent End Time
          time = a_cycleTimeData.iceAscentStartDateSci(idC);
          timeAdj = g_decArgo_dateDef;
@@ -1305,7 +1277,7 @@ if (~isempty(a_buoyancy))
             end
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
          end
-         
+
          % Ascent Start Time
          time = a_cycleTimeData.iceAscentStartDateSci(idC);
          timeAdj = g_decArgo_dateDef;
@@ -1329,7 +1301,7 @@ if (~isempty(a_buoyancy))
             end
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
          end
-         
+
          % Ascent End Time
          time = a_cycleTimeData.iceAscentEndDateSci(idC);
          timeAdj = g_decArgo_dateDef;
@@ -1363,7 +1335,7 @@ end
 
 grounded = 'N';
 if (~isempty(a_grounding))
-   
+
    for idG = 1:size(a_grounding, 1)
       time = a_grounding(idG, 1);
       timeAdj = a_grounding(idG, 2);
@@ -1414,7 +1386,7 @@ if (~isempty(continuousProfileStartDate) && ~isempty(continuousProfileEndDate))
       end
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStructAux];
    end
-   
+
    time = continuousProfileEndDate;
    timeAdj = g_decArgo_dateDef;
    if (~isempty(continuousProfileEndAdjDate))
@@ -1445,7 +1417,7 @@ end
 
 % Rafos correlation start
 if (~isempty(rafosCorStartDate))
-   
+
    for idC = 1:length(rafosCorStartDate)
       time = rafosCorStartDate(idC);
       timeAdj = g_decArgo_dateDef;
@@ -1503,7 +1475,7 @@ if (a_cycleNum > 0)
       gpsLocQcPrevCy = gpsLocQc(idF);
       gpsLocNbSatPrevCy = gpsLocNbSat(idF);
       gpsLocTimeToFixPrevCy = gpsLocTimeToFix(idF);
-      
+
       if (~isempty(o_tabTrajNMeas))
          idCyNMeas = find([o_tabTrajNMeas.cycleNumber] == max(a_cycleNum-1, 0));
          if (~isempty(idCyNMeas))
@@ -1511,14 +1483,14 @@ if (a_cycleNum > 0)
                idSurf = find(([o_tabTrajNMeas(idCyNMeas).tabMeas.measCode] == g_MC_Surface) & ...
                   ([o_tabTrajNMeas(idCyNMeas).tabMeas.sensorNumber] < 100));
                if (~isempty(idSurf))
-                  
+
                   % check that all GPS fixes are already stored in N_MEAS
                   newOne = 0;
                   for idFix = 1:length(gpsLocDatePrevCy)
                      if (~any((gpsLocDatePrevCy(idFix) == [o_tabTrajNMeas(idCyNMeas).tabMeas(idSurf).juld]) & ...
                            (gpsLocLonPrevCy(idFix) == [o_tabTrajNMeas(idCyNMeas).tabMeas(idSurf).longitude]) & ...
                            (gpsLocLatPrevCy(idFix) == [o_tabTrajNMeas(idCyNMeas).tabMeas(idSurf).latitude])))
-                        
+
                         measStruct = create_one_meas_surface(g_MC_Surface, ...
                            gpsLocDatePrevCy(idFix), ...
                            gpsLocLonPrevCy(idFix), ...
@@ -1528,9 +1500,9 @@ if (a_cycleNum > 0)
                            num2str(gpsLocQcPrevCy(idFix)), 1);
                         o_tabTrajNMeas(idCyNMeas).tabMeas = [o_tabTrajNMeas(idCyNMeas).tabMeas; measStruct];
                         newOne = 1;
-                        
+
                         if ((gpsLocNbSatPrevCy(idFix) ~= -1) && (gpsLocTimeToFixPrevCy(idFix) ~= -1))
-                           
+
                            time = gpsLocDatePrevCy(idFix);
                            timeAdj = gpsLocDatePrevCy(idFix);
                            [measStructAux, ~] = create_one_meas_float_time_bis( ...
@@ -1547,19 +1519,19 @@ if (a_cycleNum > 0)
                         end
                      end
                   end
-                  
+
                   % update N_CYCLE
                   if (newOne)
                      idCyNCycle = find([o_tabTrajNCycle.cycleNumber] == max(a_cycleNum-1, 0));
-                     
+
                      o_tabTrajNCycle(idCyNCycle).juldFirstLocation = min(gpsLocDatePrevCy);
                      o_tabTrajNCycle(idCyNCycle).juldFirstLocationStatus = g_JULD_STATUS_4;
-                     
+
                      o_tabTrajNCycle(idCyNCycle).juldLastLocation = max(gpsLocDatePrevCy);
                      o_tabTrajNCycle(idCyNCycle).juldLastLocationStatus = g_JULD_STATUS_4;
                   end
                else
-                  
+
                   % store GPS fixes in N_MEAS
                   for idFix = 1:length(gpsLocDatePrevCy)
                      measStruct = create_one_meas_surface(g_MC_Surface, ...
@@ -1570,9 +1542,9 @@ if (a_cycleNum > 0)
                         ' ', ...
                         num2str(gpsLocQcPrevCy(idFix)), 1);
                      o_tabTrajNMeas(idCyNMeas).tabMeas = [o_tabTrajNMeas(idCyNMeas).tabMeas; measStruct];
-                     
+
                      if ((gpsLocNbSatPrevCy(idFix) ~= -1) && (gpsLocTimeToFixPrevCy(idFix) ~= -1))
-                        
+
                         time = gpsLocDatePrevCy(idFix);
                         timeAdj = gpsLocDatePrevCy(idFix);
                         [measStructAux, ~] = create_one_meas_float_time_bis( ...
@@ -1588,18 +1560,18 @@ if (a_cycleNum > 0)
                         end
                      end
                   end
-                  
+
                   % update N_CYCLE
                   idCyNCycle = find([o_tabTrajNCycle.cycleNumber] == max(a_cycleNum-1, 0));
-                  
+
                   o_tabTrajNCycle(idCyNCycle).juldFirstLocation = min(gpsLocDatePrevCy);
                   o_tabTrajNCycle(idCyNCycle).juldFirstLocationStatus = g_JULD_STATUS_4;
-                  
+
                   o_tabTrajNCycle(idCyNCycle).juldLastLocation = max(gpsLocDatePrevCy);
                   o_tabTrajNCycle(idCyNCycle).juldLastLocationStatus = g_JULD_STATUS_4;
                end
             else
-               
+
                % store GPS fixes in N_MEAS
                for idFix = 1:length(gpsLocDatePrevCy)
                   measStruct = create_one_meas_surface(g_MC_Surface, ...
@@ -1610,9 +1582,9 @@ if (a_cycleNum > 0)
                      ' ', ...
                      num2str(gpsLocQcPrevCy(idFix)), 1);
                   o_tabTrajNMeas(idCyNMeas).tabMeas = [o_tabTrajNMeas(idCyNMeas).tabMeas; measStruct];
-                  
+
                   if ((gpsLocNbSatPrevCy(idFix) ~= -1) && (gpsLocTimeToFixPrevCy(idFix) ~= -1))
-                     
+
                      time = gpsLocDatePrevCy(idFix);
                      timeAdj = gpsLocDatePrevCy(idFix);
                      [measStructAux, ~] = create_one_meas_float_time_bis( ...
@@ -1628,20 +1600,20 @@ if (a_cycleNum > 0)
                      end
                   end
                end
-               
+
                % update N_CYCLE
                idCyNCycle = find([o_tabTrajNCycle.cycleNumber] == max(a_cycleNum-1, 0));
-               
+
                o_tabTrajNCycle(idCyNCycle).juldFirstLocation = min(gpsLocDatePrevCy);
                o_tabTrajNCycle(idCyNCycle).juldFirstLocationStatus = g_JULD_STATUS_4;
-               
+
                o_tabTrajNCycle(idCyNCycle).juldLastLocation = max(gpsLocDatePrevCy);
                o_tabTrajNCycle(idCyNCycle).juldLastLocationStatus = g_JULD_STATUS_4;
             end
          else
-            
+
             % no N_MEAS array for the previous cycle
-            
+
             % create N_MEAS array
             trajNMeasStructNew = get_traj_n_meas_init_struct(max(a_cycleNum-1, 0), -1);
             % store GPS fixes in N_MEAS
@@ -1654,9 +1626,9 @@ if (a_cycleNum > 0)
                   ' ', ...
                   num2str(gpsLocQcPrevCy(idFix)), 0); % the clock offset is unknown !
                trajNMeasStructNew.tabMeas = [trajNMeasStructNew.tabMeas; measStruct];
-               
+
                if ((gpsLocNbSatPrevCy(idFix) ~= -1) && (gpsLocTimeToFixPrevCy(idFix) ~= -1))
-                  
+
                   time = gpsLocDatePrevCy(idFix);
                   timeAdj = gpsLocDatePrevCy(idFix);
                   [measStructAux, ~] = create_one_meas_float_time_bis( ...
@@ -1672,17 +1644,17 @@ if (a_cycleNum > 0)
                   end
                end
             end
-            
+
             % create N_CYCLE array
             trajNCycleStructNew = get_traj_n_cycle_init_struct(max(a_cycleNum-1, 0), -1);
             trajNCycleStructNew.grounded = 'U'; % grounding status is unknown
             % update N_CYCLE
             trajNCycleStructNew.juldFirstLocation = min(gpsLocDatePrevCy);
             trajNCycleStructNew.juldFirstLocationStatus = g_JULD_STATUS_4;
-            
+
             trajNCycleStructNew.juldLastLocation = max(gpsLocDatePrevCy);
             trajNCycleStructNew.juldLastLocationStatus = g_JULD_STATUS_4;
-            
+
             % add configuration mission number
             if (max(a_cycleNum-1, 0) > 0) % we don't assign any configuration to cycle #0 data
                idF = find(g_decArgo_floatConfig.USE.CYCLE <= max(a_cycleNum-1, 0));
@@ -1693,7 +1665,7 @@ if (a_cycleNum > 0)
                   end
                end
             end
-            
+
             o_tabTrajNMeas = [o_tabTrajNMeas; trajNMeasStructNew];
             o_tabTrajNCycle = [o_tabTrajNCycle; trajNCycleStructNew];
          end
@@ -1722,9 +1694,9 @@ for idFix = 1:length(gpsCyLocDate)
       ' ', ...
       num2str(gpsCyLocQc(idFix)), 1);
    trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
-   
+
    if ((gpsLocNbSat(idFix) ~= -1) && (gpsLocTimeToFix(idFix) ~= -1))
-      
+
       time = gpsCyLocDate(idFix);
       timeAdj = gpsCyLocDate(idFix);
       [measStructAux, ~] = create_one_meas_float_time_bis( ...
@@ -1744,7 +1716,7 @@ end
 if (~isempty(gpsCyLocDate))
    trajNCycleStruct.juldFirstLocation = min(gpsCyLocDate);
    trajNCycleStruct.juldFirstLocationStatus = g_JULD_STATUS_4;
-   
+
    trajNCycleStruct.juldLastLocation = max(gpsCyLocDate);
    trajNCycleStruct.juldLastLocationStatus = g_JULD_STATUS_4;
 end

@@ -26,7 +26,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/30/2017 - RNU - creation
@@ -557,7 +557,7 @@ if (a_procLevel ~= 0)
    if (g_decArgo_generateNcTech ~= 0)
       if (~isempty(o_tabTech))
          idFTech1 = find(o_tabTech(:, 1) == 0);
-         store_tech1_data_for_nc_201_to_203_215_216_218(o_tabTech(idFTech1, :), o_deepCycle);
+         store_tech1_data_for_nc_201_to_203_215_216_218_228_229(o_tabTech(idFTech1, :), o_deepCycle);
          idFTech2 = find(o_tabTech(:, 1) == 4);
          store_tech2_data_for_nc_201_203_215(o_tabTech(idFTech2, :), o_deepCycle, a_decoderId);
       end
@@ -613,7 +613,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/30/2017 - RNU - creation
@@ -698,7 +698,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/30/2017 - RNU - creation
@@ -721,7 +721,7 @@ global g_decArgo_nbOf14Or12TypePacketReceived;
 global g_decArgo_nbOf6TypePacketReceived;
 global g_decArgo_nbOf7TypePacketReceived;
 
-% array ro store statistics on received packets
+% array to store statistics on received packets
 global g_decArgo_nbDescentPacketsReceived;
 global g_decArgo_nbParkPacketsReceived;
 global g_decArgo_nbAscentPacketsReceived;
@@ -731,9 +731,9 @@ global g_decArgo_nbHydraulicPacketsReceived;
 global g_decArgo_nbTechPacketsReceived;
 global g_decArgo_nbTech1PacketsReceived;
 global g_decArgo_nbTech2PacketsReceived;
-global g_decArgo_nbParmPacketsReceived;
-global g_decArgo_nbParm1PacketsReceived;
-global g_decArgo_nbParm2PacketsReceived;
+global g_decArgo_nbParamPacketsReceived;
+global g_decArgo_nbParam1PacketsReceived;
+global g_decArgo_nbParam2PacketsReceived;
 
 g_decArgo_nbDescentPacketsReceived = g_decArgo_nbOf1Or8TypePacketReceived;
 g_decArgo_nbParkPacketsReceived = g_decArgo_nbOf2Or9TypePacketReceived;
@@ -743,6 +743,6 @@ g_decArgo_nbInAirPacketsReceived = g_decArgo_nbOf14Or12TypePacketReceived;
 g_decArgo_nbHydraulicPacketsReceived = g_decArgo_nbOf6TypePacketReceived + g_decArgo_nbOf7TypePacketReceived;
 g_decArgo_nbTech1PacketsReceived = g_decArgo_0TypePacketReceivedFlag;
 g_decArgo_nbTech2PacketsReceived = g_decArgo_4TypePacketReceivedFlag;
-g_decArgo_nbParmPacketsReceived = g_decArgo_5TypePacketReceivedFlag;
+g_decArgo_nbParamPacketsReceived = g_decArgo_5TypePacketReceivedFlag;
 
 return

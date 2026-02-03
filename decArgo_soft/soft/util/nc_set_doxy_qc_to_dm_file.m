@@ -16,10 +16,15 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   06/24/2020 - RNU - creation
+%   06/24/2020 - RNU - V 1.0: creation
+%                      Note that, concerning g_cosq_* tools:
+%                      V 1.x are dedicated to nc_set_doxy_qc_to_dm_file
+%                      V 2.x are dedicated to nc_set_ph_qc_in_r_mode
+%                      V 3.x are dedicated to nc_set_irrad_and_par_qc
+%                      V 4.x are dedicated to nc_set_irrad_and_par_qc
 % ------------------------------------------------------------------------------
 function nc_set_doxy_qc_to_dm_file(varargin)
 
@@ -86,22 +91,22 @@ currentTime = datestr(now, 'yyyymmddTHHMMSSZ');
 ticStartTime = tic;
 
 try
-   
+
    % init the XML report
    init_xml_report(currentTime);
-   
+
    floatList = [];
    if (nargin == 0)
       if (~isempty(FLOAT_LIST_FILE_NAME))
-         
+
          floatListFileName = FLOAT_LIST_FILE_NAME;
-         
+
          % floats to process come from floatListFileName
          if ~(exist(floatListFileName, 'file') == 2)
             fprintf('ERROR: File not found: %s\n', floatListFileName);
             return
          end
-         
+
          fprintf('Floats from list: %s\n', floatListFileName);
          floatList = load(floatListFileName);
       end
@@ -109,13 +114,13 @@ try
       % floats to process come from input parameters
       floatList = cell2mat(varargin);
    end
-   
+
    if (isempty(floatList))
       % process floats encountered in the DIR_INPUT_NC_FILES directory
-      
+
       floatDirs = dir(DIR_INPUT_NC_FILES);
       for idDir = 1:length(floatDirs)
-         
+
          floatDirName = floatDirs(idDir).name;
          floatDirPathName = [DIR_INPUT_NC_FILES '/' floatDirName];
          if ((exist(floatDirPathName, 'dir') == 7) && ~strcmp(floatDirName, '.') && ~strcmp(floatDirName, '..'))
@@ -123,7 +128,7 @@ try
          end
       end
    end
-   
+
    % create and start log file recording
    name = '';
    if (nargin == 0)
@@ -134,11 +139,11 @@ try
    else
       name = sprintf('_%d', floatList);
    end
-   
+
    logFile = [DIR_LOG_FILE '/' 'nc_set_doxy_qc_to_dm_file' name '_' currentTime '.log'];
    diary(logFile);
    tic;
-   
+
    fprintf('PARAMETERS:\n');
    if (g_cosq_doItFlag == 0)
       fprintf('   This run is ONLY FOR CHECK (no file will be updated): DO_IT = %d\n', DO_IT);
@@ -164,13 +169,13 @@ try
    fprintf('   Xml file directory      : DIR_XML_FILE  = ''%s''\n', DIR_XML_FILE);
    fprintf('   Temporary file directory: DIR_TMP_FILES = ''%s''\n', DIR_TMP_FILES);
    fprintf('\n');
-   
+
    % update existing files flag
    updateFiles = 0;
    if (isempty(DIR_OUTPUT_NC_FILES))
       updateFiles = 1;
    end
-   
+
    % create output directory
    if (updateFiles == 0)
       if ~(exist(DIR_OUTPUT_NC_FILES, 'dir') == 7)
@@ -179,29 +184,29 @@ try
          end
       end
    end
-   
+
    % create temporary directory
    if (exist(DIR_TMP_FILES, 'dir') == 7)
       % delete the temporary directory
       remove_directory(DIR_TMP_FILES);
    end
-   
+
    % create the temporary directory
    mkdir(DIR_TMP_FILES);
 
    % process the floats
    nbFloats = length(floatList);
    for idFloat = 1:nbFloats
-      
+
       floatNum = floatList(idFloat);
       g_cosq_floatNum = floatNum;
       floatNumStr = num2str(floatNum);
       fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
-      
+
       ncInputFileDir = [DIR_INPUT_NC_FILES '/' num2str(floatNum) '/'];
-      
+
       if (exist(ncInputFileDir, 'dir') == 7)
-         
+
          % create output directory
          if (updateFiles == 0)
             ncOutputFileDir = [DIR_OUTPUT_NC_FILES '/' num2str(floatNum) '/'];
@@ -211,12 +216,12 @@ try
                end
             end
          end
-         
+
          % process mono-profile files
          ncInputFileDir = [ncInputFileDir '/profiles/'];
-         
+
          if (exist(ncInputFileDir, 'dir') == 7)
-            
+
             % create output directory
             if (updateFiles == 0)
                ncOutputFileDir = [ncOutputFileDir '/profiles/'];
@@ -226,30 +231,30 @@ try
                   end
                end
             end
-            
+
             ncInputFiles = dir([ncInputFileDir 'BD*.nc']);
             for idFile = 1:length(ncInputFiles)
-               
+
                monoProfInputFileName = ncInputFiles(idFile).name;
                monoProfInputFilePathName = [ncInputFileDir '/' monoProfInputFileName];
                monoProfOutputFilePathName = '';
                if (updateFiles == 0)
                   monoProfOutputFilePathName = [ncOutputFileDir '/' monoProfInputFileName];
                end
-               
+
                fprintf('%s\n', monoProfInputFileName);
-               
+
                % process current file
                [modifiedFileFlag, tmpOutputFileName] = set_do_qc_to_profile_file(monoProfInputFilePathName, DIR_TMP_FILES);
-               
+
                if (modifiedFileFlag == 1)
-                  
+
                   [monoProfOutputPath, ~, ~] = fileparts(monoProfOutputFilePathName);
                   [~, fileName, fileExtension] = fileparts(tmpOutputFileName);
                   if (g_cosq_doItFlag == 1)
                      move_file(tmpOutputFileName, [monoProfOutputPath '/' fileName fileExtension]);
                   end
-                  
+
                   % store the information for the XML report
                   g_cosq_reportData.float = [g_cosq_reportData.float g_cosq_floatNum];
                   g_cosq_reportData.monoProfFile = [g_cosq_reportData.monoProfFile {[monoProfOutputPath '/' fileName fileExtension]}];
@@ -262,22 +267,22 @@ try
          fprintf('WARNING: Directory not found: %s\n', ncInputFileDir);
       end
    end
-   
+
    ellapsedTime = toc;
    fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
-   
+
    diary off;
-   
+
    % finalize XML report
    [status] = finalize_xml_report(ticStartTime, logFile, []);
-   
+
 catch
-   
+
    diary off;
-   
+
    % finalize XML report
    [status] = finalize_xml_report(ticStartTime, logFile, lasterror);
-   
+
 end
 
 % create the XML report path file name
@@ -314,18 +319,18 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/24/2020 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_modifiedFileFlag, o_profOutputFileName] = ...
    set_do_qc_to_profile_file(a_profInputFileName, a_tmpDirName)
-   
+
 % output parameters initialization
 o_modifiedFileFlag = 0;
 o_profOutputFileName = '';
-   
+
 % QC flag values
 global g_decArgo_qcStrGood;          % '1'
 global g_decArgo_qcStrProbablyGood;  % '2'
@@ -340,6 +345,7 @@ global g_cosq_setDoxyQcToDmVersion;
 doParamList = [ ...
    {'DOXY'} ...
    {'DOXY2'} ...
+   {'DOXY_2'} ...
    ];
 
 % retrieve data from profile file
@@ -370,197 +376,117 @@ end
 
 % update the file
 if (~isempty(profIdList))
-   
+
    % directory to store temporary files
    [~, fileName, fileExtension] = fileparts(a_profInputFileName);
    tmpDirName = [a_tmpDirName '/' fileName];
-   
+
    % create temporary directory
    if (exist(tmpDirName, 'dir') == 7)
       % delete the temporary directory
       remove_directory(tmpDirName);
    end
-   
+
    % create the temporary directory
-   mkdir(tmpDirName);   
-   
+   mkdir(tmpDirName);
+
    % make a copy of the input mono profile file to be updated
    [~, fileName, fileExtension] = fileparts(a_profInputFileName);
    tmpProfOutputFileName = [tmpDirName '/' fileName fileExtension];
    copy_file(a_profInputFileName, tmpProfOutputFileName);
-   
+
    % open the file to update
    fCdf = netcdf.open(tmpProfOutputFileName, 'NC_WRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF file: %s\n', tmpProfOutputFileName);
       return
    end
-   
-   o_modifiedFileFlag = 0;
-   modifiedProfId = [];
-   for idProf = profIdList
-      for idParam = 1:nParam
-         paramName = deblank(stationParameters(:, idParam, idProf)');
-         if (~isempty(paramName))
-            if (ismember(paramName, doParamList))
-               if (parameterDataMode(idProf, idParam) == 'D')
 
-                  dataQc = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, [paramName '_QC']));
-                  idToSet = find((dataQc(:, idProf) == g_decArgo_qcStrGood) | (dataQc(:, idProf) == g_decArgo_qcStrProbablyGood));
-                  if (~isempty(idToSet))
-                     dataQc(idToSet, idProf) = g_decArgo_qcStrCorrectable;
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, [paramName '_QC']), dataQc);
-                     o_modifiedFileFlag = 1;
-                     modifiedProfId = [modifiedProfId idProf];
+   try
+
+      o_modifiedFileFlag = 0;
+      modifiedProfId = [];
+      for idProf = profIdList
+         for idParam = 1:nParam
+            paramName = deblank(stationParameters(:, idParam, idProf)');
+            if (~isempty(paramName))
+               if (ismember(paramName, doParamList))
+                  if (parameterDataMode(idProf, idParam) == 'D')
+
+                     dataQc = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, [paramName '_QC']));
+                     idToSet = find((dataQc(:, idProf) == g_decArgo_qcStrGood) | (dataQc(:, idProf) == g_decArgo_qcStrProbablyGood));
+                     if (~isempty(idToSet))
+                        dataQc(idToSet, idProf) = g_decArgo_qcStrCorrectable;
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, [paramName '_QC']), dataQc);
+                        o_modifiedFileFlag = 1;
+                        modifiedProfId = [modifiedProfId idProf];
+                     end
                   end
                end
             end
          end
       end
-   end
-   
-   if (o_modifiedFileFlag == 1)
-   
-      % update miscellaneous information
-      
-      % date of the file update
-      dateUpdate = datestr(now_utc, 'yyyymmddHHMMSS');
-      
-      % retrieve the creation date of the file
-      dateCreation = get_data_from_name('DATE_CREATION', ncProfData)';
-      if (isempty(deblank(dateCreation)))
-         dateCreation = dateUpdate;
+
+      if (o_modifiedFileFlag == 1)
+
+         % update miscellaneous information
+
+         % date of the file update
+         dateUpdate = datestr(now_utc, 'yyyymmddHHMMSS');
+
+         % retrieve the creation date of the file
+         dateCreation = get_data_from_name('DATE_CREATION', ncProfData)';
+         if (isempty(deblank(dateCreation)))
+            dateCreation = dateUpdate;
+         end
+
+         % set the 'history' global attribute
+         globalVarId = netcdf.getConstant('NC_GLOBAL');
+         globalHistoryText = [datestr(datenum(dateCreation, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; '];
+         globalHistoryText = [globalHistoryText ...
+            datestr(datenum(dateUpdate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COSQ software)'];
+         netcdf.reDef(fCdf);
+         netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
+         netcdf.endDef(fCdf);
+
+         % upate date
+         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), dateUpdate);
+
+         % update history information
+         historyInstitution = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'));
+         [~, ~, nHistory] = size(historyInstitution);
+         histoInstitution = 'IF';
+         histoSoftware = 'COSQ';
+         histoSoftwareRelease = g_cosq_setDoxyQcToDmVersion;
+         histoParameter = 'DOXY';
+
+         for idProf = 1:length(modifiedProfId)
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
+               fliplr([nHistory modifiedProfId(idProf)-1 0]), ...
+               fliplr([1 1 length(histoInstitution)]), histoInstitution');
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
+               fliplr([nHistory modifiedProfId(idProf)-1 0]), ...
+               fliplr([1 1 length(histoSoftware)]), histoSoftware');
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
+               fliplr([nHistory modifiedProfId(idProf)-1 0]), ...
+               fliplr([1 1 length(histoSoftwareRelease)]), histoSoftwareRelease');
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
+               fliplr([nHistory modifiedProfId(idProf)-1 0]), ...
+               fliplr([1 1 length(dateUpdate)]), dateUpdate');
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_PARAMETER'), ...
+               fliplr([nHistory modifiedProfId(idProf)-1 0]), ...
+               fliplr([1 1 length(histoParameter)]), histoParameter');
+         end
+
+         o_profOutputFileName = tmpProfOutputFileName;
       end
-      
-      % set the 'history' global attribute
-      globalVarId = netcdf.getConstant('NC_GLOBAL');
-      globalHistoryText = [datestr(datenum(dateCreation, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; '];
-      globalHistoryText = [globalHistoryText ...
-         datestr(datenum(dateUpdate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COSQ software)'];
-      netcdf.reDef(fCdf);
-      netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
-      netcdf.endDef(fCdf);
-      
-      % upate date
-      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), dateUpdate);
-      
-      % update history information
-      historyInstitution = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'));
-      [~, ~, nHistory] = size(historyInstitution);
-      histoInstitution = 'IF';
-      histoSoftware = 'COSQ';
-      histoSoftwareRelease = g_cosq_setDoxyQcToDmVersion;
-      histoParameter = 'DOXY';
-      
-      for idProf = 1:length(modifiedProfId)
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
-            fliplr([nHistory modifiedProfId(idProf)-1 0]), ...
-            fliplr([1 1 length(histoInstitution)]), histoInstitution');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
-            fliplr([nHistory modifiedProfId(idProf)-1 0]), ...
-            fliplr([1 1 length(histoSoftware)]), histoSoftware');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
-            fliplr([nHistory modifiedProfId(idProf)-1 0]), ...
-            fliplr([1 1 length(histoSoftwareRelease)]), histoSoftwareRelease');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
-            fliplr([nHistory modifiedProfId(idProf)-1 0]), ...
-            fliplr([1 1 length(dateUpdate)]), dateUpdate');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_PARAMETER'), ...
-            fliplr([nHistory modifiedProfId(idProf)-1 0]), ...
-            fliplr([1 1 length(histoParameter)]), histoParameter');
-      end
-      
-      o_profOutputFileName = tmpProfOutputFileName;
+
+      netcdf.close(fCdf);
+
+   catch MException
+      netcdf.close(fCdf);
+      rethrow(MException)
    end
-   
-   netcdf.close(fCdf);
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         o_ncData = [o_ncData {varName} {''}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Get data from name in a {name}/{data} list.
-%
-% SYNTAX :
-%  [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
-%
-% INPUT PARAMETERS :
-%   a_dataName : name of the data to retrieve
-%   a_dataList : {name}/{data} list
-%
-% OUTPUT PARAMETERS :
-%   o_dataValues : concerned data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/21/2015 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
-
-% output parameters initialization
-o_dataValues = [];
-
-idVal = find(strcmp(a_dataName, a_dataList) == 1, 1);
-if (~isempty(idVal))
-   o_dataValues = a_dataList{idVal+1};
 end
 
 return
@@ -579,7 +505,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/11/2016 - RNU - creation
@@ -634,7 +560,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/22/2020 - RNU - creation
@@ -697,7 +623,7 @@ docRootNode.appendChild(newChild);
 [infoMsg, warningMsg, errorMsg] = parse_log_file(a_logFileName);
 
 if (~isempty(infoMsg))
-   
+
    for idMsg = 1:length(infoMsg)
       newChild = docNode.createElement('info');
       textNode = infoMsg{idMsg};
@@ -707,7 +633,7 @@ if (~isempty(infoMsg))
 end
 
 if (~isempty(warningMsg))
-   
+
    for idMsg = 1:length(warningMsg)
       newChild = docNode.createElement('warning');
       textNode = warningMsg{idMsg};
@@ -717,7 +643,7 @@ if (~isempty(warningMsg))
 end
 
 if (~isempty(errorMsg))
-   
+
    for idMsg = 1:length(errorMsg)
       newChild = docNode.createElement('error');
       textNode = errorMsg{idMsg};
@@ -730,14 +656,14 @@ end
 % add matlab error
 if (~isempty(a_error))
    o_status = 'nok';
-   
+
    newChild = docNode.createElement('matlab_error');
-   
+
    newChildBis = docNode.createElement('error_message');
    textNode = regexprep(a_error.message, char(10), ': ');
    newChildBis.appendChild(docNode.createTextNode(textNode));
    newChild.appendChild(newChildBis);
-   
+
    for idS = 1:size(a_error.stack, 1)
       newChildBis = docNode.createElement('stack_line');
       textNode = sprintf('Line: %3d File: %s (func: %s)', ...
@@ -747,7 +673,7 @@ if (~isempty(a_error))
       newChildBis.appendChild(docNode.createTextNode(textNode));
       newChild.appendChild(newChildBis);
    end
-   
+
    docRootNode.appendChild(newChild);
 end
 
@@ -778,7 +704,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/11/2016 - RNU - creation
@@ -800,7 +726,7 @@ if (~isempty(a_logFileName))
    end
    fileContents = textscan(fId, '%s', 'delimiter', '\n');
    fclose(fId);
-   
+
    if (~isempty(fileContents))
       % retrieve wanted messages
       fileContents = fileContents{:};
@@ -841,7 +767,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/11/2016 - RNU - creation

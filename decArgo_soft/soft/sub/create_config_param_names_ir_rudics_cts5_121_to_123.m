@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -194,8 +194,8 @@ if (g_decArgo_firstPayloadConfigParamId > 0)
    paramNumListSensorHp = 0:8;
    paramIdListSensorHp = 232:240;
    posSensor = length('CONFIG_PAYLOAD_USED_SENSOR_') + 1;
-   paramNumListIsa = 0:8;
-   paramIdListIsa = 197:205;
+   paramNumListIsa = [0:8 10];
+   paramIdListIsa = [197:205 241];
    posIsa = length('CONFIG_PAYLOAD_USED_ISA_P') + 1;
    paramNumListAid = 0:14;
    paramIdListAid = 206:220;

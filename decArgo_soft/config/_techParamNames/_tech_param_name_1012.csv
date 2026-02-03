@@ -1,6 +1,6 @@
 TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PARAM_DESCRIPTION
 100;-1;Float status word 16 bits;FLAG_FloatStatus_hex;Flag indicating the status of the Float (see manual) (could be reported as hex)
-101;-1;This byte records the state of 8 status bits for the Telonics PTT;FLAG_TelonicsPTTStatus_hex;Implemented a status byte for the Telonics ST21 PTT to facilitate diagnostics. This byte records the state of 8 status bits for the Telonics PTT
+101;-1;This byte records the state of 8 status bits for the Telonics PTT;FLAG_TelonicsPTTStatus_byte;Implemented a status byte for the Telonics ST21 PTT to facilitate diagnostics. This byte records the state of 8 status bits for the Telonics PTT
 102;-1;Pressure measured once for each test message block [centibars];PRES_Now_dbar;test message data reporting pressure at the surface during drift - cycle 0
 103;-1;Air bladder pressure measured once for each test message block [counts];PRESSURE_AirBladder_COUNT;measured in COUNT - approx 148 COUNT
 104;-1;Quiescent battery voltage measured once for each test message block [counts];VOLTAGE_BatterySurfaceNoLoad_volts;battery voltage during inactive surface phase
@@ -31,6 +31,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 1023;-1;Cumulative piston on time during ascent [seconds];TIME_MotorDriveDuringAscent_seconds;n/a
 1024;-1;The ice evasion record for the most recent 8 profiles. The most recent profile is in the position of the least significant bit. Asserted bits indicate profiles where the ice-detection algorithm terminated true.;FLAG_IceDetected_bit;aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit.
 1025;-1;Number of mixed-layer samples taken;NUMBER_MixedLayerSamples_COUNT;number of CTD samples taken in the mixed layer
+1030;-1;;TEMP_MixedLayerMedian_degC;median of the mixed layer samples taken
 1026;-1;The infimum of the mixed-layer median temperature since the last successful telemetry;TEMP_MixedLayerInfimum_degC;infimum of the mixed-layer median temperature since the last successful telemetry
 1027;-1;The maximum (in absolute value) divergence between pressures from closely-spaced (ie., a few seconds apart in time) P-only sample requests and PT or PTS sample requests. The divergence is measured as the P-only sample minus the pressure from the PTS (or PT) sample. The difference is measured in centibars.;PRES_MaxDifferencePvsPTorPTSSamples_dbar;The maximum (in absolute value) divergence between pressures from closely-spaced (ie., a few seconds apart in time) P-only sample requests and PT or PTS sample requests. The divergence is measured as the P-only sample minus the pressure from the PTS (or PT) sample.
 1028;-1;;CLOCK_AscentInitiationFromDownTimeExpiryOffset_minutes ;Profile initiation time (minutes) 2's compliment signed integer (positive values - profile initiated after down time expired, negative values - profile initiated before down time expired)

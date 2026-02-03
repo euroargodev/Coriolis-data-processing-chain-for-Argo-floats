@@ -18,7 +18,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/11/2013 - RNU - creation
@@ -73,13 +73,13 @@ data(idDel, :) = [];
 
 data(:, 3) = sensor_2_value_for_pressure_ir_rudics_sbd2(data(:, 3), a_decoderId);
 paramDOWN_IRRADIANCE380 = get_netcdf_param_attributes('DOWN_IRRADIANCE380');
-data(:, 8) = compute_DOWN_IRRADIANCE380_105_to_112_121_to_133(data(:, 4), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE380.fillValue);
+data(:, 8) = compute_DOWN_IRRADIANCE380_105_to_112_121_to_133_135_to_141(data(:, 4), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE380.fillValue);
 paramDOWN_IRRADIANCE412 = get_netcdf_param_attributes('DOWN_IRRADIANCE412');
-data(:, 9) = compute_DOWN_IRRADIANCE412_105_to_112_121_to_132(data(:, 5), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE412.fillValue);
+data(:, 9) = compute_DOWN_IRRADIANCE412_105_to_112_121_to_132_135_to_137_141(data(:, 5), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE412.fillValue);
 paramDOWN_IRRADIANCE490 = get_netcdf_param_attributes('DOWN_IRRADIANCE490');
-data(:, 10) = compute_DOWN_IRRADIANCE490_105_to_112_121_to_133(data(:, 6), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE490.fillValue);
+data(:, 10) = compute_DOWN_IRRADIANCE490_105_to_112_121_to_133_135_to_141(data(:, 6), g_decArgo_iradianceCountsDef, paramDOWN_IRRADIANCE490.fillValue);
 paramDOWNWELLING_PAR = get_netcdf_param_attributes('DOWNWELLING_PAR');
-data(:, 11) = compute_DOWNWELLING_PAR_105_to_112_121_to_129_132(data(:, 7), g_decArgo_iradianceCountsDef, paramDOWNWELLING_PAR.fillValue);
+data(:, 11) = compute_DOWNWELLING_PAR_1xx_5_to_12_21_to_29_32_35_to_37_41(data(:, 7), g_decArgo_iradianceCountsDef, paramDOWNWELLING_PAR.fillValue);
 
 for idL = 1:size(data, 1)
    if (data(idL, 1) ~= g_decArgo_dateDef)

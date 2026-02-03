@@ -70,6 +70,8 @@ CONFIG_SAMPLE05;n/a;n/a;CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>
 CONFIG_SAMPLE005;n/a;n/a;CONFIG_AUX_<short_sensor_name><cycle_phase_name>DepthZone<N>SamplingPeriod_seconds;Sampling period of the <short_sensor_name> during <cycle_phase_name> in the depth zone #<N> (in minutes).
 CONFIG_SAMPLE06;n/a;n/a;CONFIG_<short_sensor_name><cycle_phase_name>DepthZone<N>NumberOfSamples_NUMBER;Number of samples for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle.
 CONFIG_SAMPLE006;n/a;n/a;CONFIG_AUX_<short_sensor_name><cycle_phase_name>DepthZone<N>NumberOfSamples_NUMBER;Number of samples for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle.
+CONFIG_SAMPLE07;n/a;n/a;CONFIG_AUX_<short_sensor_name><cycle_phase_name>DepthZone<N>MaxNumberOfSamples_NUMBER;Max number of samples for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle.
+CONFIG_SAMPLE007;n/a;n/a;CONFIG_AUX_<short_sensor_name><cycle_phase_name>DepthZone<N>MaxNumberOfSamples_NUMBER;Max number of samples for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the <cycle_phase_name> phase of the cycle.
 CONFIG_PROFILE01;n/a;n/a;CONFIG_<short_sensor_name>CpAscentPhaseNumberOfDepthZone_NUMBER;Number of ascent depth zones defined for the <short_sensor_name> sensor used in continuous profiling mode.
 CONFIG_PROFILE02;n/a;n/a;CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>StartPres_dbar;Start pressure to define the ascent depth zone  #<N> of the <short_sensor_name> sensor used in continuous profiling mode.
 CONFIG_PROFILE03;n/a;n/a;CONFIG_<short_sensor_name>CpAscentPhaseDepthZone<N>StopPres_dbar;Stop pressure to define the ascent depth zone  #<N> of the <short_sensor_name> sensor used in continuous profiling mode.
@@ -114,3 +116,5 @@ CONFIG_POWER_STOP;n/a;n/a;CONFIG_<short_sensor_name><cycle_phase_name>PowerOnSto
       CONFIG_PX_1_6_0_0_0;n/a;n/a;CONFIG_SunaVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
       CONFIG_PX_1_6_0_0_5;n/a;n/a;CONFIG_SunaWithScoop_LOGICAL;Suna with scoop which redirects flow through Suna optics
       CONFIG_PX_1_4_0_0_0;n/a;n/a;CONFIG_SfetVerticalPressureOffset_dbar;vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure
+      CONFIG_PX_1_11_0_0_1;n/a;n/a;CONFIG_AUX_RamsesAccDarkPixelBegin_NUMBER;First pixel used to compute average of background calibration coefficients over dark pixels for RAMSES_ACC sensor.
+      CONFIG_PX_1_11_0_0_2;n/a;n/a;CONFIG_AUX_RamsesAccDarkPixelEnd_NUMBER;Last pixel used to compute average of background calibration coefficients over dark pixels for RAMSES_ACC sensor.

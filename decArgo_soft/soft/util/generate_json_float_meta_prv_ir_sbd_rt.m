@@ -10,6 +10,7 @@
 %   'sensorListFileName' : list of sensors mounted on floats
 %   'floatListFileName'  : list of concerned floats
 %   'rbrMetaDataDirName' : directory of RBR meta-data files
+%   'nkeMetaDataDirName' : directory of NKE meta-data files
 %   'outputJsonDirName'  : directory of individual json float meta-data files
 %   'outputLogDirName'   : directory of log files
 %   'xmlReportDirName'   : directory of xml files
@@ -19,7 +20,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/15/2014 - RNU - creation
@@ -32,6 +33,7 @@ global g_cogj_floatMetaFileName;
 global g_cogj_sensorListFileName;
 global g_cogj_floatListFileName;
 global g_cogj_rbrMetaDataDirName;
+global g_cogj_nkeMetaDataDirName;
 global g_cogj_outputJsonDirName;
 global g_cogj_outputLogDirName;
 global g_cogj_xmlReportDirName;
@@ -77,12 +79,15 @@ try
    
    if (~inputError)
       % generate JSON meta-data files
+      rtVersionFlag = 1;
       generate_json_float_meta_prv_ir_sbd_(...
          g_cogj_floatMetaFileName, ...
          g_cogj_sensorListFileName, ...
          g_cogj_floatListFileName, ...
          g_cogj_rbrMetaDataDirName, ...
-         g_cogj_outputJsonDirName);
+         g_cogj_nkeMetaDataDirName, ...
+         g_cogj_outputJsonDirName, ...
+         rtVersionFlag);
    end
    
    diary off;
@@ -128,7 +133,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/01/2017 - RNU - creation
@@ -174,7 +179,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/01/2017 - RNU - creation
@@ -189,6 +194,7 @@ global g_cogj_floatMetaFileName;
 global g_cogj_sensorListFileName;
 global g_cogj_floatListFileName;
 global g_cogj_rbrMetaDataDirName;
+global g_cogj_nkeMetaDataDirName;
 global g_cogj_outputJsonDirName;
 global g_cogj_outputLogDirName;
 global g_cogj_xmlReportDirName;
@@ -197,6 +203,7 @@ g_cogj_floatMetaFileName = [];
 g_cogj_sensorListFileName = [];
 g_cogj_floatListFileName = [];
 g_cogj_rbrMetaDataDirName = [];
+g_cogj_nkeMetaDataDirName = [];
 g_cogj_outputJsonDirName = [];
 g_cogj_outputLogDirName = [];
 g_cogj_xmlReportDirName = [];
@@ -227,6 +234,8 @@ if (~isempty(a_varargin))
             g_cogj_floatListFileName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'rbrMetaDataDirName'))
             g_cogj_rbrMetaDataDirName = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'nkeMetaDataDirName'))
+            g_cogj_nkeMetaDataDirName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'outputJsonDirName'))
             g_cogj_outputJsonDirName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'outputLogDirName'))
@@ -277,6 +286,7 @@ o_logLines{end+1} = sprintf('floatMetaFileName: %s\n', g_cogj_floatMetaFileName)
 o_logLines{end+1} = sprintf('sensorListFileName: %s\n', g_cogj_sensorListFileName);
 o_logLines{end+1} = sprintf('floatListFileName: %s\n', g_cogj_floatListFileName);
 o_logLines{end+1} = sprintf('rbrMetaDataDirName: %s\n', g_cogj_rbrMetaDataDirName);
+o_logLines{end+1} = sprintf('nkeMetaDataDirName: %s\n', g_cogj_nkeMetaDataDirName);
 o_logLines{end+1} = sprintf('outputJsonDirName: %s\n', g_cogj_outputJsonDirName);
 o_logLines{end+1} = sprintf('outputLogDirName: %s\n', g_cogj_outputLogDirName);
 o_logLines{end+1} = sprintf('xmlReportDirName: %s\n', g_cogj_xmlReportDirName);
@@ -301,7 +311,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/01/2017 - RNU - creation
@@ -414,7 +424,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/01/2017 - RNU - creation
@@ -475,7 +485,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/01/2017 - RNU - creation

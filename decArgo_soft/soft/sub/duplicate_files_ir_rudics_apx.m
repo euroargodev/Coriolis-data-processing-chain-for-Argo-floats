@@ -17,7 +17,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/21/2017 - RNU - creation
@@ -122,7 +122,9 @@ for idFile = 1:length(fileIdList)
       end
       [gpsLocDate, gpsLocLon, gpsLocLat, ...
          gpsLocNbSat, gpsLocAcqTime, ...
-         gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_gps_fix(gpsFixDataStr);
+         gpsLocFailedAcqTime, ...
+         gpsLocFailedIceEvasion, gpsLocFailedIceCap, gpsLocFailedIceBreakup] = ...
+         parse_apx_ir_gps_fix(gpsFixDataStr);
       if (~isempty(gpsLocDate))
          dates = [dates; gpsLocDate];
       end
@@ -430,7 +432,9 @@ if (~isempty((dir([g_decArgo_archiveDirectory '*_*_CCC_*_CCC_*.msg']))))
          end
          [gpsLocDate, gpsLocLon, gpsLocLat, ...
             gpsLocNbSat, gpsLocAcqTime, ...
-            gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_gps_fix(gpsFixDataStr);
+            gpsLocFailedAcqTime, ...
+            gpsLocFailedIceEvasion, gpsLocFailedIceCap, gpsLocFailedIceBreakup] = ...
+            parse_apx_ir_gps_fix(gpsFixDataStr);
          if (~isempty(gpsLocDate))
             dates = [dates; gpsLocDate];
          end
@@ -663,7 +667,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -713,7 +717,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation

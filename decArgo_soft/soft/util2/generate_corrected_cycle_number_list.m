@@ -3,7 +3,7 @@
 % nc mono-profile files.
 %
 % SYNTAX :
-%   generate_corrected_cycle_number_list or 
+%   generate_corrected_cycle_number_list or
 %   generate_corrected_cycle_number_list(6900189, 7900118)
 %
 % INPUT PARAMETERS :
@@ -13,8 +13,8 @@
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/02/2015 - RNU - creation
@@ -60,13 +60,13 @@ INTERVAL_DAY = INTERVAL_HOUR/24;
 
 if (nargin == 0)
    floatListFileName = FLOAT_LIST_FILE_NAME;
-   
+
    % floats to process come from floatListFileName
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
       return
    end
-   
+
    fprintf('Floats from list: %s\n', floatListFileName);
    floatList = load(floatListFileName);
 else
@@ -98,11 +98,11 @@ fprintf(fidOut, '%s\n', header);
 % process the floats
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
-     
+
    floatNum = floatList(idFloat);
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
-   
+
    % recherche d'un fichier DEP pour ce flotteur
    % find a DEP file for this float
    depFileName = [DIR_INPUT_DEP_FILES '/' floatNumStr '/' floatNumStr '_data_dep.txt'];
@@ -110,10 +110,10 @@ for idFloat = 1:nbFloats
       fprintf('WARNING: no DEP file for this float!\n');
       continue
    end
-      
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % retrieve DEP file data
-   
+
    % read DEP file
    [depNumWmo, depCycle, depType, ...
       depDate, depDateFlag, depDateGregDay, depDateGregHour, depOrdre, ...
@@ -122,26 +122,26 @@ for idFloat = 1:nbFloats
       depTemp, depTempFlag, ...
       depSal, depSalFlag, ...
       depGrd, depEtat, depUpdate, depProfNum] = read_file_dep(depFileName);
-   
+
    % retrieve DEP file profiles
-   
+
    % DEP file cycles
    cycles = sort(unique(depCycle));
    cycles = cycles(find(cycles >= 0));
    maxDepNumCy = max(cycles);
-   
+
    % arrays to store the data
    tabLocDate = ones(maxDepNumCy+1, 1)*g_dateDef;
    tabLocLon = ones(maxDepNumCy+1, 1)*g_lonDef;
    tabLocLat = ones(maxDepNumCy+1, 1)*g_latDef;
    tabProfNum = ones(maxDepNumCy+1, 1)*-2;
-   
+
    % process DEP data
    for idCy = 1:length(cycles)
       numCycle = cycles(idCy);
-      
+
       idCycle = find(depCycle == numCycle);
-      
+
       % Argos locations
       idCycleArgosLoc = find(depType(idCycle) == g_typeArgosLoc);
       if (~isempty(idCycleArgosLoc))
@@ -149,26 +149,26 @@ for idFloat = 1:nbFloats
          tabLocLon(numCycle+1) = depLon(idCycle(idCycleArgosLoc(1)));
          tabLocLat(numCycle+1) = depLat(idCycle(idCycleArgosLoc(1)));
       end
-      
+
       % ascending profile
       idCycleProfAsc = find(depType(idCycle) == g_typeProfAsc);
       if (~isempty(idCycleProfAsc))
          tabProfNum(numCycle+1) = unique(depProfNum(idCycle(idCycleProfAsc)));
       end
    end
-      
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % retrieve data from NC mono profile files
-   
+
    [monoDescProfNum, monoDescProfDate, monoDescProfLocDate, ...
       monoAscProfNum, monoAscProfDate, monoAscProfLocDate, ...
       multiDescProfNum, multiDescProfDate, multiDescProfLocDate, ...
       multiAscProfNum, multiAscProfDate, multiAscProfLocDate] = get_profil_info(DIR_INPUT_NC_FILES, floatNum);
    maxProfNumCy = max([monoAscProfNum; multiAscProfNum]);
-      
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % profile identification
-   
+
    idDated = find(tabLocDate ~= g_dateDef);
    if (~isempty(idDated))
       tabLocDate(idDated) = datenum(datestr(tabLocDate(idDated)+SHIFT_DATE, 0), 'dd-mmm-yyyy HH:MM:SS')-SHIFT_DATE;
@@ -181,7 +181,7 @@ for idFloat = 1:nbFloats
    if (~isempty(idDated))
       monoAscProfLocDate(idDated) = datenum(datestr(monoAscProfLocDate(idDated)+SHIFT_DATE, 0), 'dd-mmm-yyyy HH:MM:SS')-SHIFT_DATE;
    end
-   
+
    % cycle mapping
    maxNumCy = max([maxDepNumCy maxProfNumCy]);
    dep2NcId = ones(maxNumCy+1, 1)*999;
@@ -192,17 +192,17 @@ for idFloat = 1:nbFloats
    for idCy = 1:maxDepNumCy+1
       if (tabLocDate(idCy) ~= g_dateDef)
          idNcMonoProfDate = find(abs(monoAscProfDate - tabLocDate(idCy)) <= INTERVAL_DAY);
-         
+
          if (~isempty(idNcMonoProfDate))
             if (length(idNcMonoProfDate) == 1)
                dep2NcId(idCy) = monoAscProfNum(idNcMonoProfDate)+1;
             else
                [~, idMin] = min(abs(monoAscProfDate(idNcMonoProfDate) - tabLocDate(idCy)));
                dep2NcId(idCy) = monoAscProfNum(idNcMonoProfDate(idMin(1)))+1;
-               
+
                fprintf('WARNING: float %d: %d profiles found in NC around loc date %s (the #%d is selected)\n', ...
                   floatNum, length(idNcMonoProfDate), julian_2_gregorian_dec_argo(tabLocDate(idCy)), idMin(1));
-               
+
                for id = 1:length(idNcMonoProfDate)
                   fprintf('INFO: float %d: mono-profile #%d : nc cycle number #%d date %s\n', ...
                      floatNum, id, monoAscProfNum(idNcMonoProfDate(id)), ...
@@ -211,17 +211,17 @@ for idFloat = 1:nbFloats
             end
          else
             idNcMonoProfLocDate = find(abs(monoAscProfLocDate - tabLocDate(idCy)) <= INTERVAL_DAY);
-            
+
             if (~isempty(idNcMonoProfLocDate))
                if (length(idNcMonoProfLocDate) == 1)
                   dep2NcId(idCy) = monoAscProfNum(idNcMonoProfLocDate)+1;
                else
                   [~, idMin] = min(abs(monoAscProfLocDate(idNcMonoProfLocDate) - tabLocDate(idCy)));
                   dep2NcId(idCy) = monoAscProfNum(idNcMonoProfLocDate(idMin(1)))+1;
-                  
+
                   fprintf('WARNING: float %d: %d profiles found in NC around loc date %s (the #%d is selected)\n', ...
                      floatNum, length(idNcMonoProfLocDate), julian_2_gregorian_dec_argo(tabLocDate(idCy)), idMin(1));
-                  
+
                   for id = 1:length(idNcMonoProfLocDate)
                      fprintf('INFO: float %d: mono-profile #%d : nc cycle number #%d date %s\n', ...
                         floatNum, id, monoAscProfNum(idNcMonoProfLocDate(id)), ...
@@ -230,17 +230,17 @@ for idFloat = 1:nbFloats
                end
             else
                idNcMultiProfDate = find(abs(multiAscProfDate - tabLocDate(idCy)) <= INTERVAL_DAY);
-               
+
                if (~isempty(idNcMultiProfDate))
                   if (length(idNcMultiProfDate) == 1)
                      dep2NcId(idCy) = multiAscProfNum(idNcMultiProfDate)+1;
                   else
                      [~, idMin] = min(abs(multiAscProfDate(idNcMultiProfDate) - tabLocDate(idCy)));
                      dep2NcId(idCy) = multiAscProfNum(idNcMultiProfDate(idMin(1)))+1;
-                     
+
                      fprintf('WARNING: float %d: %d profiles found in NC around loc date %s (the #%d is selected)\n', ...
                         floatNum, length(idNcMultiProfDate), julian_2_gregorian_dec_argo(tabLocDate(idCy)), idMin(1));
-                     
+
                      for id = 1:length(idNcMultiProfDate)
                         fprintf('INFO: float %d: multi-profile #%d : nc cycle number #%d date %s\n', ...
                            floatNum, id, multiAscProfNum(idNcMultiProfDate(id)), ...
@@ -249,17 +249,17 @@ for idFloat = 1:nbFloats
                   end
                else
                   idNcMultiProfLocDate = find(abs(multiAscProfLocDate - tabLocDate(idCy)) <= INTERVAL_DAY);
-                  
+
                   if (~isempty(idNcMultiProfLocDate))
                      if (length(idNcMultiProfLocDate) == 1)
                         dep2NcId(idCy) = multiAscProfNum(idNcMultiProfLocDate)+1;
                      else
                         [~, idMin] = min(abs(multiAscProfLocDate(idNcMultiProfLocDate) - tabLocDate(idCy)));
                         dep2NcId(idCy) = multiAscProfNum(idNcMultiProfLocDate(idMin(1)))+1;
-                        
+
                         fprintf('WARNING: float %d: %d profiles found in NC around loc date %s (the #%d is selected)\n', ...
                            floatNum, length(idNcMultiProfLocDate), julian_2_gregorian_dec_argo(tabLocDate(idCy)), idMin(1));
-                        
+
                         for id = 1:length(idNcMultiProfLocDate)
                            fprintf('INFO: float %d: multi-profile #%d : nc cycle number #%d date %s\n', ...
                               floatNum, id, multiAscProfNum(idNcMultiProfLocDate(id)), ...
@@ -268,7 +268,7 @@ for idFloat = 1:nbFloats
                      end
                   else
                      dep2NcId(idCy) = 0;
-                     
+
                      fprintf('INFO: float %d cycle #%d: no profile found (DEP (date lon lat) - (%s %8.3f %7.3f))\n', ...
                         floatNum, idCy-1, ...
                         julian_2_gregorian_dec_argo(tabLocDate(idCy)), tabLocLon(idCy), tabLocLat(idCy));
@@ -276,13 +276,13 @@ for idFloat = 1:nbFloats
                end
             end
          end
-         
-         % contrÙle de la valeur mise jusqu'‡ prÈsent (utilisÈ pour
+
+         % contr√¥le de la valeur mise jusqu'√† pr√©sent (utilis√© pour
          % production DEP2 post AOML 2009)
          % contenu de dep2NcId
          % si J   => prof dans NC au cycle J+1
          % si 999 => pas de prof dans DEP et pas dans NC
-         % si 0   => prof dans DEP pas trouvÈ dans NC
+         % si 0   => prof dans DEP pas trouv√© dans NC
          %             if (dep2NcId(idCy) ~= 999)
          %                if (dep2NcId(idCy) == 0)
          %                   if (tabProfNum(idCy) ~= -2)
@@ -300,7 +300,7 @@ for idFloat = 1:nbFloats
          %                   end
          %                end
          %             end
-         
+
          %          if (dep2NcId(idCy) ~= 0)
          %             idCycle = find(depCycle == idCy-1);
          %             depProfNum(idCycle) = dep2NcId(idCy)-1;
@@ -321,7 +321,7 @@ diary off;
 return
 
 % ------------------------------------------------------------------------------
-% Collecte des informations de profils (numÈro de cycle et date) dans les
+% Collecte des informations de profils (num√©ro de cycle et date) dans les
 % fichiers NetCDF mono et multi-profils.
 %
 % SYNTAX :
@@ -332,29 +332,29 @@ return
 %    ] = get_profil_info(a_ncDirName, a_floatNum)
 %
 % INPUT PARAMETERS :
-%   a_ncDirName : rÈpertoire des fichiers profils
-%   a_floatNum  : numÈro du flotteur
+%   a_ncDirName : r√©pertoire des fichiers profils
+%   a_floatNum  : num√©ro du flotteur
 %
 % OUTPUT PARAMETERS :
-%   o_monoDescProfNum      : numÈros des profls descendants dans les fichiers
+%   o_monoDescProfNum      : num√©ros des profls descendants dans les fichiers
 %                            mono-profil
 %   o_monoDescProfDate     : date des profls descendants dans les fichiers
 %                            mono-profil
 %   o_monoDescProfLocDate  : dates des localisations des profls descendants dans
 %                            les fichiers mono-profil
-%   o_monoAscProfNum       : numÈros des profls ascendants dans les fichiers
+%   o_monoAscProfNum       : num√©ros des profls ascendants dans les fichiers
 %                            mono-profil
 %   o_monoAscProfDate      : date des profls ascendants dans les fichiers
 %                            mono-profil
 %   o_monoAscProfLocDate   : dates des localisations des profls ascendants dans
 %                            les fichiers mono-profil
-%   o_multiDescProfNum     : numÈros des profls descendants dans le fichier
+%   o_multiDescProfNum     : num√©ros des profls descendants dans le fichier
 %                            multi-profil
 %   o_multiDescProfDate    : date des profls descendants dans le fichier
 %                            multi-profil
 %   o_multiDescProfLocDate : dates des localisations des profls descendants dans
 %                            le fichier multi-profil
-%   o_multiAscProfNum      : numÈros des profls ascendants dans le fichier
+%   o_multiAscProfNum      : num√©ros des profls ascendants dans le fichier
 %                            multi-profil
 %   o_multiAscProfDate     : date des profls ascendants dans le fichier
 %                            multi-profil
@@ -364,7 +364,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   18/03/2012 - RNU - creation
@@ -377,7 +377,7 @@ function [o_monoDescProfNum, o_monoDescProfDate, o_monoDescProfLocDate, ...
 
 global g_dateDef;
 
-% initialisation des valeurs par dÈfaut
+% initialisation des valeurs par d√©faut
 init_valdef;
 
 o_monoDescProfNum = [];
@@ -404,9 +404,9 @@ multiProfLocDate = [];
 profFileName = [a_ncDirName '/' sprintf('%d/%d_prof.nc', a_floatNum, a_floatNum)];
 if (~exist(profFileName, 'dir') && exist(profFileName, 'file'))
    if (verLessThan('matlab', '7.7'))
-      
+
       fCdf = netcdf(profFileName, 'read');
-      
+
       cycleNumber = fCdf{'CYCLE_NUMBER'}(:);
       direction = fCdf{'DIRECTION'}(:);
       juld = fCdf{'JULD'}(:);
@@ -419,16 +419,16 @@ if (~exist(profFileName, 'dir') && exist(profFileName, 'file'))
       if (~isempty(idFillValue))
          juldLocation(idFillValue) = ones(length(idFillValue), 1)*g_dateDef;
       end
-      
+
       close(fCdf);
-      
+
       multiProfNum = cycleNumber;
       multiProfDir = direction;
       multiProfDate = juld;
       multiProfLocDate = juldLocation;
-      
+
    else
-      
+
       % retrieve needed information from NetCDF file
       wantedVars = [ ...
          {'CYCLE_NUMBER'} ...
@@ -437,26 +437,26 @@ if (~exist(profFileName, 'dir') && exist(profFileName, 'file'))
          {'JULD_LOCATION'} ...
          ];
       [ncData] = get_data_from_nc_file(profFileName, wantedVars);
-      
+
       idVal = find(strcmp('CYCLE_NUMBER', ncData) == 1, 1);
       cycleNumber = ncData{idVal+1};
-      
+
       idVal = find(strcmp('DIRECTION', ncData) == 1, 1);
       direction = ncData{idVal+1};
-      
+
       idVal = find(strcmp('JULD', ncData) == 1, 1);
       juld = ncData{idVal+1};
       juld(find(juld == 999999)) = g_dateDef;
-      
+
       idVal = find(strcmp('JULD_LOCATION', ncData) == 1, 1);
       juldLocation = ncData{idVal+1};
       juldLocation(find(juldLocation == 999999)) = g_dateDef;
-      
+
       multiProfNum = cycleNumber;
       multiProfDir = direction;
       multiProfDate = juld;
       multiProfLocDate = juldLocation;
-      
+
    end
 else
    fprintf('ATTENTION: pas de fichier multi PROF.nc pour le flotteur %d\n', ...
@@ -473,12 +473,12 @@ monoProfFiles = dir(monoProfFileName);
 for idFile = 1:length(monoProfFiles)
    fileName = monoProfFiles(idFile).name;
    profFileName = [a_ncDirName sprintf('/%d/profiles/', a_floatNum) fileName];
-   
+
    if (~exist(profFileName, 'dir') && exist(profFileName, 'file'))
       if (verLessThan('matlab', '7.7'))
-         
+
          fCdf = netcdf(profFileName, 'read');
-         
+
          cycleNumber = fCdf{'CYCLE_NUMBER'}(:);
          direction = fCdf{'DIRECTION'}(:);
          juld = fCdf{'JULD'}(:);
@@ -489,16 +489,16 @@ for idFile = 1:length(monoProfFiles)
          if (juldLocation == fCdf{'JULD_LOCATION'}.FillValue_(:))
             juldLocation = g_dateDef;
          end
-         
+
          close(fCdf);
-         
+
          monoProfNum = [monoProfNum; cycleNumber(1)];
          monoProfDir = [monoProfDir direction(1)];
          monoProfDate = [monoProfDate; juld(1)];
          monoProfLocDate = [monoProfLocDate; juldLocation(1)];
-         
+
       else
-         
+
          % retrieve needed information from NetCDF file
          wantedVars = [ ...
             {'CYCLE_NUMBER'} ...
@@ -507,26 +507,26 @@ for idFile = 1:length(monoProfFiles)
             {'JULD_LOCATION'} ...
             ];
          [ncData] = get_data_from_nc_file(profFileName, wantedVars);
-         
+
          idVal = find(strcmp('CYCLE_NUMBER', ncData) == 1, 1);
          cycleNumber = ncData{idVal+1};
-         
+
          idVal = find(strcmp('DIRECTION', ncData) == 1, 1);
          direction = ncData{idVal+1};
-         
+
          idVal = find(strcmp('JULD', ncData) == 1, 1);
          juld = ncData{idVal+1};
          juld(find(juld == 999999)) = g_dateDef;
-         
+
          idVal = find(strcmp('JULD_LOCATION', ncData) == 1, 1);
          juldLocation = ncData{idVal+1};
          juldLocation(find(juldLocation == 999999)) = g_dateDef;
-         
+
          monoProfNum = [monoProfNum; cycleNumber(1)];
          monoProfDir = [monoProfDir direction(1)];
          monoProfDate = [monoProfDate; juld(1)];
          monoProfLocDate = [monoProfLocDate; juldLocation(1)];
-         
+
       end
    end
 end
@@ -535,7 +535,7 @@ if (isempty(monoProfFiles))
       a_floatNum);
 end
 
-% on Èpure la liste des multi en supprimant les profils dÈj‡ dans les mono
+% on √©pure la liste des multi en supprimant les profils d√©j√† dans les mono
 
 % profils descendants
 idDesc = find(multiProfDir == 'D');
@@ -590,61 +590,5 @@ o_monoAscProfLocDate = monoProfLocDate(idAsc);
 %    fprintf('ATTENTION: %d profils ascendants du multi ne sont pas dans les mono pour le flotteur %d\n', ...
 %       length(o_multiAscProfNum), a_floatNum);
 % end
-
-return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (~exist(a_ncPathFileName, 'dir') && exist(a_ncPathFileName, 'file'))
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retreive variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         fprintf('WARNING: Variable %s not present in file : %s\n', ...
-            varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {' '}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
-end
 
 return

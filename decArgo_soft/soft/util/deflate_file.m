@@ -11,7 +11,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/14/2016 - RNU - creation
@@ -48,30 +48,48 @@ dirFiles = dir([INPUT_DIR_NAME '/*.nc']);
 for idFile = 1:length(dirFiles)
    fileName = dirFiles(idFile).name;
    filePathNameIn = [INPUT_DIR_NAME '/' fileName];
-   
+
    % read test
    tic;
    fCdf = netcdf.open(filePathNameIn, 'NC_NOWRITE');
-   [nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(fCdf);
-   for idVar = 0:nbVars-1
-      data = netcdf.getVar(fCdf, idVar);
-      clear('data');
+
+   try
+
+      [nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(fCdf);
+      for idVar = 0:nbVars-1
+         data = netcdf.getVar(fCdf, idVar);
+         clear('data');
+      end
+      netcdf.close(fCdf);
+
+   catch MException
+      netcdf.close(fCdf);
+      rethrow(MException)
    end
-   netcdf.close(fCdf);
+
    readTime = toc;
-   
+
    % read and save test
    tic;
    fCdf = netcdf.open(filePathNameIn, 'NC_WRITE');
-   [nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(fCdf);
-   for idVar = 0:nbVars-1
-      data = netcdf.getVar(fCdf, idVar);
-      if (~isempty(data))
-         netcdf.putVar(fCdf, idVar, data);
+
+   try
+
+      [nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(fCdf);
+      for idVar = 0:nbVars-1
+         data = netcdf.getVar(fCdf, idVar);
+         if (~isempty(data))
+            netcdf.putVar(fCdf, idVar, data);
+         end
+         clear('data');
       end
-      clear('data');
+      netcdf.close(fCdf);
+
+   catch MException
+      netcdf.close(fCdf);
+      rethrow(MException)
    end
-   netcdf.close(fCdf);
+
    readSaveTime = toc;
 
    fileSizeOri = dirFiles(idFile).bytes;
@@ -79,10 +97,10 @@ for idFile = 1:length(dirFiles)
       fileName, ...
       dirFiles(idFile).bytes, ...
       readTime, readSaveTime);
-   
+
    for idMode = 1:NB_FORMAT_TYPE
       for idDL = 1:length(DEFLATE_LEVELS)
-         
+
          % convert the file
          if (idMode == 1)
             mode = netcdf.getConstant('NETCDF4');
@@ -95,77 +113,111 @@ for idFile = 1:length(dirFiles)
          outputDirName = [OUTPUT_DIR_NAME outputDirNamePart];
          mkdir(outputDirName);
          filePathNameOut = [outputDirName '/' fileName];
-         
+
          tic;
          fCdfIn = netcdf.open(filePathNameIn, 'NC_NOWRITE');
-         fCdfOut = netcdf.create(filePathNameOut, mode);
-         
-         [nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(fCdfIn);
-         
-         for idDim = 0:nbDims-1
-            [dimname, dimlen] = netcdf.inqDim(fCdfIn, idDim);
-            netcdf.defDim(fCdfOut, dimname, dimlen);
-         end
-         
-         for idVarIn = 0:nbVars-1
-            [varname, xtype, dimids, natts] = netcdf.inqVar(fCdfIn, idVarIn);
-            netcdf.defVar(fCdfOut, varname, xtype, dimids);
-            idVarOut = netcdf.inqVarID(fCdfOut, varname);
-            netcdf.defVarDeflate(fCdfOut, idVarOut, SHUFFLE_FLAG, true, DEFLATE_LEVELS(idDL));
-            for idAtt = 0:natts-1
-               attName = netcdf.inqAttName(fCdfIn, idVarIn, idAtt);
-               netcdf.copyAtt(fCdfIn, idVarIn, attName, fCdfOut, idVarOut)
+
+         try
+
+            fCdfOut = netcdf.create(filePathNameOut, mode);
+
+            try
+
+               [nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(fCdfIn);
+
+               for idDim = 0:nbDims-1
+                  [dimname, dimlen] = netcdf.inqDim(fCdfIn, idDim);
+                  netcdf.defDim(fCdfOut, dimname, dimlen);
+               end
+
+               for idVarIn = 0:nbVars-1
+                  [varname, xtype, dimids, natts] = netcdf.inqVar(fCdfIn, idVarIn);
+                  netcdf.defVar(fCdfOut, varname, xtype, dimids);
+                  idVarOut = netcdf.inqVarID(fCdfOut, varname);
+                  netcdf.defVarDeflate(fCdfOut, idVarOut, SHUFFLE_FLAG, true, DEFLATE_LEVELS(idDL));
+                  for idAtt = 0:natts-1
+                     attName = netcdf.inqAttName(fCdfIn, idVarIn, idAtt);
+                     netcdf.copyAtt(fCdfIn, idVarIn, attName, fCdfOut, idVarOut)
+                  end
+               end
+
+               for idGAtt = 0:nbGAtts-1
+                  attName = netcdf.inqAttName(fCdfIn, netcdf.getConstant('NC_GLOBAL'), idGAtt);
+                  netcdf.copyAtt(fCdfOut, netcdf.getConstant('NC_GLOBAL'), attName, fCdfOut, netcdf.getConstant('NC_GLOBAL'))
+               end
+
+               netcdf.endDef(fCdfOut);
+
+               for idVarIn = 0:nbVars-1
+                  [varname, xtype, dimids, natts] = netcdf.inqVar(fCdfIn, idVarIn);
+                  idVarOut = netcdf.inqVarID(fCdfOut, varname);
+                  data = netcdf.getVar(fCdfIn, idVarIn);
+                  if (~isempty(data))
+                     netcdf.putVar(fCdfOut, idVarOut, data);
+                  end
+               end
+
+               netcdf.close(fCdfOut);
+
+            catch MException
+               netcdf.close(fCdfOut);
+               rethrow(MException)
             end
+
+            netcdf.close(fCdfIn);
+
+         catch MException
+            netcdf.close(fCdfIn);
+            rethrow(MException)
          end
-         
-         for idGAtt = 0:nbGAtts-1
-            attName = netcdf.inqAttName(fCdfIn, netcdf.getConstant('NC_GLOBAL'), idGAtt);
-            netcdf.copyAtt(fCdfOut, netcdf.getConstant('NC_GLOBAL'), attName, fCdfOut, netcdf.getConstant('NC_GLOBAL'))
-         end
-         
-         netcdf.endDef(fCdfOut);
-         
-         for idVarIn = 0:nbVars-1
-            [varname, xtype, dimids, natts] = netcdf.inqVar(fCdfIn, idVarIn);
-            idVarOut = netcdf.inqVarID(fCdfOut, varname);
-            data = netcdf.getVar(fCdfIn, idVarIn);
-            if (~isempty(data))
-               netcdf.putVar(fCdfOut, idVarOut, data);
-            end
-         end
-         
-         netcdf.close(fCdfOut);
-         netcdf.close(fCdfIn);
-         
+
          conversionTime = toc;
-         
+
          % read test
          tic;
          fCdf = netcdf.open(filePathNameOut, 'NC_NOWRITE');
-         [nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(fCdf);
-         for idVar = 0:nbVars-1
-            data = netcdf.getVar(fCdf, idVar);
-            clear('data');
+
+         try
+
+            [nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(fCdf);
+            for idVar = 0:nbVars-1
+               data = netcdf.getVar(fCdf, idVar);
+               clear('data');
+            end
+            netcdf.close(fCdf);
+
+         catch MException
+            netcdf.close(fCdf);
+            rethrow(MException)
          end
-         netcdf.close(fCdf);
+
          readTime = toc;
-         
+
          % read and save test
          tic;
          fCdf = netcdf.open(filePathNameOut, 'NC_WRITE');
-         [nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(fCdf);
-         for idVar = 0:nbVars-1
-            data = netcdf.getVar(fCdf, idVar);
-            if (~isempty(data))
-               netcdf.putVar(fCdf, idVar, data);
+
+         try
+
+            [nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(fCdf);
+            for idVar = 0:nbVars-1
+               data = netcdf.getVar(fCdf, idVar);
+               if (~isempty(data))
+                  netcdf.putVar(fCdf, idVar, data);
+               end
+               clear('data');
             end
-            clear('data');
+            netcdf.close(fCdf);
+
+         catch MException
+            netcdf.close(fCdf);
+            rethrow(MException)
          end
-         netcdf.close(fCdf);
+
          readSaveTime = toc;
-         
+
          infoFile = dir([outputDirName '/' fileName]);
-         
+
          ratio = fileSizeOri/infoFile(1).bytes;
          ratioComment = 'times smaller';
          if (ratio < 1)

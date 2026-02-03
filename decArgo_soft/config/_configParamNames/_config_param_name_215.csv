@@ -60,7 +60,7 @@ PG06;Pressure acquisition period during ascent (slow speed), once P < IC6;TBD;CO
 PG07;Pressure delta min before pump action;TBD;CONFIG_IceDetectionAscentVerticalThresholdForBuoyancyAction_dbar;Similar to CONFIG_AscentVerticalThresholdForBuoyancyAction_dbar but for a float in ice detection mode.
 PG08;Pump action duration;TBD;CONFIG_IceDetectionPumpActionMaxTimeAscent_csec;Similar to CONFIG_PumpActionMaxTimeAscent_csec but for a float in ice detection mode.
 PG09;GPS timeout;TBD;CONFIG_GPSTimeout_minutes;Timeout for GPS acquisition.
-PG10;Delay before ascent blocking detection;TBD;CONFIG_IceDetectionNoVerticalMotionTimeOut_csec;When the float is in ice detection mode if, despite of pump actions, no vertical motion is detected during this delay, the cycle is aborted.
+PG10;Delay before ascent blocking detection;TBD;CONFIG_IceDetectionNoVerticalMotionTimeOut_minutes;When the float is in ice detection mode if, despite of pump actions, no vertical motion is detected during this delay, the cycle is aborted.
 PG11;Pressure variation for speed inversion;TBD;CONFIG_IceDetectionDescentVerticalThresholdToEndBuoyancyInversionPhase_dbar;When the cycle is aborted this threshold is used to detect speed inversion and to stop buoyancy inversion phase.
 PG12;Valve action volume;;CONFIG_IceDetectionOilVolumePerValveAction_cm^3;Valve action duration during the buoyancy inversion phase.
 PG13;Max valve volume to detect grounding on descent;TBD;CONFIG_IceDetectionOilVolumeMinForGroundingDetection_cm^3;Similar to CONFIG_OilVolumeMinForGroundingDetection_cm^3 but for a float in a buoyancy inversion phase.

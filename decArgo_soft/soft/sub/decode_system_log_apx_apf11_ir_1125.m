@@ -30,7 +30,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/04/2020 - RNU - creation
@@ -61,13 +61,6 @@ global g_decArgo_cycleNum;
 
 % output CSV file Id
 global g_decArgo_outputCsvFileId;
-
-% list of cycle numbers and ice detection flag
-global g_decArgo_cycleNumListForIce;
-global g_decArgo_cycleNumListIceDetected;
-
-% ice float flag
-global g_decArgo_iceFloat;
 
 % decoder Id check flag
 global g_decArgo_decIdCheckFlag;
@@ -133,27 +126,15 @@ for idFile = 1:length(a_systemLogFileList)
       strcmp({events.functionName}, 'sample_cfg') ...
       );
    if (~isempty(idEvts))
-      [missionCfg, sampleCfg] = process_apx_apf11_ir_config_evts_1124_25_28(events(idEvts));
+      [missionCfg, sampleCfg] = process_apx_apf11_ir_config_evts_1124_25_28_to_32(events(idEvts));
       o_missionCfg = [o_missionCfg; missionCfg];
       o_sampleCfg = [o_sampleCfg; sampleCfg];
-      
-      if (g_decArgo_iceFloat == 0)
-         if (~isempty(missionCfg))
-            missionCfgTmp = missionCfg{2};
-            if (isfield(missionCfgTmp, 'IceMonths'))
-               iceMonths = hex2dec(missionCfgTmp.IceMonths{:});
-               if (iceMonths ~= 0)
-                  g_decArgo_iceFloat = 1;
-               end
-            end
-         end
-      end
    end
    
    % pressure offset
    idEvts = find(strcmp({events.functionName}, 'PARKDESCENT'));
    if (~isempty(idEvts))
-      pressureOffset = process_apx_apf11_ir_pres_offset_1124_25_28(events(idEvts));
+      pressureOffset = process_apx_apf11_ir_pres_offset_1124_25_28_to_32(events(idEvts));
       if (~isempty(pressureOffset))
          dataStruct = get_apx_misc_data_init_struct('PresOffset', [], [], []);
          dataStruct.label = 'Pressure offset';
@@ -204,82 +185,18 @@ for idFile = 1:length(a_systemLogFileList)
    end
    
    % Ice events
-   if (g_decArgo_iceFloat == 1)
-      g_decArgo_cycleNumListForIce = [g_decArgo_cycleNumListForIce g_decArgo_cycleNum];
-      g_decArgo_cycleNumListIceDetected = [g_decArgo_cycleNumListIceDetected 0];
-      iceAlgoActivatedForCurrentCycle = 0;
-   end
    idEvts = find(strcmp({events.functionName}, 'ICE') | ...
-      strcmp({events.functionName}, 'ASCENT'));
+      strcmp({events.functionName}, 'ASCENT') | ...
+      strcmp({events.functionName}, 'mission_state') | ...
+      strcmp({events.functionName}, 'COMMS'));
    if (~isempty(idEvts))
-      iceDetectionTab = process_apx_apf11_ir_ice_evts_1125_1128_to_1130(events(idEvts));
-
-      if (~isempty(iceDetectionTab))
-         o_iceDetection = iceDetectionTab;
-      end
-
-      for idI = 1:length(iceDetectionTab)
-         iceDetection = iceDetectionTab{idI};
-         
-         if (~isempty(iceDetection.thermalDetect.sampleTime))
-            g_decArgo_iceFloat = 1;
-            iceAlgoActivatedForCurrentCycle = 1;
-         end
-         
-         if (~isempty(iceDetection.thermalDetect.detectTime))
-            dataStruct = get_apx_tech_data_init_struct(1);
-            dataStruct.label = 'Pressure Ice avoidance';
-            dataStruct.techId = 1006;
-            dataStruct.value = num2str(iceDetection.thermalDetect.detectPres);
-            dataStruct.cyNum = g_decArgo_cycleNum;
-            o_techData{end+1} = dataStruct;
-            
-            dataStruct = get_apx_tech_data_init_struct(1);
-            dataStruct.label = 'Median TEMP of mixed layer samples';
-            dataStruct.techId = 1007;
-            dataStruct.value = num2str(iceDetection.thermalDetect.medianTemp);
-            dataStruct.cyNum = g_decArgo_cycleNum;
-            o_techData{end+1} = dataStruct;
-         end
-         
-         if (~isempty(iceDetection.ascent.abortTypeTime))
-            o_cycleTimeData.ascentAbortDate = iceDetection.ascent.abortTypeTime;
-            if (~isempty(iceDetection.thermalDetect.detectPres))
-               o_cycleTimeData.ascentAbortPres = iceDetection.thermalDetect.detectPres;
-            end
-            
-            dataStruct = get_apx_tech_data_init_struct(1);
-            dataStruct.label = 'Ice detection type';
-            dataStruct.techId = 1009;
-            dataStruct.value = num2str(iceDetection.ascent.abortType);
-            dataStruct.cyNum = g_decArgo_cycleNum;
-            o_techData{end+1} = dataStruct;
-            
-            g_decArgo_cycleNumListIceDetected(end) = 1;
-            iceDetectedBitValue = compute_ice_detected_bit_value(g_decArgo_cycleNum, ...
-               g_decArgo_cycleNumListForIce, g_decArgo_cycleNumListIceDetected);
-            dataStruct = get_apx_tech_data_init_struct(1);
-            dataStruct.label = 'Ice detected bit';
-            dataStruct.techId = 1005;
-            dataStruct.value = iceDetectedBitValue;
-            dataStruct.cyNum = g_decArgo_cycleNum;
-            o_techData{end+1} = dataStruct;
-         end
-      end
-   end
-   if (g_decArgo_iceFloat == 1)
-      dataStruct = get_apx_tech_data_init_struct(1);
-      dataStruct.label = 'Ice algorithm activated';
-      dataStruct.techId = 1010;
-      dataStruct.value = iceAlgoActivatedForCurrentCycle;
-      dataStruct.cyNum = g_decArgo_cycleNum;
-      o_techData{end+1} = dataStruct;
+      o_iceDetection = process_apx_apf11_ir_ice_evts_1124_1125_1128_to_1132(events(idEvts));
    end
    
    % buoyancy activity
    idEvts = find(strcmp({events.functionName}, 'BuoyEngine'));
    if (~isempty(idEvts))
-      buoyancy = process_apx_apf11_ir_buoyancy_evts_1124_25_28(events(idEvts));
+      buoyancy = process_apx_apf11_ir_buoyancy_evts_1124_25_28_to_32(events(idEvts));
       o_buoyancy = [o_buoyancy; buoyancy];
    end
 

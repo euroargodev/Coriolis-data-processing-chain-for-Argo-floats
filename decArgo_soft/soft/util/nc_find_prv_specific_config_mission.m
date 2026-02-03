@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/16/2022 - RNU - creation
@@ -53,15 +53,15 @@ currentTime = datestr(now, 'yyyymmddTHHMMSSZ');
 floatList = [];
 if (nargin == 0)
    if (~isempty(FLOAT_LIST_FILE_NAME))
-      
+
       floatListFileName = FLOAT_LIST_FILE_NAME;
-      
+
       % floats to process come from floatListFileName
       if ~(exist(floatListFileName, 'file') == 2)
          fprintf('ERROR: File not found: %s\n', floatListFileName);
          return
       end
-      
+
       fprintf('Floats from list: %s\n', floatListFileName);
       floatList = load(floatListFileName);
    end
@@ -72,10 +72,10 @@ end
 
 if (isempty(floatList))
    % process floats encountered in the DIR_INPUT_NC_FILES directory
-   
+
    floatDirs = dir(DIR_INPUT_NC_FILES);
    for idDir = 1:length(floatDirs)
-      
+
       floatDirName = floatDirs(idDir).name;
       floatDirPathName = [DIR_INPUT_NC_FILES '/' floatDirName];
       if ((exist(floatDirPathName, 'dir') == 7) && ~strcmp(floatDirName, '.') && ~strcmp(floatDirName, '..'))
@@ -118,15 +118,15 @@ fprintf('\n');
 % process the floats
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
-   
+
    floatNum = floatList(idFloat);
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
-   
+
    ncInputFileDir = [DIR_INPUT_NC_FILES '/' num2str(floatNum) '/'];
-   
+
    if (exist(ncInputFileDir, 'dir') == 7)
-            
+
       % get configuration mission numbers from META.nc
       ncMetaFilePathName = [ncInputFileDir sprintf('%d_meta.nc', floatNum)];
       if ~(exist(ncMetaFilePathName, 'file') == 2)
@@ -186,7 +186,7 @@ fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 diary off;
 
 return
-   
+
 % ------------------------------------------------------------------------------
 % Retrieve the configuration values of a list of configuration parameters.
 %
@@ -210,7 +210,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/16/2022 - RNU - creation
@@ -238,61 +238,5 @@ for idN = 1:length(a_configNameList)
    end
 end
 o_configVal(o_configVal == 99999) = nan;
-
-return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('RTQC_ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         %          fprintf('RTQC_WARNING: Variable %s not present in file : %s\n', ...
-         %             varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {''}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
-end
 
 return

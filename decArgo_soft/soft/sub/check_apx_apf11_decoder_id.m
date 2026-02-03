@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/09/2020 - RNU - creation
@@ -125,7 +125,7 @@ if (~isempty(versionStr))
             g_decArgo_decIdCheckFlag = 1;
          end
       case 1129
-         if (~strcmp(versionStr, '2.16.0'))
+         if (~strcmp(versionStr, '2.16.0') && ~strcmp(versionStr, '2.16.1'))
             fprintf('ERROR: Float #%d: A wrong decoder (#%d) seems to be used for this float\n', ...
                g_decArgo_floatNum, a_decoderId);
          else
@@ -133,6 +133,20 @@ if (~isempty(versionStr))
          end
       case 1130
          if (~strcmp(versionStr, '2.17.4'))
+            fprintf('ERROR: Float #%d: A wrong decoder (#%d) seems to be used for this float\n', ...
+               g_decArgo_floatNum, a_decoderId);
+         else
+            g_decArgo_decIdCheckFlag = 1;
+         end
+      case 1131
+         if (~strcmp(versionStr, '2.18.1'))
+            fprintf('ERROR: Float #%d: A wrong decoder (#%d) seems to be used for this float\n', ...
+               g_decArgo_floatNum, a_decoderId);
+         else
+            g_decArgo_decIdCheckFlag = 1;
+         end
+      case 1132
+         if (~strcmp(versionStr, '2.19.1'))
             fprintf('ERROR: Float #%d: A wrong decoder (#%d) seems to be used for this float\n', ...
                g_decArgo_floatNum, a_decoderId);
          else

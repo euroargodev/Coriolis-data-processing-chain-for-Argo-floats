@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/14/2014 - RNU - creation
@@ -60,7 +60,7 @@ for idP = 1:length(a_tabProfiles)
             threshold1 = get_config_value('CONFIG_PM10', configNames, configValues);
             thickSurf = get_config_value('CONFIG_PM11', configNames, configValues);
             thickBottom = get_config_value('CONFIG_PM12', configNames, configValues);
-         case {201, 202, 203, 205, 206, 207, 208, 209, 215, 216, 218, 221}
+         case {201, 202, 203, 205, 206, 207, 208, 209, 215, 216, 218, 221, 228, 229, 230}
             nbThreshold = 2;
             descSamplingPeriod = get_config_value('CONFIG_PM05', configNames, configValues);
             ascSamplingPeriod = get_config_value('CONFIG_PM07', configNames, configValues);
@@ -76,7 +76,7 @@ for idP = 1:length(a_tabProfiles)
                threshold3 = prof.additionnalBottomThreshold;
                thickBottom2 = 1;
             end
-         case {210, 211, 212, 222, 223, 224, 213, 214, 217, 225, 226}
+         case {210, 211, 212, 222, 223, 224, 213, 214, 217, 225, 226, 227, 231, 232}
             nbThreshold = 2;
             descSamplingPeriod = get_config_value('CONFIG_MC08_', configNames, configValues);
             ascSamplingPeriod = get_config_value('CONFIG_MC10_', configNames, configValues);
@@ -129,7 +129,8 @@ for idP = 1:length(a_tabProfiles)
             
             vssText = [vssText ' [' description ']'];
          elseif (nbThreshold == 2)
-            if (~ismember(a_decoderId, [224 226]))
+            if (~ismember(a_decoderId, [224, 226, 227, 229]))
+               % CTD SBE
                if (~isempty(ascSamplingPeriod) && ~isempty(profilePres) && ...
                      ~isempty(threshold1) && ~isempty(threshold2) && ...
                      ~isempty(thickSurf) && ~isempty(thickMiddle) && ~isempty(thickBottom) && ...

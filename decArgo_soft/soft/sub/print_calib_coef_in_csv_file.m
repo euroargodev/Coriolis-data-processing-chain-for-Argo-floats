@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/26/2016 - RNU - creation
@@ -311,7 +311,7 @@ switch (a_decoderId)
          end
       end
       
-   case {1107, 1113}
+   case {1107, 1113, 1115}
       
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; -; CALIBRATION COEFFICIENTS\n', ...
          g_decArgo_floatNum, -1);
@@ -335,6 +335,18 @@ switch (a_decoderId)
             fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; -; Aanderaa 4330; %s; %g\n', ...
                g_decArgo_floatNum, -1, ...
                ['SVUFoilCoef' num2str(idC-1)], tabDoxyCoef(2, idC));
+         end
+      end
+
+      % print FLBB coef
+      if (~isempty(g_decArgo_calibInfo) && ...
+            isfield(g_decArgo_calibInfo, 'FLBB'))
+         
+         fNames = fieldnames(g_decArgo_calibInfo.FLBB);
+         for idField = 1:length(fNames)
+            fprintf(g_decArgo_outputCsvFileId, '%d; %d; Calib; -; -; FLBB; %s; %g\n', ...
+               g_decArgo_floatNum, -1, ...
+               fNames{idField}, g_decArgo_calibInfo.FLBB.(fNames{idField}));
          end
       end
       

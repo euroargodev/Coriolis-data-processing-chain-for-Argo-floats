@@ -19,7 +19,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/11/2013 - RNU - creation
@@ -99,9 +99,9 @@ if (isempty(idDataStdMed))
    dataMean(:, 5) = sensor_2_value_for_backscat_ir_rudics_sbd2(dataMean(:, 5));
    dataMean(:, 6) = sensor_2_value_for_backscat_ir_rudics_sbd2(dataMean(:, 6));
    paramCHLA = get_netcdf_param_attributes('CHLA');
-   dataMean(:, 7) = compute_CHLA_105_to_112_121_to_133_1121_to_28_1322_1323(dataMean(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
+   dataMean(:, 7) = compute_CHLA_1xx_and_1121_to_1132_1322_1323(dataMean(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
 %    paramBBP700 = get_netcdf_param_attributes('BBP700');
-%    dataMean(:, 8) = compute_BBP700_105_to_112_121_to_133_1121_to_28_1322_1323(dataMean(:, 5), g_decArgo_backscatDef, paramBBP700.fillValue);
+%    dataMean(:, 8) = compute_BBP700_others_dec_id(dataMean(:, 5), g_decArgo_backscatDef, paramBBP700.fillValue);
 %    paramBBP532 = get_netcdf_param_attributes('BBP532');
 %    dataMean(:, 9) = compute_BBP532_108_109(dataMean(:, 6), g_decArgo_backscatDef, paramBBP532.fillValue);
    
@@ -207,7 +207,7 @@ else
       data(:, 11) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 11));
       data(:, 12) = sensor_2_value_for_backscat_ir_rudics_sbd2(data(:, 12));
       paramCHLA = get_netcdf_param_attributes('CHLA');
-      data(:, 13) = compute_CHLA_105_to_112_121_to_133_1121_to_28_1322_1323(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
+      data(:, 13) = compute_CHLA_1xx_and_1121_to_1132_1322_1323(data(:, 4), g_decArgo_chloroADef, paramCHLA.fillValue);
       
       for idL = 1:size(data, 1)
          if (data(idL, 1) ~= g_decArgo_dateDef)

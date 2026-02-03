@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/02/2014 - RNU - creation
@@ -300,11 +300,11 @@ elseif (length(idF2) == 1)
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2; TECH: LAST PUMPED ASCENT RAW MEAS\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum);
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2; "Subsurface" meas PRES; %d; => %.1f; dbar\n', ...
-         g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 10), sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(a_tabTech(id, 10)));
+         g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 10), sensor_2_value_for_pressure_2xx_2_10_to_14_17_22_to_27_31_32(a_tabTech(id, 10)));
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2; "Subsurface" meas TEMP; %d; => %.3f; degC\n', ...
-         g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 11), sensor_2_value_for_temperature_201_to_203_215_216_218_221(a_tabTech(id, 11)));
+         g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 11), sensor_2_value_for_temp_2xx_1_to_3_15_16_18_21_28_29_30(a_tabTech(id, 11)));
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2; "Subsurface" meas PSAL; %d; => %.3f; PSU\n', ...
-         g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 12), sensor_2_value_for_salinity_201_to_203_215_216_218_221(a_tabTech(id, 12)));
+         g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 12), sensor_2_value_for_salinity_2xx_1_to_3_15_16_18_21_28_29_30(a_tabTech(id, 12)));
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2; "Subsurface" meas C1PHASE_DOXY; %d; => %.3f; degree\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 13), sensor_2_value_for_C1C2phase_ir_sbd_2xx(a_tabTech(id, 13)));
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech #2; "Subsurface" meas C2PHASE_DOXY; %d; => %.3f; degree\n', ...

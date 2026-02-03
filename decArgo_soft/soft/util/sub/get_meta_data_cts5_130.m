@@ -21,7 +21,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/14/2022 - RNU - creation
@@ -40,7 +40,7 @@ global g_cogj_csvFileCoefPathName;
 
 
 % read meta-data file
-metaData = decode_apmt_metadata_129_to_133(a_metaDataXmlFileName);
+metaData = decode_apmt_metadata_129_to_133_135_138_to_141(a_metaDataXmlFileName);
 
 % check meta-data and store meta-data if needed
 if (isfield(metaData, 'profiler'))
@@ -2135,7 +2135,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation

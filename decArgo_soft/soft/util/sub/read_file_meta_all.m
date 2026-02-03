@@ -1,5 +1,5 @@
 % ------------------------------------------------------------------------------
-% Lecture d'un fichier de méta données.
+% Lecture d'un fichier de mÃ©ta donnÃ©es.
 %
 % SYNTAX :
 %  [o_nCycles, o_nParam, ...
@@ -19,15 +19,15 @@
 %    o_deepestPressureDescending] = read_file_meta_all(a_fileName)
 %
 % INPUT PARAMETERS :
-%   a_fileName : nom du fichier de meta données à lire
+%   a_fileName : nom du fichier de meta donnÃ©es Ã  lire
 %
 % OUTPUT PARAMETERS :
-%   paramètres pertinents lus dans le fichier
+%   paramÃ¨tres pertinents lus dans le fichier
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/03/2011 - RNU - creation

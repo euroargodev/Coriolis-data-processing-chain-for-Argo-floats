@@ -61,7 +61,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/14/2014 - RNU - creation
@@ -568,7 +568,7 @@ if (a_deepCycle == 1)
    
    % the unpumped part of the profile should not be duplicated in the TRAJ file
    % anymore (whatever the value of CONFIG_OptodeMeasurementsInAir_LOGICAL is)
-   % see specification in "NOTE ON ìNEAR SURFACEî AND ìIN AIRî DATA PROCESSING IN
+   % see specification in "NOTE ON ‚ÄúNEAR SURFACE‚Äù AND ‚ÄúIN AIR‚Äù DATA PROCESSING IN
    % THE CORIOLIS MATLAB DECODER" (V1.0 dated 29/06/2018)
    
    %    for idProf = 1:length(a_tabProfiles)
@@ -830,8 +830,8 @@ if (a_deepCycle == 1)
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       
       % last pumped CTD measurement
-      pres = sensor_2_value_for_pressure_201_203_215_216_218_221(tabTech2(10));
-      temp = sensor_2_value_for_temperature_201_to_203_215_216_218_221(tabTech2(11));
+      pres = sensor_2_value_for_pressure_201_203_215_216_218_221_228_229_230(tabTech2(10));
+      temp = sensor_2_value_for_temp_2xx_1_to_3_15_16_18_21_28_29_30(tabTech2(11));
       psal = tabTech2(12)/1000;
       if (any([pres temp psal] ~= 0))
          measStruct = get_traj_one_meas_init_struct();
@@ -849,7 +849,7 @@ if (a_deepCycle == 1)
             c1PhaseDoxy = sensor_2_value_for_C1C2phase_ir_sbd_2xx(tabTech2(13));
             c2PhaseDoxy = sensor_2_value_for_C1C2phase_ir_sbd_2xx(tabTech2(14));
             tempDoxy = sensor_2_value_for_temp_doxy_ir_sbd_2xx(tabTech2(15));
-            doxy = compute_DOXY_201_203_206_209_213_to_218_221_223_225(c1PhaseDoxy, c2PhaseDoxy, tempDoxy, pres, temp, psal);
+            doxy = compute_DOXY_201_203_206_209_213_to_218_221_223_225_230_232(c1PhaseDoxy, c2PhaseDoxy, tempDoxy, pres, temp, psal);
             measStruct.paramData = [pres temp psal c1PhaseDoxy c2PhaseDoxy tempDoxy doxy];
             
             trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];

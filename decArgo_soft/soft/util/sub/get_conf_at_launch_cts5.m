@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/21/2017 - RNU - creation
@@ -28,7 +28,7 @@ function [o_confParamNames, o_confParamValues] = get_conf_at_launch_cts5( ...
 o_confParamNames = [];
 o_confParamValues = [];
 
-% retrieve deecId from DAC version
+% retrieve decId from DAC version
 decoderId = [];
 switch (a_dacFormatId)
    case {'7.01'}
@@ -57,6 +57,22 @@ switch (a_dacFormatId)
       decoderId = 132;
    case {'7.18'}
       decoderId = 133;
+   case {'7.19'}
+      decoderId = 134;
+   case {'7.20'}
+      decoderId = 135;
+   case {'7.21'}
+      decoderId = 136;
+   case {'7.22'}
+      decoderId = 137;
+   case {'7.23'}
+      decoderId = 138;
+   case {'7.24'}
+      decoderId = 139;
+   case {'7.25'}
+      decoderId = 140;
+   case {'7.26'}
+      decoderId = 141;
    otherwise
       fprintf('ERROR: Cannot find decoderId from DAC version ''%s'' in get_conf_at_launch_cts5\n', ...
          a_dacFormatId);

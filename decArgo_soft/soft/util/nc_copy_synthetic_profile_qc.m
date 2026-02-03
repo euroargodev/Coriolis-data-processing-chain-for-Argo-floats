@@ -32,7 +32,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/20/2023 - RNU - V 1.0: creation
@@ -40,6 +40,12 @@
 %                             or B PROF file.
 %   12/04/2023 - RNU - V 1.2: uninitialized variable.
 %   01/22/2024 - RNU - V 1.3: uninitialized variable.
+%   06/24/2024 - RNU - V 1.4: check that Qc prof and S prof sizes are identical.
+%   07/16/2024 - RNU - V 1.5: manage VSS with only 'n/a'.
+%   07/16/2024 - RNU - V 1.6: bug in determining if PROFILE_PARAM_QC should be
+%                             updated (PROFILE_PARAM_QC should be computed with
+%                             PARAM_ADJUSTED_QC if exists PARAM_QC otherwise).
+%   11/14/2024 - RNU - V 1.7: manage <PARAM>_STD and <PARAM>_MED parameters.
 % ------------------------------------------------------------------------------
 function nc_copy_synthetic_profile_qc(varargin)
 
@@ -48,19 +54,19 @@ function nc_copy_synthetic_profile_qc(varargin)
 
 % top directory of input NetCDF files containing the Qc values
 % (top directory of the DAC name directories)
-DIR_INPUT_QC_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_REPORT_QC_SPROF_PROF\TEST_20240122\dbqc\';
+DIR_INPUT_QC_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_REPORT_QC_SPROF_PROF\TEST_20240624\dbqc\';
 
 % top directory of input NetCDF files to be updated
 % (E-DAC, thus top directory of the DAC name directories)
-DIR_INPUT_EDAC_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_REPORT_QC_SPROF_PROF\TEST_20240122\edac\';
+DIR_INPUT_EDAC_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_REPORT_QC_SPROF_PROF\TEST_20240624\edac\';
 
 % top directory of input S-PROF and META NetCDF files
 % (G-DAC, thus top directory of the DAC name directories)
-DIR_INPUT_GDAC_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_REPORT_QC_SPROF_PROF\TEST_20240122\gdac\';
+DIR_INPUT_GDAC_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_REPORT_QC_SPROF_PROF\TEST_20240624\gdac\';
 
 % top directory of output NetCDF updated files
 % (top directory of the DAC name directories)
-DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_REPORT_QC_SPROF_PROF\TEST_20240122\out\';
+DIR_OUTPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TEST_REPORT_QC_SPROF_PROF\TEST_20240624\out\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log';
@@ -80,7 +86,7 @@ g_cocsq_realtimeFlag = 0;
 
 % program version
 global g_cocsq_ncCopySyntheticProfileQcVersion;
-g_cocsq_ncCopySyntheticProfileQcVersion = '1.3';
+g_cocsq_ncCopySyntheticProfileQcVersion = '1.7';
 
 % date of the run
 global g_cocsq_nowUtc;

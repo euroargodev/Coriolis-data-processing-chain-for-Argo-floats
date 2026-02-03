@@ -17,7 +17,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/22/2020 - RNU - V O1.0: creation:
@@ -60,8 +60,8 @@ DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 % directory to store the XML file
 DIR_XML_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\xml\';
 
-% grey list file
-GREY_LIST_FILE_PATH_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\ar_greylist.txt';
+% exclusion list file
+EXCLUSION_LIST_FILE_PATH_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\ar_exclusionlist.txt';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CONFIGURATION - END
@@ -69,7 +69,7 @@ GREY_LIST_FILE_PATH_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\ar_greylist
 
 % program version
 global g_copq_addDoRtqcToProfAndTrajVersion;
-g_copq_addDoRtqcToProfAndTrajVersion = 'O2.0';
+g_copq_addDoRtqcToProfAndTrajVersion = 'O2.1';
 
 % default values initialization
 init_default_values;
@@ -128,7 +128,7 @@ UPDATE_TRAJECTORY_FILE_FLAG = 1;
 %    {'TEST012_DIGIT_ROLLOVER'} {1} ...
 %    {'TEST013_STUCK_VALUE'} {1} ...
 %    {'TEST014_DENSITY_INVERSION'} {0} ...
-%    {'TEST015_GREY_LIST'} {1} ...
+%    {'TEST015_EXCLUSION_LIST'} {1} ...
 %    {'TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT'} {0} ... % concerns DO data but not performed at Coriolis
 %    {'TEST018_FROZEN_PRESSURE'} {0} ... ... % concerns DO data but not performed at Coriolis
 %    {'TEST019_DEEPEST_PRESSURE'} {1} ...
@@ -142,6 +142,8 @@ UPDATE_TRAJECTORY_FILE_FLAG = 1;
 %    {'TEST056_PH'} {1} ...
 %    {'TEST057_DOXY'} {1} ...
 %    {'TEST059_NITRATE'} {0} ...
+%    {'TEST060_PAR'} {0} ...
+%    {'TEST061_IRRADIANCE'} {0} ...
 %    {'TEST062_BBP'} {0} ...
 %    {'TEST063_CHLA'} {0} ...
 %    ];
@@ -161,7 +163,7 @@ testToPerformList = [ ...
    {'TEST012_DIGIT_ROLLOVER'} {1} ...
    {'TEST013_STUCK_VALUE'} {1} ...
    {'TEST014_DENSITY_INVERSION'} {1} ...
-   {'TEST015_GREY_LIST'} {1} ...
+   {'TEST015_EXCLUSION_LIST'} {1} ...
    {'TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT'} {1} ... % concerns DO data but not performed at Coriolis
    {'TEST018_FROZEN_PRESSURE'} {1} ... ... % concerns DO data but not performed at Coriolis
    {'TEST019_DEEPEST_PRESSURE'} {1} ...
@@ -175,6 +177,8 @@ testToPerformList = [ ...
    {'TEST056_PH'} {1} ...
    {'TEST057_DOXY'} {1} ...
    {'TEST059_NITRATE'} {1} ...
+   {'TEST060_PAR'} {1} ...
+   {'TEST061_IRRADIANCE'} {1} ...
    {'TEST062_BBP'} {1} ...
    {'TEST063_CHLA'} {1} ...
    ];
@@ -183,7 +187,7 @@ testToPerformList = [ ...
 testMetaData = [ ...
    {'TEST000_FLOAT_DECODER_ID'} {''} ...
    {'TEST013_METADA_DATA_FILE'} {''} ...
-   {'TEST015_GREY_LIST_FILE'} {GREY_LIST_FILE_PATH_NAME} ...
+   {'TEST015_EXCLUSION_LIST_FILE'} {EXCLUSION_LIST_FILE_PATH_NAME} ...
    {'TEST019_METADA_DATA_FILE'} {''} ...
    {'TEST021_METADA_DATA_FILE'} {''} ...
    {'TEST057_METADA_DATA_FILE'} {''} ...
@@ -274,7 +278,7 @@ try
    fprintf('   Log file directory: DIR_LOG_FILE = ''%s''\n', DIR_LOG_FILE);
    fprintf('   Xml file directory: DIR_XML_FILE = ''%s''\n', DIR_XML_FILE);
    fprintf('   Info.json file directory: DIR_JSON_FLOAT_INFO = ''%s''\n', DIR_JSON_FLOAT_INFO);
-   fprintf('   Grey list file: GREY_LIST_FILE_PATH_NAME = ''%s''\n', GREY_LIST_FILE_PATH_NAME);
+   fprintf('   Exclusion list file: EXCLUSION_LIST_FILE_PATH_NAME = ''%s''\n', EXCLUSION_LIST_FILE_PATH_NAME);
    fprintf('\n');
    
    % update existing files flag
@@ -611,7 +615,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/21/2015 - RNU - creation
@@ -644,7 +648,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/11/2016 - RNU - creation
@@ -699,7 +703,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/22/2020 - RNU - creation
@@ -904,7 +908,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/11/2016 - RNU - creation
@@ -977,7 +981,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/11/2016 - RNU - creation
@@ -1028,7 +1032,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/23/2020 - RNU - creation

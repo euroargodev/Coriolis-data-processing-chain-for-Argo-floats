@@ -1,0 +1,220 @@
+TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PARAM_DESCRIPTION
+200;2;Total profile realized;TECH_AUX_NUMBER_CyclesDone_COUNT;Number of cycles done since float manufacturing.
+201;2;Total distance profiled (dbar);TECH_AUX_NUMBER_DepthSampled_dbar;Amount of depth sampled since float manufacturing.
+202;2;Total duration at sea (day);TECH_AUX_NUMBER_TimeElapsedt_HHMMSS;Number of days elapsedsince float manufacturing.
+100101;1001;EV lump sum volume (1/10 cm3);TECH_AUX_VOLUME_OilVolumeTransferredAtSurfaceDuringFirstValveAction_cm^3;Oil volume transferred from the external bladder during the first valve action of the descent to park.
+100102;1001;EV transferred volume (1/10 cm3);VOLUME_OilVolumeTransferredAtSurfaceDuringDescent_cm^3;Oil volume transferred from the external bladder during the descent to park (between the surface and the second threshold of the buoyancy reduction phase). This is the oil volume tranferred  during the NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT valve actions.
+100103;1001;EV action number;NUMBER_ValveActionsAtSurfaceDuringDescent_COUNT;number of solenoid valve actions at the surface until the crossing of the GAP threshold
+100200;1002;Date/Time (in second since 2000);CLOCK_BuoyancyInversionStart_YYYYMMDDHHMMSS;Time when the float starts the buoyancy inversion phase when ice was detected during ascent.
+100201;1002;External pressure (cbar);TECH_AUX_PRES_BuoyancyInversionStart_dbar;Pressure when the float starts the buoyancy inversion phase when ice was detected during ascent.
+100300;1003;Date/Time (in second since 2000);TECH_AUX_CLOCK_BuoyancyInversionEnd_YYYYMMDDHHMMSS;Time when the float ends the buoyancy inversion phase when ice was detected during ascent.
+100301;1003;External pressure offset (cbar);TECH_AUX_PRES_BuoyancyInversionEnd_dbar;Pressure when the float ends the buoyancy inversion phase when ice was detected during ascent.
+100302;1003;External pressure min (cbar);TECH_AUX_PRES_BuoyancyInversionEndMinPres_dbar;Min pressure sampled during buoyancy inversion phase.
+100303;1003;EV transferred volume (1/10 cm3);TECH_AUX_VOLUME_OilVolumeTransferredDuringBuoyancyInversion_cm^3;Oil volume transferred from the external bladder during the buoyancy inversion phase when ice was detected during ascent.
+100304;1003;EV action number;NUMBER_BuoyancyInversionValveActions_COUNT;Number of solenoid valve actions needed to perform the buoyancy inversion phase when ice was detected during ascent.
+100501;1005;EV transferred volume (1/10 cm3);VOLUME_OilVolumeTransferredDuringDescentToPark_cm^3;Oil volume transferred from the external bladder during the descent to park (between the second threshold of the buoyancy reduction phase and the end of the descent to park). This is the oil volume tranferred  during the NUMBER_ValveActionsDuringDescentToPark_COUNT valve actions.
+100502;1005;EV action number;NUMBER_ValveActionsDuringDescentToPark_COUNT;Number of valve actions between the crossing  of the gap threshold and the end of descent at park pressure
+100701;1007;EV transferred volume (1/10 cm3);VOLUME_OilVolumeTransferredDuringDescentToProfile_cm^3;Oil volume transferred from the external bladder during the descent to start profile pressure. This is the oil volume tranferred  during the NUMBER_ValveActionsDuringDescentToProfile_COUNT valve actions.
+100702;1007;EV action number;NUMBER_ValveActionsDuringDescentToProfile_COUNT;number of valve actions during descent to start profile pressure
+100903;1009;Stabilized entrance number;NUMBER_ParkDriftEntriesInParkMargin_COUNT;drift at park pressure: number of entries in margin around park pressure target - specifically, how many times the float enters the band of pressure surrounding the target park pressure (generally +/- 30db)
+100904;1009;Unstabilized entrance number;NUMBER_ParkDriftExitsFromParkMargin_COUNT;drift at park pressure: number of exits from margin around park pressure target - specifically, how many times the float exits the band of pressure surrounding the target park pressure (generally +/- 30db)
+100905;1009;Repositioning number;NUMBER_RepositionsDuringPark_COUNT;Number of times the float readjusts its buoyancy during the park phase - using either the pump or EV.
+100906;1009;EV transferred volume (1/10 cm3);TECH_AUX_VOLUME_ValveOilVolumeTransferredDuringPark_cm^3;Oil volume transferred to the external bladder by the valve actions during the park phase. This is the oil volume tranferred  during the NUMBER_ValveActionsDuringPark_COUNT valve actions.
+100907;1009;EV action number;NUMBER_ValveActionsDuringPark_COUNT;Number of valve actions while at park depth.
+100908;1009;PUMP transferred volume (1/10 cm3);TECH_AUX_VOLUME_PumpOilVolumeTransferredDuringPark_cm^3;Oil volume transferred to the external bladder by the pump actions during the park phase. This is the oil volume tranferred  during the NUMBER_PumpActionsDuringPark_COUNT pump actions.
+100909;1009;PUMP action number;NUMBER_PumpActionsDuringPark_COUNT;Number of pump actions while at park depth.
+101103;1011;Stabilized entrance number;NUMBER_DescentToProfileEntriesInProfileMargin_COUNT;descent to profile pressure: number of entries in margin around profile pressure target  - specifically, how many times the float enters the band of pressure surrounding the target profile pressure (generally +/- 30db)
+101104;1011;Unstabilized entrance number;TECH_AUX_NUMBER_ProfileDriftExitsFromProfileMargin_COUNT;drift at profile pressure: number of exits from margin around profile pressure target - specifically, how many times the float exits the band of pressure surrounding the target profile pressure (generally +/- 30db)
+101105;1011;Repositioning number;NUMBER_RepositionsAtProfileDepth_COUNT;at profile pressure stand-by, number of times the float readjusts its buoyancy - using either the pump or EV
+101106;1011;EV transferred volume (1/10 cm3);TECH_AUX_VOLUME_ValveOilVolumeTransferredDuringProfileDrift_cm^3;Oil volume transferred to the external bladder by the valve actions during the profile drift phase. This is the oil volume tranferred  during the NUMBER_ValveActionsDuringProfileDrift_COUNT valve actions.
+101107;1011;EV action number;NUMBER_ValveActionsDuringProfileDrift_COUNT;number of valve actions while drifting at profile depth
+101108;1011;PUMP transferred volume (1/10 cm3);TECH_AUX_VOLUME_PumpOilVolumeTransferredDuringProfileDrift_cm^3;Oil volume transferred to the external bladder by the pump actions during the profile drift phase. This is the oil volume tranferred  during the NUMBER_PumpActionsDuringProfileDrift_COUNT pump actions.
+101109;1011;PUMP action number;NUMBER_PumpActionsDuringProfileDrift_COUNT;Number of pump actions during drift at profile depth.
+101301;1013;PUMP transferred volume (1/10 cm3);VOLUME_OilVolumeTransferredDuringAscentToSurface_cm^3;Oil volume transferred to the external bladder during the ascent to surface This is the oil volume tranferred  during the NUMBER_PumpActionsDuringAscentToSurface_COUNT pump actions.
+101302;1013;PUMP action number;NUMBER_PumpActionsDuringAscentToSurface_COUNT;number of pump actions between start and end of ascent 
+101500;1015;Date/Time (in second since 2000);TECH_AUX_CLOCK_InAirStartTime_YYYYMMDDHHMMSS;Time when the float enters in the in air phase.
+101501;1015;External pressure (cbar);TECH_AUX_PRES_InAirStartTime_dbar;Pressure when the float enters in the in air phase.
+101700;1017;Date/Time (in second since 2000);CLOCK_DateOfEmergencyAscent_YYYYMMDDHHMMSS;date of emergency ascent
+101701;1017;External pressure max (cbar);TECH_AUX_PRES_EmergencyAscent_dbar;Pressure that triggered the emergency ascent.
+101801;1018;PUMP transferred volume (1/10 cm3);TECH_AUX_VOLUME_OilVolumeTransferredToEmergencyAscent_cm^3;Oil volume, transferred to the external bladder, needed to reach the surface after an emergency ascent.
+101900;1019;Date/Time (in second since 2000);CLOCK_EOLStart_YYYYMMDDHHMMSS;Clock time when End of Life mode starts
+101901;1019;Last date/time of end-of-life detection (in second since 2000);TECH_AUX_CLOCK_EOLStartLast_YYYYMMDDHHMMSS;Date of the last End Of Life start phase.
+101902;1019;End of life source;TECH_AUX_FLAG_EndOfLifeSource_hex;Event that generated the End Of Life sequence (bit#, 0: Programmed, 1: Startup failure, 2: Self-test failure, 3: Settings failure, 4: CTD settings failure, 5: Request by downlink, 6: Alarm on ext. pressure high, 7: Alarm on ext. pressure error, 8: Alarm on descent speed high, 9: Alarm on battery voltage low, 10: Alarm on insulation voltage, 11: Alarm on RTC).
+102000;1020;Date/Time (in second since 2000);CLOCK_PressureActivationStart_YYYYMMDDHHMMSS;Pressure activation scrutation start date.
+102100;1021;Date/Time (in second since 2000);CLOCK_PressureActivationStop_YYYYMMDDHHMMSS;Pressure activation scrutation end date.
+102101;1021;Date/Time of external pressure detection;TECH_AUX_CLOCK_PressureActivation_YYYYMMDDHHMMSS;Mission start date with pressure activation.
+102102;1021;External pressure max (dbar);TECH_AUX_PRES_PressureActivationMax_dbar;Max pressure sampled during pressure activation scrutation period.
+102200;1022;Date/Time (in second since 2000);TECH_AUX_CLOCK_EndOfCycle_YYYYMMDDHHMMSS;Theoretical end of cycle date computed by the float.
+200002;2000;PUMP transferred volume (1/10 cm3);VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3;Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded.
+200003;2000;;TECH_AUX_VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3;Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded.
+200101;2001;External pressure (cbar);TECH_AUX_PRES_Hanging_dbar;Hanging pressure.
+200102;2001;PUMP transferred volume (1/10 cm3);TECH_AUX_VOLUME_OilVolumeTransferredToAscentWhenHanging_cm^3;Oil volume, transferred to the external bladder, needed to ascent when hanging.
+200201;2002;External pressure (cbar);TECH_AUX_PRES_BrakingDuringDescentAlarm_dbar;Alarm raised when the descent speed is too high and the float brakes. Pressure of alarm.
+200202;2002;Speed (mm/s);TECH_AUX_SPEED_BrakingDuringDescentAlarm_mm/s;Alarm raised when the descent speed is too high and the float brakes. Speed of alarm.
+200301;2003;External pressure (cbar);TECH_AUX_PRES_EmergencyBrakingDuringDescentAlarm_dbar;Alarm raised when the float overrides its max pressure and the float brakes. Pressure of alarm.
+200302;2003;Speed (mm/s);TECH_AUX_SPEED_EmergencyBrakingDuringDescentAlarm_mm/s;Alarm raised when the float overrides its max pressure and the float brakes. Speed of alarm.
+200401;2004;Counter of detection;TECH_AUX_NUMBER_IceDetectionByIsaAlgorithm_COUNT;Number of consecutive Ice detection with ISA algorithm.
+200501;2005;Median temperature (m°C);TEMP_MixedLayerMedian_degC;median of the mixed layer samples taken
+200502;2005;;TECH_AUX_TEMP_MixedLayerMedian_degC;median of the mixed layer samples taken
+200700;2007;Mode (0: not armed, 1: armed, 2: armed in pressure detection mode);TECH_AUX_FLAG_DeploymentMode_NUMBER;Deployment mode (0: not armed, 1: armed, 2: armed in pressure detection mode).
+200801;2008;Previous setpoint (cbar);TECH_AUX_PRES_PreviousSetPoint_dbar;In case of grounding, the target pressure is modified. This is the previous one.
+200802;2008;New setpoint (cbar);TECH_AUX_PRES_NewSetPoint_dbar;In case of grounding, the target pressure is modified. This is the new one.
+200901;2009;Detection flag;TECH_AUX_FLAG_EmptyBallastDetection_LOGICAL;Result of empty ballast detection flag.
+201000;2010;Date/Time (in second since 2000);TECH_AUX_CLOCK_IceAdvoidancePerigee_YYYYMMDDHHMMSS;Time at perigee when the float advoids Ice.
+201001;2010;External pressure (cbar);TECH_AUX_PRES_IceAdvoidancePerigee_dbar;Pressure at perigee when float avoids ice.
+201100;2011;Date/Time (in second since 2000);TECH_AUX_CLOCK_IceAlgorithmActivated_YYYYMMDDHHMMSS;Time when Ice algorithm was activated.
+300001;3000;Alarm type (11: External pressure sensor => No pressure information, 12: Barometer sensor, 13: Failure on initialization of SBE41 reset offset, 14: Failure on initialization of SBE41 cut-off, 15: Error system, 17: Treatment timeout, 18: Rescue, 19: GNSS, 20: RTC, 22: DO Aanderaa4330 sensor, 23: Invalid setting of mission, 24: Invalid setting of sensor, 25: Invalid setting of CTD sensor, 26: Empty ballast sensor, 27: Flash memory, 28: SDCard memory, 31: Satellite mask, 32: Clock drift, 33: CTD SBE41 sensor, 34: CTD RBR sensor, 35: Failure on initialization of CTD RBR reset offset, 36: Aborted profile, 37: Ice – Aborted profile, 38: Ice – Breakup period, 39: Ice – Forced ascent);TECH_AUX_FLAG_Alarm1Type_NUMBER;Type of alarm (11: External pressure sensor => No pressure information, 12: Barometer sensor, 13: Failure on initialization of SBE41 reset offset, 14: Failure on initialization of SBE41 cut-off, 15: Error system, 17: Treatment timeout, 18: Rescue, 19: GNSS, 20: RTC, 22: DO Aanderaa4330 sensor, 23: Invalid setting of mission, 24: Invalid setting of sensor, 25: Invalid setting of CTD sensor, 26: Empty ballast sensor, 27: Flash memory, 28: SDCard memory, 31: Satellite mask, 32: Clock drift, 33: CTD SBE41 sensor, 34: CTD RBR sensor, 35: Failure on initialization of CTD RBR reset offset, 36: Aborted profile, 37: Ice – Aborted profile, 38: Ice – Breakup period, 39: Ice – Forced ascent).
+300101;3001;Alarm type (0: Low battery voltage, 1: Low external pressure, 2: High external pressure, 3: Low internal pressure, 4: High internal pressure, 5: Low internal temperature, 6: High internal temperature, 7: Low internal humidity, 8: High internal humidity, 9: Gap on external pressure, 10: High speed of descent, 16: Grounding – Volume max reached, 21: Insulation voltage, 29: Hanging – Volume max reached, 30: ISA detection – Number max of detection reached);TECH_AUX_FLAG_Alarm2Type_NUMBER;Type of alarm (0: Low battery voltage, 1: Low external pressure, 2: High external pressure, 3: Low internal pressure, 4: High internal pressure, 5: Low internal temperature, 6: High internal temperature, 7: Low internal humidity, 8: High internal humidity, 9: Gap on external pressure, 10: High speed of descent, 16: Grounding – Volume max reached, 21: Insulation voltage, 29: Hanging – Volume max reached, 30: ISA detection – Number max of detection reached).
+300102;3001;Value;TECH_AUX_NUMBER_Alarm2Value;Alarm value.
+300103;3001;Threshold;TECH_AUX_NUMBER_Alarm2Threshold;Alarm threshold.
+300200;3002;Pressure: Number of samples over limits;TECH_AUX_NUMBER_AlarmOverLimitsCtdPres_COUNT;Number of CTD PRES values that are over limits.
+300203;3002;Temperature: Number of samples over limits;TECH_AUX_NUMBER_AlarmOverLimitsCtdTemp_COUNT;Number of CTD TEMP values that are over limits.
+300206;3002;Salinity: Number of samples over limits;TECH_AUX_NUMBER_AlarmOverLimitsCtdPsal_COUNT;Number of CTD PSAL values that are over limits.
+300300;3003;C1RPhase: Number of samples over limits;TECH_AUX_NUMBER_AlarmOverLimitsOptodeC1Phase_COUNT;Number of Optode C1PHASE values that are over limits.
+300303;3003;C2RPhase: Number of samples over limits;TECH_AUX_NUMBER_AlarmOverLimitsOptodeC2Phase_COUNT;Number of Optode C2PHASE values that are over limits.
+300306;3003;Temperature: Number of samples over limits;TECH_AUX_NUMBER_AlarmOverLimitsOptodeTemp_COUNT;Number of Optode TEMP_DOXY values that are over limits.
+300400;3004;Pressure: Number of samples over limits;TECH_AUX_NUMBER_AlarmOverLimitsCtdPres_COUNT;Number of CTD PRES values that are over limits.
+300403;3004;Temperature: Number of samples over limits;TECH_AUX_NUMBER_AlarmOverLimitsCtdTemp_COUNT;Number of CTD TEMP values that are over limits.
+300406;3004;Salinity: Number of samples over limits;TECH_AUX_NUMBER_AlarmOverLimitsCtdPsal_COUNT;Number of CTD PSAL values that are over limits.
+300409;3004;Coils temperature: Number of samples over limits;TECH_AUX_NUMBER_AlarmOverLimitsCtdTempCndc_COUNT;Number of CTD TEMP_CNDC values that are over limits.
+300412;3004;Salinity corrected: Number of samples over limits;TECH_AUX_NUMBER_AlarmOverLimitsCtdPsalCor_COUNT;Number of CTD PSAL_DynamicCorrection values that are over limits.
+300501;3005;Number of invalid data;TECH_AUX_NUMBER_<short_sensor_name>AlarmErrorInvalidData_COUNT;Number of invalid data transmitted by the <short_sensor_name> sensor.
+300600;3006;Date/Time (in second since 2000);TECH_AUX_CLOCK_<short_sensor_name>AlarmFrameError_YYYYMMDDHHSSMM;Time of the invalid frame transmitted by the <short_sensor_name> sensor.
+300603;3006;Sensor frame;TECH_AUX_STRING_<short_sensor_name>AlarmFrameError;Invalid frame transmitted by the <short_sensor_name> sensor.
+400001;4000;Voltage (mV);TECH_AUX_VOLTAGE_BatteryCheck_volts;Battery voltage.
+400101;4001;Voltage (mV);TECH_AUX_VOLTAGE_BatteryCheckMaxLoad_volts;Battery voltage measured at the first pump activation of ascent.
+400102;4001;External pressure (cbar);TECH_AUX_PRES_BatteryCheck_dbar;Pressure at battery voltage measurement.
+400201;4002;Internal pressure (mbar);TECH_AUX_PRESSURE_InternalVacuum_mbar;Internal vacuum.
+400202;4002;Internal temperature (m°C);TECH_AUX_TEMPERATURE_InternalTemperature_degC;Internal temperature.
+400203;4002;Internal relative humidity (%RH);TECH_AUX_RATE_InternalHumidity_percent;Internal relative humidity.
+400300;4003;Internal pressure (mbar);TECH_AUX_PRESSURE_InternalVacuumCompensed_mbar;Internal vacuum (compensed in temperature to be compared with factory value, should be around 600 mbar for Arvor floats).
+400400;4004;Date/Time (in second since 2000);CLOCK_LastReset_YYYYMMDDHHMMSS;Clock time of the last reset of the float
+400401;4004;Source of the reset;TECH_AUX_FLAG_LastReset_hex;Event that generated the reset of the float (bit#, 0 : Firewall, 1 : Option byte loader, 2 : PIN reset, 3 : BOR reset, 4 : software, 5 : Independent watchdog, 6 : Window watchdog, 7 : Low-power reset).
+400500;4005;Disk number (0: Flash, 1: SDcard);TECH_AUX_NUMBER_MemoryFreeSpaceFlash_percent;Remaining space in the float flash memory.
+400501;4005;Disk occupancy (resolution: 0.5%);TECH_AUX_NUMBER_MemoryFreeSpaceSdCard_percent;Remaining space in the float SD card memory.
+400601;4006;Internal pressure (mbar);TECH_AUX_PRESSURE_InternalVacuumLastLoss_mbar;Internal vacuum during last loss of internal vacuum.
+400602;4006;Internal temperature (m°C);TECH_AUX_TEMPERATURE_InternalTemperatureLastLossOfInternalVacuum_degC;Internal temperature during last loss of internal vacuum.
+400603;4006;Internal relative humidity (%RH);TECH_AUX_RATE_InternalHumidityLastLossOfInternalVacuum_percent;Internal relative humidity during last loss of internal vacuum.
+500100;5001;Date/Time (in second since 2000);TECH_AUX_CLOCK_SurfaceOffsetMeasurement_YYYYMMDDHHMMSS;Time of surface offset measurement.
+500101;5001;Offset pressure (dbar);TECH_AUX_PRES_SurfaceOffsetMeasurement_dbar;Pressure of surface offset measurement.
+500200;5002;Date/Time (in second since 2000);TECH_AUX_CLOCK_SurfaceOffsetMeasurement_YYYYMMDDHHMMSS;Time of surface offset measurement.
+500201;5002;Offset pressure (dbar);TECH_AUX_PRES_SurfaceOffsetMeasurement_dbar;Pressure of surface offset measurement.
+500300;5003;Date/Time (in second since 2000);TECH_AUX_CLOCK_SurfaceOffsetMeasurement_YYYYMMDDHHMMSS;Time of surface offset measurement.
+500301;5003;Offset pressure (dbar);PRES_SurfaceOffsetCorrectedNotResetNegative_1cBarResolution_dbar;Surface pressure recorded just before the previous descent but data is corrected on board the float. Note: cumulative NEGATIVE   offset  (real offset * -1) but no further correction required. Autocorrected
+500400;5004;Date/Time (in second since 2000);TECH_AUX_CLOCK_SurfaceOffsetMeasurement_YYYYMMDDHHMMSS;Time of surface offset measurement.
+500401;5004;Offset pressure (dbar);PRES_SurfaceOffsetCorrectedNotResetNegative_1cBarResolution_dbar;Surface pressure recorded just before the previous descent but data is corrected on board the float. Note: cumulative NEGATIVE   offset  (real offset * -1) but no further correction required. Autocorrected
+600100;6001;Fast pressure result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_CtdInitialCheckFailedFastPressure_LOGICAL;Result of initial check of CTD fast pressure command (0: ok, 1: error).
+600101;6001;Fast pressure (dbar);TECH_AUX_PRESSURE_CtdInitialCheckFastPressure_dbar;Fast pressure sampled during initial check.
+600102;6001;CTD measurement result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_CtdInitialCheckFailed_LOGICAL;Result of initial check of CTD sensor (0: ok, 1: error).
+600103;6001;CTD Pressure (dbar);TECH_AUX_PRESSURE_CtdInitialCheck_dbar;Pressure sampled during initial check.
+600104;6001;CTD temperature (°C);TECH_AUX_TEMPERATURE_CtdInitialCheck_degC;Temperature sampled during initial check.
+600105;6001;CTD salinity (PSU);TECH_AUX_PSAL_CtdInitialCheck_psu;Salinity sampled during initial check.
+600200;6002;Measurement result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_OptodeInitialCheckFailed_LOGICAL;Result of initial check of optode sensor (0: ok, 1: error).
+600300;6003;Fast pressure result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_CtdInitialCheckFailedFastPressure_LOGICAL;Result of initial check of CTD fast pressure command (0: ok, 1: error).
+600301;6003;Fast pressure (dbar);TECH_AUX_PRESSURE_CtdInitialCheckFastPressure_dbar;Fast pressure sampled during initial check.
+600302;6003;CTD measurement result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_CtdInitialCheckFailed_LOGICAL;Result of initial check of CTD sensor (0: ok, 1: error).
+600303;6003;CTD pressure (dbar);TECH_AUX_PRESSURE_CtdInitialCheck_dbar;Pressure sampled during initial check.
+600304;6003;CTD temperature (°C);TECH_AUX_TEMPERATURE_CtdInitialCheck_degC;Temperature sampled during initial check.
+600305;6003;CTD salinity (PSU);TECH_AUX_PSAL_CtdInitialCheck_psu;Salinity sampled during initial check.
+600306;6003;CTD coils temperature (°C);TECH_AUX_TEMPERATURE_CtdInitialCheckCoilsTemperature_degC;Coils temperature (TEMP_CNDC) sampled during initial check.
+600307;6003;CTD corrected salinity (PSU);TECH_AUX_PSAL_CtdInitialCheckPsalCor_psu;Corrected salinity (PSAL_DynamicCorrection) sampled during initial check.
+610000;6100;Result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedFramMemory_LOGICAL;Result of initial check of FRAM memory (0: ok, 1: error).
+610100;6101;Result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedFlashMemory_LOGICAL;Result of initial check of FLASH memory (0: ok, 1: error).
+610200;6102;State (0: error, 1: ok, 2: not present);TECH_AUX_DIAGNOSTIC_InitialCheckFailedSdCard_NUMBER;Result of initial check of SD card (0: ok, 1: error, 2: not present).
+610300;6103;Result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedXmlSettings_LOGICAL;Result of initial check of XML settings (0: ok, 1: error).
+610400;6104;Result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedRtc_LOGICAL;Result of initial check of RTC (0: ok, 1: error).
+610401;6104;RTC date/Time (in second since 2000);TECH_AUX_DIAGNOSTIC_InitialCheck_YYYYMMDDHHSSMM;Time of initial check.
+610500;6105;Result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedInsulation_LOGICAL;Result of initial check of insulation (0: ok, 1: error).
+610501;6105;Value;TECH_AUX_VOLTAGE_InitialCheckInsulation;Insulation value sampled during initial check.
+610600;6106;Result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedBattery_LOGICAL;Result of initial check of battery (0: ok, 1: error).
+610601;6106;On load battery voltage (mV);TECH_AUX_VOLTAGE_InitialCheckBattery_volts;Battery voltage sampled on load (while pump is activated) during initial check.
+610700;6107;Result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedValve_LOGICAL;Result of initial check of valve (0: ok, 1: error).
+610800;6108;Result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedPump_LOGICAL;Result of initial check of pump (0: ok, 1: error).
+610900;6109;Result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedEmptyBallast_LOGICAL;Result of initial check of empty ballast (0: ok, 1: error).
+610901;6109;Max buoyancy pumping duration (s);TECH_AUX_TIME_InitialCheckMaxPumpDuration_seconds;Pump activation time to reach max buoyancy.
+611000;6110;Internal pressure result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedInternalVacuum_LOGICAL;Result of initial check of internal pressure (0: ok, 1: error).
+611001;6110;Internal pressure (mbar);TECH_AUX_PRESSURE_InitialCheckInternalVacuum_mbar;Internal vacuum sampled during initial check.
+611002;6110;Internal pressure compensed (mbar);TECH_AUX_PRESSURE_InitialCheckInternalVacuumCompensed_mbar;Internal vacuum sampled during initial check (compensed in temperature to be compared with factory value, should be around 600 mbar for Arvor float).
+611003;6110;Internal temperature result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedInternalTemperature_LOGICAL;Result of initial check of internal temperature (0: ok, 1: error).
+611004;6110;Internal temperature (°C);TECH_AUX_TEMPERATURE_InitialCheckInternalTemperature_degC;Internal temperature sampled during initial check.
+611005;6110;Internal relative humidity result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedInternalHumidity_LOGICAL;Result of initial check of internal relative humidity (0: ok, 1: error).
+611006;6110;Internal relative humidity (%);TECH_AUX_RATE_InitialCheckInternalHumidity_percent;Internal relative humidity sampled during initial check.
+611100;6111;Result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedGnss_LOGICAL;Result of initial check of Global Navigation Satellite System (0: ok, 1: error).
+611200;6112;Result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedModem_LOGICAL;Result of initial check of modem (0: ok, 1: error).
+611300;6113;Result flag (0: error, 1: ok, 3: not tested);TECH_AUX_DIAGNOSTIC_InitialCheckFailedGnssFix_NUMBER;Result of initial check of GNSS fix (0: ok, 1: error, 3: not tested).
+611400;6114;Result flag (0: error, 1: ok, 3: not tested);TECH_AUX_DIAGNOSTIC_InitialCheckFailedSurfaceOffsetMeasurement_NUMBER;Result of initial check of surface pressure measurement (0: ok, 1: error, 3: not tested).
+611401;6114;Offset pressure (dbar);TECH_AUX_PRESSURE_InitialCheckSurfaceOffsetMeasurement_dbar;Surface pressure sampled during initial check.
+611500;6115;Result flag (0: error, 1: ok, 3: not tested);TECH_AUX_DIAGNOSTIC_InitialCheckFailedSurfaceOffsetMeasurement_NUMBER;Result of initial check of surface pressure measurement (0: ok, 1: error, 3: not tested).
+611501;6115;Offset pressure (dbar);TECH_AUX_PRESSURE_InitialCheckSurfaceOffsetMeasurement_dbar;Surface pressure sampled during initial check.
+611600;6116;Result flag (0: error, 1: ok);TECH_AUX_DIAGNOSTIC_InitialCheckFailedSbe61_LOGICAL;Result of initial check of SBE61 (0: ok, 1: error).
+700003;7000;Number of satellite;NUMBER_GPSSatellites_COUNT;number of GPS satellites seen by the float 
+700007;7000;;TECH_AUX_NUMBER_GPSSatellites_COUNT;number of GPS satellites seen by the float 
+700004;7000;Valid fix;TECH_AUX_FLAG_GPSValidFix_LOGICAL;Flag for GPS fix determination (1 if a valid fix has been transmitted in tech msg, 0 otherwise).
+700005;7000;Clock drift (s) (*);CLOCK_FloatTimeCorrection_seconds;float internal clock time correction
+700008;7000;;TECH_AUX_CLOCK_FloatTimeCorrection_seconds;float internal clock time correction
+700006;7000;Session duration (s);TIME_IridiumGPSFix_seconds;the number of seconds required to obtain a GPS fix for a profile
+700009;7000;;TECH_AUX_TIME_IridiumGPSFix_seconds;the number of seconds required to obtain a GPS fix for a profile
+700100;7001;Date/Time (in second since 2000);TECH_AUX_CLOCK_PreviousIridiumSessionEnd_YYYYMMDDHHSSMM;End time of the previous Iridium session.
+700101;7001;Session duration (s);TIME_PreviousIridiumSession_seconds;Duration on the previous Iridium session
+700102;7001;SBDI success counter;TECH_AUX_NUMBER_SbdTransmitted_COUNT;Number of SBD message transmitted.
+700103;7001;SBDI total counter;TECH_AUX_NUMBER_SbdSent_COUNT;Number of SBD message sent (but not necessarily successfully transmitted).
+700104;7001;Remote command accepted counter;NUMBER_RemoteControlCommandOK_COUNT;Number of remote control commands successfully considered.
+700105;7001;Remote command refused counter;NUMBER_RemoteControlCommandKO_COUNT;Number of remote control commands rejected by the float.
+700106;7001;Remote command unkown counter;TECH_AUX_NUMBER_RemoteControlCommandUnknown_COUNT;Number of remote control commands not recognised by the float (for example because they concern unknown parameters).
+700107;7001;Received files number;TECH_AUX_NUMBER_RemoteControlFile_COUNT;Number of remote control files received.
+700108;7001;Received size (Byte);TECH_AUX_NUMBER_RemoteControlFile_byte;Number of bytes of remote control files received.
+700109;7001;Transmitted files number;TECH_AUX_NUMBER_FloatFileTransmitted_COUNT;Number of float files successfully transmitted.
+700110;7001;Transmitted size (Byte);TECH_AUX_NUMBER_FloatFileTransmitted_byte;Number of byte of float files successfully transmitted.
+700111;7001;Files number in waiting of transmission;TECH_AUX_NUMBER_FloatFileToBeTransmitted_COUNT;Number of float files that still wait to be transmitted.
+700200;7002;Date/Time (in second since 2000);TECH_AUX_CLOCK_PreviousRudicsSessionEnd_YYYYMMDDHHSSMM;End time of the previous Rudics session.
+700201;7002;Session duration (s);TECH_AUX_TIME_PreviousRudicsSession_seconds;Duration of the previous Rudics session
+700202;7002;Session number;TECH_AUX_NUMBER_PreviousRudicsSession_NUMBER;Number of the previous Rudics session
+700203;7002;Remote command accepted counter;NUMBER_RemoteControlCommandOK_COUNT;Number of remote control commands successfully considered.
+700204;7002;Remote command refused counter;NUMBER_RemoteControlCommandKO_COUNT;Number of remote control commands rejected by the float.
+700205;7002;Remote command unkown counter;TECH_AUX_NUMBER_RemoteControlCommandUnknown_COUNT;Number of remote control commands not recognised by the float (for example because they concern unknown parameters).
+700206;7002;Received files number;TECH_AUX_NUMBER_RemoteControlFile_COUNT;Number of remote control files received.
+700207;7002;Received size (Byte);TECH_AUX_NUMBER_RemoteControlFile_byte;Number of bytes of remote control files received.
+700208;7002;Transmitted files number;TECH_AUX_NUMBER_FloatFileTransmitted_COUNT;Number of float files successfully transmitted.
+700209;7002;Transmitted size (Byte);TECH_AUX_NUMBER_FloatFileTransmitted_byte;Number of byte of float files successfully transmitted.
+700210;7002;Files number in waiting of transmission;TECH_AUX_NUMBER_FloatFileToBeTransmitted_COUNT;Number of float files that still wait to be transmitted.
+800001;8000;Stabilization state (0x00: not stabilized, 0x01: stabilized);TECH_AUX_NUMBER_StabilizationState_NUMBER;State of the first stabilization (0: not stabilized, 1: stabilized).
+800202;8002;PUMP transferred volume (1/10 cm3);TECH_AUX_VOLUME_PumpOilVolumeTransferred_cm^3;Oil volume transferred to the external bladder by the pump action.
+800302;8003;EV transferred volume (1/10 cm3);TECH_AUX_VOLUME_ValveOilVolumeTransferred_cm^3;Oil volume transferred to the external bladder by the valve action.
+900015;9000;;TECH_AUX_NUMBER_<short_sensor_name>DescentSamplesDepthZone<Z>_COUNT;Number of samples acquired by <short_sensor_name> in the depth zone #<Z> during the descent phase from surface to the parking depth.
+900016;9000;;TECH_AUX_NUMBER_<short_sensor_name>DeepDescentSamplesDepthZone<Z>_COUNT;Number of samples acquired by <short_sensor_name> in the depth zone #<Z> during the descent phase from the parking depth to the profile depth.
+900017;9000;;NUMBER_<short_sensor_name>AscentSamplesDepthZone<Z>_COUNT;Number of samples acquired by <short_sensor_name> in the depth zone #<Z> during the ascent from the profile depth to the surface.
+900018;9000;;TECH_AUX_NUMBER_<short_sensor_name>TreatmentTypeDescentSamplesDepthZone<Z>_NUMBER;Treatment type (0x00 : raw, 0x80 : raw decimated, 0x81 : average decimated) applied to raw data mesurements acquired by <short_sensor_name> in the depth zone #<Z> during the descent phases (from surface to the parking depth and from the parking depth to the profile depth).
+900019;9000;;TECH_AUX_NUMBER_<short_sensor_name>TreatmentTypeAscentSamplesDepthZone<Z>_NUMBER;Treatment type (0x00 : raw, 0x80 : raw decimated, 0x81 : average decimated) applied to raw data mesurements acquired by <short_sensor_name> in the depth zone #<Z> during the ascent from the profile depth to the surface.
+900106;9001;;NUMBER_<short_sensor_name>ParkSamples_COUNT;Number of samples acquired by <short_sensor_name> during the drift at parking depth.
+900107;9001;;NUMBER_<short_sensor_name>ProfileDriftSamples_COUNT;Number of samples acquired by <short_sensor_name> during the drift at profile depth.
+900108;9001;;NUMBER_<short_sensor_name>InAirSamples_COUNT;"Number of samples acquired by <short_sensor_name> during the ""surface"" phase."
+900225;9002;;TECH_AUX_NUMBER_<short_sensor_name>DescentMeasRawDepthZone<Z>_COUNT;Number of raw measurements acquired by <short_sensor_name> in the depth zone #<Z> during the descent phase from surface to the parking depth.
+900226;9002;;TECH_AUX_NUMBER_<short_sensor_name>DescentMeasDecimatedDepthZone<Z>_COUNT;Number of decimated measurements acquired by <short_sensor_name> in the depth zone #<Z> during the descent phase from surface to the parking depth.
+900227;9002;;TECH_AUX_NUMBER_<short_sensor_name>DescentMeasProcessedDepthZone<Z>_COUNT;Number of processed measurements acquired by <short_sensor_name> in the depth zone #<Z> during the descent phase from surface to the parking depth.
+900228;9002;;TECH_AUX_NUMBER_<short_sensor_name>DeepDescentMeasRawDepthZone<Z>_COUNT;Number of raw measurements acquired by <short_sensor_name> in the depth zone #<Z> during the descent phase from the parking depth to the profile depth.
+900229;9002;;TECH_AUX_NUMBER_<short_sensor_name>DeepDescentMeasDecimatedDepthZone<Z>_COUNT;Number of decimated measurements acquired by <short_sensor_name> in the depth zone #<Z> during the descent phase from the parking depth to the profile depth.
+900230;9002;;TECH_AUX_NUMBER_<short_sensor_name>DeepDescentMeasProcessedDepthZone<Z>_COUNT;Number of processed measurements acquired by <short_sensor_name> in the depth zone #<Z> during the descent phase from the parking depth to the profile depth.
+900231;9002;;TECH_AUX_NUMBER_<short_sensor_name>AscentMeasRawDepthZone<Z>_COUNT;Number of raw measurements acquired by <short_sensor_name> in the depth zone #<Z> during the ascent from the profile depth to the surface.
+900232;9002;;TECH_AUX_NUMBER_<short_sensor_name>AscentMeasDecimatedDepthZone<Z>_COUNT;Number of decimated measurements acquired by <short_sensor_name> in the depth zone #<Z> during the ascent from the profile depth to the surface.
+900233;9002;;TECH_AUX_NUMBER_<short_sensor_name>AscentMeasProcessedDepthZone<Z>_COUNT;Number of processed measurements acquired by <short_sensor_name> in the depth zone #<Z> during the ascent from the profile depth to the surface.
+1000;-1;Number of SELF-TEST files received;TECH_AUX_NUMBER_SelftestFileReceived_COUNT;Number of selftest files received.
+1001;-1;Number of TECH files received;TECH_AUX_NUMBER_TechnicalFileReceived_COUNT;Number of technical files received (from different transmission sessions).
+1002;-1;Number of EOL files received;TECH_AUX_NUMBER_EolFileReceived_COUNT;Number of eol files received (from different transmission sessions).
+1003;-1;Number of CONFIG files received;TECH_AUX_NUMBER_ParameterMessageReceived_COUNT;Number of configuration files received.
+1004;-1;Expected data file received flag;TECH_AUX_FLAG_CtdExpectedDescentDataFileReceived_LOGICAL;Flag used to report if expected ctd descent data file has been received.
+1005;-1;Expected data file received flag;TECH_AUX_FLAG_OptodeExpectedDescentDataFileReceived_LOGICAL;Flag used to report if expected optode descent data file has been received.
+1006;-1;Expected data file received flag;TECH_AUX_FLAG_CtdExpectedParkDriftDataFileReceived_LOGICAL;Flag used to report if expected ctd park drift data file has been received.
+1007;-1;Expected data file received flag;TECH_AUX_FLAG_OptodeExpectedParkDriftDataFileReceived_LOGICAL;Flag used to report if expected optode park drift data file has been received.
+1008;-1;Expected data file received flag;TECH_AUX_FLAG_CtdExpectedDescentToProfDataFileReceived_LOGICAL;Flag used to report if expected ctd descent to prof data file has been received.
+1009;-1;Expected data file received flag;TECH_AUX_FLAG_OptodeExpectedDescentToProfDataFileReceived_LOGICAL;Flag used to report if expected optode descent to prof data file has been received.
+1010;-1;Expected data file received flag;TECH_AUX_FLAG_CtdExpectedProfDriftDataFileReceived_LOGICAL;Flag used to report if expected ctd prof drift data file has been received.
+1011;-1;Expected data file received flag;TECH_AUX_FLAG_OptodeExpectedProfDriftDataFileReceived_LOGICAL;Flag used to report if expected optode prof drift data file has been received.
+1012;-1;Expected data file received flag;TECH_AUX_FLAG_CtdExpectedAscentDataFileReceived_LOGICAL;Flag used to report if expected ctd ascent data file has been received.
+1013;-1;Expected data file received flag;TECH_AUX_FLAG_OptodeExpectedAscentDataFileReceived_LOGICAL;Flag used to report if expected optode ascent data file has been received.
+1014;-1;Expected data file received flag;TECH_AUX_FLAG_CtdExpectedInAirDataFileReceived_LOGICAL;Flag used to report if expected ctd in air data file has been received.
+1015;-1;Expected data file received flag;TECH_AUX_FLAG_OptodeExpectedInAirDataFileReceived_LOGICAL;Flag used to report if expected optode in air data file has been received.
+1016;-1;Ice activated flag;TECH_AUX_FLAG_IceAlgorithmActivated_LOGICAL;This float type is equiped with Ice detection algorithm which needs to be activated (before launch or at any time during the mission): reported flag = 1 when Ice detection algorithm is activated for the concerned cycle, = 0 otherwise.
+1017;-1;Deep cycle transmission flag;TECH_AUX_FLAG_DeepCycleTransmission_LOGICAL;Reported flag = 1 when the concerned transmission session occured after a deep cycle (i.e. a subsurface) one, = 0 when the float is programed to stay at the surface before the concerned transmission session.
+1015;-1;Expected data file received flag;TECH_AUX_FLAG_OptodeExpectedInAirDataFileReceived_LOGICAL;Flag used to report if expected optode in air data file has been received.
+1016;-1;Ice activated flag;TECH_AUX_FLAG_IceAlgorithmActivated_LOGICAL;This float type is equiped with Ice detection algorithm which needs to be activated (before launch or at any time during the mission): reported flag = 1 when Ice detection algorithm is activated for the concerned cycle, = 0 otherwise.
+1017;-1;Deep cycle transmission flag;TECH_AUX_FLAG_DeepCycleTransmission_LOGICAL;Reported flag = 1 when the concerned transmission session occured after a deep cycle (i.e. a subsurface) one, = 0 when the float is programed to stay at the surface before the concerned transmission session.

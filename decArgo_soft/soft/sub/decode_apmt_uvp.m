@@ -19,7 +19,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/20/2022 - RNU - creation
@@ -89,7 +89,7 @@ catch MException
    switch MException.identifier
       case 'MATLAB:badsubscript'
 
-         fprintf('ERROR: Float #%d: (Cy,Ptn)=(%d,%d): File ''%s'' is inconsistent (shorter than expected) - file ignored\n', ...
+         fprintf('WARNING: Float #%d: (Cy,Ptn)=(%d,%d): File ''%s'' is inconsistent (shorter than expected) - file ignored\n', ...
             g_decArgo_floatNum, ...
             g_decArgo_cycleNumFloat, ...
             g_decArgo_patternNumFloat, ...

@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/18/2013 - RNU - creation
@@ -40,20 +40,22 @@ switch (a_decoderId)
       % PROVOR CTS4 & ARVOR CM
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
-   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133}
+   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
       % PROVOR APMT
       o_comment = 'PRES variable resolutions depend on measurement codes';
       
-   case {201, 202, 203, 215, 216, 218, 221}
+   case {201, 202, 203, 215, 216, 218, 221, 228, 229, 230}
       % ARVOR DEEP 4000
       % ARVOR DEEP 3500
       % ARVOR DEEP 4000 with "Near Surface" & "In Air" measurements
       % Arvor-Deep-Ice Iridium 5.65
       % Arvor-Deep-Ice Iridium 5.66
       % Arvor-Deep-Ice Iridium 5.67
+      % Arvor-Deep-Ice Iridium 5.68 (3T prototype)
+      % Arvor-Deep-Ice Iridium 5.77 (2DO)
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
-   case {205, 204, 210, 211, 212, 222, 213, 214, 217, 219, 220, 223, 224, 225, 226}
+   case {205, 204, 210, 211, 212, 222, 213, 214, 217, 219, 220, 223, 224, 225, 226, 227, 231, 232}
       % ARVOR Iridium
       % ARVOR-ARN Iridium
       % ARVOR-ARN-Ice Iridium 5.45 & 5.47
@@ -65,6 +67,9 @@ switch (a_decoderId)
       % ARVOR-ARN-Ice RBR Iridium 5.49
       % Provor-ARN-DO-Ice Iridium 5.76
       % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
+      % Arvor-ARN-Ice RBR 1 Hz + auto corrected PSAL Iridium 5.52
+      % Arvor-ARN-Ice SBE Iridium 5.53
+      % ARVOR-ARN-Ice Iridium 5.54
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
       
    case {209}
@@ -73,6 +78,10 @@ switch (a_decoderId)
    
    case {206, 207, 208}
       % Provor-DO Iridium
+      o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
+
+   case {401, 402}
+      % ARVOR PFV2
       o_comment = 'JULD and PRES variable resolutions depend on measurement codes';
 
    case {1001, 1002, 1003, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, ...
@@ -88,11 +97,11 @@ switch (a_decoderId)
       % Apex Argos
       o_comment = 'PRES variable resolution depends on measurement codes';
 
-   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1314}
+   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1115, 1314}
       % Apex Iridium Rudics & Sbd
       o_comment = 'PRES variable resolution depends on measurement codes';
       
-   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1321, 1322, 1323}
+   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132, 1321, 1322, 1323}
       % Apex APF11 Iridium
       o_comment = '';
       

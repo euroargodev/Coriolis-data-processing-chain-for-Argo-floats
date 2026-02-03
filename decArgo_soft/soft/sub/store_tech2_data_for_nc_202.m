@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/14/2014 - RNU - creation
@@ -76,8 +76,8 @@ if (a_deepCycle == 1)
       g_decArgo_cycleNum 207];
    g_decArgo_outputNcParamValue{end+1} = tabTech2(9);
    
-   pres = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(tabTech2(10));
-   temp = sensor_2_value_for_temperature_201_to_203_215_216_218_221(tabTech2(11));
+   pres = sensor_2_value_for_pressure_2xx_2_10_to_14_17_22_to_27_31_32(tabTech2(10));
+   temp = sensor_2_value_for_temp_2xx_1_to_3_15_16_18_21_28_29_30(tabTech2(11));
    psal = tabTech2(12)/1000;
    if (any([pres temp psal] ~= 0))
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;

@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/21/2017 - RNU - creation
@@ -136,6 +136,9 @@ end
 % retrieve technical information
 fieldNames = fieldnames(configData);
 for idF = 1:length(fieldNames)
+   if (strcmp(fieldNames{idF}, 'MODEL'))
+      continue
+   end
    if (strcmp(fieldNames{idF}, 'GUI'))
       continue
    end
@@ -158,7 +161,7 @@ for idF = 1:length(fieldNames)
          if (strcmp(data, 'P60=0'))
             continue
          end
-      elseif (ismember(a_decoderId, [129, 130, 131, 132, 133]))
+      elseif (ismember(a_decoderId, [128, 129, 130, 131, 132, 133, 135, 137, 138, 141]))
          allowedNum = [configInfoStruct.(fieldNames{idF}){:}];
          allowedNum = [allowedNum.num];
          idFEq = strfind(data, '=');
@@ -246,7 +249,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/16/2018 - RNU - creation
@@ -262,14 +265,18 @@ switch (a_decoderId)
       [o_configSectionList, o_configInfoStruct] = init_config_info_struct_121_to_123;
    case {124, 125}
       [o_configSectionList, o_configInfoStruct] = init_config_info_struct_124_125;
-   case {126}
-      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_126;
-   case {127}
-      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_127;
+   case {126, 136}
+      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_126_136;
+   case {127, 134}
+      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_127_134;
    case {128}
       [o_configSectionList, o_configInfoStruct] = init_config_info_struct_128;
-   case {129, 130, 131, 132, 133}
-      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_129_to_133;
+   case {129, 130, 131, 132, 133, 137, 141}
+      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_129_to_133_137_141;
+   case {135, 138}
+      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_135_138;
+   case {139, 140}
+      [o_configSectionList, o_configInfoStruct] = init_config_info_struct_139_140;
    otherwise
       fprintf('ERROR: Don''t know how to initialize decoding structure for decoder Id #%d\n', ...
          a_decoderId);

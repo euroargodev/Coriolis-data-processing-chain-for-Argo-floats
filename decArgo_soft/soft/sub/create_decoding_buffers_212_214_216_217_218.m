@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/17/2018 - RNU - creation
@@ -152,7 +152,10 @@ if (any(diff(tabResetDate(idPackType4)) > 0))
       resetId = idPackType4(resetListId(idR));
       resetDate = tabResetDate(resetId);
       tabResetFlag(resetId) = 1;
-      cycNumPrev = tabCyNum(find(tabDate < resetDate, 1, 'last'));
+
+      % cycNumPrev = tabCyNum(find(tabDate < resetDate, 1, 'last'));
+      cycNumPrev = max(tabCyNum(find(tabDate < resetDate))); % example 6904097 (the last cycle is cycle #23 but transmitted after cycle #24)
+
       firstPack = find(tabDate >= resetDate, 1);
       
       fprintf('INFO: Float #%d: A reset has been performed at sea on %s\n', ...
@@ -667,7 +670,7 @@ end
 if (ismember(g_decArgo_floatNum, [ ...
       6903865, 6903771, 7900543, 6900790, 6901880, 6903229, 6902802, 7900522, ...
       6903774, 3901644, 6903010, 6902938, 6903777, 6902989, 6903256, 6903000, ...
-      6903009]))
+      6903009, 6903230, 6903766, 6903782, 7900595, 6903561]))
    switch g_decArgo_floatNum
       case 6903865
          % cycle #58 data are separated
@@ -699,6 +702,18 @@ if (ismember(g_decArgo_floatNum, [ ...
          id = id(1);
          tabRank(tabCyNum == 62) = tabRank(id);
          
+         % cycle #161 data are separated
+         id = find(tabCyNum == 161);
+         tabRank(tabCyNum == 161) = tabRank(id(1));
+         tabSession(tabCyNum == 161) = tabSession(id(1));
+         tabCompleted(tabCyNum == 161) = 1;
+
+         % cycle #167 data are separated
+         id = find(tabCyNum == 167);
+         tabRank(tabCyNum == 167) = tabRank(id(1));
+         tabSession(tabCyNum == 167) = tabSession(id(1));
+         tabCompleted(tabCyNum == 167) = 1;
+
       case 6900790
          % cycle #107 data are separated
          id = find((tabCyNum == 107) & (tabBase == 1));
@@ -900,6 +915,36 @@ if (ismember(g_decArgo_floatNum, [ ...
          id173S(id173 < idSurf) = [];
          tabDeep(id173S) = 0;
 
+         % delayed transmission of second Iridium session of cycle #208
+         id = find(tabCyNum == 208);
+         id2 = find((tabCyNum == 208) & (tabIrSession == 1));
+         id3 = id2(1):id2(1)+2;
+         id4 = setdiff(id, id3);
+         tabRank(id4) = tabRank(id4(1));
+         tabRankByCycle(id4) = tabRank(id4(1));
+         tabDelayed(id4) = 2;
+         tabCompleted(id4) = 1;
+         tabDeep(id3) = 0;
+
+         % delayed transmission cycle #230
+         id = find(tabCyNum == 230);
+         id2 = find((tabRank ~=-1) & (tabRank > tabRank(id(1))));
+         tabRank(id2) = tabRank(id2) + 1;
+         tabRank(id(1:end-3)) = tabRank(id(1)) + 1;
+         tabDeep(id(end-2:end)) = 0;
+
+         % delayed transmission cycle #232
+         id = find(tabCyNum == 232);
+         id2 = find((tabRank ~=-1) & (tabRank > tabRank(id(1))));
+         tabRank(id2) = tabRank(id2) + 1;
+         tabRank(id(1:end-3)) = tabRank(id(1)) + 1;
+         tabDeep(id(end-2:end)) = 0;
+
+         % delayed transmission cycle #234
+         id = find(tabCyNum == 234);
+         tabRank(id(end-2:end)) = tabRank(id(1));
+         tabDeep(id(end-5:end-3)) = 0;
+
       case 6903256
          % cycle #145 in 2 sessions
          id = find(tabCyNum == 145);
@@ -916,6 +961,11 @@ if (ismember(g_decArgo_floatNum, [ ...
          id = find((tabCyNum == 156) & ((tabSession == sessions(1)) | (tabSession == sessions(2))));
          tabSession(id) = tabSession(id(1));   
 
+         % cycle #236 in 2 sessions
+         id236 = find(tabCyNum == 236);
+         tabRank(id236) = tabRank(id236(1));
+         tabDelayed(id236) = 2;
+
       case 6903000
          % cycle #83 in 2 sessions
          id1 = find(tabCyNum == 83, 1, 'first');
@@ -924,33 +974,56 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabSession(tabSession == tabSession(id2)) = tabSession(id1);
          tabCompleted(tabCyNum == 83) = 1;
 
-         % cycle #121 in 2 sessions
-         id1 = find(tabCyNum == 121, 1, 'first');
-         id2 = find((tabCyNum == 121) & (tabBase == 1) & (tabIrSession == 0));
-         tabRank(tabRank == tabRank(id2)) = tabRank(id1);
-         tabSession(tabSession == tabSession(id2)) = tabSession(id1);
-         tabCompleted(tabCyNum == 121) = 1;
+         % multiple cycles in 2 sessions (because of the second Iridium session
+         % data that are also delayed)
+         cycleList = [121, 123, 126, 142, 143, 145, 146, 200, 203, 207, 211, 212, 216, 223, 224];
+         for cyNum = cycleList
+            idC = find(tabCyNum == cyNum);
+            id2 = find((tabCyNum == cyNum) & (tabIrSession == 1));
+            idC_2 = idC(idC >= id2(1));
+            idC = idC(idC < id2(1));
+            tabRank(idC) = tabRank(idC(1));
+            tabDelayed(idC) = 0;
+            tabDeep(idC_2) = 0;
+         end
 
-         % cycle #123 in 2 sessions
-         id123 = find(tabCyNum == 123);
-         tabCompleted(id123) = 1;
-         tabDelayed(id123) = 0;
-         id124 = find(tabCyNum == 124, 1, 'first');
-         id123bisAll = find((tabCyNum == 123) & (tabSession == tabSession(id124)));
-         id123Ir2 = find((tabCyNum == 123) & (tabIrSession == 1), 1, 'first');
-         id123bis = id123bisAll;
-         id123bis(id123bis >= id123Ir2) = [];
-         tabRank(id123bis) = tabRank(id123(1));
-         id123ter = id123bisAll;
-         id123ter(id123ter < id123Ir2) = [];
-         tabDeep(id123ter) = 0;
+         % cycle #201 in 2 sessions
+         id201 = find(tabCyNum == 201);
+         id2 = find((tabCyNum == 201) & (tabIrSession == 1));
+         id3 = find((tabCyNum == 201) & (tabPackType == 5));
+         id201_2 = id201((id201 >= id2(1)) & (id201 <= id3(end)));
+         id201 = setdiff(id201, id201_2);
+         tabRank(id201) = tabRank(id201(1));
+         % tabCompleted(id201) = 1;
+         tabDelayed(id201) = 0;
+         tabDeep(id201_2) = 0;
 
-         % cycle #126 in 2 sessions
-         id1 = find(tabCyNum == 126, 1, 'first');
-         id2 = find((tabCyNum == 126) & (tabBase == 1) & (tabIrSession == 0));
-         tabRank(tabRank == tabRank(id2)) = tabRank(id1);
-         tabSession(tabSession == tabSession(id2)) = tabSession(id1);
-         tabCompleted(tabCyNum == 126) = 1;
+         % cycle #235 in 2 sessions (separated by a second Iridium session)
+         id235 = find(tabCyNum == 235);
+         tabRank(id235(end-2:end)) = tabRank(id235(1));
+         tabCompleted(id235) = 1;
+         tabDeep(id235(end-5:end-3)) = 0;
+         tabDelayed(id235(end-5:end-3)) = 0;
+
+         % cycle #251 in 2 sessions
+         id251 = find(tabCyNum == 251);
+         uRank = unique(tabRank(id251));
+         id = find(ismember(tabRank, uRank(1:2)));
+         tabRank(id) = tabRank(id(1));
+         tabSession(id) = tabSession(id(1));
+
+         % cycle #254 in 2 sessions
+         id254 = find(tabCyNum == 254);
+         uRank = unique(tabRank(id254));
+         id = find(ismember(tabRank, uRank(1:2)));
+         tabRank(id) = tabRank(id(1));
+         tabSession(id) = tabSession(id(1));
+
+         % cycle #263 in 2 sessions
+         id263 = find(tabCyNum == 263);
+         tabRank(id263(1:end-3)) = tabRank(id263(1));
+         tabSession(id263(1:end-3)) = tabSession(id263(1));
+         tabDeep(id263(end-2:end)) = 0;
 
       case 6903009
          % cycle #213 in 2 sessions
@@ -963,6 +1036,67 @@ if (ismember(g_decArgo_floatNum, [ ...
          id213ter = find((tabCyNum == 213) & (tabIrSession == 1), 1, 'first');
          id213ter = find((tabCyNum == 213) & (tabSession == tabSession(id213ter)));
          tabDeep(id213ter) = 0;
+
+      case 6903230
+         % cycle #216 data are separated
+         id = find(tabCyNum == 216);
+         tabRank(id) = tabRank(id(1));
+         tabCompleted(id) = 1; 
+         tabDelayed(id) = 1; 
+         tabDeep(id) = 1; 
+         tabGo(id) = 1;
+
+      case 6903766
+         % cycle #332 data are separated
+         id = find(tabCyNum == 332);
+         tabRank(id) = tabRank(id(1));
+         % tabCompleted(id) = 1; 
+         tabDelayed(id) = 0; 
+         tabDeep(id) = 1; 
+         tabGo(id) = 1; 
+
+         % cycle #334 data are separated
+         id = find(tabCyNum == 334);
+         tabRank(id) = tabRank(id(1));
+         % tabCompleted(id) = 1; 
+         tabDelayed(id) = 0; 
+         tabDeep(id) = 1; 
+         tabGo(id) = 1; 
+
+         % cycle #335 data are separated
+         id = find(tabCyNum == 335);
+         tabRank(id) = tabRank(id(1));
+         % tabCompleted(id) = 1; 
+         tabDelayed(id) = 0; 
+         tabDeep(id) = 1; 
+         tabGo(id) = 1; 
+
+         % cycle #336 data are separated
+         id = find(tabCyNum == 336);
+         tabRank(id) = tabRank(id(1));
+         % tabCompleted(id) = 1; 
+         tabDelayed(id) = 0; 
+         tabDeep(id) = 1; 
+         tabGo(id) = 1; 
+
+      case 6903782
+         % cycle #262 data are separated
+         id = find(tabCyNum == 262);
+         tabRank(id) = tabRank(id(1));
+         tabSession(id) = tabSession(id(1));
+         tabDelayed(id) = 0; 
+         tabDeep(id) = 1; 
+
+      case 7900595
+         % cycle #262 data are separated
+         id = find(tabCyNum == 210);
+         tabRank(id) = tabRank(id(1));
+
+      case 6903561
+         % cycle #227 data are separated
+         id = find(tabCyNum == 227);
+         tabRank(id) = tabRank(id(1));
+
    end
 
    % sort rank numbers according to cycle numbers
@@ -1219,7 +1353,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/17/2018 - RNU - creation
@@ -1243,7 +1377,7 @@ idPackTech2 = find(a_tabPackType(a_idForCheck) == 4);
 idPackProg = find(a_tabPackType(a_idForCheck) == 5);
 % for 5.47 floats, float parameter message is transmitted only when a parameter
 % has been modified
-if (a_decoderId == 222)
+if ((a_decoderId == 222) || (a_decoderId == 232))
    idPackProg = -1;
 end
 idPackDesc = find((a_tabPackType(a_idForCheck) == 1) | (a_tabPackType(a_idForCheck) == 8));
@@ -1372,7 +1506,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/17/2018 - RNU - creation
@@ -1383,7 +1517,7 @@ function [o_packTypeDesc] = get_pack_type_desc(a_packType, a_decoderId)
 o_packTypeDesc = '';
 
 switch (a_decoderId)
-   case {212, 222, 214, 217}
+   case {212, 222, 214, 217, 232}
       switch (a_packType)
          case 0
             o_packTypeDesc = 'Tech#1';

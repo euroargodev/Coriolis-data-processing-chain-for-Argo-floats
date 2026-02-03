@@ -1,0 +1,1554 @@
+{
+   "CONF_PARAM_1" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION.P0",
+      "CONF_PARAM_LABEL" : "Reference day of the 1st cycle (days)",
+      "CONF_PARAM_DEFINITION" : "Reference day of the 1st cycle (days)",
+      "CONF_PARAM_NAME" : "CONFIG_FloatReferenceDay_FloatDay",
+      "CONF_PARAM_DESCRIPTION" : "Profiler configuration - Reference day, for PROVOR and ARVOR floats this is: The day number on which the first profile is to be made. The day when the mission starts is zero."
+   },
+   "CONF_PARAM_2" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-PRESSURE_DETECTION.P0",
+      "CONF_PARAM_LABEL" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_DEFINITION" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_PressureActivationPressureCheckTime_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Pressure scrutation period during the pressure activation phase."
+   },
+   "CONF_PARAM_3" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-PRESSURE_DETECTION.P1",
+      "CONF_PARAM_LABEL" : "Threshold of pressure to start mission (dbar)",
+      "CONF_PARAM_DEFINITION" : "Threshold of pressure to start mission (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_PressureActivation_dbar",
+      "CONF_PARAM_DESCRIPTION" : "depth at which float is set to pressure activate"
+   },
+   "CONF_PARAM_4" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-PRESSURE_DETECTION.P2",
+      "CONF_PARAM_LABEL" : "Maximum number of days before starting mission (days)",
+      "CONF_PARAM_DEFINITION" : "Maximum number of days before starting mission (days)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_PressureActivationTimeout_days",
+      "CONF_PARAM_DESCRIPTION" : "The pressure activation phase starts after the first successfull auto-test and ends (with the start of the float mission) at the end of the CONFIG_AUX_PressureActivationTimeout_days period. During this phase the float checks the external pressure and can start its mission as soon as a CONFIG_PressureActivation_dbar pressure is measured. At the end of this phase the mission will automatically start."
+   },
+   "CONF_PARAM_5" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-INITIALIZATION.P0",
+      "CONF_PARAM_LABEL" : "Waiting at surface before starting mission (s)",
+      "CONF_PARAM_DEFINITION" : "Waiting at surface before starting mission (s)",
+      "CONF_PARAM_NAME" : "CONFIG_DelayBeforeMissionStart_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Float waiting period before the first cycle of its mission (in minutes)."
+   },
+   "CONF_PARAM_6" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX.P1",
+      "CONF_PARAM_LABEL" : "Period of cycle (s)",
+      "CONF_PARAM_DEFINITION" : "Period of cycle (s)",
+      "CONF_PARAM_NAME" : "CONFIG_CycleTime_seconds",
+      "CONF_PARAM_DESCRIPTION" : "For APEX and ARVOR floats this is the total duration of one cycle, usually 240 hours (10 days). For SOLO floats this is the total duration of one cycle, assuming that all float operations reach their full time-out intervals before moving to the next float stage. Typically the actual cycle time will be shorter than this value."
+   },
+   "CONF_PARAM_7" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX.P2",
+      "CONF_PARAM_LABEL" : "Expected hour at surface",
+      "CONF_PARAM_DEFINITION" : "Expected hour at surface",
+      "CONF_PARAM_NAME" : "CONFIG_SurfaceTime_HHMMSS",
+      "CONF_PARAM_DESCRIPTION" : "Hour of the float surfacing"
+   },
+   "CONF_PARAM_8" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-TRANSMISSION01.P0",
+      "CONF_PARAM_LABEL" : "Enable/disable transmission session",
+      "CONF_PARAM_DEFINITION" : "Enable/disable transmission session",
+      "CONF_PARAM_NAME" : "CONFIG_TransmissionEndCycle_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "The float performs a telemetry transmission at the end of the cycle (Yes=1/No=0)."
+   },
+   "CONF_PARAM_9" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-BUOYANCY_RED.P0",
+      "CONF_PARAM_LABEL" : "Mode of buoyancy reduction (0: secure, 1: fast)",
+      "CONF_PARAM_DEFINITION" : "Mode of buoyancy reduction (0: secure, 1: fast)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_BuoyancyReductionMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Mode of the buoyancy reduction (0: secure, 1: fast)."
+   },
+   "CONF_PARAM_10" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-DESC_PARK.P0",
+      "CONF_PARAM_LABEL" : "Expected depth (dbar)",
+      "CONF_PARAM_DEFINITION" : "Expected depth (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_ParkPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "park pressure - this may change if the float is reprogrammed and must be reported in the mission configuration settings"
+   },
+   "CONF_PARAM_11" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-DESC_PARK.P1",
+      "CONF_PARAM_LABEL" : "Mean speed on descent (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Mean speed on descent (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DescentToParkSpeed_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Mean descent speed during descent to parking depth."
+   },
+   "CONF_PARAM_12" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-PARK_DRIFT.P0",
+      "CONF_PARAM_LABEL" : "Minimum duration in drift (s)",
+      "CONF_PARAM_DEFINITION" : "Minimum duration in drift (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_ParkDriftDuration_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Minimum duration of the parking drift phase."
+   },
+   "CONF_PARAM_13" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-PARK_DRIFT.P1",
+      "CONF_PARAM_LABEL" : "Tolerance of positioning (dbar)",
+      "CONF_PARAM_DEFINITION" : "Tolerance of positioning (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_PressureTargetToleranceBeforeParkDriftReposition_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Defines the target pressure interval before performing a buoyancy readjustment to reposition during the drift at parking depth. When a PRES measurement (sampled to monitor the float drift at parking depth) is outside the [parking_pressure +- CONFIG_AUX_PressureTargetToleranceBeforeParkDriftReposition_dbar] interval, the float adjusts its buoyancy."
+   },
+   "CONF_PARAM_14" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-PARK_DRIFT.P2",
+      "CONF_PARAM_LABEL" : "Tolerance of repositioning (dbar)",
+      "CONF_PARAM_DEFINITION" : "Tolerance of repositioning (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_PressureTargetToleranceAfterParkDriftReposition_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Defines the target pressure interval after a reposition to enter anew in the drift phase at parking depth (in dbars)."
+   },
+   "CONF_PARAM_15" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-DESC_PROF.P0",
+      "CONF_PARAM_LABEL" : "Expected depth (dbar)",
+      "CONF_PARAM_DEFINITION" : "Expected depth (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_ProfilePressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "profile pressure - this may change if the float is reprogrammed and must be reported in the mission configuration settings"
+   },
+   "CONF_PARAM_16" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-DESC_PROF.P1",
+      "CONF_PARAM_LABEL" : "Mean speed on descent (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Mean speed on descent (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DescentToProfSpeed_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Mean descent speed during descent to profile depth."
+   },
+   "CONF_PARAM_17" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-PROF_DRIFT.P0",
+      "CONF_PARAM_LABEL" : "Minimum duration in drift (s)",
+      "CONF_PARAM_DEFINITION" : "Minimum duration in drift (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_ProfDriftDuration_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Minimum duration of the profile drift phase."
+   },
+   "CONF_PARAM_18" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-PROF_DRIFT.P1",
+      "CONF_PARAM_LABEL" : "Tolerance of positioning (dbar)",
+      "CONF_PARAM_DEFINITION" : "Tolerance of positioning (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_PressureTargetToleranceBeforeProfDriftReposition_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Defines the target pressure interval before performing a buoyancy readjustment to reposition during the drift at profile depth. When a PRES measurement (sampled to monitor the float drift at parking depth) is outside the [parking_pressure +- CONFIG_AUX_PressureTargetToleranceBeforeProfDriftReposition_dbar] interval, the float adjust its buoyancy."
+   },
+   "CONF_PARAM_19" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-PROF_DRIFT.P2",
+      "CONF_PARAM_LABEL" : "Tolerance of repositioning (dbar)",
+      "CONF_PARAM_DEFINITION" : "Tolerance of repositioning (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_PressureTargetToleranceAfterProfDriftReposition_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Defines the target pressure interval for float drift at profile depth (in dbars)."
+   },
+   "CONF_PARAM_20" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-ASCENT.P0",
+      "CONF_PARAM_LABEL" : "Expected depth (Optional – set to 0 if only one ascent phase)",
+      "CONF_PARAM_DEFINITION" : "Expected depth (Optional – set to 0 if only one ascent phase)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AscentEndPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Expected depth at end of ascent (0 if only one ascent phase)."
+   },
+   "CONF_PARAM_21" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-ASCENT.P1",
+      "CONF_PARAM_LABEL" : "Mean speed on ascent (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Mean speed on ascent (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AscentSpeed_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "ascent speed during upcast in mm/s or cm/s (can be used to estimate the profile duration)"
+   },
+   "CONF_PARAM_22" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-IN_AIR.P0",
+      "CONF_PARAM_LABEL" : "Cycle periodicity (1/x where x=number of the cycle)",
+      "CONF_PARAM_DEFINITION" : "Cycle periodicity (1/x where x=number of the cycle)",
+      "CONF_PARAM_NAME" : "CONFIG_InAirMeasurementPeriodicity_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Cycle periodicity of the in air measurement phase: - 0 means no in air acquisition - 1 means in air acquisition every cycle - N means in air acquisition one cycle every N cycles"
+   },
+   "CONF_PARAM_23" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-IN_AIR.P1",
+      "CONF_PARAM_LABEL" : "Duration of waiting at surface (s)",
+      "CONF_PARAM_DEFINITION" : "Duration of waiting at surface (s)",
+      "CONF_PARAM_NAME" : "CONFIG_InAirMeasurementTime_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Duration of the in air measurement phase."
+   },
+   "CONF_PARAM_24" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-LOOPXX-CYCLEXX-END_OF_CYCLE.P0",
+      "CONF_PARAM_LABEL" : "Waiting at the end of the cycle (s)",
+      "CONF_PARAM_DEFINITION" : "Waiting at the end of the cycle (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EndOfCycleWaintingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Duration of the waiting period at the end of a cycle."
+   },
+   "CONF_PARAM_25" :
+   {
+      "CONF_PARAM_DEC_ID" : "MISSION-END_OF_LIFE.P0",
+      "CONF_PARAM_LABEL" : "Periodicity of the GPS/transmission session (s)",
+      "CONF_PARAM_DEFINITION" : "Periodicity of the GPS/transmission session (s)",
+      "CONF_PARAM_NAME" : "CONFIG_TransmissionPeriodEndOfLife_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Period of the Iridium transmission when in End Of Life mode (in minutes)."
+   },
+   "CONF_PARAM_26" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-BUOYANCY_RED.P0",
+      "CONF_PARAM_LABEL" : "1st threshold of the buoyancy reduction (dbar)",
+      "CONF_PARAM_DEFINITION" : "1st threshold of the buoyancy reduction (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_BuoyancyReductionFirstThreshold_dbar",
+      "CONF_PARAM_DESCRIPTION" : "First threshold of the buoyancy reduction phase (in dbars). From the surface to this first threshold, the float performs one initial valve action (of a computed duration) and N1 additional valve actions (of fixed durations) until the crossing of this first threshold."
+   },
+   "CONF_PARAM_27" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-BUOYANCY_RED.P1",
+      "CONF_PARAM_LABEL" : "2nd threshold of the buoyancy reduction (dbar)",
+      "CONF_PARAM_DEFINITION" : "2nd threshold of the buoyancy reduction (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_BuoyancyReductionSecondThreshold_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Second threshold of the buoyancy reduction phase (in dbars). From the first threshold to this second threshold, the float performs N2 additional valve actions (of computed durations) until the crossing of this second threshold. The descent to park phase starts at the crossing of this second threshold."
+   },
+   "CONF_PARAM_28" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-BUOYANCY_RED.P2",
+      "CONF_PARAM_LABEL" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_DEFINITION" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_NAME" : "CONFIG_PressureCheckTimeBuoyancyReductionPhase_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Time delay after each valve action before checking the pressure during the buoyancy reduction phase (in seconds)."
+   },
+   "CONF_PARAM_29" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-BUOYANCY_RED.P3",
+      "CONF_PARAM_LABEL" : "Volume of SV activation (cm3)",
+      "CONF_PARAM_DEFINITION" : "Volume of SV activation (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_OilVolumePerValveActionBuoyancyReductionPhase_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Constant oil volume transfered at each valve action during the first step (between surface and first threshold) of the buoyancy reduction phase."
+   },
+   "CONF_PARAM_30" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-DESCENT-MIN.P0",
+      "CONF_PARAM_LABEL" : "Mean speed (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Mean speed (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DescentMinThresholdForMeanSpeedProcessing_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute parameters associated with expected mean speed on descent."
+   },
+   "CONF_PARAM_31" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-DESCENT-MIN.P1",
+      "CONF_PARAM_LABEL" : "Min speed (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Min speed (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DescentMinThresholdForMinSpeedProcessing_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute min speed before buoyancy action with expected mean speed on descent."
+   },
+   "CONF_PARAM_32" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-DESCENT-MIN.P2",
+      "CONF_PARAM_LABEL" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_DEFINITION" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DescentMinThresholdForPressureMonitoringPeriodProcessing_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute pressure monitoring period with expected mean speed on descent."
+   },
+   "CONF_PARAM_33" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-DESCENT-MIN.P3",
+      "CONF_PARAM_LABEL" : "Volume of SV activation (cm3)",
+      "CONF_PARAM_DEFINITION" : "Volume of SV activation (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DescentMinThresholdForMaxVolumeOfValveActionProcessing_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute max volume of valve action with expected mean speed on descent."
+   },
+   "CONF_PARAM_34" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-DESCENT-MAX.P0",
+      "CONF_PARAM_LABEL" : "Mean speed (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Mean speed (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DescentMaxThresholdForMeanSpeedProcessing_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute parameters associated with expected mean speed on descent."
+   },
+   "CONF_PARAM_35" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-DESCENT-MAX.P1",
+      "CONF_PARAM_LABEL" : "Min speed (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Min speed (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DescentMaxThresholdForMinSpeedProcessing_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute min speed before buoyancy action with expected mean speed on descent."
+   },
+   "CONF_PARAM_36" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-DESCENT-MAX.P2",
+      "CONF_PARAM_LABEL" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_DEFINITION" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DescentMaxThresholdForPressureMonitoringPeriodProcessing_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute pressure monitoring period with expected mean speed on descent."
+   },
+   "CONF_PARAM_37" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-DESCENT-MAX.P3",
+      "CONF_PARAM_LABEL" : "Volume of SV activation (cm3)",
+      "CONF_PARAM_DEFINITION" : "Volume of SV activation (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DescentMaxThresholdForMaxVolumeOfValveActionProcessing_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute max volume of valve action with expected mean speed on descent."
+   },
+   "CONF_PARAM_38" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-DRIFT.P0",
+      "CONF_PARAM_LABEL" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_DEFINITION" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_NAME" : "CONFIG_PressureCheckTimeParking_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Period of the pressure checks during the float drift at park or profile depth."
+   },
+   "CONF_PARAM_39" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-REPOSITIONING.P0",
+      "CONF_PARAM_LABEL" : "Speed stabilization (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Speed stabilization (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_ExpectedSpeedStabilizationDuringDriftReposition_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Expected speed stabilization during drift reposition (used to compute hydraulic activity during drift reposition)."
+   },
+   "CONF_PARAM_40" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-REPOSITIONING-MIN.P0",
+      "CONF_PARAM_LABEL" : "Tolerance in pressure of expected depth (dbar)",
+      "CONF_PARAM_DEFINITION" : "Tolerance in pressure of expected depth (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DriftMinThresholdForToleranceBeforeDriftRepositionProcessing_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute parameters associated with expected tolerance before drift reposition."
+   },
+   "CONF_PARAM_41" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-REPOSITIONING-MIN.P1",
+      "CONF_PARAM_LABEL" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_DEFINITION" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DriftMinThresholdForPressureMonitoringPeriodProcessing_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute pressure monitoring period with expected tolerance before drift reposition."
+   },
+   "CONF_PARAM_42" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-REPOSITIONING-MIN.P2",
+      "CONF_PARAM_LABEL" : "Maximum volume of SV activation (cm3)",
+      "CONF_PARAM_DEFINITION" : "Maximum volume of SV activation (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DriftMinThresholdForMaxVolumeOfValveActionProcessing_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute max volume of valve action with expected tolerance before drift reposition."
+   },
+   "CONF_PARAM_43" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-REPOSITIONING-MIN.P3",
+      "CONF_PARAM_LABEL" : "Maximum volume of PUMP activation (cm3)",
+      "CONF_PARAM_DEFINITION" : "Maximum volume of PUMP activation (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DriftMinThresholdForMaxVolumeOfPumpActionProcessing_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute max volume of pump action with expected tolerance before drift reposition."
+   },
+   "CONF_PARAM_44" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-REPOSITIONING-MAX.P0",
+      "CONF_PARAM_LABEL" : "Tolerance in pressure of expected depth (dbar)",
+      "CONF_PARAM_DEFINITION" : "Tolerance in pressure of expected depth (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DriftMaxThresholdForToleranceBeforeDriftRepositionProcessing_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute parameters associated with expected tolerance before drift reposition."
+   },
+   "CONF_PARAM_45" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-REPOSITIONING-MAX.P1",
+      "CONF_PARAM_LABEL" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_DEFINITION" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DriftMaxThresholdForPressureMonitoringPeriodProcessing_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute pressure monitoring period with expected tolerance before drift reposition."
+   },
+   "CONF_PARAM_46" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-REPOSITIONING-MAX.P2",
+      "CONF_PARAM_LABEL" : "Maximum volume of SV activation (cm3)",
+      "CONF_PARAM_DEFINITION" : "Maximum volume of SV activation (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DriftMaxThresholdForMaxVolumeOfValveActionProcessing_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute max volume of valve action with expected tolerance before drift reposition."
+   },
+   "CONF_PARAM_47" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-REPOSITIONING-MAX.P3",
+      "CONF_PARAM_LABEL" : "Maximum volume of PUMP activation (cm3)",
+      "CONF_PARAM_DEFINITION" : "Maximum volume of PUMP activation (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DriftMaxThresholdForMaxVolumeOfPumpActionProcessing_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute max volume of pump action with expected tolerance before drift reposition."
+   },
+   "CONF_PARAM_48" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-ASCENT.P0",
+      "CONF_PARAM_LABEL" : "Tolerance in pressure of expected depth (dbar) (NOT USED by ARVOR 2)",
+      "CONF_PARAM_DEFINITION" : "Tolerance in pressure of expected depth (dbar) (NOT USED by ARVOR 2)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_PressureThresholdBeforeAscentEnd_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Defines the pressure threshold (CONFIG_AscentEndPressure_dbar - CONFIG_PressureThresholdBeforeAscentEnd_dbar) to stop pump action during ascent to surface"
+   },
+   "CONF_PARAM_49" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-ASCENT-SURFACE.P0",
+      "CONF_PARAM_LABEL" : "Threshold of pressure considering that the surface has been reached (dbar)",
+      "CONF_PARAM_DEFINITION" : "Threshold of pressure considering that the surface has been reached (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AscentEndThreshold_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Threshold used by the float to stop ascent speed control and pump actions."
+   },
+   "CONF_PARAM_50" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-ASCENT-SURFACE.P1",
+      "CONF_PARAM_LABEL" : "Waiting delay once surface reached (s)",
+      "CONF_PARAM_DEFINITION" : "Waiting delay once surface reached (s)",
+      "CONF_PARAM_NAME" : "CONFIG_TimeDelayAfterEndOfAscentPressureThreshold_seconds",
+      "CONF_PARAM_DESCRIPTION" : "At the end of the ascent phase, when the float detects a given pressure (Ex: 6 dbar) it waits for this time delay before starting the pump for the final buoyancy acquisition."
+   },
+   "CONF_PARAM_51" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-ASCENT-MIN.P0",
+      "CONF_PARAM_LABEL" : "Mean speed (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Mean speed (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AscentMinThresholdForMeanSpeedProcessing_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute parameters associated with expected mean speed on ascent."
+   },
+   "CONF_PARAM_52" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-ASCENT-MIN.P1",
+      "CONF_PARAM_LABEL" : "Min speed (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Min speed (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AscentMinThresholdForMinSpeedProcessing_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute min speed before buoyancy action with expected mean speed on ascent."
+   },
+   "CONF_PARAM_53" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-ASCENT-MIN.P2",
+      "CONF_PARAM_LABEL" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_DEFINITION" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AscentMinThresholdForPressureMonitoringPeriodProcessing_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute pressure monitoring period with expected mean speed on ascent."
+   },
+   "CONF_PARAM_54" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-ASCENT-MIN.P3",
+      "CONF_PARAM_LABEL" : "Volume of PUMP activation (cm3)",
+      "CONF_PARAM_DEFINITION" : "Volume of PUMP activation (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AscentMinThresholdForMaxVolumeOfValveActionProcessing_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute max volume of valve action with expected mean speed on ascent."
+   },
+   "CONF_PARAM_55" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-ASCENT-MAX.P0",
+      "CONF_PARAM_LABEL" : "Mean speed (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Mean speed (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AscentMaxThresholdForMeanSpeedProcessing_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute parameters associated with expected mean speed on ascent."
+   },
+   "CONF_PARAM_56" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-ASCENT-MAX.P1",
+      "CONF_PARAM_LABEL" : "Min speed (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Min speed (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AscentMaxThresholdForMinSpeedProcessing_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute min speed before buoyancy action with expected mean speed on ascent."
+   },
+   "CONF_PARAM_57" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-ASCENT-MAX.P2",
+      "CONF_PARAM_LABEL" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_DEFINITION" : "Period of pressure monitoring (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AscentMaxThresholdForPressureMonitoringPeriodProcessing_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute pressure monitoring period with expected mean speed on ascent."
+   },
+   "CONF_PARAM_58" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-ASCENT-MAX.P3",
+      "CONF_PARAM_LABEL" : "Volume of PUMP activation (cm3)",
+      "CONF_PARAM_DEFINITION" : "Volume of PUMP activation (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AscentMaxThresholdForMaxVolumeOfValveActionProcessing_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Parameter used to compute max volume of valve action with expected mean speed on ascent."
+   },
+   "CONF_PARAM_59" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-EMERGENCE.P0",
+      "CONF_PARAM_LABEL" : "Volume of pumping increasing buoyancy",
+      "CONF_PARAM_DEFINITION" : "Volume of pumping increasing buoyancy",
+      "CONF_PARAM_NAME" : "CONFIG_OilVolumeLastPumpActionBuoyancyAcquisition_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Volume of the last pump action of the buoyancy acquisition phase. Original proposed name was: CONFIG_PumpActionOilVolumeBuoyancyAcquisition_cm^3"
+   },
+   "CONF_PARAM_60" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-IN_AIR.P0",
+      "CONF_PARAM_LABEL" : "Volume of pumping increasing buoyancy to make acquisition in air",
+      "CONF_PARAM_DEFINITION" : "Volume of pumping increasing buoyancy to make acquisition in air",
+      "CONF_PARAM_NAME" : "CONFIG_PumpActionTimeBuoyancyAcquisitionForInAirMeasCycle_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Duration of the last pump action of the buoyancy acquisition phase when a in air measurement phase is programmed (in centi-seconds). [For a cycle without in air measurement phase it is CONFIG_PumpActionTimeBuoyancyAcquisition_csec]."
+   },
+   "CONF_PARAM_61" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-TREATMENT.P0",
+      "CONF_PARAM_LABEL" : "Timeout of sensors data treatment before transmission (s)",
+      "CONF_PARAM_DEFINITION" : "Timeout of sensors data treatment before transmission (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_TimeoutSensorDataProcessing_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Maximum amount of time allowed for sensor data processing to complete its task."
+   },
+   "CONF_PARAM_62" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-TRANSMISSION.P0",
+      "CONF_PARAM_LABEL" : "GPS: Time-out of session (s)",
+      "CONF_PARAM_DEFINITION" : "GPS: Time-out of session (s)",
+      "CONF_PARAM_NAME" : "CONFIG_GPSTimeout_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Timeout for GPS acquisition."
+   },
+   "CONF_PARAM_63" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-TRANSMISSION.P1",
+      "CONF_PARAM_LABEL" : "GPS: Volume of pumping in case of acquisition failure (cm3)",
+      "CONF_PARAM_DEFINITION" : "GPS: Volume of pumping in case of acquisition failure (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_OilVolumePumpActionWhenGpsFailed_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Volume of the additional pump action performed when the GNSS failed to acquire a valid GPS fix."
+   },
+   "CONF_PARAM_64" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-TRANSMISSION.P2",
+      "CONF_PARAM_LABEL" : "IRIDIUM: Time-out of 1st connection (s)",
+      "CONF_PARAM_DEFINITION" : "IRIDIUM: Time-out of 1st connection (s)",
+      "CONF_PARAM_NAME" : "CONFIG_ConnectionFailureTimeOut_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Is the maximum time allowed for the float to connect to the RUDICS server, i.e. it tries to connect during 30 minutes (values set for these floats) if it fails it is probably because it is under ice (that has not been detected by ISA or hanging algorithms)."
+   },
+   "CONF_PARAM_65" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-TRANSMISSION.P3",
+      "CONF_PARAM_LABEL" : "IRIDIUM: Time-out of session (s)",
+      "CONF_PARAM_DEFINITION" : "IRIDIUM: Time-out of session (s)",
+      "CONF_PARAM_NAME" : "CONFIG_ConnectionTimeOut_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Connection time-out, i.e. maximum transmission period for one telemetry session"
+   },
+   "CONF_PARAM_66" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-TRANSMISSION.P4",
+      "CONF_PARAM_LABEL" : "Enable/disable GZ compression on all files sent",
+      "CONF_PARAM_DEFINITION" : "Enable/disable GZ compression on all files sent",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EnableGzCompressionOnTransmittedFiles_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable GZ compression on all files sent."
+   },
+   "CONF_PARAM_67" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-TRANSMISSION.P5",
+      "CONF_PARAM_LABEL" : "Number of sending tries before quarantining a file",
+      "CONF_PARAM_DEFINITION" : "Number of sending tries before quarantining a file",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_FileTransmissionGiveUp_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Threshold used to give up in transmitting a file."
+   },
+   "CONF_PARAM_68" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-TRANSMISSION-RUDICS.P0",
+      "CONF_PARAM_LABEL" : "Maximum size of transmit files (KB)",
+      "CONF_PARAM_DEFINITION" : "Maximum size of transmit files (KB)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_TransmittedFileMaxSize_kbyte",
+      "CONF_PARAM_DESCRIPTION" : "Max size for transmitted files (in kbyte). Larger files are split before transmission."
+   },
+   "CONF_PARAM_69" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-TRANSMISSION-RUDICS.P1",
+      "CONF_PARAM_LABEL" : "Reset RUDICS connection before retrieving remote control commands",
+      "CONF_PARAM_DEFINITION" : "Reset RUDICS connection before retrieving remote control commands",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_ResetRudicsBeforeRetrievingRemoteControlCommands_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Reset RUDICS connection before retrieving remote control commands."
+   },
+   "CONF_PARAM_70" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-TRANSMISSION-SBD.P0",
+      "CONF_PARAM_LABEL" : "Resend setting file one remote control commands receiving",
+      "CONF_PARAM_DEFINITION" : "Resend setting file one remote control commands receiving",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_SendSettingFileOnRemoteControlCommandsReception_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Send the updated setting file when new remote control commands have been received."
+   },
+   "CONF_PARAM_71" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-EMERGENCY_ASCENT.P0",
+      "CONF_PARAM_LABEL" : "Min speed (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Min speed (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EmergencyAscentSpeedMin_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Float minimum ascent speed before activating the pump during an emergency ascent."
+   },
+   "CONF_PARAM_72" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-EMERGENCY_ASCENT.P1",
+      "CONF_PARAM_LABEL" : "Volume of PUMP activation (cm3)",
+      "CONF_PARAM_DEFINITION" : "Volume of PUMP activation (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EmergencyAscentOilVolumePerPumpAction_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Oil volume of each pump action during an emergency ascent."
+   },
+   "CONF_PARAM_73" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-END_OF_LIFE-SCHEDULER.P0",
+      "CONF_PARAM_LABEL" : "Enable/disable the automatic “end of life at bottom”",
+      "CONF_PARAM_DEFINITION" : "Enable/disable the automatic “end of life at bottom”",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EolAtDepth_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable automatic End Of Life at depth."
+   },
+   "CONF_PARAM_74" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-END_OF_LIFE-SCHEDULER.P1",
+      "CONF_PARAM_LABEL" : "Minimum number of cycles realized",
+      "CONF_PARAM_DEFINITION" : "Minimum number of cycles realized",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EolAtDepthMinimumNumberOfCycles_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Minimum number of cycles completed to activate automatic End Of Life at depth."
+   },
+   "CONF_PARAM_75" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-END_OF_LIFE-SCHEDULER.P2",
+      "CONF_PARAM_LABEL" : "Minimum number of days at sea",
+      "CONF_PARAM_DEFINITION" : "Minimum number of days at sea",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EolAtDepthMinimumNumberOfDaysAtSea_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Minimum number of days at sea to activate automatic End Of Life at depth."
+   },
+   "CONF_PARAM_76" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-END_OF_LIFE-SCHEDULER.P3",
+      "CONF_PARAM_LABEL" : "Number of detections confirming the “end of life”",
+      "CONF_PARAM_DEFINITION" : "Number of detections confirming the “end of life”",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EolAtDepthMinimumNumberOfBatteryDepletion_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Minimum number of check battery depletion confirmations to activate automatic End Of Life at depth."
+   },
+   "CONF_PARAM_77" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-LOGGER.P0",
+      "CONF_PARAM_LABEL" : "Event logger level (0: project information, 1: technical information, 2: endurance information)",
+      "CONF_PARAM_DEFINITION" : "Event logger level (0: project information, 1: technical information, 2: endurance information)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EventLoggerDescriptionLevel_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Level of events stored in the associated log file (0: project information, 1: technical information, 2: endurance information)."
+   },
+   "CONF_PARAM_78" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-LOGGER.P1",
+      "CONF_PARAM_LABEL" : "Pressure information (bit 0: on descent, bit 1: on drift, bit 2: on ascent)",
+      "CONF_PARAM_DEFINITION" : "Pressure information (bit 0: on descent, bit 1: on drift, bit 2: on ascent)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_ReportedSpyData_hex",
+      "CONF_PARAM_DESCRIPTION" : "Used to choose which spy measurements (pressure vs time) are reported in the technical file (bit 0: on descent, bit 1: on drift, bit 2: on ascent)."
+   },
+   "CONF_PARAM_79" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-LOGGER.P2",
+      "CONF_PARAM_LABEL" : "Reporting of sensors treatment (0: treated data only, 1: all data)",
+      "CONF_PARAM_DEFINITION" : "Reporting of sensors treatment (0: treated data only, 1: all data)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_ReportDetailedDataProcessing_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable report of detailed data processing information in the technical file."
+   },
+   "CONF_PARAM_80" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-LOGGER.P3",
+      "CONF_PARAM_LABEL" : "Reporting of ISA measures",
+      "CONF_PARAM_DEFINITION" : "Reporting of ISA measures",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_ReportIsaSamples_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable report of all samples acquired for the ISA detection (with a maximum of 50 samples) in the technical file."
+   },
+   "CONF_PARAM_81" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-SECURITY.P0",
+      "CONF_PARAM_LABEL" : "Surface pressure (dbar)",
+      "CONF_PARAM_DEFINITION" : "Surface pressure (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_FloatAtSurfacePressureThreshold_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Defines the pressure threshold used to decide if the float is at the surface."
+   },
+   "CONF_PARAM_82" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-SECURITY.P1",
+      "CONF_PARAM_LABEL" : "Min delay between pressure to compute speed (s)",
+      "CONF_PARAM_DEFINITION" : "Min delay between pressure to compute speed (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_SpeedComputationMinDelay_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Threshold used to compute a speed between two pressures."
+   },
+   "CONF_PARAM_83" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-SECURITY.P2",
+      "CONF_PARAM_LABEL" : "Volume of PUMP activation on descent braking (cm3)",
+      "CONF_PARAM_DEFINITION" : "Volume of PUMP activation on descent braking (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_OilVolumePumpActionDescentBraking_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Volume of the pump actions performed when the descent speed overshot its max value (CONFIG_HighDescentSpeedAlarmThreshold_cm/s)."
+   },
+   "CONF_PARAM_84" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-SECURITY.P3",
+      "CONF_PARAM_LABEL" : "Volume of PUMP activation on emergency braking (cm3)",
+      "CONF_PARAM_DEFINITION" : "Volume of PUMP activation on emergency braking (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_OilVolumePumpActionDescentEmergencyBraking_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "Volume of the pump action performed when the pressure overshot its max value (CONFIG_PressureMaxBeforeEmergencyAscent_dbar)."
+   },
+   "CONF_PARAM_85" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-SECURITY.P4",
+      "CONF_PARAM_LABEL" : "Braking factor to stop ascent on aborted profile",
+      "CONF_PARAM_DEFINITION" : "Braking factor to stop ascent on aborted profile",
+      "CONF_PARAM_NAME" : "CONFIG_ProfileEvasionBrakingFactor_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "This factor defines the oil volume transferred from the external bladder when a profile evasion occurs and the float has to brake. The transferred oil volume is CONFIG_ProfileEvasionAscentSpeedFactor_NUMBER times the oil volume of the last pump action."
+   },
+   "CONF_PARAM_86" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-SECURITY-GROUNDING.P0",
+      "CONF_PARAM_LABEL" : "Volume of SV at surface before considering a grounding (cm3)",
+      "CONF_PARAM_DEFINITION" : "Volume of SV at surface before considering a grounding (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_OilVolumeMinForSurfaceGroundingDetection_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "This information is a threshold used to detect a surface grounding of the float. If there is no vertical motion after having tranfered CONFIG_OilVolumeMinForSurfaceGroundingDetection_cm^3 through the valve, the surface gounded flag is activated."
+   },
+   "CONF_PARAM_87" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-SECURITY-GROUNDING.P1",
+      "CONF_PARAM_LABEL" : "Volume of SV on descent before considering a grounding (cm3)",
+      "CONF_PARAM_DEFINITION" : "Volume of SV on descent before considering a grounding (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_OilVolumeMinForGroundingDetection_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "This information is a threshold used to detect a grounding of the float. If there is no vertical motion after having tranfered CONFIG_OilVolumeMinForGroundingDetection_cm^3 through the valve, the gounded flag is activated and the float acts as configurated by the CONFIG_GroundingMode_LOGICAL parameter.So, yes it is a configuration parameter (and I can easily understand that it can be modified via remote control since some PROVOR floats have experienced erroneous grounding detection (under study but perhaps due to in-situ conditions)."
+   },
+   "CONF_PARAM_88" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-SECURITY-GROUNDING.P2",
+      "CONF_PARAM_LABEL" : "Speed of stabilization on descent (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Speed of stabilization on descent (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_DescentSpeedForGroundingDetection_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Descent speed threshold to check for a possible grounding of the float."
+   },
+   "CONF_PARAM_89" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-SECURITY-GROUNDING.P3",
+      "CONF_PARAM_LABEL" : "Behaviour on grounding in “descent to parking” or “parking drift” (0: pressure switch, 1: stay grounded, 2: immediate ascent)",
+      "CONF_PARAM_DEFINITION" : "Behaviour on grounding in “descent to parking” or “parking drift” (0: pressure switch, 1: stay grounded, 2: immediate ascent)",
+      "CONF_PARAM_NAME" : "CONFIG_GroundingMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Action performed by the float when a grounding is detected. 0: the float changes its drift pressure, 1: the float stays on the seabed until the next phase of the cycle. For PROVOR CTS5 the number assigned to each mode has changed - see float manual for details for this model."
+   },
+   "CONF_PARAM_90" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-SECURITY-GROUNDING.P4",
+      "CONF_PARAM_LABEL" : "Behaviour on grounding in “descent to profile” or “profile drift” (0: pressure switch, 1: stay grounded, 2: immediate ascent)",
+      "CONF_PARAM_DEFINITION" : "Behaviour on grounding in “descent to profile” or “profile drift” (0: pressure switch, 1: stay grounded, 2: immediate ascent)",
+      "CONF_PARAM_NAME" : "CONFIG_GroundingModeForProfileDepth_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Action performed by the float when a grounding is detected during descent to profile depth. For PROVOR CTS5 floats: 2: the float stays on the seabed until the ascent start time, 3: the ascent starts immediately."
+   },
+   "CONF_PARAM_91" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-SECURITY-GROUNDING.P5",
+      "CONF_PARAM_LABEL" : "Minimum pressure before allowing switch on depth setpoint (dbar)",
+      "CONF_PARAM_DEFINITION" : "Minimum pressure before allowing switch on depth setpoint (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_GroundingModeMinPresThreshold_dbar",
+      "CONF_PARAM_DESCRIPTION" : "If in grounding mode 0, the float changes its drift pressure only if its current pressure is greater than this value."
+   },
+   "CONF_PARAM_92" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-SECURITY-GROUNDING.P6",
+      "CONF_PARAM_LABEL" : "Offset pressure of depth setpoint (dbar)",
+      "CONF_PARAM_DEFINITION" : "Offset pressure of depth setpoint (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_GroundingModePresAdjustment_dbar",
+      "CONF_PARAM_DESCRIPTION" : "If in grounding mode 0, the float changes its drift pressure to its programmed one minus this value only if its current pressure is greater than this value."
+   },
+   "CONF_PARAM_93" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-HYDRAULIC.P0",
+      "CONF_PARAM_LABEL" : "Multiplier coefficient of hydraulic algorithm",
+      "CONF_PARAM_DEFINITION" : "Multiplier coefficient of hydraulic algorithm",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HydraulicAlgorithmMultiplierFactor_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Multiplier coefficient of hydraulic algorithm."
+   },
+   "CONF_PARAM_94" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-HYDRAULIC-SV.P0",
+      "CONF_PARAM_LABEL" : "Minimum duration of SV activation (ms)",
+      "CONF_PARAM_DEFINITION" : "Minimum duration of SV activation (ms)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_ValveActionMinTime_msec",
+      "CONF_PARAM_DESCRIPTION" : "Minimum duration of a valve action."
+   },
+   "CONF_PARAM_95" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-HYDRAULIC-SV.P1",
+      "CONF_PARAM_LABEL" : "SV efficiency (%)",
+      "CONF_PARAM_DEFINITION" : "SV efficiency (%)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_ValveEfficiency_percent",
+      "CONF_PARAM_DESCRIPTION" : "Valve efficiency (%)."
+   },
+   "CONF_PARAM_96" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-HYDRAULIC-PUMP.P0",
+      "CONF_PARAM_LABEL" : "Minimum duration of PUMP activation (ms)",
+      "CONF_PARAM_DEFINITION" : "Minimum duration of PUMP activation (ms)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_PumpActionMinTime_msec",
+      "CONF_PARAM_DESCRIPTION" : "Minimum duration of a pump action."
+   },
+   "CONF_PARAM_97" :
+   {
+      "CONF_PARAM_DEC_ID" : "TECHNICAL-HYDRAULIC-PUMP.P1",
+      "CONF_PARAM_LABEL" : "PUMP efficiency (%)",
+      "CONF_PARAM_DEFINITION" : "PUMP efficiency (%)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_PumpEfficiency_percent",
+      "CONF_PARAM_DESCRIPTION" : "Pump efficiency (%)."
+   },
+   "CONF_PARAM_98" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX.P0",
+      "CONF_PARAM_LABEL" : "Enable/disable the sensor",
+      "CONF_PARAM_DEFINITION" : "Enable/disable the sensor",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>Enable_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable <short_sensor_name> sensor."
+   },
+   "CONF_PARAM_99" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX.P1",
+      "CONF_PARAM_LABEL" : "Format of treated data",
+      "CONF_PARAM_DEFINITION" : "Format of treated data",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>TransmittedDataFormat_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Format of <short_sensor_name> transmitted data (coded value that depends on each sensor)."
+   },
+   "CONF_PARAM_100" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX.P2",
+      "CONF_PARAM_LABEL" : "Datation frequency of treated data",
+      "CONF_PARAM_DEFINITION" : "Datation frequency of treated data",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>DatationFrequency_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Datation frequency of <short_sensor_name> sampled data (N means that we have 1 dated level each N measurements)."
+   },
+   "CONF_PARAM_101" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-DESCENT.P0",
+      "CONF_PARAM_LABEL" : "Enable/disable acquisition on “descent to parking”",
+      "CONF_PARAM_DEFINITION" : "Enable/disable acquisition on “descent to parking”",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>DescentToParkPhaseEnableAcquisition_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable acquisition during “descent to parking” phase."
+   },
+   "CONF_PARAM_102" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-DESCENT.P1",
+      "CONF_PARAM_LABEL" : "Enable/disable acquisition on “descent to profile”",
+      "CONF_PARAM_DEFINITION" : "Enable/disable acquisition on “descent to profile”",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>DescentToProfPhaseEnableAcquisition_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable acquisition during “descent to profile” phase."
+   },
+   "CONF_PARAM_103" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-DESCENT-ZONEN.P0",
+      "CONF_PARAM_LABEL" : "Zone N - Pressure threshold between zone N and zone N+1",
+      "CONF_PARAM_DEFINITION" : "Zone N - Pressure threshold between zone N and zone N+1",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>DescentPhasesDepthZone<N>DepthZone<N+1>PressureThreshold_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Threshold between depth zone #N and depth zone #N+1 for <short_sensor_name> in the descent phases (in dbar)."
+   },
+   "CONF_PARAM_104" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-DESCENT-ZONEN.P1",
+      "CONF_PARAM_LABEL" : "Zone N - Sampling period (s)",
+      "CONF_PARAM_DEFINITION" : "Zone N - Sampling period (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>DescentPhasesDepthZone<N>SamplingPeriod_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the descent phases of the cycle."
+   },
+   "CONF_PARAM_105" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-DESCENT-ZONEN.P2",
+      "CONF_PARAM_LABEL" : "Zone N - Acquisition type (0: none, 1: continu, 2: pulsed, 3: spot sampling)",
+      "CONF_PARAM_DEFINITION" : "Zone N - Acquisition type (0: none, 1: continu, 2: pulsed, 3: spot sampling)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>DescentPhasesDepthZone<N>PowerAcquisitionMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode of the <short_sensor_name> in the depth zone #<N> during the descent phases (0 : none, 1 : continuous, 2 : pulsed, 3 : spot sampling)."
+   },
+   "CONF_PARAM_106" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-DESCENT-ZONEN.P3",
+      "CONF_PARAM_LABEL" : "Zone N - Processing type (00: raw, 80: raw decimated, 81: average decimated)",
+      "CONF_PARAM_DEFINITION" : "Zone N - Processing type (00: raw, 80: raw decimated, 81: average decimated)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>DescentPhasesDepthZone<N>DataProcessingMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data processing output of the <short_sensor_name> in the depth zone #<N> during the descent phases (00: raw, 80: raw decimated, 81: average decimated)."
+   },
+   "CONF_PARAM_107" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-DESCENT-ZONEN.P4",
+      "CONF_PARAM_LABEL" : "Zone N - Slice thickness (dbar)",
+      "CONF_PARAM_DEFINITION" : "Zone N - Slice thickness (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>DescentPhasesDepthZone<N>SlicesThickness_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Slices thickness for <short_sensor_name> in the depth zone #<N> during the descent phases (in dbar)."
+   },
+   "CONF_PARAM_108" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-DESCENT-ZONEN.P5",
+      "CONF_PARAM_LABEL" : "Zone N - Number of samples in spot sampling mode per slice",
+      "CONF_PARAM_DEFINITION" : "Zone N - Number of samples in spot sampling mode per slice",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>DescentPhasesDepthZone<N>Sample_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of samples acquired in spot sampling mode by <short_sensor_name> in the depth zone #<N> during the descent phases."
+   },
+   "CONF_PARAM_109" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-ASCENT.P0",
+      "CONF_PARAM_LABEL" : "Enable/disable acquisition on “ascent”",
+      "CONF_PARAM_DEFINITION" : "Enable/disable acquisition on “ascent”",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>AscentPhaseEnableAcquisition_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable acquisition during “ascent” phase."
+   },
+   "CONF_PARAM_110" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-ASCENT-ZONEN.P0",
+      "CONF_PARAM_LABEL" : "Zone N - Pressure threshold between zone N and zone N+1",
+      "CONF_PARAM_DEFINITION" : "Zone N - Pressure threshold between zone N and zone N+1",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>AscentPhasesDepthZone<N>DepthZone<N+1>PressureThreshold_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Threshold between depth zone #N and depth zone #N+1 for <short_sensor_name> in the ascent phase (in dbar)."
+   },
+   "CONF_PARAM_111" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-ASCENT-ZONEN.P1",
+      "CONF_PARAM_LABEL" : "Zone N - Sampling period (s)",
+      "CONF_PARAM_DEFINITION" : "Zone N - Sampling period (s)",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>AscentPhaseDepthZone<N>SamplingPeriod_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the ascent phase of the cycle."
+   },
+   "CONF_PARAM_112" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-ASCENT-ZONEN.P2",
+      "CONF_PARAM_LABEL" : "Zone N - Acquisition type (0: none, 1: continu, 2: pulsed, 3: spot sampling)",
+      "CONF_PARAM_DEFINITION" : "Zone N - Acquisition type (0: none, 1: continu, 2: pulsed, 3: spot sampling)",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>AscentPhaseDepthZone<N>PowerAcquisitionMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode for the depth zone #<N> of the <short_sensor_name> sensor while sampling during the ascent phase of the cycle."
+   },
+   "CONF_PARAM_113" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-ASCENT-ZONEN.P3",
+      "CONF_PARAM_LABEL" : "Zone N - Processing type (00: raw, 80: raw decimated, 81: average decimated)",
+      "CONF_PARAM_DEFINITION" : "Zone N - Processing type (00: raw, 80: raw decimated, 81: average decimated)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>AscentPhaseDepthZone<N>DataProcessingMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Data processing output of the <short_sensor_name> in the depth zone #<N> during the ascent phase (00: raw, 80: raw decimated, 81: average decimated)."
+   },
+   "CONF_PARAM_114" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-ASCENT-ZONEN.P4",
+      "CONF_PARAM_LABEL" : "Zone N - Slice thickness (dbar)",
+      "CONF_PARAM_DEFINITION" : "Zone N - Slice thickness (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>AscentPhaseDepthZone<N>SlicesThickness_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Slices thickness for <short_sensor_name> in the depth zone #<N> during the ascent phase (in dbar)."
+   },
+   "CONF_PARAM_115" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-ASCENT-ZONEN.P5",
+      "CONF_PARAM_LABEL" : "Zone N - Number of samples in spot sampling mode per slice",
+      "CONF_PARAM_DEFINITION" : "Zone N - Number of samples in spot sampling mode per slice",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>AscentPhaseDepthZone<N>Sample_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of samples acquired in spot sampling mode by <short_sensor_name> in the depth zone #<N> during the ascent phase."
+   },
+   "CONF_PARAM_116" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-PARK_DRIFT.P0",
+      "CONF_PARAM_LABEL" : "Sampling period (s)",
+      "CONF_PARAM_DEFINITION" : "Sampling period (s)",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DriftAtParkPresSamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the drift at parking pressure (in minutes)."
+   },
+   "CONF_PARAM_117" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-PROF_DRIFT.P0",
+      "CONF_PARAM_LABEL" : "Sampling period (s)",
+      "CONF_PARAM_DEFINITION" : "Sampling period (s)",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>DriftAtProfilePresSamplingPeriod_minutes",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period of the <short_sensor_name> during the drift at profile pressure (in minutes)."
+   },
+   "CONF_PARAM_118" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-IN_AIR.P0",
+      "CONF_PARAM_LABEL" : "Sampling period (s)",
+      "CONF_PARAM_DEFINITION" : "Sampling period (s)",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>InAirMeasurementSamplingPeriod_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Sampling period for the <short_sensor_name> sensor during the in air measurement phase."
+   },
+   "CONF_PARAM_119" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-IN_AIR.P1",
+      "CONF_PARAM_LABEL" : "Acquisition type (0: none, 1: continu, 2: pulsed)",
+      "CONF_PARAM_DEFINITION" : "Acquisition type (0: none, 1: continu, 2: pulsed)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>InAirMeasurementPowerAcquisitionMode_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Power acquisition mode of the <short_sensor_name> during the in air measurement phase (0 : none, 1 : continuous, 2 : pulsed)."
+   },
+   "CONF_PARAM_120" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-TECHNICAL.P0",
+      "CONF_PARAM_LABEL" : "Warmup delay (s)",
+      "CONF_PARAM_DEFINITION" : "Warmup delay (s)",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>WarmUpTime_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Time, needed after the <short_sensor_name> is powered ON, to provide its first sample (in milli-seconds)."
+   },
+   "CONF_PARAM_121" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-TECHNICAL.P1",
+      "CONF_PARAM_LABEL" : "Power-off delay (s)",
+      "CONF_PARAM_DEFINITION" : "Power-off delay (s)",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>PowerSwitchDelayMin_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Minimum waiting time needed by the <short sensor name> between a switch OFF and a switch ON (in milli-seconds)."
+   },
+   "CONF_PARAM_122" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-TECHNICAL.P2",
+      "CONF_PARAM_LABEL" : "Theorical delay between 2 samples (s)",
+      "CONF_PARAM_DEFINITION" : "Theorical delay between 2 samples (s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_<short_sensor_name>MinDelayBetweenTwoSamples_seconds",
+      "CONF_PARAM_DESCRIPTION" : "Minimum delay between 2 samples of the <short sensor name>."
+   },
+   "CONF_PARAM_123" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSORXX-TECHNICAL.P3",
+      "CONF_PARAM_LABEL" : "Index of 1st sample valid",
+      "CONF_PARAM_DEFINITION" : "Index of 1st sample valid",
+      "CONF_PARAM_NAME" : "CONFIG_<short_sensor_name>FirstValidSample_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Rank of the first valid sample provided by the <short_sensor_name> (0 is the rank of the first sample)."
+   },
+   "CONF_PARAM_124" :
+   {
+      "CONF_PARAM_DEC_ID" : "SENSORS-SENSOR01-SPECIFIC.P0",
+      "CONF_PARAM_LABEL" : "Cut-off pressure (dbar)",
+      "CONF_PARAM_DEFINITION" : "Cut-off pressure (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_CTDPumpStopPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "The pressure at which the CTD pump is switched off.  As the float ascends, the code looks at the pressure and if <= CONFIG_CTDPumpStopPressure, the CTD is turned off. CTDPumpStopPressure is a firmware threshold and as such, data may continue to be collected for a limited span after the threshold is recognized. Especially in floats that return high resolution discrete data, there might be data collected shallower than the cut off, due to the discrete nature of the pressure data and also due to the time necessary for the firmware to turn off the CTD once the pressure threshold is reached. For example for SOLOII floats the CTD is switched off at 1dbar, and typically the shallowest data is from 0.5 to 0.8 dbar. This shallow data should be carefully assessed for its validity."
+   },
+   "CONF_PARAM_125" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE.P0",
+      "CONF_PARAM_LABEL" : "Key validating the option activation",
+      "CONF_PARAM_DEFINITION" : "Key validating the option activation",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDetectionValidationKey_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Key validating the ice detection activation."
+   },
+   "CONF_PARAM_126" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE.P1",
+      "CONF_PARAM_LABEL" : "Enable/disable ice detection",
+      "CONF_PARAM_DEFINITION" : "Enable/disable ice detection",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EnableIceDetection_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable ice detection."
+   },
+   "CONF_PARAM_127" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE.P2",
+      "CONF_PARAM_LABEL" : "Monthly calendar activation (12bits with: BIT11 = January, ..., BIT0 = December)",
+      "CONF_PARAM_DEFINITION" : "Monthly calendar activation (12bits with: BIT11 = January, ..., BIT0 = December)",
+      "CONF_PARAM_NAME" : "CONFIG_BitMaskMonthsIceDetectionActive_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "When is ice detection active - months in reverse order"
+   },
+   "CONF_PARAM_128" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE.P3",
+      "CONF_PARAM_LABEL" : "Breakup period (days)",
+      "CONF_PARAM_DEFINITION" : "Breakup period (days)",
+      "CONF_PARAM_NAME" : "CONFIG_IceDetectionSpringInhibitionDelaySinceLastIceEvasion_days",
+      "CONF_PARAM_DESCRIPTION" : "Maximum delay (in days/cycles) since the last ice evasiondate to attempt a surfacing.  This is often called the 'Spring', where the float stays underwater for a time even though the temperature has warmed."
+   },
+   "CONF_PARAM_129" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE.P4",
+      "CONF_PARAM_LABEL" : "Period of 1st forcing ascent (days)",
+      "CONF_PARAM_DEFINITION" : "Period of 1st forcing ascent (days)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDetectionMaxDaysNoTransmissionBeforeFirstForcedAscent_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Maximum delay (in days) of no transmission before the fisrt forced ascent. This parameter is used to disable the ice detection algorithmand force the float to surface even if ice is detected."
+   },
+   "CONF_PARAM_130" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE.P5",
+      "CONF_PARAM_LABEL" : "Period of next forcing ascent (days)",
+      "CONF_PARAM_DEFINITION" : "Period of next forcing ascent (days)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDetectionMaxDaysNoTransmissionBeforeFollowingForcedAscent_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Maximum delay (in days) of no transmission before the followin forced ascent. This parameter is used to disable the ice detection algorithmand force the float to surface even if ice is detected."
+   },
+   "CONF_PARAM_131" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE.P6",
+      "CONF_PARAM_LABEL" : "Depth for slow down speed of ascent (dbar)",
+      "CONF_PARAM_DEFINITION" : "Depth for slow down speed of ascent (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AscentSpeedStartPressureThresholdForSlowPhase_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Pressure threshold to start the slow ascent speed phase."
+   },
+   "CONF_PARAM_132" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE.P7",
+      "CONF_PARAM_LABEL" : "“Slow down” speed (cm/s)",
+      "CONF_PARAM_DEFINITION" : "“Slow down” speed (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_IceDetectionSlowAscentSpeed_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Slow ascent  speed during ice detection phase."
+   },
+   "CONF_PARAM_133" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE-ISA.P0",
+      "CONF_PARAM_LABEL" : "Enable/disable ISA detection",
+      "CONF_PARAM_DEFINITION" : "Enable/disable ISA detection",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EnableIceDetectionIsa_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable ISA step of ice detection."
+   },
+   "CONF_PARAM_134" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE-ISA.P1",
+      "CONF_PARAM_LABEL" : "Collection starting depth (dbar)",
+      "CONF_PARAM_DEFINITION" : "Collection starting depth (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_IceDetectionMixedLayerPMax_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Maximum sampling pressure used by ice cover detection algorithm. i.e. start pressure threshold for ice detection algorithm)"
+   },
+   "CONF_PARAM_135" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE-ISA.P2",
+      "CONF_PARAM_LABEL" : "Collection stopping depth (dbar)",
+      "CONF_PARAM_DEFINITION" : "Collection stopping depth (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_IceDetectionMixedLayerPMin_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Minimum sampling pressure used by ice cover detection algorithm. (i..e end pressure threshold for ice detection algorithm)"
+   },
+   "CONF_PARAM_136" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE-ISA.P3",
+      "CONF_PARAM_LABEL" : "Median temperature threshold (°C)",
+      "CONF_PARAM_DEFINITION" : "Median temperature threshold (°C)",
+      "CONF_PARAM_NAME" : "CONFIG_IceDetection_degC",
+      "CONF_PARAM_DESCRIPTION" : "Ice temperature in [degree Celsius/1e3] where profiles are aborted because of ice formation conditions"
+   },
+   "CONF_PARAM_137" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE-ISA.P4",
+      "CONF_PARAM_LABEL" : "Successive detections counter threshold",
+      "CONF_PARAM_DEFINITION" : "Successive detections counter threshold",
+      "CONF_PARAM_NAME" : "CONFIG_IceDetectionConsecutiveDetectionBeforeFloatSurfaceInhibition_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Number of consecutive ISA detections before float surface inhibition.If fewer consecutive ice detections are made, then the float will immediately seek the surface if mixed layer temp is warm."
+   },
+   "CONF_PARAM_138" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE-HANGING.P0",
+      "CONF_PARAM_LABEL" : "Enable/disable hanging detection",
+      "CONF_PARAM_DEFINITION" : "Enable/disable hanging detection",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EnableIceDetectionHanging_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable hanging step of ice detection."
+   },
+   "CONF_PARAM_139" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE-HANGING.P1",
+      "CONF_PARAM_LABEL" : "Maximum volume before considering a hanging (cm3)",
+      "CONF_PARAM_DEFINITION" : "Maximum volume before considering a hanging (cm3)",
+      "CONF_PARAM_NAME" : "CONFIG_IceDetectionNoVerticalMotionTimeOut_cm^3",
+      "CONF_PARAM_DESCRIPTION" : "When the float is in ice detection mode if, despite of pump actions, no vertical motion is detected during this delay, the cycle is aborted."
+   },
+   "CONF_PARAM_140" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE-HANGING.P2",
+      "CONF_PARAM_LABEL" : "Speed stabilization (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Speed stabilization (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AscentSpeedForIceDetectionHanging_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Ascent speed threshold to check for a possible hangind of the float during ice detection phase."
+   },
+   "CONF_PARAM_141" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE-HANGING.P3",
+      "CONF_PARAM_LABEL" : "Pressure delta to flow back (dbar)",
+      "CONF_PARAM_DEFINITION" : "Pressure delta to flow back (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AscentStartPressureDiffThresholdForIceDetectionHanging_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Pressure difference threshold at ascent start to be sure that start of ascent is not considered as a hanging."
+   },
+   "CONF_PARAM_142" :
+   {
+      "CONF_PARAM_DEC_ID" : "ICE-SAT_MASK.P0",
+      "CONF_PARAM_LABEL" : "Enable/disable satellite mask detection",
+      "CONF_PARAM_DEFINITION" : "Enable/disable satellite mask detection",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EnableIceDetectionSatMask_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable satellite mask step of ice detection."
+   },
+   "CONF_PARAM_143" :
+   {
+      "CONF_PARAM_DEC_ID" : "SELFTEST.P0",
+      "CONF_PARAM_LABEL" : "Minimum voltage of battery (V)",
+      "CONF_PARAM_DEFINITION" : "Minimum voltage of battery (V)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_SelfTestMinBatteryVoltage_volts",
+      "CONF_PARAM_DESCRIPTION" : "Minimum battery voltage for successful self test."
+   },
+   "CONF_PARAM_144" :
+   {
+      "CONF_PARAM_DEC_ID" : "SELFTEST.P1",
+      "CONF_PARAM_LABEL" : "Minimum external pressure (dbar)",
+      "CONF_PARAM_DEFINITION" : "Minimum external pressure (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_SelfTestMinExternalPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Minimum external pressure for successful self test."
+   },
+   "CONF_PARAM_145" :
+   {
+      "CONF_PARAM_DEC_ID" : "SELFTEST.P2",
+      "CONF_PARAM_LABEL" : "Maximum external pressure (dbar)",
+      "CONF_PARAM_DEFINITION" : "Maximum external pressure (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_SelfTestMaxExternalPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Maximum external pressure for successful self test."
+   },
+   "CONF_PARAM_146" :
+   {
+      "CONF_PARAM_DEC_ID" : "SELFTEST.P3",
+      "CONF_PARAM_LABEL" : "Minimum internal pressure (mbar)",
+      "CONF_PARAM_DEFINITION" : "Minimum internal pressure (mbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_SelfTestMinInternalPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Minimum internal pressure for successful self test."
+   },
+   "CONF_PARAM_147" :
+   {
+      "CONF_PARAM_DEC_ID" : "SELFTEST.P4",
+      "CONF_PARAM_LABEL" : "Maximum internal pressure (mbar)",
+      "CONF_PARAM_DEFINITION" : "Maximum internal pressure (mbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_SelfTestMaxInternalPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Maximum internal pressure for successful self test."
+   },
+   "CONF_PARAM_148" :
+   {
+      "CONF_PARAM_DEC_ID" : "SELFTEST.P5",
+      "CONF_PARAM_LABEL" : "Minimum internal temperature (°C)",
+      "CONF_PARAM_DEFINITION" : "Minimum internal temperature (°C)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_SelfTestMinInternalTemperature_degC",
+      "CONF_PARAM_DESCRIPTION" : "Minimum internal temperature for successful self test."
+   },
+   "CONF_PARAM_149" :
+   {
+      "CONF_PARAM_DEC_ID" : "SELFTEST.P6",
+      "CONF_PARAM_LABEL" : "Maximum internal temperature (°C)",
+      "CONF_PARAM_DEFINITION" : "Maximum internal temperature (°C)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_SelfTestMaxInternalTemperature_degC",
+      "CONF_PARAM_DESCRIPTION" : "Maximum internal temperature for successful self test."
+   },
+   "CONF_PARAM_150" :
+   {
+      "CONF_PARAM_DEC_ID" : "SELFTEST.P7",
+      "CONF_PARAM_LABEL" : "Minimum internal relative humidity (%RH)",
+      "CONF_PARAM_DEFINITION" : "Minimum internal relative humidity (%RH)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_SelfTestMinInternalRelativeHumidity",
+      "CONF_PARAM_DESCRIPTION" : "Minimum internal relative humidity for successful self test."
+   },
+   "CONF_PARAM_151" :
+   {
+      "CONF_PARAM_DEC_ID" : "SELFTEST.P8",
+      "CONF_PARAM_LABEL" : "Maximum internal relative humidity (%RH)",
+      "CONF_PARAM_DEFINITION" : "Maximum internal relative humidity (%RH)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_SelfTestMaxInternalRelativeHumidity",
+      "CONF_PARAM_DESCRIPTION" : "Maximum internal relative humidity for successful self test."
+   },
+   "CONF_PARAM_152" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-THRESHOLD.P0",
+      "CONF_PARAM_LABEL" : "Minimum voltage of battery (V)",
+      "CONF_PARAM_DEFINITION" : "Minimum voltage of battery (V)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AlarmMinBatteryVoltage_volts",
+      "CONF_PARAM_DESCRIPTION" : "Minimum battery voltage threshold to raise an alarm."
+   },
+   "CONF_PARAM_153" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-THRESHOLD.P1",
+      "CONF_PARAM_LABEL" : "Minimum external pressure (dbar)",
+      "CONF_PARAM_DEFINITION" : "Minimum external pressure (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AlarmMinExternalPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Minimum external pressure threshold to raise an alarm."
+   },
+   "CONF_PARAM_154" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-THRESHOLD.P2",
+      "CONF_PARAM_LABEL" : "Maximum external pressure (dbar)",
+      "CONF_PARAM_DEFINITION" : "Maximum external pressure (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_PressureMaxBeforeEmergencyAscent_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Emergency ascent phase start pressure (in dbars)."
+   },
+   "CONF_PARAM_155" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-THRESHOLD.P3",
+      "CONF_PARAM_LABEL" : "Minimum internal pressure (mbar)",
+      "CONF_PARAM_DEFINITION" : "Minimum internal pressure (mbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AlarmMinInternalPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Minimum internal pressure threshold to raise an alarm."
+   },
+   "CONF_PARAM_156" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-THRESHOLD.P4",
+      "CONF_PARAM_LABEL" : "Maximum internal pressure (mbar)",
+      "CONF_PARAM_DEFINITION" : "Maximum internal pressure (mbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AlarmMaxInternalPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Maximum internal pressure threshold to raise an alarm."
+   },
+   "CONF_PARAM_157" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-THRESHOLD.P5",
+      "CONF_PARAM_LABEL" : "Minimum internal temperature (°C)",
+      "CONF_PARAM_DEFINITION" : "Minimum internal temperature (°C)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AlarmMinInternalTemperature_degC",
+      "CONF_PARAM_DESCRIPTION" : "Minimum internal temperature threshold to raise an alarm."
+   },
+   "CONF_PARAM_158" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-THRESHOLD.P6",
+      "CONF_PARAM_LABEL" : "Maximum internal temperature (°C)",
+      "CONF_PARAM_DEFINITION" : "Maximum internal temperature (°C)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AlarmMaxInternalTemperature_degC",
+      "CONF_PARAM_DESCRIPTION" : "Maximum internal temperature threshold to raise an alarm."
+   },
+   "CONF_PARAM_159" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-THRESHOLD.P7",
+      "CONF_PARAM_LABEL" : "Minimum internal relative humidity (%RH)",
+      "CONF_PARAM_DEFINITION" : "Minimum internal relative humidity (%RH)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AlarmMinInternalRelativeHumidity",
+      "CONF_PARAM_DESCRIPTION" : "Minimum internal relative humidity threshold to raise an alarm."
+   },
+   "CONF_PARAM_160" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-THRESHOLD.P8",
+      "CONF_PARAM_LABEL" : "Maximum internal relative humidity (%RH)",
+      "CONF_PARAM_DEFINITION" : "Maximum internal relative humidity (%RH)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AlarmMaxInternalRelativeHumidity",
+      "CONF_PARAM_DESCRIPTION" : "Maximum internal relative humidity threshold to raise an alarm."
+   },
+   "CONF_PARAM_161" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-THRESHOLD.P9",
+      "CONF_PARAM_LABEL" : "Gap between 2 consecutive pressure requests (dbar)",
+      "CONF_PARAM_DEFINITION" : "Gap between 2 consecutive pressure requests (dbar)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_AlarmMaxPressureDiff_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Maximum difference between 2 consecutive pressures (used for navigation) to raise an alarm."
+   },
+   "CONF_PARAM_162" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-THRESHOLD.P10",
+      "CONF_PARAM_LABEL" : "Maximum speed on descent (cm/s)",
+      "CONF_PARAM_DEFINITION" : "Maximum speed on descent (cm/s)",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_HighDescentSpeedAlarmThreshold_cm/s",
+      "CONF_PARAM_DESCRIPTION" : "Max threshold of descent speed before raising a braking alarm."
+   },
+   "CONF_PARAM_163" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-END_OF_LIFE.P0",
+      "CONF_PARAM_LABEL" : "Detection of minimum battery voltage",
+      "CONF_PARAM_DEFINITION" : "Detection of minimum battery voltage",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EolMinBatteryVoltage_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable to switch in EOL mode when the minimum battery voltage threshold is overshot."
+   },
+   "CONF_PARAM_164" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-END_OF_LIFE.P2",
+      "CONF_PARAM_LABEL" : "Detection of maximum external pressure",
+      "CONF_PARAM_DEFINITION" : "Detection of maximum external pressure",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EolMaxExternalPressure_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable to switch in EOL mode when the maximum external pressure threshold is overshot."
+   },
+   "CONF_PARAM_165" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-END_OF_LIFE.P4",
+      "CONF_PARAM_LABEL" : "Detection of maximum internal pressure",
+      "CONF_PARAM_DEFINITION" : "Detection of maximum internal pressure",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EolMaxInternalPressure_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable to switch in EOL mode when the maximum internal pressure threshold is overshot."
+   },
+   "CONF_PARAM_166" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-END_OF_LIFE.P10",
+      "CONF_PARAM_LABEL" : "Detection of maximum speed on descent",
+      "CONF_PARAM_DEFINITION" : "Detection of maximum speed on descent",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EolMaxDescentSpeed_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable to switch in EOL mode when the maximum descent speed threshold is overshot."
+   },
+   "CONF_PARAM_167" :
+   {
+      "CONF_PARAM_DEC_ID" : "ALARMS-END_OF_LIFE.P21",
+      "CONF_PARAM_LABEL" : "Detection of insulation voltage",
+      "CONF_PARAM_DEFINITION" : "Detection of insulation voltage",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_EolInsulationVoltage_LOGICAL",
+      "CONF_PARAM_DESCRIPTION" : "Enable/disable to switch in EOL mode when water is detected inside the float."
+   },
+   "CONF_PARAM_168" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P0",
+      "CONF_PARAM_LABEL" : "Float ID",
+      "CONF_PARAM_DEFINITION" : "Float ID",
+      "CONF_PARAM_NAME" : "FLOAT_SERIAL_NO",
+      "CONF_PARAM_DESCRIPTION" : "Serial number of the float."
+   },
+   "CONF_PARAM_169" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P1",
+      "CONF_PARAM_LABEL" : "Firmware version (type, version, subversion, release)",
+      "CONF_PARAM_DEFINITION" : "Firmware version (type, version, subversion, release)",
+      "CONF_PARAM_NAME" : "FIRMWARE_VERSION",
+      "CONF_PARAM_DESCRIPTION" : "Firmware version of the float."
+   },
+   "CONF_PARAM_170" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P2",
+      "CONF_PARAM_LABEL" : "Firmware checksum",
+      "CONF_PARAM_DEFINITION" : "Firmware checksum",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_NUMBER_VectorBoardFirmwareChecksum_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Checksum of the vector board firmware."
+   },
+   "CONF_PARAM_171" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300201",
+      "CONF_PARAM_LABEL" : "Pressure: Min value expected",
+      "CONF_PARAM_DEFINITION" : "Pressure: Min value expected",
+      "CONF_PARAM_NAME" : "CONFIG_CtdMinTransmittedPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Ctd pressure measurements (in dbars)."
+   },
+   "CONF_PARAM_172" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300202",
+      "CONF_PARAM_LABEL" : "Pressure: Max value expected",
+      "CONF_PARAM_DEFINITION" : "Pressure: Max value expected",
+      "CONF_PARAM_NAME" : "CONFIG_CtdMaxTransmittedPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Ctd pressure measurements (in dbars)."
+   },
+   "CONF_PARAM_173" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300204",
+      "CONF_PARAM_LABEL" : "Temperature: Min value expected",
+      "CONF_PARAM_DEFINITION" : "Temperature: Min value expected",
+      "CONF_PARAM_NAME" : "CONFIG_CtdMinTransmittedTemperature_mdegC",
+      "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Ctd temperature measurements (in milli-DegC)."
+   },
+   "CONF_PARAM_174" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300205",
+      "CONF_PARAM_LABEL" : "Temperature: Max value expected",
+      "CONF_PARAM_DEFINITION" : "Temperature: Max value expected",
+      "CONF_PARAM_NAME" : "CONFIG_CtdMaxTransmittedTemperature_mdegC",
+      "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Ctd temperature measurements (in milli-DegC)."
+   },
+   "CONF_PARAM_175" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300207",
+      "CONF_PARAM_LABEL" : "Salinity: Min value expected",
+      "CONF_PARAM_DEFINITION" : "Salinity: Min value expected",
+      "CONF_PARAM_NAME" : "CONFIG_CtdMinTransmittedSalinity_mpsu",
+      "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Ctd salinity measurements (in milli-PSU)."
+   },
+   "CONF_PARAM_176" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300208",
+      "CONF_PARAM_LABEL" : "Salinity: Max value expected",
+      "CONF_PARAM_DEFINITION" : "Salinity: Max value expected",
+      "CONF_PARAM_NAME" : "CONFIG_CtdMaxTransmittedSalinity_mpsu",
+      "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Ctd salinity measurements (in milli-PSU)."
+   },
+   "CONF_PARAM_177" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300301",
+      "CONF_PARAM_LABEL" : "C1RPhase: Min value expected",
+      "CONF_PARAM_DEFINITION" : "C1RPhase: Min value expected",
+      "CONF_PARAM_NAME" : "CONFIG_OptodeMinTransmittedC1Phase_angularDeg",
+      "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Optode C1 phase measurements (in degrees)."
+   },
+   "CONF_PARAM_178" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300302",
+      "CONF_PARAM_LABEL" : "C1RPhase: Max value expected",
+      "CONF_PARAM_DEFINITION" : "C1RPhase: Max value expected",
+      "CONF_PARAM_NAME" : "CONFIG_OptodeMaxTransmittedC1Phase_angularDeg",
+      "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Optode C1 phase measurements (in degrees)."
+   },
+   "CONF_PARAM_179" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300304",
+      "CONF_PARAM_LABEL" : "C2RPhase: Min value expected",
+      "CONF_PARAM_DEFINITION" : "C2RPhase: Min value expected",
+      "CONF_PARAM_NAME" : "CONFIG_OptodeMinTransmittedC2Phase_angularDeg",
+      "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Optode C2 phase measurements (in degrees)."
+   },
+   "CONF_PARAM_180" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300305",
+      "CONF_PARAM_LABEL" : "C2RPhase: Max value expected",
+      "CONF_PARAM_DEFINITION" : "C2RPhase: Max value expected",
+      "CONF_PARAM_NAME" : "CONFIG_OptodeMaxTransmittedC2Phase_angularDeg",
+      "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Optode C2 phase measurements (in degrees)."
+   },
+   "CONF_PARAM_181" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300307",
+      "CONF_PARAM_LABEL" : "Temperature: Min value expected",
+      "CONF_PARAM_DEFINITION" : "Temperature: Min value expected",
+      "CONF_PARAM_NAME" : "CONFIG_OptodeMinTransmittedTemperature_mdegC",
+      "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Optode temperature measurements (in milli-DegC)."
+   },
+   "CONF_PARAM_182" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300308",
+      "CONF_PARAM_LABEL" : "Temperature : Max value expected",
+      "CONF_PARAM_DEFINITION" : "Temperature : Max value expected",
+      "CONF_PARAM_NAME" : "CONFIG_OptodeMaxTransmittedTemperature_mdegC",
+      "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Optode temperature measurements (in milli-DegC)."
+   },
+   "CONF_PARAM_183" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300401",
+      "CONF_PARAM_LABEL" : "Pressure : Min value expected",
+      "CONF_PARAM_DEFINITION" : "Pressure : Min value expected",
+      "CONF_PARAM_NAME" : "CONFIG_CtdMinTransmittedPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Ctd pressure measurements (in dbars)."
+   },
+   "CONF_PARAM_184" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300402",
+      "CONF_PARAM_LABEL" : "Pressure : Max value expected",
+      "CONF_PARAM_DEFINITION" : "Pressure : Max value expected",
+      "CONF_PARAM_NAME" : "CONFIG_CtdMaxTransmittedPressure_dbar",
+      "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Ctd pressure measurements (in dbars)."
+   },
+   "CONF_PARAM_185" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300404",
+      "CONF_PARAM_LABEL" : "Temperature : Min value expected",
+      "CONF_PARAM_DEFINITION" : "Temperature : Min value expected",
+      "CONF_PARAM_NAME" : "CONFIG_CtdMinTransmittedTemperature_mdegC",
+      "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Ctd temperature measurements (in milli-DegC)."
+   },
+   "CONF_PARAM_186" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300405",
+      "CONF_PARAM_LABEL" : "Temperature : Max value expected",
+      "CONF_PARAM_DEFINITION" : "Temperature : Max value expected",
+      "CONF_PARAM_NAME" : "CONFIG_CtdMaxTransmittedTemperature_mdegC",
+      "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Ctd temperature measurements (in milli-DegC)."
+   },
+   "CONF_PARAM_187" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300407",
+      "CONF_PARAM_LABEL" : "Salinity : Min value expected",
+      "CONF_PARAM_DEFINITION" : "Salinity : Min value expected",
+      "CONF_PARAM_NAME" : "CONFIG_CtdMinTransmittedSalinity_mpsu",
+      "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Ctd salinity measurements (in milli-PSU)."
+   },
+   "CONF_PARAM_188" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300408",
+      "CONF_PARAM_LABEL" : "Salinity : Max value expected",
+      "CONF_PARAM_DEFINITION" : "Salinity : Max value expected",
+      "CONF_PARAM_NAME" : "CONFIG_CtdMaxTransmittedSalinity_mpsu",
+      "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Ctd salinity measurements (in milli-PSU)."
+   },
+   "CONF_PARAM_189" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300410",
+      "CONF_PARAM_LABEL" : "Coils temperature: Min value expected",
+      "CONF_PARAM_DEFINITION" : "Coils temperature: Min value expected",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_TEMP_CtdMinTransmittedCoilsTemperature_mdegC",
+      "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Ctd coils temperature measurements (in milli-DegC)."
+   },
+   "CONF_PARAM_190" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300411",
+      "CONF_PARAM_LABEL" : "Coils temperature: Max value expected",
+      "CONF_PARAM_DEFINITION" : "Coils temperature: Max value expected",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_TEMP_CtdMaxTransmittedCoilsTemperature_mdegC",
+      "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Ctd coils temperature measurements (in milli-DegC)."
+   },
+   "CONF_PARAM_191" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300413",
+      "CONF_PARAM_LABEL" : "Salinity corrected: Min value expected",
+      "CONF_PARAM_DEFINITION" : "Salinity corrected: Min value expected",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_PSAL_CtdMinTransmittedSalinityCor_mpsu",
+      "CONF_PARAM_DESCRIPTION" : "Minimum value of transmitted Ctd salinity corrected measurements (in milli-PSU)."
+   },
+   "CONF_PARAM_192" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P300414",
+      "CONF_PARAM_LABEL" : "Salinity corrected: Max value expected",
+      "CONF_PARAM_DEFINITION" : "Salinity corrected: Max value expected",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_PSAL_CtdMaxTransmittedSalinityCor_mpsu",
+      "CONF_PARAM_DESCRIPTION" : "Maximum value of transmitted Ctd salinity corrected measurements (in milli-PSU)."
+   },
+   "CONF_PARAM_193" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P600201",
+      "CONF_PARAM_LABEL" : "Serial number",
+      "CONF_PARAM_DEFINITION" : "Serial number",
+      "CONF_PARAM_NAME" : "SENSOR_SERIAL_NO",
+      "CONF_PARAM_DESCRIPTION" : "Serial number of the Aanderaa4330 sensor."
+   },
+   "CONF_PARAM_194" :
+   {
+      "CONF_PARAM_DEC_ID" : "META-FROM-TECH.P600308",
+      "CONF_PARAM_LABEL" : "Sensor’s serial number",
+      "CONF_PARAM_DEFINITION" : "Sensor’s serial number",
+      "CONF_PARAM_NAME" : "SENSOR_SERIAL_NO",
+      "CONF_PARAM_DESCRIPTION" : "Serial number of the RBRargo3 sensor."
+   }
+}

@@ -47,7 +47,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/11/2018 - RNU - V 0.1: creation
@@ -78,7 +78,7 @@
 %   04/05/2022 - RNU - V 1.12: includes version 01.04.2022 of ARGO_simplified_profile
 %   06/10/2022 - RNU - V 1.13: includes version 09.06.2022 of ARGO_simplified_profile
 %   08/23/2022 - RNU - V 1.14: CP660_MED and _STD remained in 'b' type in
-%                              get_netcdf_param_attributes_3_1, set to 'i'
+%                              get_netcdf_param_attributes, set to 'i'
 %   09/13/2022 - RNU - V 1.15: report ERROR message and don't generate S-PROF
 %                              file if PRES profiles are not consistent between
 %                              core and B files
@@ -87,16 +87,29 @@
 %                              parameter).
 %   12/04/2023 - RNU - V 1.17: includes version 01.12.2023 of ARGO_simplified_profile
 %   01/19/2024 - RNU - V 1.18: includes version 11.01.2024 of ARGO_simplified_profile
+%   05/19/2025 - RNU - V 1.19: includes version 12.05.2025 of ARGO_simplified_profile
+%   12/03/2025 - RNU - V 1.20: get_netcdf_param_attributes replaced by
+%                              get_netcdf_param_attributes_extended to manage
+%                              parameter names still like <PARAM>N (instead of 
+%                              <PARAM>_N) coming from other DACs.
 % ------------------------------------------------------------------------------
 function nc_create_synthetic_profile_rt(varargin)
 
 % generate NetCDF-4 flag for mono-profile file
 global g_cocs_netCDF4FlagForMonoProf;
-g_cocs_netCDF4FlagForMonoProf = 0;
+g_cocs_netCDF4FlagForMonoProf = 1;
 
 % generate NetCDF-4 flag for multiple-profiles file
 global g_cocs_netCDF4FlagForMultiProf;
 g_cocs_netCDF4FlagForMultiProf = 1;
+
+% deflate level to use (0 to 9)
+% a deflate level of 1 is recomended in "EXPERIENCE WITH AN ENHANCED NETCDF DATA
+% MODEL AND INTERFACE FOR SCIENTIFIC DATA ACCESS" where we can read "In our
+% tests we notice that setting the deflate higher than one takes more time, but
+% has little benefit."
+global g_cocs_netCDF4DeflateLevel;
+g_cocs_netCDF4DeflateLevel = 1; 
 
 % default directory to store the LOG file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -155,7 +168,7 @@ g_cocs_reportData.outputSMultiProfFile = [];
 
 % program version
 global g_cocs_ncCreateSyntheticProfileVersion;
-g_cocs_ncCreateSyntheticProfileVersion = '1.18 (version 11.01.2024 for ARGO_simplified_profile)';
+g_cocs_ncCreateSyntheticProfileVersion = '1.20 (version 12.05.2025 for ARGO_simplified_profile)';
 
 % current float and cycle identification
 global g_cocs_floatNum;
@@ -346,7 +359,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/15/2018 - RNU - creation
@@ -393,7 +406,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/15/2018 - RNU - creation
@@ -706,7 +719,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/15/2018 - RNU - creation
@@ -719,6 +732,9 @@ global g_cocs_xmlReportDOMNode;
 % report information structure
 global g_cocs_reportData;
 
+% input parameters
+global g_cocs_createOnlyMultiProfFlag;
+
 
 % initalize final status
 o_status = 'ok';
@@ -727,6 +743,14 @@ o_status = 'ok';
 docNode = g_cocs_xmlReportDOMNode;
 docRootNode = docNode.getDocumentElement;
 
+% input parameter
+newChild = docNode.createElement('input_param');
+
+newChildBis = docNode.createElement('createOnlyMultiProfFlag');
+newChildBis.appendChild(docNode.createTextNode(g_cocs_createOnlyMultiProfFlag));
+newChild.appendChild(newChildBis);
+
+docRootNode.appendChild(newChild);
 
 % list of input files
 newChild = docNode.createElement('input_files');
@@ -850,7 +874,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/15/2018 - RNU - creation
@@ -920,7 +944,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/15/2018 - RNU - creation

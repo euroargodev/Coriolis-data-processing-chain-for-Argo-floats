@@ -89,3 +89,4 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 1007;-1;Number of tech #1 packets received;TECH_AUX_NUMBER_TechnicalMessage1Received_COUNT;Number of times technical message #1 has been received.
 1008;-1;Number of tech #2 packets received;TECH_AUX_NUMBER_TechnicalMessage2Received_COUNT;Number of times technical message #2 has been received.
 1009;-1;Number of parameter packets received;TECH_AUX_NUMBER_ParameterMessageReceived_COUNT;Number of times parameter message has been received.
+1010;-1;Offset de pression (quand erreur de resetoffset);TECH_AUX_PRES_OffsetNotSampledAtSurface_dbar;Pressure offset not necessarily sampled at the surface but originally used to correct PRES data provided by the float (copy of PRES_SurfaceOffsetCorrectedNotResetNegative_1cBarResolution_dbar in case of erroneous resetoffset).

@@ -5,60 +5,40 @@
 %  [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = process_trajectory_data_212( ...
 %    a_cycleNum, a_deepCycle, ...
 %    a_gpsData, a_iridiumMailData, ...
-%    a_cycleStartDate, ...
-%    a_descentToParkStartDate, a_firstStabDate, a_firstStabPres, a_descentToParkEndDate, ...
-%    a_descentToProfStartDate, a_descentToProfEndDate, ...
-%    a_ascentStartDate, a_ascentEndDate, ...
-%    a_transStartDate, ...
-%    a_firstGroundingDate, a_firstGroundingPres, ...
-%    a_secondGroundingDate, a_secondGroundingPres, ...
+%    a_cycleTimeData, ...
 %    a_tabTech1, a_tabTech2, ...
 %    a_tabProfiles, ...
 %    a_parkDate, a_parkTransDate, a_parkPres, a_parkTemp, a_parkSal, ...
 %    a_nearSurfDate, a_nearSurfTransDate, a_nearSurfPres, a_nearSurfTemp, a_nearSurfSal, ...
 %    a_inAirDate, a_inAirTransDate, a_inAirPres, a_inAirTemp, a_inAirSal, ...
-%    a_evAct, a_pumpAct, a_iceDetected)
+%    a_evAct, a_pumpAct)
 %
 % INPUT PARAMETERS :
-%   a_cycleNum               : current cycle number
-%   a_deepCycle              : deep cycle flag
-%   a_gpsData                : GPS data
-%   a_iridiumMailData        : Iridium mail contents
-%   a_cycleStartDate         : cycle start date
-%   a_descentToParkStartDate : descent to park start date
-%   a_firstStabDate          : first stabilisation date
-%   a_firstStabPres          : first stabilisation pressure
-%   a_descentToParkEndDate   : descent to park end date
-%   a_descentToProfStartDate : descent to profile start date
-%   a_descentToProfEndDate   : descent to profile end date
-%   a_ascentStartDate        : ascent start date
-%   a_ascentEndDate          : ascent end date
-%   a_transStartDate         : transmission start date
-%   a_firstGroundingDate     : first grounding date
-%   a_firstGroundingPres     : first grounding pressure
-%   a_secondGroundingDate    : second grounding date
-%   a_secondGroundingPres    : second grounding pressure
-%   a_tabTech1               : decoded data of technical msg #1
-%   a_tabTech2               : decoded data of technical msg #2
-%   a_tabProfiles            : profiles data
-%   a_parkDate               : drift meas dates
-%   a_parkTransDate          : drift meas transmitted date flags
-%   a_parkPres               : drift meas PRES
-%   a_parkTemp               : drift meas TEMP
-%   a_parkSal                : drift meas PSAL
-%   a_nearSurfDate           : "near surface" profile dates
-%   a_nearSurfTransDate      : "near surface" profile transmitted date flags
-%   a_nearSurfPres           : "near surface" profile PRES
-%   a_nearSurfTemp           : "near surface" profile TEMP
-%   a_nearSurfSal            : "near surface" profile PSAL
-%   a_inAirDate              : "in air" profile dates
-%   a_inAirTransDate         : "in air" profile transmitted date flags
-%   a_inAirPres              : "in air" profile PRES
-%   a_inAirTemp              : "in air" profile TEMP
-%   a_inAirSal               : "in air" profile PSAL
-%   a_evAct                  : decoded hydraulic (EV) data
-%   a_pumpAct                : decoded hydraulic (pump) data
-%   a_iceDetected            : ice detected flag
+%   a_cycleNum          : current cycle number
+%   a_deepCycle         : deep cycle flag
+%   a_gpsData           : GPS data
+%   a_iridiumMailData   : Iridium mail contents
+%   a_cycleTimeData     : cycle timings structure
+%   a_tabTech1          : decoded data of technical msg #1
+%   a_tabTech2          : decoded data of technical msg #2
+%   a_tabProfiles       : profiles data
+%   a_parkDate          : drift meas dates
+%   a_parkTransDate     : drift meas transmitted date flags
+%   a_parkPres          : drift meas PRES
+%   a_parkTemp          : drift meas TEMP
+%   a_parkSal           : drift meas PSAL
+%   a_nearSurfDate      : "near surface" profile dates
+%   a_nearSurfTransDate : "near surface" profile transmitted date flags
+%   a_nearSurfPres      : "near surface" profile PRES
+%   a_nearSurfTemp      : "near surface" profile TEMP
+%   a_nearSurfSal       : "near surface" profile PSAL
+%   a_inAirDate         : "in air" profile dates
+%   a_inAirTransDate    : "in air" profile transmitted date flags
+%   a_inAirPres         : "in air" profile PRES
+%   a_inAirTemp         : "in air" profile TEMP
+%   a_inAirSal          : "in air" profile PSAL
+%   a_evAct             : decoded hydraulic (EV) data
+%   a_pumpAct           : decoded hydraulic (pump) data
 %
 % OUTPUT PARAMETERS :
 %   o_tabTrajNMeas  : N_MEASUREMENT trajectory data
@@ -68,7 +48,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/16/2017 - RNU - creation
@@ -76,19 +56,13 @@
 function [o_tabTrajNMeas, o_tabTrajNCycle, o_tabTechNMeas] = process_trajectory_data_212( ...
    a_cycleNum, a_deepCycle, ...
    a_gpsData, a_iridiumMailData, ...
-   a_cycleStartDate, ...
-   a_descentToParkStartDate, a_firstStabDate, a_firstStabPres, a_descentToParkEndDate, ...
-   a_descentToProfStartDate, a_descentToProfEndDate, ...
-   a_ascentStartDate, a_ascentEndDate, ...
-   a_transStartDate, ...
-   a_firstGroundingDate, a_firstGroundingPres, ...
-   a_secondGroundingDate, a_secondGroundingPres, ...
+   a_cycleTimeData, ...
    a_tabTech1, a_tabTech2, ...
    a_tabProfiles, ...
    a_parkDate, a_parkTransDate, a_parkPres, a_parkTemp, a_parkSal, ...
    a_nearSurfDate, a_nearSurfTransDate, a_nearSurfPres, a_nearSurfTemp, a_nearSurfSal, ...
    a_inAirDate, a_inAirTransDate, a_inAirPres, a_inAirTemp, a_inAirSal, ...
-   a_evAct, a_pumpAct, a_iceDetected)
+   a_evAct, a_pumpAct)
 
 % output parameters initialization
 o_tabTrajNMeas = [];
@@ -362,7 +336,7 @@ if (a_deepCycle == 1)
    trajNCycleStruct.dataMode = 'A';
    
    % Cycle Start Time (i.e. buoyancy reduction start time for this float type)
-   cycleStartDate = a_cycleStartDate;
+   cycleStartDate = a_cycleTimeData.cycleStartDate;
    if (isempty(cycleStartDate))
       cycleStartDate = g_decArgo_dateDef;
    end
@@ -375,7 +349,7 @@ if (a_deepCycle == 1)
    end
    
    % Descent Start Time
-   descentToParkStartDate = a_descentToParkStartDate;
+   descentToParkStartDate = a_cycleTimeData.descentToParkStartDate;
    if (isempty(descentToParkStartDate))
       descentToParkStartDate = g_decArgo_dateDef;
    end
@@ -388,7 +362,7 @@ if (a_deepCycle == 1)
    end
    
    % First Stabilization Time
-   firstStabDate = a_firstStabDate;
+   firstStabDate = a_cycleTimeData.firstStabDate;
    if (isempty(firstStabDate))
       firstStabDate = g_decArgo_dateDef;
    end
@@ -397,7 +371,7 @@ if (a_deepCycle == 1)
       paramPres = get_netcdf_param_attributes('PRES');
       paramPres.resolution = single(1);
       measStruct.paramList = paramPres;
-      measStruct.paramData = a_firstStabPres;
+      measStruct.paramData = a_cycleTimeData.firstStabPres;
    end
    trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
    
@@ -407,7 +381,7 @@ if (a_deepCycle == 1)
    end
    
    % Park Start Time
-   descentToParkEndDate = a_descentToParkEndDate;
+   descentToParkEndDate = a_cycleTimeData.descentToParkEndDate;
    if (isempty(descentToParkEndDate))
       descentToParkEndDate = g_decArgo_dateDef;
    end
@@ -420,7 +394,7 @@ if (a_deepCycle == 1)
    end
    
    % Park End Time
-   descentToProfStartDate = a_descentToProfStartDate;
+   descentToProfStartDate = a_cycleTimeData.descentToProfStartDate;
    if (isempty(descentToProfStartDate))
       descentToProfStartDate = g_decArgo_dateDef;
    end
@@ -433,7 +407,7 @@ if (a_deepCycle == 1)
    end
    
    % Deep Park Start Time
-   descentToProfEndDate = a_descentToProfEndDate;
+   descentToProfEndDate = a_cycleTimeData.descentToProfEndDate;
    if (isempty(descentToProfEndDate))
       descentToProfEndDate = g_decArgo_dateDef;
    end
@@ -446,7 +420,7 @@ if (a_deepCycle == 1)
    end
    
    % Ascent Start Time
-   ascentStartDate = a_ascentStartDate;
+   ascentStartDate = a_cycleTimeData.ascentStartDate;
    if (isempty(ascentStartDate))
       ascentStartDate = g_decArgo_dateDef;
    end
@@ -459,7 +433,7 @@ if (a_deepCycle == 1)
    end
    
    % Ascent End Time
-   ascentEndDate = a_ascentEndDate;
+   ascentEndDate = a_cycleTimeData.ascentEndDate;
    if (isempty(ascentEndDate))
       ascentEndDate = g_decArgo_dateDef;
    end
@@ -472,7 +446,7 @@ if (a_deepCycle == 1)
    end
    
    % Transmission Start Time
-   transStartDate = a_transStartDate;
+   transStartDate = a_cycleTimeData.transStartDate;
    if (isempty(transStartDate))
       transStartDate = g_decArgo_dateDef;
    end
@@ -626,7 +600,7 @@ if (a_deepCycle == 1)
    tabPres = [];
    tabDur = [];
    tabType = [];
-   if (~isempty(a_cycleStartDate))
+   if (~isempty(a_cycleTimeData.cycleStartDate))
       
       for idP = 1:size(a_evAct, 1)
          tabDate = [tabDate; a_evAct(idP, 3) + g_decArgo_julD2FloatDayOffset];
@@ -648,24 +622,40 @@ if (a_deepCycle == 1)
          tabPres = tabPres(idSorted);
          tabDur = tabDur(idSorted);
          tabType = tabType(idSorted);
-         
+
+         cycleStartDate = g_decArgo_dateDef;
+         if (~isempty(a_cycleTimeData.cycleStartDate))
+            cycleStartDate = a_cycleTimeData.cycleStartDate;
+         end
          descentToParkEndDate = g_decArgo_dateDef;
-         if (~isempty(a_descentToParkEndDate))
-            descentToParkEndDate = a_descentToParkEndDate;
+         if (~isempty(a_cycleTimeData.descentToParkEndDate))
+            descentToParkEndDate = a_cycleTimeData.descentToParkEndDate;
          end
          descentToProfStartDate = g_decArgo_dateDef;
-         if (~isempty(a_descentToProfStartDate))
-            descentToProfStartDate = a_descentToProfStartDate;
+         if (~isempty(a_cycleTimeData.descentToProfStartDate))
+            descentToProfStartDate = a_cycleTimeData.descentToProfStartDate;
          end
-         
-         if (~isempty(a_transStartDate))
+         descentToProfEndDate = g_decArgo_dateDef;
+         if (~isempty(a_cycleTimeData.descentToProfEndDate))
+            descentToProfEndDate = a_cycleTimeData.descentToProfEndDate;
+         end
+         ascentStartDate = g_decArgo_dateDef;
+         if (~isempty(a_cycleTimeData.ascentStartDate))
+            ascentStartDate = a_cycleTimeData.ascentStartDate;
+         end
+         transStartDate = g_decArgo_dateDef;
+         if (~isempty(a_cycleTimeData.transStartDate))
+            transStartDate = a_cycleTimeData.transStartDate;
+         end
+
+         if (~isempty(transStartDate))
             
             tabRefDates = [ ...
-               a_cycleStartDate descentToParkEndDate; ...
+               cycleStartDate descentToParkEndDate; ...
                descentToParkEndDate descentToProfStartDate; ...
-               descentToProfStartDate a_descentToProfEndDate; ...
-               a_descentToProfEndDate a_ascentStartDate; ...
-               a_ascentStartDate a_transStartDate];
+               descentToProfStartDate descentToProfEndDate; ...
+               descentToProfEndDate ascentStartDate; ...
+               ascentStartDate transStartDate];
             tabMc = [ ...
                g_MC_SpyInDescToPark;...
                g_MC_SpyAtPark;...
@@ -706,11 +696,11 @@ if (a_deepCycle == 1)
             
             % ice detected
             tabRefDates = [ ...
-               a_cycleStartDate descentToParkEndDate; ...
+               cycleStartDate descentToParkEndDate; ...
                descentToParkEndDate descentToProfStartDate; ...
-               descentToProfStartDate a_descentToProfEndDate; ...
-               a_descentToProfEndDate a_ascentStartDate; ...
-               a_ascentStartDate g_decArgo_dateDef];
+               descentToProfStartDate descentToProfEndDate; ...
+               descentToProfEndDate ascentStartDate; ...
+               ascentStartDate g_decArgo_dateDef];
             tabMc = [ ...
                g_MC_SpyInDescToPark;...
                g_MC_SpyAtPark;...
@@ -894,11 +884,11 @@ if (a_deepCycle == 1)
       
    end
    
-   if (~isempty(tabTech2) && (a_iceDetected == 0))
+   if (~isempty(tabTech2) && (a_cycleTimeData.iceAscentAbortedFlag == 0))
       
       % last pumped CTD measurement
-      pres = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(tabTech2(15+ID_OFFSET));
-      temp = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(tabTech2(16+ID_OFFSET));
+      pres = sensor_2_value_for_pressure_2xx_2_10_to_14_17_22_to_27_31_32(tabTech2(15+ID_OFFSET));
+      temp = sensor_2_value_for_temp_2xx_4_to_14_17_19_20_22_to_27_31_32(tabTech2(16+ID_OFFSET));
       psal = tabTech2(17+ID_OFFSET)/1000;
       if (any([pres temp psal] ~= 0))
          measStruct = get_traj_one_meas_init_struct();
@@ -916,29 +906,31 @@ if (a_deepCycle == 1)
    
    % grounding information
    grounded = 'N';
-   if (~isempty(a_firstGroundingPres))
-      if (~isempty(a_firstGroundingDate))
-         measStruct = create_one_meas_float_time(g_MC_Grounded, a_firstGroundingDate, g_JULD_STATUS_2, floatClockDrift);
+   if (~isempty(a_cycleTimeData.firstGroundingPres))
+      if (~isempty(a_cycleTimeData.firstGroundingDate))
+         measStruct = create_one_meas_float_time( ...
+            g_MC_Grounded, a_cycleTimeData.firstGroundingDate, g_JULD_STATUS_2, floatClockDrift);
       else
          measStruct = get_traj_one_meas_init_struct();
       end
       paramPres = get_netcdf_param_attributes('PRES');
       paramPres.resolution = single(1);
       measStruct.paramList = paramPres;
-      measStruct.paramData = a_firstGroundingPres;
+      measStruct.paramData = a_cycleTimeData.firstGroundingPres;
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       grounded = 'Y';
    end
-   if (~isempty(a_secondGroundingPres))
-      if (~isempty(a_secondGroundingDate))
-         measStruct = create_one_meas_float_time(g_MC_Grounded, a_secondGroundingDate, g_JULD_STATUS_2, floatClockDrift);
+   if (~isempty(a_cycleTimeData.secondGroundingPres))
+      if (~isempty(a_cycleTimeData.secondGroundingDate))
+         measStruct = create_one_meas_float_time( ...
+            g_MC_Grounded, a_cycleTimeData.secondGroundingDate, g_JULD_STATUS_2, floatClockDrift);
       else
          measStruct = get_traj_one_meas_init_struct();
       end
       paramPres = get_netcdf_param_attributes('PRES');
       paramPres.resolution = single(1);
       measStruct.paramList = paramPres;
-      measStruct.paramData = a_secondGroundingPres;
+      measStruct.paramData = a_cycleTimeData.secondGroundingPres;
       trajNMeasStruct.tabMeas = [trajNMeasStruct.tabMeas; measStruct];
       grounded = 'Y';
    end

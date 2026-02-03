@@ -17,7 +17,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -68,10 +68,10 @@ switch (a_decoderId)
       [o_parkData, o_profLrData, o_expectedProfLrNbSamples] = ...
          parse_apx_ir_LR_profile_data_7_13(a_profLowResMeasDataStr);
       
-   case {1110, 1111, 1112, 1114} % 092813 & 073014 & 102815 & 073014_2
+   case {1110, 1111, 1112, 1114, 1115} % 092813 & 073014 & 102815 & 073014_2 & 073014_3
       
       [o_parkData, o_profLrData, o_expectedProfLrNbSamples] = ...
-         parse_apx_ir_LR_profile_data_10_to_12_14(a_profLowResMeasDataStr);
+         parse_apx_ir_LR_profile_data_10_to_12_14_15(a_profLowResMeasDataStr);
                   
    case {1201} % 061113
       
@@ -106,7 +106,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -306,7 +306,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -447,7 +447,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -614,7 +614,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -828,7 +828,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -995,7 +995,7 @@ return
 %
 % SYNTAX :
 %  [o_parkData, o_profLrData, o_expectedProfLrNbSamples] = ...
-%    parse_apx_ir_LR_profile_data_10_to_12_14(a_profLowResMeasDataStr)
+%    parse_apx_ir_LR_profile_data_10_to_12_14_15(a_profLowResMeasDataStr)
 %
 % INPUT PARAMETERS :
 %   a_profLowResMeasDataStr : input ASCII LR profile data
@@ -1008,13 +1008,13 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_parkData, o_profLrData, o_expectedProfLrNbSamples] = ...
-   parse_apx_ir_LR_profile_data_10_to_12_14(a_profLowResMeasDataStr)
+   parse_apx_ir_LR_profile_data_10_to_12_14_15(a_profLowResMeasDataStr)
 
 % output parameters initialization
 o_parkData = [];
@@ -1235,7 +1235,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -1383,8 +1383,8 @@ paramSal = get_netcdf_param_attributes('PSAL');
 paramTPhaseDoxy = get_netcdf_param_attributes('TPHASE_DOXY');
 paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
 paramRPhaseDoxy = get_netcdf_param_attributes('RPHASE_DOXY');
-paramPhaseDelayDoxy = get_netcdf_param_attributes('PHASE_DELAY_DOXY2');
-paramTempDoxy2 = get_netcdf_param_attributes('TEMP_DOXY2');
+paramPhaseDelayDoxy = get_netcdf_param_attributes('PHASE_DELAY_DOXY_2');
+paramTempDoxy2 = get_netcdf_param_attributes('TEMP_DOXY_2');
 
 if (~isempty(parkPres))
    

@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/29/2014 - RNU - creation
@@ -32,7 +32,7 @@
 %      - 1 bug while computing PROFILE_PARAM_QC
 %      - 2 'on the fly' corrections of input DM data:
 %         #1- from Argo Quality Control Manual V2.9.1: Please note that whenever
-%             PARAM_ADJUSTED_QC = ‘4’, both PARAM_ADJUSTED and
+%             PARAM_ADJUSTED_QC = â€˜4â€™, both PARAM_ADJUSTED and
 %             PARAM_ADJUSTED_ERROR should be set to FillValue
 %         #2- if PRES_QC = '0' set PRES_QC = '1'
 %   06/08/2015 - RNU - V 2.4:
@@ -174,7 +174,7 @@ if (nargin == 0)
       fprintf('ERROR: File not found: %s\n', floatListFileName);
       return
    end
-   
+
    fprintf('Floats from list: %s\n', floatListFileName);
    floatList = textread(floatListFileName, '%d');
 else
@@ -225,19 +225,19 @@ end
 % process the floats
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
-   
+
    floatNum = floatList(idFloat);
    fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
-   
+
    dmInFloatPath = [DIR_INPUT_DM_NC_FILES '/' sprintf('/%d/profiles/', floatNum)];
    rtInFloatPath = [DIR_INPUT_RT_NC_FILES '/' sprintf('/%d/profiles/', floatNum)];
    dmOutFloatPath = [DIR_OUTPUT_NC_FILES '/' sprintf('/%d/profiles/', floatNum)];
-   
+
    % create the float output directory
    if ~(exist(dmOutFloatPath, 'dir') == 7)
       mkdir(dmOutFloatPath);
    end
-   
+
    % process the files for this float
    idForWmo = find(floatWmoList == floatNum);
    %    for idFile = 1:min(3, length(idForWmo))
@@ -246,23 +246,23 @@ for idFloat = 1:nbFloats
       if (profDirList(idForWmo(idFile)) == 2)
          dir = 'D';
       end
-      
+
       dmInFilePathName = [dmInFloatPath sprintf('D%d_%03d%s.nc', floatNum, dmCyNumList(idForWmo(idFile)), dir)];
       rtInCFilePathName = [rtInFloatPath sprintf('R%d_%03d%s.nc', floatNum, rtCyNumList(idForWmo(idFile)), dir)];
       rtInBFilePathName = [rtInFloatPath sprintf('BR%d_%03d%s.nc', floatNum, rtCyNumList(idForWmo(idFile)), dir)];
       dmOutCFilePathName = [dmOutFloatPath sprintf('D%d_%03d%s.nc', floatNum, rtCyNumList(idForWmo(idFile)), dir)];
       dmOutBFilePathName = [dmOutFloatPath sprintf('BD%d_%03d%s.nc', floatNum, rtCyNumList(idForWmo(idFile)), dir)];
-      
+
       if ((exist(dmInFilePathName, 'file') == 2) && ...
             (exist(rtInCFilePathName, 'file') == 2))
-         
+
          bFileFlag = 0;
          if (exist(rtInBFilePathName, 'file') == 2)
             bFileFlag = 1;
             %             fprintf('INFO: B file - exit\n');
             %             continue
          end
-         
+
          % update the file
          [ok] = update_dm_file(dmInFilePathName, ...
             rtInCFilePathName, rtInBFilePathName, ...
@@ -271,7 +271,7 @@ for idFloat = 1:nbFloats
             rtCyNumList(idForWmo(idFile)), ...
             bFileFlag, ...
             floatNum, DIR_JSON_FLOAT_INFO, DIR_JSON_FLOAT_META);
-         
+
       else
          fprintf('ERROR: Some input file is missing\n');
       end
@@ -318,7 +318,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/29/2014 - RNU - creation
@@ -413,12 +413,12 @@ inputRtParamList = sort(unique(inputRtParamList));
 nParamDimInputRt = length(inputRtParamList);
 
 if (a_bFileFlag == 1)
-   
+
    wantedInputVars = [ ...
       {'STATION_PARAMETERS'} ...
       ];
    [inputRtData] = get_data_from_nc_file(a_inputRtBFileName, wantedInputVars);
-   
+
    % create the list of parameters
    idVal = find(strcmp('STATION_PARAMETERS', inputRtData(1:2:end)) == 1, 1);
    stationParameters = inputRtData{2*idVal};
@@ -455,7 +455,7 @@ for idP = 1:length(idF)
    fprintf('ERROR: Parameter %s is in input RT file but missing in input DM file. [DM file: %s] [RT file: (B)%s]\n', ...
       inputRtParamList{idF(idP)}, ...
       [dmFileName dmFileExt], [rtFileName rtFileExt]);
-   
+
    % add it into the list to create empty variable in output file
    inputDmParamList{end+1} = inputRtParamList{idF(idP)};
    inputDmParamList = sort(unique(inputDmParamList));
@@ -482,7 +482,7 @@ else
    nParamDimCOutput = 0;
    nParamDimBOutput = 1;
    for idP = 1:length(inputDmParamList)
-      param = get_netcdf_param_attributes_3_1(inputDmParamList{idP});
+      param = get_netcdf_param_attributes(inputDmParamList{idP});
       if ((param.paramType == 'c') || (param.paramType == 'j'))
          nParamDimCOutput = nParamDimCOutput + 1;
       else
@@ -539,7 +539,7 @@ if (~isempty(idF))
    if (strcmp(firmwareVersionRt, '061609'))
       idVal = find(strcmp('PRES', inputRtCData(1:2:end)) == 1, 1);
       presRt = inputRtCData{2*idVal};
-      paramStruct = get_netcdf_param_attributes_3_1('PRES');
+      paramStruct = get_netcdf_param_attributes('PRES');
       idNoDef = find(presRt(:, idF) ~= paramStruct.fillValue);
       nstLevRt = max(idNoDef);
       nstProfRt = 1;
@@ -661,7 +661,7 @@ if (~isempty(idVal))
                newDate = datestr(curDateNum, 'yyyymmddHHMMSS');
                inputDmDate(:, idNProf, idNHistory) = newDate';
                updated = 1;
-               
+
                fprintf('INFO: input ''HISTORY_DATE'' value (%s) updated to (%s) from input DM file %s\n', ...
                   curDate, newDate, a_inputDmFileName);
             end
@@ -696,7 +696,7 @@ if (~isempty(inputDmDate))
                   newDate = datestr(curDateNum, 'yyyymmddHHMMSS');
                   inputDmDate(:, idNParam, idNCalib, idNProf) = newDate';
                   updated = 1;
-                  
+
                   fprintf('INFO: input ''SCIENTIFIC_CALIB_DATE'' value (%s) updated to (%s) from input DM file %s\n', ...
                      curDate, newDate, a_inputDmFileName);
                end
@@ -780,7 +780,7 @@ end
 [inputRtCData] = get_data_from_nc_file(a_inputRtCFileName, wantedInputVars);
 
 if (a_bFileFlag == 1)
-   
+
    % retrieve information from input RT B file
    wantedInputVars = [ ...
       {'DATA_TYPE'} ...
@@ -860,7 +860,7 @@ if (a_bFileFlag == 1)
    nbOutputFiles = 2;
 end
 for idFile = 1:nbOutputFiles
-   
+
    if (idFile == 1)
       outputFileName = a_outputCFileName;
       inputRtData = inputRtCData;
@@ -870,487 +870,318 @@ for idFile = 1:nbOutputFiles
       inputRtData = inputRtBData;
       nParamDimOutput = nParamDimBOutput;
    end
-   
+
    % open the output file to update it
    fCdf = netcdf.open(outputFileName, 'NC_WRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF output c file: %s\n', outputFileName);
       return
    end
-   
-   netcdf.reDef(fCdf);
-   
-   % retrieve the creation date of the input DM file
-   idVal = find(strcmp('DATE_CREATION', inputDmData(1:2:end)) == 1, 1);
-   inputDmDateCreation = inputDmData{2*idVal}';
-   if (isempty(deblank(inputDmDateCreation)))
-      inputDmDateCreation = outputDateUpdate;
-   end
-   
-   % update the 'history' global attribute
-   globalVarId = netcdf.getConstant('NC_GLOBAL');
-   globalHistoryText = [datestr(datenum(inputDmDateCreation, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; '];
-   globalHistoryText = [globalHistoryText ...
-      datestr(datenum(outputDateUpdate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COFC software)'];
-   netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
-   
-   netcdf.endDef(fCdf);
-   
-   % list of RT variables without N_PROF dimension
-   list1InputRtVars = [ ...
-      {'DATA_TYPE'} ...
-      {'FORMAT_VERSION'} ...
-      {'HANDBOOK_VERSION'} ...
-      {'REFERENCE_DATE_TIME'} ...
-      ];
-   
-   % copy of the list1 input RT file variables into the output file
-   for idVar = 1:length(list1InputRtVars)
-      
-      varNameIn = list1InputRtVars{idVar};
-      varNameOut = varNameIn;
-      
-      if (var_is_present(fCdf, varNameOut))
-         idVal = find(strcmp(varNameIn, inputRtData(1:2:end)) == 1, 1);
+
+   try
+
+      netcdf.reDef(fCdf);
+
+      % retrieve the creation date of the input DM file
+      idVal = find(strcmp('DATE_CREATION', inputDmData(1:2:end)) == 1, 1);
+      inputDmDateCreation = inputDmData{2*idVal}';
+      if (isempty(deblank(inputDmDateCreation)))
+         inputDmDateCreation = outputDateUpdate;
+      end
+
+      % update the 'history' global attribute
+      globalVarId = netcdf.getConstant('NC_GLOBAL');
+      globalHistoryText = [datestr(datenum(inputDmDateCreation, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; '];
+      globalHistoryText = [globalHistoryText ...
+         datestr(datenum(outputDateUpdate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COFC software)'];
+      netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
+
+      netcdf.endDef(fCdf);
+
+      % list of RT variables without N_PROF dimension
+      list1InputRtVars = [ ...
+         {'DATA_TYPE'} ...
+         {'FORMAT_VERSION'} ...
+         {'HANDBOOK_VERSION'} ...
+         {'REFERENCE_DATE_TIME'} ...
+         ];
+
+      % copy of the list1 input RT file variables into the output file
+      for idVar = 1:length(list1InputRtVars)
+
+         varNameIn = list1InputRtVars{idVar};
+         varNameOut = varNameIn;
+
+         if (var_is_present(fCdf, varNameOut))
+            idVal = find(strcmp(varNameIn, inputRtData(1:2:end)) == 1, 1);
+            varValue = inputRtData{2*idVal};
+            if (isempty(varValue))
+               continue
+            end
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), varValue);
+         else
+            fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
+               varNameOut);
+         end
+      end
+
+      % list of DM variables without N_PROF dimension
+      list1InputDmVars = [ ...
+         {'DATE_CREATION'} ...
+         ];
+
+      % copy of the list1 input DM file variables into the output file
+      for idVar = 1:length(list1InputDmVars)
+
+         varNameIn = list1InputDmVars{idVar};
+         varNameOut = varNameIn;
+
+         if (var_is_present(fCdf, varNameOut))
+            idVal = find(strcmp(varNameIn, inputDmData(1:2:end)) == 1, 1);
+            varValue = inputDmData{2*idVal};
+            if (isempty(varValue))
+               continue
+            end
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), varValue);
+         else
+            fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
+               varNameOut);
+         end
+      end
+
+      % update the update date of the Output file
+      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), outputDateUpdate);
+
+      % list of RT variables with N_PROF dimension
+      list2InputRtVars = [ ...
+         {'PLATFORM_NUMBER'} ...
+         {'PROJECT_NAME'} ...
+         {'PI_NAME'} ...
+         {'STATION_PARAMETERS'} ...
+         {'CYCLE_NUMBER'} ...
+         {'DIRECTION'} ...
+         {'PLATFORM_TYPE'} ...
+         {'FLOAT_SERIAL_NO'} ...
+         {'FIRMWARE_VERSION'} ...
+         {'WMO_INST_TYPE'} ...
+         {'JULD'} ...
+         {'JULD_QC'} ...
+         {'JULD_LOCATION'} ...
+         {'LATITUDE'} ...
+         {'LONGITUDE'} ...
+         {'POSITION_QC'} ...
+         {'POSITIONING_SYSTEM'} ...
+         {'PARAMETER'} ...
+         {'VERTICAL_SAMPLING_SCHEME'} ...
+         {'CONFIG_MISSION_NUMBER'} ...
+         ];
+
+      primaryProfInRtInput = 1;
+      if (a_direction == 2)
+         % descending profile
+         nProfDimRtInput = 1;
+      else
+         % ascending profile
+         idVal = find(strcmp('CYCLE_NUMBER', inputRtData(1:2:end)) == 1, 1);
          varValue = inputRtData{2*idVal};
-         if (isempty(varValue))
-            continue
+         nProfDimRtInput = length(varValue);
+         if (varValue(1) == netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, 'CYCLE_NUMBER'), '_FillValue'))
+            primaryProfInRtInput = 0;
          end
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), varValue);
-      else
-         fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
-            varNameOut);
       end
-   end
-   
-   % list of DM variables without N_PROF dimension
-   list1InputDmVars = [ ...
-      {'DATE_CREATION'} ...
-      ];
-   
-   % copy of the list1 input DM file variables into the output file
-   for idVar = 1:length(list1InputDmVars)
-      
-      varNameIn = list1InputDmVars{idVar};
-      varNameOut = varNameIn;
-      
-      if (var_is_present(fCdf, varNameOut))
-         idVal = find(strcmp(varNameIn, inputDmData(1:2:end)) == 1, 1);
-         varValue = inputDmData{2*idVal};
-         if (isempty(varValue))
-            continue
+
+      if (nProfDimRtInput ~= nProfDimOutput)
+         if (nstProfRt == 0)
+            [~, fileName, fileExt] = fileparts(a_inputDmFileName);
+            fprintf('INFO: File %s N_PROF = %d in RT input and N_PROF = %d in DM output\n', ...
+               [fileName fileExt], nProfDimRtInput, nProfDimOutput);
          end
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), varValue);
-      else
-         fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
-            varNameOut);
       end
-   end
-   
-   % update the update date of the Output file
-   netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), outputDateUpdate);
-   
-   % list of RT variables with N_PROF dimension
-   list2InputRtVars = [ ...
-      {'PLATFORM_NUMBER'} ...
-      {'PROJECT_NAME'} ...
-      {'PI_NAME'} ...
-      {'STATION_PARAMETERS'} ...
-      {'CYCLE_NUMBER'} ...
-      {'DIRECTION'} ...
-      {'PLATFORM_TYPE'} ...
-      {'FLOAT_SERIAL_NO'} ...
-      {'FIRMWARE_VERSION'} ...
-      {'WMO_INST_TYPE'} ...
-      {'JULD'} ...
-      {'JULD_QC'} ...
-      {'JULD_LOCATION'} ...
-      {'LATITUDE'} ...
-      {'LONGITUDE'} ...
-      {'POSITION_QC'} ...
-      {'POSITIONING_SYSTEM'} ...
-      {'PARAMETER'} ...
-      {'VERTICAL_SAMPLING_SCHEME'} ...
-      {'CONFIG_MISSION_NUMBER'} ...
-      ];
-   
-   primaryProfInRtInput = 1;
-   if (a_direction == 2)
-      % descending profile
-      nProfDimRtInput = 1;
-   else
-      % ascending profile
-      idVal = find(strcmp('CYCLE_NUMBER', inputRtData(1:2:end)) == 1, 1);
-      varValue = inputRtData{2*idVal};
-      nProfDimRtInput = length(varValue);
-      if (varValue(1) == netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, 'CYCLE_NUMBER'), '_FillValue'))
-         primaryProfInRtInput = 0;
-      end
-   end
-   
-   if (nProfDimRtInput ~= nProfDimOutput)
-      if (nstProfRt == 0)
+      if (primaryProfInRtInput ~= primaryProfInOutput)
          [~, fileName, fileExt] = fileparts(a_inputDmFileName);
-         fprintf('INFO: File %s N_PROF = %d in RT input and N_PROF = %d in DM output\n', ...
-            [fileName fileExt], nProfDimRtInput, nProfDimOutput);
-      end
-   end
-   if (primaryProfInRtInput ~= primaryProfInOutput)
-      [~, fileName, fileExt] = fileparts(a_inputDmFileName);
-      if ((primaryProfInRtInput == 0) && (primaryProfInOutput == 1))
-         fprintf('ERROR: File %s no primary in RT input but exists in DM output - exit. We must create a new VSS for output primary profile\n', ...
-            [fileName fileExt]);
-         return
-      else
-         fprintf('INFO: File %s no primary in DM output but exists in RT input - RT data are ignored\n', ...
-            [fileName fileExt]);
-      end
-   end
-   
-   if (primaryProfInOutput == 0)
-      fprintf('INFO: File %s no primary in DM output - a default primary profile is created (from secondary profile information)\n', ...
-         [fileName fileExt]);
-   end
-   
-   % copy of the list2 RT input file variables into the output file
-   parameterOutputList = [];
-   for idVar = 1:length(list2InputRtVars)
-      
-      varNameIn = list2InputRtVars{idVar};
-      varNameOut = varNameIn;
-      
-      if (var_is_present(fCdf, varNameOut))
-         idVal = find(strcmp(varNameIn, inputRtData(1:2:end)) == 1, 1);
-         varValue = inputRtData{2*idVal};
-         if (isempty(varValue))
-            continue
+         if ((primaryProfInRtInput == 0) && (primaryProfInOutput == 1))
+            fprintf('ERROR: File %s no primary in RT input but exists in DM output - exit. We must create a new VSS for output primary profile\n', ...
+               [fileName fileExt]);
+            return
+         else
+            fprintf('INFO: File %s no primary in DM output but exists in RT input - RT data are ignored\n', ...
+               [fileName fileExt]);
          end
-         
-         for idProf = 1:nProfDimOutput+nstProfRt
-            
-            if ((primaryProfInOutput == 0) && (idProf == 1))
-               
-               % no primary profile in output file, we will create a default one
-               % (for the checker) by duplicating some variable of the secondary
-               % profile
-               if (strcmp(varNameOut, 'STATION_PARAMETERS'))
-                  
-                  % variables with a (N_PROF, N_PARAM, STRING) dimension
-                  for idParam = 1:nParamDimOutput
-                     % use the data of the secondary profile
-                     data = varValue(:, idParam, 2)';
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                        fliplr([idProf-1 idParam-1 0]), ...
-                        fliplr([1 1 length(data)]), data');
-                  end
-                  
-               elseif (strcmp(varNameOut, 'PARAMETER'))
-                  
-                  % variables with a (N_PROF, N_CALIB, N_PARAM, STRING) dimension
-                  for idCalib = 1:nCalibDimInputRt
+      end
+
+      if (primaryProfInOutput == 0)
+         fprintf('INFO: File %s no primary in DM output - a default primary profile is created (from secondary profile information)\n', ...
+            [fileName fileExt]);
+      end
+
+      % copy of the list2 RT input file variables into the output file
+      parameterOutputList = [];
+      for idVar = 1:length(list2InputRtVars)
+
+         varNameIn = list2InputRtVars{idVar};
+         varNameOut = varNameIn;
+
+         if (var_is_present(fCdf, varNameOut))
+            idVal = find(strcmp(varNameIn, inputRtData(1:2:end)) == 1, 1);
+            varValue = inputRtData{2*idVal};
+            if (isempty(varValue))
+               continue
+            end
+
+            for idProf = 1:nProfDimOutput+nstProfRt
+
+               if ((primaryProfInOutput == 0) && (idProf == 1))
+
+                  % no primary profile in output file, we will create a default one
+                  % (for the checker) by duplicating some variable of the secondary
+                  % profile
+                  if (strcmp(varNameOut, 'STATION_PARAMETERS'))
+
+                     % variables with a (N_PROF, N_PARAM, STRING) dimension
                      for idParam = 1:nParamDimOutput
                         % use the data of the secondary profile
-                        data = varValue(:, idParam, idCalib, 2)';
+                        data = varValue(:, idParam, 2)';
                         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                           fliplr([idProf-1 idCalib-1 idParam-1 0]), ...
-                           fliplr([1 1 1 length(data)]), data');
-                        parameterOutputList{idProf, idCalib, idParam} = deblank(data);
+                           fliplr([idProf-1 idParam-1 0]), ...
+                           fliplr([1 1 length(data)]), data');
                      end
-                  end
-                  
-               elseif (strcmp(varNameOut, 'VERTICAL_SAMPLING_SCHEME'))
-                  
-                  % (N_PROF, STRING) dimension variables
-                  data = 'Primary sampling: averaged []';
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                     fliplr([idProf-1 0]), ...
-                     fliplr([1 length(data)]), data');
-                  
-               else
-                  
-                  % variables with a (N_PROF, STRING) or (N_PROF) dimension
-                  % be careful that:
-                  %   - char(N_PROF, STRING16) is stored with size 16, N_PROF
-                  %   - char(N_PROF) is stored with size N_PROF, 1
-                  [varname, xtype, dimids, numatts] = netcdf.inqVar(fCdf, netcdf.inqVarID(fCdf, varNameOut));
-                  if (length(dimids) > 1)
+
+                  elseif (strcmp(varNameOut, 'PARAMETER'))
+
+                     % variables with a (N_PROF, N_CALIB, N_PARAM, STRING) dimension
+                     for idCalib = 1:nCalibDimInputRt
+                        for idParam = 1:nParamDimOutput
+                           % use the data of the secondary profile
+                           data = varValue(:, idParam, idCalib, 2)';
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                              fliplr([idProf-1 idCalib-1 idParam-1 0]), ...
+                              fliplr([1 1 1 length(data)]), data');
+                           parameterOutputList{idProf, idCalib, idParam} = deblank(data);
+                        end
+                     end
+
+                  elseif (strcmp(varNameOut, 'VERTICAL_SAMPLING_SCHEME'))
+
                      % (N_PROF, STRING) dimension variables
-                     data = varValue(:, idProf)';
+                     data = 'Primary sampling: averaged []';
                      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
                         fliplr([idProf-1 0]), ...
                         fliplr([1 length(data)]), data');
+
                   else
-                     % (N_PROF) dimension variables
-                     data = varValue(idProf);
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                        fliplr(idProf-1), ...
-                        fliplr(1), data);
-                  end
-                  
-               end
-               
-            else
-               
-               % nominal case (the primary profile exists in output file)
-               
-               if (strcmp(varNameOut, 'STATION_PARAMETERS'))
-                  
-                  % variables with a (N_PROF, N_PARAM, STRING) dimension
-                  for idParam = 1:nParamDimOutput
-                     if (idProf == 1)
-                        if (primaryProfInRtInput == 1)
-                           data = varValue(:, idParam, 1)';
-                        else
-                           data = varValue(:, idParam, 2)';
-                        end
+
+                     % variables with a (N_PROF, STRING) or (N_PROF) dimension
+                     % be careful that:
+                     %   - char(N_PROF, STRING16) is stored with size 16, N_PROF
+                     %   - char(N_PROF) is stored with size N_PROF, 1
+                     [varname, xtype, dimids, numatts] = netcdf.inqVar(fCdf, netcdf.inqVarID(fCdf, varNameOut));
+                     if (length(dimids) > 1)
+                        % (N_PROF, STRING) dimension variables
+                        data = varValue(:, idProf)';
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                           fliplr([idProf-1 0]), ...
+                           fliplr([1 length(data)]), data');
                      else
-                        data = varValue(:, idParam, idProf)';
+                        % (N_PROF) dimension variables
+                        data = varValue(idProf);
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                           fliplr(idProf-1), ...
+                           fliplr(1), data);
                      end
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                        fliplr([idProf-1 idParam-1 0]), ...
-                        fliplr([1 1 length(data)]), data');
+
                   end
-                  
-               elseif (strcmp(varNameOut, 'PARAMETER'))
-                  
-                  % variables with a (N_PROF, N_CALIB, N_PARAM, STRING) dimension
-                  for idCalib = 1:nCalibDimInputRt
+
+               else
+
+                  % nominal case (the primary profile exists in output file)
+
+                  if (strcmp(varNameOut, 'STATION_PARAMETERS'))
+
+                     % variables with a (N_PROF, N_PARAM, STRING) dimension
                      for idParam = 1:nParamDimOutput
                         if (idProf == 1)
                            if (primaryProfInRtInput == 1)
-                              data = varValue(:, idParam, idCalib, 1)';
+                              data = varValue(:, idParam, 1)';
                            else
-                              data = varValue(:, idParam, idCalib, 2)';
+                              data = varValue(:, idParam, 2)';
                            end
                         else
-                           data = varValue(:, idParam, idCalib, idProf)';
+                           data = varValue(:, idParam, idProf)';
                         end
                         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                           fliplr([idProf-1 idCalib-1 idParam-1 0]), ...
-                           fliplr([1 1 1 length(data)]), data');
-                        parameterOutputList{idProf, idCalib, idParam} = deblank(data);
+                           fliplr([idProf-1 idParam-1 0]), ...
+                           fliplr([1 1 length(data)]), data');
                      end
-                  end
-                  
-               elseif (strcmp(varNameOut, 'VERTICAL_SAMPLING_SCHEME'))
-                  
-                  % (N_PROF, STRING) dimension variables
-                  data = varValue(:, idProf)';
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                     fliplr([idProf-1 0]), ...
-                     fliplr([1 length(data)]), data');
-                  
-               else
-                  
-                  % variables with a (N_PROF, STRING) or (N_PROF) dimension
-                  % be careful that:
-                  %   - char(N_PROF, STRING16) is stored with size 16, N_PROF
-                  %   - char(N_PROF) is stored with size N_PROF, 1
-                  [varname, xtype, dimids, numatts] = netcdf.inqVar(fCdf, netcdf.inqVarID(fCdf, varNameOut));
-                  if (length(dimids) > 1)
-                     % (N_PROF, STRING) dimension variables
-                     data = varValue(:, idProf)';
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                        fliplr([idProf-1 0]), ...
-                        fliplr([1 length(data)]), data');
-                  else
-                     % (N_PROF) dimension variables
-                     data = varValue(idProf);
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                        fliplr(idProf-1), ...
-                        fliplr(1), data);
-                  end
-                  
-               end
-            end
-         end
-      else
-         fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
-            varNameOut);
-      end
-   end
-   
-   % list of DM variables with N_PROF dimension
-   list2InputDmVars = [ ...
-      {'DATA_CENTRE'} ...
-      {'DC_REFERENCE'} ...
-      {'DATA_STATE_INDICATOR'} ...
-      {'DATA_MODE'} ...
-      {'PARAMETER'} ...
-      {'SCIENTIFIC_CALIB_EQUATION'} ...
-      {'SCIENTIFIC_CALIB_COEFFICIENT'} ...
-      {'SCIENTIFIC_CALIB_COMMENT'} ...
-      {'HISTORY_INSTITUTION'} ...
-      {'HISTORY_STEP'} ...
-      {'HISTORY_SOFTWARE'} ...
-      {'HISTORY_SOFTWARE_RELEASE'} ...
-      {'HISTORY_REFERENCE'} ...
-      {'HISTORY_DATE'} ...
-      {'HISTORY_ACTION'} ...
-      {'HISTORY_PARAMETER'} ...
-      {'HISTORY_START_PRES'} ...
-      {'HISTORY_STOP_PRES'} ...
-      {'HISTORY_PREVIOUS_VALUE'} ...
-      {'HISTORY_QCTEST'} ...
-      ];
-   if (inputFileFormatVersion == 2.2)
-      list2InputDmVars = [ ...
-         list2InputDmVars ...
-         {'CALIBRATION_DATE'} ...
-         ];
-   elseif (inputFileFormatVersion == 2.3)
-      list2InputDmVars = [ ...
-         list2InputDmVars ...
-         {'SCIENTIFIC_CALIB_DATE'} ... % for Coriolis floats
-         ];
-   elseif (inputFileFormatVersion == 3.0)
-      list2InputDmVars = [ ...
-         list2InputDmVars ...
-         {'SCIENTIFIC_CALIB_DATE'} ...
-         ];
-   end
-   
-   idVal = find(strcmp('PARAMETER', inputDmData(1:2:end)) == 1, 1);
-   parameterValue = inputDmData{2*idVal};
-   
-   % copy of the list2 DM input file variables into the output file
-   for idVar = 1:length(list2InputDmVars)
-      
-      varNameIn = list2InputDmVars{idVar};
-      varNameOut = varNameIn;
-      
-      if (strcmp(varNameOut, 'PARAMETER'))
-         continue
-      end
-      
-      if ((inputFileFormatVersion == 2.2) || ...
-            (inputFileFormatVersion == 2.3))
-         if (strcmp(varNameIn, 'CALIBRATION_DATE') == 1)
-            varNameOut = 'SCIENTIFIC_CALIB_DATE';
-         end
-      end
-      
-      if (var_is_present(fCdf, varNameOut))
-         idVal = find(strcmp(varNameIn, inputDmData(1:2:end)) == 1, 1);
-         varValue = inputDmData{2*idVal};
-         if (isempty(varValue))
-            continue
-         end
-         
-         for idProf = 1:nProfDimOutput
-            
-            if ((primaryProfInOutput == 0) && (idProf == 1))
-               
-               % no primary profile in output file, we will create a default one
-               % (for the checker) by duplicating some variable of the secondary
-               % profile
-               
-               if ((strncmp(varNameOut, 'DATA_CENTRE', length('DATA_CENTRE'))) || ...
-                     (strncmp(varNameOut, 'DC_REFERENCE', length('DC_REFERENCE'))) || ...
-                     (strncmp(varNameOut, 'DATA_STATE_INDICATOR', length('DATA_STATE_INDICATOR'))) || ...
-                     (strncmp(varNameOut, 'DATA_MODE', length('DATA_MODE'))))
-                  
-                  fprintf('ERROR: Don''t know how to do that!\n');
-               end
-               
-            else
-               
-               % nominal case (the primary profile exists in output file)
-               
-               if (strncmp(varNameOut, 'SCIENTIFIC_CALIB_', length('SCIENTIFIC_CALIB_')))
-                  
-                  % variables with a (N_PROF, N_CALIB, N_PARAM, STRING) dimension
-                  for idCalib = 1:nCalibDimInputDm
-                     for idParam = 1:nParamDimInputDm
-                        param = deblank(parameterValue(:, idParam, idCalib, 1)');
-                        if (isempty(param))
-                           continue
-                        end
-                        if (~strcmp(param, 'PRES'))
-                           paramStruct = get_netcdf_param_attributes_3_1(param);
-                           if (idFile == 1)
-                              if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
-                                 continue
+
+                  elseif (strcmp(varNameOut, 'PARAMETER'))
+
+                     % variables with a (N_PROF, N_CALIB, N_PARAM, STRING) dimension
+                     for idCalib = 1:nCalibDimInputRt
+                        for idParam = 1:nParamDimOutput
+                           if (idProf == 1)
+                              if (primaryProfInRtInput == 1)
+                                 data = varValue(:, idParam, idCalib, 1)';
+                              else
+                                 data = varValue(:, idParam, idCalib, 2)';
                               end
                            else
-                              if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
-                                 continue
-                              end
+                              data = varValue(:, idParam, idCalib, idProf)';
                            end
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                              fliplr([idProf-1 idCalib-1 idParam-1 0]), ...
+                              fliplr([1 1 1 length(data)]), data');
+                           parameterOutputList{idProf, idCalib, idParam} = deblank(data);
                         end
-                        
-                        data = varValue(:, idParam, idCalib, 1)';
-                        
-                        % the position of the parameters can differ
-                        idF = find(strcmp(param, parameterOutputList(idProf, idCalib, :)) == 1, 1);
-                        
-                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                           fliplr([idProf-1 idCalib-1 idF-1 0]), ...
-                           fliplr([1 1 1 length(data)]), data');
                      end
-                  end
-                  
-               elseif (strncmp(varNameOut, 'HISTORY_', length('HISTORY_')))
-                  
-                  % variables with a (N_HISTORY, N_PROF, STRING) or (N_HISTORY, N_PROF) dimension
-                  for idHisto = 1:nHistoryDimInputDm
-                     if (ischar(varValue) && (size(varValue, 1) > 1))
-                        data = varValue(:, 1, idHisto)';
-                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                           fliplr([idHisto-1 idProf-1 0]), ...
-                           fliplr([1 1 length(data)]), data');
-                     else
-                        data = varValue(1, idHisto);
-                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                           fliplr([idHisto-1 idProf-1]), ...
-                           fliplr([1 1]), data);
-                     end
-                  end
-                  
-               else
-                  
-                  % variables with a (N_PROF, STRING) or (N_PROF) dimension
-                  % be careful that:
-                  %   - char(N_PROF, STRING16) is stored with size 16, N_PROF
-                  %   - char(N_PROF) is stored with size N_PROF, 1
-                  [varname, xtype, dimids, numatts] = netcdf.inqVar(fCdf, netcdf.inqVarID(fCdf, varNameOut));
-                  if (length(dimids) > 1)
+
+                  elseif (strcmp(varNameOut, 'VERTICAL_SAMPLING_SCHEME'))
+
                      % (N_PROF, STRING) dimension variables
                      data = varValue(:, idProf)';
                      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
                         fliplr([idProf-1 0]), ...
                         fliplr([1 length(data)]), data');
+
                   else
-                     % (N_PROF) dimension variables
-                     data = varValue(idProf);
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                        fliplr(idProf-1), ...
-                        fliplr(1), data);
+
+                     % variables with a (N_PROF, STRING) or (N_PROF) dimension
+                     % be careful that:
+                     %   - char(N_PROF, STRING16) is stored with size 16, N_PROF
+                     %   - char(N_PROF) is stored with size N_PROF, 1
+                     [varname, xtype, dimids, numatts] = netcdf.inqVar(fCdf, netcdf.inqVarID(fCdf, varNameOut));
+                     if (length(dimids) > 1)
+                        % (N_PROF, STRING) dimension variables
+                        data = varValue(:, idProf)';
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                           fliplr([idProf-1 0]), ...
+                           fliplr([1 length(data)]), data');
+                     else
+                        % (N_PROF) dimension variables
+                        data = varValue(idProf);
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                           fliplr(idProf-1), ...
+                           fliplr(1), data);
+                     end
+
                   end
-                  
                end
             end
+         else
+            fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
+               varNameOut);
          end
-         
-      else
-         fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
-            varNameOut);
       end
-   end
-   
-   % fill NST profile variables with RT input file data
-   if (nstProfRt == 1)
-      
-      % list of RT variables with N_PROF dimension
-      list3InputRtVars = [ ...
+
+      % list of DM variables with N_PROF dimension
+      list2InputDmVars = [ ...
          {'DATA_CENTRE'} ...
+         {'DC_REFERENCE'} ...
          {'DATA_STATE_INDICATOR'} ...
          {'DATA_MODE'} ...
          {'PARAMETER'} ...
          {'SCIENTIFIC_CALIB_EQUATION'} ...
          {'SCIENTIFIC_CALIB_COEFFICIENT'} ...
          {'SCIENTIFIC_CALIB_COMMENT'} ...
-         {'SCIENTIFIC_CALIB_DATE'} ...
          {'HISTORY_INSTITUTION'} ...
          {'HISTORY_STEP'} ...
          {'HISTORY_SOFTWARE'} ...
@@ -1364,563 +1195,382 @@ for idFile = 1:nbOutputFiles
          {'HISTORY_PREVIOUS_VALUE'} ...
          {'HISTORY_QCTEST'} ...
          ];
-      %          {'DC_REFERENCE'} ... % copied from DM data
-      
-      idVal = find(strcmp('PARAMETER', inputRtData(1:2:end)) == 1, 1);
-      parameterValue = inputRtData{2*idVal};
-      
-      % copy of the list3 RT input file variables into the nstProfIdRt profile
-      % of the output file
-      for idVar = 1:length(list3InputRtVars)
-         
-         varNameIn = list3InputRtVars{idVar};
+      if (inputFileFormatVersion == 2.2)
+         list2InputDmVars = [ ...
+            list2InputDmVars ...
+            {'CALIBRATION_DATE'} ...
+            ];
+      elseif (inputFileFormatVersion == 2.3)
+         list2InputDmVars = [ ...
+            list2InputDmVars ...
+            {'SCIENTIFIC_CALIB_DATE'} ... % for Coriolis floats
+            ];
+      elseif (inputFileFormatVersion == 3.0)
+         list2InputDmVars = [ ...
+            list2InputDmVars ...
+            {'SCIENTIFIC_CALIB_DATE'} ...
+            ];
+      end
+
+      idVal = find(strcmp('PARAMETER', inputDmData(1:2:end)) == 1, 1);
+      parameterValue = inputDmData{2*idVal};
+
+      % copy of the list2 DM input file variables into the output file
+      for idVar = 1:length(list2InputDmVars)
+
+         varNameIn = list2InputDmVars{idVar};
          varNameOut = varNameIn;
-         
+
          if (strcmp(varNameOut, 'PARAMETER'))
             continue
          end
-         
+
+         if ((inputFileFormatVersion == 2.2) || ...
+               (inputFileFormatVersion == 2.3))
+            if (strcmp(varNameIn, 'CALIBRATION_DATE') == 1)
+               varNameOut = 'SCIENTIFIC_CALIB_DATE';
+            end
+         end
+
          if (var_is_present(fCdf, varNameOut))
-            idVal = find(strcmp(varNameIn, inputRtData(1:2:end)) == 1, 1);
-            varValue = inputRtData{2*idVal};
+            idVal = find(strcmp(varNameIn, inputDmData(1:2:end)) == 1, 1);
+            varValue = inputDmData{2*idVal};
             if (isempty(varValue))
                continue
             end
-            
-            for idProf = nstProfIdRt
-               
-               if (strncmp(varNameOut, 'SCIENTIFIC_CALIB_', length('SCIENTIFIC_CALIB_')))
-                  
-                  % variables with a (N_PROF, N_CALIB, N_PARAM, STRING) dimension
-                  for idCalib = 1:nCalibDimInputRt
-                     for idParam = 1:nParamDimInputRt
-                        param = deblank(parameterValue(:, idParam, idCalib, idProf)');
-                        if (isempty(param))
-                           continue
-                        end
-                        if (~strcmp(param, 'PRES'))
-                           paramStruct = get_netcdf_param_attributes_3_1(param);
-                           if (idFile == 1)
-                              if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
-                                 continue
-                              end
-                           else
-                              if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
-                                 continue
+
+            for idProf = 1:nProfDimOutput
+
+               if ((primaryProfInOutput == 0) && (idProf == 1))
+
+                  % no primary profile in output file, we will create a default one
+                  % (for the checker) by duplicating some variable of the secondary
+                  % profile
+
+                  if ((strncmp(varNameOut, 'DATA_CENTRE', length('DATA_CENTRE'))) || ...
+                        (strncmp(varNameOut, 'DC_REFERENCE', length('DC_REFERENCE'))) || ...
+                        (strncmp(varNameOut, 'DATA_STATE_INDICATOR', length('DATA_STATE_INDICATOR'))) || ...
+                        (strncmp(varNameOut, 'DATA_MODE', length('DATA_MODE'))))
+
+                     fprintf('ERROR: Don''t know how to do that!\n');
+                  end
+
+               else
+
+                  % nominal case (the primary profile exists in output file)
+
+                  if (strncmp(varNameOut, 'SCIENTIFIC_CALIB_', length('SCIENTIFIC_CALIB_')))
+
+                     % variables with a (N_PROF, N_CALIB, N_PARAM, STRING) dimension
+                     for idCalib = 1:nCalibDimInputDm
+                        for idParam = 1:nParamDimInputDm
+                           param = deblank(parameterValue(:, idParam, idCalib, 1)');
+                           if (isempty(param))
+                              continue
+                           end
+                           if (~strcmp(param, 'PRES'))
+                              paramStruct = get_netcdf_param_attributes(param);
+                              if (idFile == 1)
+                                 if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
+                                    continue
+                                 end
+                              else
+                                 if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
+                                    continue
+                                 end
                               end
                            end
+
+                           data = varValue(:, idParam, idCalib, 1)';
+
+                           % the position of the parameters can differ
+                           idF = find(strcmp(param, parameterOutputList(idProf, idCalib, :)) == 1, 1);
+
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                              fliplr([idProf-1 idCalib-1 idF-1 0]), ...
+                              fliplr([1 1 1 length(data)]), data');
                         end
-                        
-                        data = varValue(:, idParam, idCalib, 1)';
-                        
-                        % the position of the parameters can differ
-                        idF = find(strcmp(param, parameterOutputList(idProf, idCalib, :)) == 1, 1);
-                        
-                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                           fliplr([idProf-1 idCalib-1 idF-1 0]), ...
-                           fliplr([1 1 1 length(data)]), data');
                      end
-                  end
-                  
-               elseif (strncmp(varNameOut, 'HISTORY_', length('HISTORY_')))
-                  
-                  % variables with a (N_HISTORY, N_PROF, STRING) or (N_HISTORY, N_PROF) dimension
-                  for idHisto = 1:nHistoryDimInputRt
-                     if (ischar(varValue) && (size(varValue, 1) > 1))
-                        data = varValue(:, 1, idHisto)';
-                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                           fliplr([idHisto-1 idProf-1 0]), ...
-                           fliplr([1 1 length(data)]), data');
-                     else
-                        data = varValue(1, idHisto);
-                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                           fliplr([idHisto-1 idProf-1]), ...
-                           fliplr([1 1]), data);
+
+                  elseif (strncmp(varNameOut, 'HISTORY_', length('HISTORY_')))
+
+                     % variables with a (N_HISTORY, N_PROF, STRING) or (N_HISTORY, N_PROF) dimension
+                     for idHisto = 1:nHistoryDimInputDm
+                        if (ischar(varValue) && (size(varValue, 1) > 1))
+                           data = varValue(:, 1, idHisto)';
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                              fliplr([idHisto-1 idProf-1 0]), ...
+                              fliplr([1 1 length(data)]), data');
+                        else
+                           data = varValue(1, idHisto);
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                              fliplr([idHisto-1 idProf-1]), ...
+                              fliplr([1 1]), data);
+                        end
                      end
-                  end
-                  
-               else
-                  
-                  % variables with a (N_PROF, STRING) or (N_PROF) dimension
-                  % be careful that:
-                  %   - char(N_PROF, STRING16) is stored with size 16, N_PROF
-                  %   - char(N_PROF) is stored with size N_PROF, 1
-                  [varname, xtype, dimids, numatts] = netcdf.inqVar(fCdf, netcdf.inqVarID(fCdf, varNameOut));
-                  if (length(dimids) > 1)
-                     % (N_PROF, STRING) dimension variables
-                     data = varValue(:, idProf)';
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                        fliplr([idProf-1 0]), ...
-                        fliplr([1 length(data)]), data');
+
                   else
-                     % (N_PROF) dimension variables
-                     data = varValue(idProf);
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                        fliplr(idProf-1), ...
-                        fliplr(1), data);
+
+                     % variables with a (N_PROF, STRING) or (N_PROF) dimension
+                     % be careful that:
+                     %   - char(N_PROF, STRING16) is stored with size 16, N_PROF
+                     %   - char(N_PROF) is stored with size N_PROF, 1
+                     [varname, xtype, dimids, numatts] = netcdf.inqVar(fCdf, netcdf.inqVarID(fCdf, varNameOut));
+                     if (length(dimids) > 1)
+                        % (N_PROF, STRING) dimension variables
+                        data = varValue(:, idProf)';
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                           fliplr([idProf-1 0]), ...
+                           fliplr([1 length(data)]), data');
+                     else
+                        % (N_PROF) dimension variables
+                        data = varValue(idProf);
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                           fliplr(idProf-1), ...
+                           fliplr(1), data);
+                     end
+
                   end
                end
             end
-            
+
          else
             fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
                varNameOut);
          end
       end
-   end
-   
-   % correction #8:
-   % for each PARAMETER of the 'D' profiles of the output file:
-   % - if empty, set SCIENTIFIC_CALIB_DATE to the DATE_UPDATE of the input DM file
-   % - if empty, set SCIENTIFIC_CALIB_COMMENT to 'none'
-   
-   if (var_is_present(fCdf, 'PARAMETER') && ...
-         var_is_present(fCdf, 'SCIENTIFIC_CALIB_DATE') && ...
-         var_is_present(fCdf, 'SCIENTIFIC_CALIB_COMMENT') && ...
-         var_is_present(fCdf, 'DATA_MODE'))
-      calibParam = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER'));
-      calibDate = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_DATE'));
-      calibComment = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_COMMENT'));
-      dataMode = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_MODE'));
-      [~, nParamDimOutput2, nCalibDimOutput2, nProfDimOutput2] = size(calibParam);
-      for idProf = 1:nProfDimOutput2
-         if (dataMode(idProf) == 'D')
-            for idCalib = 1:nCalibDimOutput2
-               for idParam = 1:nParamDimOutput2
-                  param = deblank(calibParam(:, idParam, idCalib, idProf)');
-                  if (~isempty(param))
-                     date = deblank(calibDate(:, idParam, idCalib, idProf)');
-                     if (isempty(date))
-                        % retrieve the update date of the input DM file
-                        idVal = find(strcmp('DATE_UPDATE', inputDmData(1:2:end)) == 1, 1);
-                        inputDmDateUpdate = inputDmData{2*idVal}';
-                        if (~isempty(deblank(inputDmDateUpdate)))
-                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_DATE'), ...
-                              fliplr([idProf-1 idCalib-1 idParam-1 0]), ...
-                              fliplr([1 1 1 length(inputDmDateUpdate)]), inputDmDateUpdate');
-                           fprintf('INFO: ''SCIENTIFIC_CALIB_DATE'' is empty for %s parameter - set to ''DATE_UPDATE'' of input DM file (= %s) (file %s)\n', ...
-                              param, inputDmDateUpdate, outputFileName);
-                        else
-                           fprintf('WARNING: ''SCIENTIFIC_CALIB_DATE'' is empty for %s parameter - nothing done since ''DATE_UPDATE'' of input DM file is empty (file %s)\n', ...
-                              param, outputFileName);
-                        end
-                     end
-                     comment = deblank(calibComment(:, idParam, idCalib, idProf)');
-                     if (isempty(comment))
-                        defaultComment = 'none';
-                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_COMMENT'), ...
-                           fliplr([idProf-1 idCalib-1 idParam-1 0]), ...
-                           fliplr([1 1 1 length(defaultComment)]), defaultComment');
-                        fprintf('INFO: ''SCIENTIFIC_CALIB_COMMENT'' is empty for %s parameter - set to ''%s'' (file %s)\n', ...
-                           param, defaultComment,outputFileName);
-                     end
-                  end
-               end
-            end
-         end
-      end
-   end
-   
-   % correction #9:
-   % if JULD > DATE_CREATION set DATE_CREATION = JULD
-   if (var_is_present(fCdf, 'DATE_CREATION') && ...
-         var_is_present(fCdf, 'JULD'))
-      dateCreation = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_CREATION'));
-      julDateCreation = datenum(dateCreation', 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
-      
-      julD = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'JULD'));
-      paramStruct = get_netcdf_param_attributes_3_1('JULD');
-      julD = julD(find(julD ~= paramStruct.fillValue));
-      if (any(julD > julDateCreation))
-         julDateCreationNew = max(julD);
-         dateCreationNew = datestr(julDateCreationNew + g_decArgo_janFirst1950InMatlab, 'yyyymmddHHMMSS');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_CREATION'), dateCreationNew);
-         fprintf('INFO: ''DATE_CREATION'' (%s) is before ''JULD'' (%s) - ''DATE_CREATION'' set to ''JULD'' (file %s)\n', ...
-            dateCreation, julian_2_gregorian_dec_argo(julDateCreationNew), outputFileName);
-      end
-   end
-   
-   if (idFile == 2)
-      
-      % retrieve parameter of RT input file (same as DM output file) used to
-      % update PARAMETER_DATA_MODE
-      
-      wantedInputVars = [ ...
-         {'STATION_PARAMETERS'} ...
-         ];
-      [inputRtData] = get_data_from_nc_file(a_inputRtBFileName, wantedInputVars);
-      
-      % create the list of parameters
-      idVal = find(strcmp('STATION_PARAMETERS', inputRtData(1:2:end)) == 1, 1);
-      stationParameters = inputRtData{2*idVal};
-      [~, inputNParam, inputNProf] = size(stationParameters);
-      outputStationParameters = [];
-      for idProf = 1:inputNProf
-         for idParam = 1:inputNParam
-            outputStationParameters{idProf, idParam} = deblank(stationParameters(:, idParam, idProf)');
-         end
-      end
-   end
-   
-   % copy of the DM input measurements into the DM output file
-   sufixList = [{''} {'_QC'} {'_ADJUSTED'} {'_ADJUSTED_QC'} {'_ADJUSTED_ERROR'}];
-   for idParam = 1:length(inputRtParamList)
-      paramNamePrefix = inputRtParamList{idParam};
-      
-      if (~strcmp(paramNamePrefix, 'PRES'))
-         paramStruct = get_netcdf_param_attributes_3_1(paramNamePrefix);
-         if (idFile == 1)
-            if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
+
+      % fill NST profile variables with RT input file data
+      if (nstProfRt == 1)
+
+         % list of RT variables with N_PROF dimension
+         list3InputRtVars = [ ...
+            {'DATA_CENTRE'} ...
+            {'DATA_STATE_INDICATOR'} ...
+            {'DATA_MODE'} ...
+            {'PARAMETER'} ...
+            {'SCIENTIFIC_CALIB_EQUATION'} ...
+            {'SCIENTIFIC_CALIB_COEFFICIENT'} ...
+            {'SCIENTIFIC_CALIB_COMMENT'} ...
+            {'SCIENTIFIC_CALIB_DATE'} ...
+            {'HISTORY_INSTITUTION'} ...
+            {'HISTORY_STEP'} ...
+            {'HISTORY_SOFTWARE'} ...
+            {'HISTORY_SOFTWARE_RELEASE'} ...
+            {'HISTORY_REFERENCE'} ...
+            {'HISTORY_DATE'} ...
+            {'HISTORY_ACTION'} ...
+            {'HISTORY_PARAMETER'} ...
+            {'HISTORY_START_PRES'} ...
+            {'HISTORY_STOP_PRES'} ...
+            {'HISTORY_PREVIOUS_VALUE'} ...
+            {'HISTORY_QCTEST'} ...
+            ];
+         %          {'DC_REFERENCE'} ... % copied from DM data
+
+         idVal = find(strcmp('PARAMETER', inputRtData(1:2:end)) == 1, 1);
+         parameterValue = inputRtData{2*idVal};
+
+         % copy of the list3 RT input file variables into the nstProfIdRt profile
+         % of the output file
+         for idVar = 1:length(list3InputRtVars)
+
+            varNameIn = list3InputRtVars{idVar};
+            varNameOut = varNameIn;
+
+            if (strcmp(varNameOut, 'PARAMETER'))
                continue
             end
-         else
-            if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
-               continue
-            end
-         end
-      end
-      
-      if (~isempty(find(strcmp(paramNamePrefix, inputDmMissingParamList) ==1, 1)))
-         % this parameter desn't exist in DM input file
-         continue
-      end
-      
-      for idS = 1:length(sufixList)
-         varNameIn = [paramNamePrefix sufixList{idS}];
-         varNameOut = varNameIn;
-         
-         if (idFile == 2)
-            if (strcmp(paramNamePrefix, 'PRES')  && (idS > 1))
-               continue
-            end
-         end
-         
-         paramStruct = get_netcdf_param_attributes_3_1(paramNamePrefix);
-         if (~isempty(paramStruct) && (paramStruct.adjAllowed == 0) && (idS > 2))
-            continue
-         end
-         
-         if (var_is_present(fCdf, varNameOut))
-            idVal = find(strcmp(varNameIn, inputDmData(1:2:end)) == 1, 1);
-            if (~isempty(idVal))
-               varValue = inputDmData{2*idVal};
+
+            if (var_is_present(fCdf, varNameOut))
+               idVal = find(strcmp(varNameIn, inputRtData(1:2:end)) == 1, 1);
+               varValue = inputRtData{2*idVal};
                if (isempty(varValue))
                   continue
                end
+
+               for idProf = nstProfIdRt
+
+                  if (strncmp(varNameOut, 'SCIENTIFIC_CALIB_', length('SCIENTIFIC_CALIB_')))
+
+                     % variables with a (N_PROF, N_CALIB, N_PARAM, STRING) dimension
+                     for idCalib = 1:nCalibDimInputRt
+                        for idParam = 1:nParamDimInputRt
+                           param = deblank(parameterValue(:, idParam, idCalib, idProf)');
+                           if (isempty(param))
+                              continue
+                           end
+                           if (~strcmp(param, 'PRES'))
+                              paramStruct = get_netcdf_param_attributes(param);
+                              if (idFile == 1)
+                                 if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
+                                    continue
+                                 end
+                              else
+                                 if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
+                                    continue
+                                 end
+                              end
+                           end
+
+                           data = varValue(:, idParam, idCalib, 1)';
+
+                           % the position of the parameters can differ
+                           idF = find(strcmp(param, parameterOutputList(idProf, idCalib, :)) == 1, 1);
+
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                              fliplr([idProf-1 idCalib-1 idF-1 0]), ...
+                              fliplr([1 1 1 length(data)]), data');
+                        end
+                     end
+
+                  elseif (strncmp(varNameOut, 'HISTORY_', length('HISTORY_')))
+
+                     % variables with a (N_HISTORY, N_PROF, STRING) or (N_HISTORY, N_PROF) dimension
+                     for idHisto = 1:nHistoryDimInputRt
+                        if (ischar(varValue) && (size(varValue, 1) > 1))
+                           data = varValue(:, 1, idHisto)';
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                              fliplr([idHisto-1 idProf-1 0]), ...
+                              fliplr([1 1 length(data)]), data');
+                        else
+                           data = varValue(1, idHisto);
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                              fliplr([idHisto-1 idProf-1]), ...
+                              fliplr([1 1]), data);
+                        end
+                     end
+
+                  else
+
+                     % variables with a (N_PROF, STRING) or (N_PROF) dimension
+                     % be careful that:
+                     %   - char(N_PROF, STRING16) is stored with size 16, N_PROF
+                     %   - char(N_PROF) is stored with size N_PROF, 1
+                     [varname, xtype, dimids, numatts] = netcdf.inqVar(fCdf, netcdf.inqVarID(fCdf, varNameOut));
+                     if (length(dimids) > 1)
+                        % (N_PROF, STRING) dimension variables
+                        data = varValue(:, idProf)';
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                           fliplr([idProf-1 0]), ...
+                           fliplr([1 length(data)]), data');
+                     else
+                        % (N_PROF) dimension variables
+                        data = varValue(idProf);
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                           fliplr(idProf-1), ...
+                           fliplr(1), data);
+                     end
+                  end
+               end
+
             else
-               fprintf('WARNING: Variable %s not present in DM input file\n', ...
+               fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
                   varNameOut);
-               continue
             end
-            
-            % input DM data correction #1
-            % from Argo Quality Control Manual V2.9.1
-            % Please note that whenever PARAM_ADJUSTED_QC = ‘4’, both
-            % PARAM_ADJUSTED and PARAM_ADJUSTED_ERROR should be set to FillValue.
-            if ((idS == 3) || (idS == 5))
-               
-               % retrieve <PARAM>_ADJUSTED_QC values
-               varAdjQcValue = [];
-               varAdjQcName = [paramNamePrefix sufixList{4}];
-               idValTmp = find(strcmp(varAdjQcName, inputDmData(1:2:end)) == 1, 1);
-               if (~isempty(idValTmp))
-                  varAdjQcValue = inputDmData{2*idValTmp};
-               end
-               if (~isempty(varAdjQcValue))
-                  idFQc4 = find(varAdjQcValue == g_decArgo_qcStrBad);
-                  if (any(varValue(idFQc4) ~= paramStruct.fillValue))
-                     fprintf('INFO: %d %s values set to FillValue (because %s = ''4'') (file %s)\n', ...
-                        length(idFQc4), varNameIn, varAdjQcName, outputFileName);
-                     varValue(idFQc4) = paramStruct.fillValue;
-                     inputDmData{2*idVal} = varValue;
-                  end
-               end
-            end
-            
-            % input DM data correction #2
-            % if PRES_QC = '0' set PRES_QC = '1'
-            if (strcmp(paramNamePrefix, 'PRES') && (idS == 2))
-               idFQc0 = find(varValue == g_decArgo_qcStrNoQc);
-               if (~isempty(idFQc0))
-                  varValue(idFQc0) = g_decArgo_qcStrGood;
-                  fprintf('INFO: %d %s values set to ''1'' (because %s = ''0'') (file %s)\n', ...
-                     length(idFQc0), varNameIn, varNameIn, outputFileName);
-                  inputDmData{2*idVal} = varValue;
-               end
-            end
-            
-            % input DM data correction #3
-            % if TEMP_QC = '0' duplicate TEMP_ADJUSTED_QC in TEMP_QC
-            if (strcmp(paramNamePrefix, 'TEMP') && (idS == 2))
-               idFQc0 = find(varValue == g_decArgo_qcStrNoQc);
-               if (~isempty(idFQc0))
-                  
-                  % retrieve <PARAM>_ADJUSTED_QC values
-                  varAdjQcValue = [];
-                  varAdjQcName = [paramNamePrefix sufixList{4}];
-                  idValTmp = find(strcmp(varAdjQcName, inputDmData(1:2:end)) == 1, 1);
-                  if (~isempty(idValTmp))
-                     varAdjQcValue = inputDmData{2*idValTmp};
-                  end
-                  if (~isempty(varAdjQcValue))
-                     if (any((varAdjQcValue ~= g_decArgo_qcStrDef) & (varAdjQcValue ~= g_decArgo_qcStrNoQc)))
-                        % TEMP parameter has been adjusted
-                        fprintf('INFO: %d TEMP_ADJUSTED_QC values duplicated to TEMP_QC (because TEMP_QC = ''0'' or '' '') (file %s)\n', ...
-                           length(idFQc0), outputFileName);
-                        varValue(idFQc0) = varAdjQcValue(idFQc0);
-                        inputDmData{2*idVal} = varValue;
-                     end
-                  end
-               end
-            end
-            % print a warning if same pb occurs with PSAL
-            if (strcmp(paramNamePrefix, 'PSAL') && (idS == 2))
-               idFQc0 = find(varValue == g_decArgo_qcStrNoQc);
-               if (~isempty(idFQc0))
-                  fprintf('WARNING: %d PSAL_QC values equal to ''0'' (file %s)\n', ...
-                     length(idFQc0), outputFileName);
-               end
-            end
-            
-            % input DM data correction #4
-            % if <PARAM>_ADJUSTED ~= fillValue and <PARAM>_ADJUSTED_ERROR =
-            % fillValue then <PARAM>_ADJUSTED_ERROR = error value (retrieve
-            % from existing error values (should be unique))
-            if (idS == 5)
-               
-               % retrieve <PARAM>_ADJUSTED values
-               varAdjValue = [];
-               varAdjName = [paramNamePrefix sufixList{3}];
-               idValTmp = find(strcmp(varAdjName, inputDmData(1:2:end)) == 1, 1);
-               if (~isempty(idValTmp))
-                  varAdjValue = inputDmData{2*idValTmp};
-               end
-               if (~isempty(varAdjValue))
-                  idFAdjNotFillval = find(varAdjValue ~= paramStruct.fillValue);
-                  if (any(varValue(idFAdjNotFillval) == paramStruct.fillValue))
-                     idFAdjErrorToSet = find(varValue(idFAdjNotFillval) == paramStruct.fillValue);
-                     adjErrorVal = unique(varValue(find(varValue ~= paramStruct.fillValue)));
-                     if (length(adjErrorVal) == 1)
-                        fprintf('INFO: %d %s values set to %f (because %s = FillValue) (file %s)\n', ...
-                           length(idFAdjErrorToSet), varNameIn, adjErrorVal, varNameIn, outputFileName);
-                        varValue(idFAdjNotFillval(idFAdjErrorToSet)) = adjErrorVal;
-                        inputDmData{2*idVal} = varValue;
-                     else
-                        fprintf('ERROR: %s values are not unique (file %s)\n', ...
-                           varNameIn, outputFileName);
-                     end
-                  end
-               end
-            end
-            
-            % input DM data correction #5
-            % if <PARAM> = fillValue and <PARAM>_QC ~= ' ' and <PARAM>_QC ~= '9'
-            % then <PARAM>_QC = '9'
-            if (idS == 2)
-               
-               % retrieve <PARAM> values
-               varParamValue = [];
-               varParamName = [paramNamePrefix sufixList{1}];
-               idValTmp = find(strcmp(varParamName, inputDmData(1:2:end)) == 1, 1);
-               if (~isempty(idValTmp))
-                  varParamValue = inputDmData{2*idValTmp};
-               end
-               if (~isempty(varParamValue))
-                  idFParamFillval = find(varParamValue == paramStruct.fillValue);
-                  if (any(~((varValue(idFParamFillval) == g_decArgo_qcStrDef) | ...
-                        (varValue(idFParamFillval) == g_decArgo_qcStrMissing))))
-                     idFQcToSet = find(~((varValue(idFParamFillval) == g_decArgo_qcStrDef) | ...
-                        (varValue(idFParamFillval) == g_decArgo_qcStrMissing)));
-                     fprintf('INFO: %d %s values set to ''9'' (because %s = FillValue) (file %s)\n', ...
-                        length(idFQcToSet), varNameIn, varParamName, outputFileName);
-                     varValue(idFParamFillval(idFQcToSet)) = g_decArgo_qcStrMissing;
-                     inputDmData{2*idVal} = varValue;
-                  end
-               end
-            end
-            
-            % input DM data correction #6
-            % if <PARAM>_ADJUSTED = fillValue and <PARAM>_QC ~= ' ' and
-            % <PARAM>_QC ~= '9' and <PARAM>_QC ~= '4'
-            % then <PARAM>_ADJUSTED_QC = '9'
-            if (idS == 4)
-               
-               % retrieve <PARAM>_ADJUSTED values
-               varAdjValue = [];
-               varAdjName = [paramNamePrefix sufixList{3}];
-               idValTmp = find(strcmp(varAdjName, inputDmData(1:2:end)) == 1, 1);
-               if (~isempty(idValTmp))
-                  varAdjValue = inputDmData{2*idValTmp};
-               end
-               if (~isempty(varAdjValue))
-                  idFAdjFillval = find(varAdjValue == paramStruct.fillValue);
-                  if (any(~((varValue(idFAdjFillval) == g_decArgo_qcStrDef) | ...
-                        (varValue(idFAdjFillval) == g_decArgo_qcStrMissing) | ...
-                        (varValue(idFAdjFillval) == g_decArgo_qcStrBad))))
-                     idFQcToSet = find(~((varValue(idFParamFillval) == g_decArgo_qcStrDef) | ...
-                        (varValue(idFParamFillval) == g_decArgo_qcStrMissing) | ...
-                        (varValue(idFParamFillval) == g_decArgo_qcStrBad)));
-                     fprintf('INFO: %d %s values set to ''9'' (because %s = FillValue) (file %s)\n', ...
-                        length(idFQcToSet), varNameIn, varParamName, outputFileName);
-                     varValue(idFAdjFillval(idFQcToSet)) = g_decArgo_qcStrMissing;
-                     inputDmData{2*idVal} = varValue;
-                  end
-               end
-            end
-            
-            % input DM data correction #7
-            % if <PARAM>_ADJUSTED = fillValue
-            % then <PARAM>_ADJUSTED_ERROR = fillValue
-            if (idS == 5)
-               
-               % retrieve <PARAM>_ADJUSTED values
-               varAdjValue = [];
-               varAdjName = [paramNamePrefix sufixList{3}];
-               idValTmp = find(strcmp(varAdjName, inputDmData(1:2:end)) == 1, 1);
-               if (~isempty(idValTmp))
-                  varAdjValue = inputDmData{2*idValTmp};
-               end
-               if (~isempty(varAdjValue))
-                  idFAdjFillval = find(varAdjValue == paramStruct.fillValue);
-                  if (any(varValue(idFAdjFillval) ~= paramStruct.fillValue))
-                     idFFillValToSet = find(varValue(idFAdjFillval) ~= paramStruct.fillValue);
-                     fprintf('INFO: %d %s values set to FillValue (because %s = fillvalue) (file %s)\n', ...
-                        length(idFFillValToSet), varNameIn, varAdjName, outputFileName);
-                     varValue(idFAdjFillval(idFFillValToSet)) = paramStruct.fillValue;
-                     inputDmData{2*idVal} = varValue;
-                  end
-               end
-            end
-            
-            % input DM data correction #10
-            % if PSAL ~= fillValue and PSAL_ADJUSTED == fillValue
-            % then PSAL_ADJUSTED_QC = '4'
-            if (strcmp(paramNamePrefix, 'PSAL') && (idS == 4))
-               
-               % retrieve PSAL values
-               varParamValue = [];
-               varName = [paramNamePrefix sufixList{1}];
-               idValTmp = find(strcmp(varName, inputDmData(1:2:end)) == 1, 1);
-               if (~isempty(idValTmp))
-                  varParamValue = inputDmData{2*idValTmp};
-               end
-               
-               % retrieve PSAL_ADJUSTED values
-               varParamAdjValue = [];
-               varAdjName = [paramNamePrefix sufixList{3}];
-               idValTmp = find(strcmp(varAdjName, inputDmData(1:2:end)) == 1, 1);
-               if (~isempty(idValTmp))
-                  varParamAdjValue = inputDmData{2*idValTmp};
-               end
-               
-               if (any((varParamValue ~= paramStruct.fillValue) & ...
-                     (varParamAdjValue == paramStruct.fillValue) & ...
-                     (varValue ~= g_decArgo_qcStrBad)))
-                  idFQcToSet = find((varParamValue ~= paramStruct.fillValue) & ...
-                     (varAdjValue == paramStruct.fillValue) & ...
-                     (varValue ~= g_decArgo_qcStrBad));
-                  fprintf('INFO: %d %s values set to ''4'' (because %s ~= fillvalue and %s_ADJUSTED = fillvalue) (file %s)\n', ...
-                     length(idFQcToSet), varNameIn, varParamName, varParamName, outputFileName);
-                  varValue(idFQcToSet) = g_decArgo_qcStrBad;
-                  inputDmData{2*idVal} = varValue;
-               end
-            end
-            
-            % input DM data correction #11
-            % if <PARAM>_QC = '9' then <PARAM>_ADJUSTED_QC = '9'
-            if (idS == 4)
-               
-               % retrieve <PARAM>_QC values
-               varQcValue = [];
-               varQcName = [paramNamePrefix sufixList{2}];
-               idValTmp = find(strcmp(varQcName, inputDmData(1:2:end)) == 1, 1);
-               if (~isempty(idValTmp))
-                  varQcValue = inputDmData{2*idValTmp};
-               end
-               
-               if (~isempty(varQcValue))
-                  if (any((varQcValue == g_decArgo_qcStrMissing) & (varValue ~= g_decArgo_qcStrMissing)))
-                     idFQcToSet = find((varQcValue == g_decArgo_qcStrMissing) & (varValue ~= g_decArgo_qcStrMissing));
-                     fprintf('INFO: %d %s values set to ''9'' (because %s = ''9'') (file %s)\n', ...
-                        length(idFQcToSet), varNameIn, varQcName, outputFileName);
-                     varValue(idFQcToSet) = g_decArgo_qcStrMissing;
-                     inputDmData{2*idVal} = varValue;
-                  end
-               end
-            end
-            
-            % input DM data correction #12
-            % if <PARAM>_QC = '4' and <PARAM>_ADJUSTED_QC = '9' then
-            % <PARAM>_ADJUSTED_QC = '4'
-            if (idS == 4)
-               
-               % retrieve <PARAM>_QC values
-               varQcValue = [];
-               varQcName = [paramNamePrefix sufixList{2}];
-               idValTmp = find(strcmp(varQcName, inputDmData(1:2:end)) == 1, 1);
-               if (~isempty(idValTmp))
-                  varQcValue = inputDmData{2*idValTmp};
-               end
-               
-               if (~isempty(varQcValue))
-                  if (any((varQcValue == g_decArgo_qcStrBad) & (varValue == g_decArgo_qcStrMissing)))
-                     idFQcToSet = find((varQcValue == g_decArgo_qcStrBad) & (varValue == g_decArgo_qcStrMissing));
-                     fprintf('INFO: %d %s values set to ''4'' (because %s = ''4'') (file %s)\n', ...
-                        length(idFQcToSet), varNameIn, varQcName, outputFileName);
-                     varValue(idFQcToSet) = g_decArgo_qcStrBad;
-                     inputDmData{2*idVal} = varValue;
-                  end
-               end
-            end
-            
-            if (nLevelsPrimary > 0)
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                  fliplr([0 0]), ...
-                  fliplr([1 nLevelsPrimary]), varValue(end-(nLevelsPrimary-1):end, 1));
-               
-               if (idS == 4)
-                  
-                  % update the profile quality flags
-                  profParamQcName = ['PROFILE_' paramNamePrefix '_QC'];
-                  profQualityFlag = compute_profile_quality_flag(varValue(end-(nLevelsPrimary-1):end, 1));
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), 0, 1, profQualityFlag);
-                  
-                  if (idFile == 2)
-                     
-                     % find the place of the current parameter in the DM output
-                     % b file
-                     idF = find(strcmp(paramNamePrefix, outputStationParameters(1, :)) == 1, 1);
-                     
-                     % update PARAMETER_DATA_MODE
-                     qcData = varValue(end-(nLevelsPrimary-1):end, 1);
-                     if (length(find((qcData == g_decArgo_qcStrDef) | (qcData == g_decArgo_qcStrNoQc) | (qcData == g_decArgo_qcStrMissing))) ~= length(qcData))
-                        % QC performed
-                        dataMode = 'D';
-                     else
-                        % no QC performed
-                        dataMode = 'R';
-                     end
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER_DATA_MODE'), ...
-                        fliplr([0 idF-1]), dataMode);
-                  end
-               end
-            end
-         else
-            fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
-               varNameOut);
          end
       end
-   end
-   
-   % copy of the RT input measurements of the NST profile into the DM output file
-   if (nstProfRt == 1)
-      
+
+      % correction #8:
+      % for each PARAMETER of the 'D' profiles of the output file:
+      % - if empty, set SCIENTIFIC_CALIB_DATE to the DATE_UPDATE of the input DM file
+      % - if empty, set SCIENTIFIC_CALIB_COMMENT to 'none'
+
+      if (var_is_present(fCdf, 'PARAMETER') && ...
+            var_is_present(fCdf, 'SCIENTIFIC_CALIB_DATE') && ...
+            var_is_present(fCdf, 'SCIENTIFIC_CALIB_COMMENT') && ...
+            var_is_present(fCdf, 'DATA_MODE'))
+         calibParam = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER'));
+         calibDate = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_DATE'));
+         calibComment = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_COMMENT'));
+         dataMode = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_MODE'));
+         [~, nParamDimOutput2, nCalibDimOutput2, nProfDimOutput2] = size(calibParam);
+         for idProf = 1:nProfDimOutput2
+            if (dataMode(idProf) == 'D')
+               for idCalib = 1:nCalibDimOutput2
+                  for idParam = 1:nParamDimOutput2
+                     param = deblank(calibParam(:, idParam, idCalib, idProf)');
+                     if (~isempty(param))
+                        date = deblank(calibDate(:, idParam, idCalib, idProf)');
+                        if (isempty(date))
+                           % retrieve the update date of the input DM file
+                           idVal = find(strcmp('DATE_UPDATE', inputDmData(1:2:end)) == 1, 1);
+                           inputDmDateUpdate = inputDmData{2*idVal}';
+                           if (~isempty(deblank(inputDmDateUpdate)))
+                              netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_DATE'), ...
+                                 fliplr([idProf-1 idCalib-1 idParam-1 0]), ...
+                                 fliplr([1 1 1 length(inputDmDateUpdate)]), inputDmDateUpdate');
+                              fprintf('INFO: ''SCIENTIFIC_CALIB_DATE'' is empty for %s parameter - set to ''DATE_UPDATE'' of input DM file (= %s) (file %s)\n', ...
+                                 param, inputDmDateUpdate, outputFileName);
+                           else
+                              fprintf('WARNING: ''SCIENTIFIC_CALIB_DATE'' is empty for %s parameter - nothing done since ''DATE_UPDATE'' of input DM file is empty (file %s)\n', ...
+                                 param, outputFileName);
+                           end
+                        end
+                        comment = deblank(calibComment(:, idParam, idCalib, idProf)');
+                        if (isempty(comment))
+                           defaultComment = 'none';
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_COMMENT'), ...
+                              fliplr([idProf-1 idCalib-1 idParam-1 0]), ...
+                              fliplr([1 1 1 length(defaultComment)]), defaultComment');
+                           fprintf('INFO: ''SCIENTIFIC_CALIB_COMMENT'' is empty for %s parameter - set to ''%s'' (file %s)\n', ...
+                              param, defaultComment,outputFileName);
+                        end
+                     end
+                  end
+               end
+            end
+         end
+      end
+
+      % correction #9:
+      % if JULD > DATE_CREATION set DATE_CREATION = JULD
+      if (var_is_present(fCdf, 'DATE_CREATION') && ...
+            var_is_present(fCdf, 'JULD'))
+         dateCreation = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_CREATION'));
+         julDateCreation = datenum(dateCreation', 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
+
+         julD = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'JULD'));
+         paramStruct = get_netcdf_param_attributes('JULD');
+         julD = julD(find(julD ~= paramStruct.fillValue));
+         if (any(julD > julDateCreation))
+            julDateCreationNew = max(julD);
+            dateCreationNew = datestr(julDateCreationNew + g_decArgo_janFirst1950InMatlab, 'yyyymmddHHMMSS');
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_CREATION'), dateCreationNew);
+            fprintf('INFO: ''DATE_CREATION'' (%s) is before ''JULD'' (%s) - ''DATE_CREATION'' set to ''JULD'' (file %s)\n', ...
+               dateCreation, julian_2_gregorian_dec_argo(julDateCreationNew), outputFileName);
+         end
+      end
+
+      if (idFile == 2)
+
+         % retrieve parameter of RT input file (same as DM output file) used to
+         % update PARAMETER_DATA_MODE
+
+         wantedInputVars = [ ...
+            {'STATION_PARAMETERS'} ...
+            ];
+         [inputRtData] = get_data_from_nc_file(a_inputRtBFileName, wantedInputVars);
+
+         % create the list of parameters
+         idVal = find(strcmp('STATION_PARAMETERS', inputRtData(1:2:end)) == 1, 1);
+         stationParameters = inputRtData{2*idVal};
+         [~, inputNParam, inputNProf] = size(stationParameters);
+         outputStationParameters = [];
+         for idProf = 1:inputNProf
+            for idParam = 1:inputNParam
+               outputStationParameters{idProf, idParam} = deblank(stationParameters(:, idParam, idProf)');
+            end
+         end
+      end
+
+      % copy of the DM input measurements into the DM output file
       sufixList = [{''} {'_QC'} {'_ADJUSTED'} {'_ADJUSTED_QC'} {'_ADJUSTED_ERROR'}];
       for idParam = 1:length(inputRtParamList)
          paramNamePrefix = inputRtParamList{idParam};
-         
+
          if (~strcmp(paramNamePrefix, 'PRES'))
-            paramStruct = get_netcdf_param_attributes_3_1(paramNamePrefix);
+            paramStruct = get_netcdf_param_attributes(paramNamePrefix);
             if (idFile == 1)
                if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                   continue
@@ -1931,59 +1581,321 @@ for idFile = 1:nbOutputFiles
                end
             end
          end
-         
+
+         if (~isempty(find(strcmp(paramNamePrefix, inputDmMissingParamList) ==1, 1)))
+            % this parameter desn't exist in DM input file
+            continue
+         end
+
          for idS = 1:length(sufixList)
             varNameIn = [paramNamePrefix sufixList{idS}];
             varNameOut = varNameIn;
-            
+
             if (idFile == 2)
                if (strcmp(paramNamePrefix, 'PRES')  && (idS > 1))
                   continue
                end
             end
-            
-            paramStruct = get_netcdf_param_attributes_3_1(paramNamePrefix);
+
+            paramStruct = get_netcdf_param_attributes(paramNamePrefix);
             if (~isempty(paramStruct) && (paramStruct.adjAllowed == 0) && (idS > 2))
                continue
             end
-            
+
             if (var_is_present(fCdf, varNameOut))
-               idVal = find(strcmp(varNameIn, inputRtData(1:2:end)) == 1, 1);
+               idVal = find(strcmp(varNameIn, inputDmData(1:2:end)) == 1, 1);
                if (~isempty(idVal))
-                  varValue = inputRtData{2*idVal};
-                  varValue = varValue(:, nstProfIdRt);
+                  varValue = inputDmData{2*idVal};
                   if (isempty(varValue))
                      continue
                   end
                else
-                  fprintf('WARNING: Variable %s not present in RT input file\n', ...
+                  fprintf('WARNING: Variable %s not present in DM input file\n', ...
                      varNameOut);
                   continue
                end
-               
-               if (nstLevRt > 0)
+
+               % input DM data correction #1
+               % from Argo Quality Control Manual V2.9.1
+               % Please note that whenever PARAM_ADJUSTED_QC = â€˜4â€™, both
+               % PARAM_ADJUSTED and PARAM_ADJUSTED_ERROR should be set to FillValue.
+               if ((idS == 3) || (idS == 5))
+
+                  % retrieve <PARAM>_ADJUSTED_QC values
+                  varAdjQcValue = [];
+                  varAdjQcName = [paramNamePrefix sufixList{4}];
+                  idValTmp = find(strcmp(varAdjQcName, inputDmData(1:2:end)) == 1, 1);
+                  if (~isempty(idValTmp))
+                     varAdjQcValue = inputDmData{2*idValTmp};
+                  end
+                  if (~isempty(varAdjQcValue))
+                     idFQc4 = find(varAdjQcValue == g_decArgo_qcStrBad);
+                     if (any(varValue(idFQc4) ~= paramStruct.fillValue))
+                        fprintf('INFO: %d %s values set to FillValue (because %s = ''4'') (file %s)\n', ...
+                           length(idFQc4), varNameIn, varAdjQcName, outputFileName);
+                        varValue(idFQc4) = paramStruct.fillValue;
+                        inputDmData{2*idVal} = varValue;
+                     end
+                  end
+               end
+
+               % input DM data correction #2
+               % if PRES_QC = '0' set PRES_QC = '1'
+               if (strcmp(paramNamePrefix, 'PRES') && (idS == 2))
+                  idFQc0 = find(varValue == g_decArgo_qcStrNoQc);
+                  if (~isempty(idFQc0))
+                     varValue(idFQc0) = g_decArgo_qcStrGood;
+                     fprintf('INFO: %d %s values set to ''1'' (because %s = ''0'') (file %s)\n', ...
+                        length(idFQc0), varNameIn, varNameIn, outputFileName);
+                     inputDmData{2*idVal} = varValue;
+                  end
+               end
+
+               % input DM data correction #3
+               % if TEMP_QC = '0' duplicate TEMP_ADJUSTED_QC in TEMP_QC
+               if (strcmp(paramNamePrefix, 'TEMP') && (idS == 2))
+                  idFQc0 = find(varValue == g_decArgo_qcStrNoQc);
+                  if (~isempty(idFQc0))
+
+                     % retrieve <PARAM>_ADJUSTED_QC values
+                     varAdjQcValue = [];
+                     varAdjQcName = [paramNamePrefix sufixList{4}];
+                     idValTmp = find(strcmp(varAdjQcName, inputDmData(1:2:end)) == 1, 1);
+                     if (~isempty(idValTmp))
+                        varAdjQcValue = inputDmData{2*idValTmp};
+                     end
+                     if (~isempty(varAdjQcValue))
+                        if (any((varAdjQcValue ~= g_decArgo_qcStrDef) & (varAdjQcValue ~= g_decArgo_qcStrNoQc)))
+                           % TEMP parameter has been adjusted
+                           fprintf('INFO: %d TEMP_ADJUSTED_QC values duplicated to TEMP_QC (because TEMP_QC = ''0'' or '' '') (file %s)\n', ...
+                              length(idFQc0), outputFileName);
+                           varValue(idFQc0) = varAdjQcValue(idFQc0);
+                           inputDmData{2*idVal} = varValue;
+                        end
+                     end
+                  end
+               end
+               % print a warning if same pb occurs with PSAL
+               if (strcmp(paramNamePrefix, 'PSAL') && (idS == 2))
+                  idFQc0 = find(varValue == g_decArgo_qcStrNoQc);
+                  if (~isempty(idFQc0))
+                     fprintf('WARNING: %d PSAL_QC values equal to ''0'' (file %s)\n', ...
+                        length(idFQc0), outputFileName);
+                  end
+               end
+
+               % input DM data correction #4
+               % if <PARAM>_ADJUSTED ~= fillValue and <PARAM>_ADJUSTED_ERROR =
+               % fillValue then <PARAM>_ADJUSTED_ERROR = error value (retrieve
+               % from existing error values (should be unique))
+               if (idS == 5)
+
+                  % retrieve <PARAM>_ADJUSTED values
+                  varAdjValue = [];
+                  varAdjName = [paramNamePrefix sufixList{3}];
+                  idValTmp = find(strcmp(varAdjName, inputDmData(1:2:end)) == 1, 1);
+                  if (~isempty(idValTmp))
+                     varAdjValue = inputDmData{2*idValTmp};
+                  end
+                  if (~isempty(varAdjValue))
+                     idFAdjNotFillval = find(varAdjValue ~= paramStruct.fillValue);
+                     if (any(varValue(idFAdjNotFillval) == paramStruct.fillValue))
+                        idFAdjErrorToSet = find(varValue(idFAdjNotFillval) == paramStruct.fillValue);
+                        adjErrorVal = unique(varValue(find(varValue ~= paramStruct.fillValue)));
+                        if (length(adjErrorVal) == 1)
+                           fprintf('INFO: %d %s values set to %f (because %s = FillValue) (file %s)\n', ...
+                              length(idFAdjErrorToSet), varNameIn, adjErrorVal, varNameIn, outputFileName);
+                           varValue(idFAdjNotFillval(idFAdjErrorToSet)) = adjErrorVal;
+                           inputDmData{2*idVal} = varValue;
+                        else
+                           fprintf('ERROR: %s values are not unique (file %s)\n', ...
+                              varNameIn, outputFileName);
+                        end
+                     end
+                  end
+               end
+
+               % input DM data correction #5
+               % if <PARAM> = fillValue and <PARAM>_QC ~= ' ' and <PARAM>_QC ~= '9'
+               % then <PARAM>_QC = '9'
+               if (idS == 2)
+
+                  % retrieve <PARAM> values
+                  varParamValue = [];
+                  varParamName = [paramNamePrefix sufixList{1}];
+                  idValTmp = find(strcmp(varParamName, inputDmData(1:2:end)) == 1, 1);
+                  if (~isempty(idValTmp))
+                     varParamValue = inputDmData{2*idValTmp};
+                  end
+                  if (~isempty(varParamValue))
+                     idFParamFillval = find(varParamValue == paramStruct.fillValue);
+                     if (any(~((varValue(idFParamFillval) == g_decArgo_qcStrDef) | ...
+                           (varValue(idFParamFillval) == g_decArgo_qcStrMissing))))
+                        idFQcToSet = find(~((varValue(idFParamFillval) == g_decArgo_qcStrDef) | ...
+                           (varValue(idFParamFillval) == g_decArgo_qcStrMissing)));
+                        fprintf('INFO: %d %s values set to ''9'' (because %s = FillValue) (file %s)\n', ...
+                           length(idFQcToSet), varNameIn, varParamName, outputFileName);
+                        varValue(idFParamFillval(idFQcToSet)) = g_decArgo_qcStrMissing;
+                        inputDmData{2*idVal} = varValue;
+                     end
+                  end
+               end
+
+               % input DM data correction #6
+               % if <PARAM>_ADJUSTED = fillValue and <PARAM>_QC ~= ' ' and
+               % <PARAM>_QC ~= '9' and <PARAM>_QC ~= '4'
+               % then <PARAM>_ADJUSTED_QC = '9'
+               if (idS == 4)
+
+                  % retrieve <PARAM>_ADJUSTED values
+                  varAdjValue = [];
+                  varAdjName = [paramNamePrefix sufixList{3}];
+                  idValTmp = find(strcmp(varAdjName, inputDmData(1:2:end)) == 1, 1);
+                  if (~isempty(idValTmp))
+                     varAdjValue = inputDmData{2*idValTmp};
+                  end
+                  if (~isempty(varAdjValue))
+                     idFAdjFillval = find(varAdjValue == paramStruct.fillValue);
+                     if (any(~((varValue(idFAdjFillval) == g_decArgo_qcStrDef) | ...
+                           (varValue(idFAdjFillval) == g_decArgo_qcStrMissing) | ...
+                           (varValue(idFAdjFillval) == g_decArgo_qcStrBad))))
+                        idFQcToSet = find(~((varValue(idFParamFillval) == g_decArgo_qcStrDef) | ...
+                           (varValue(idFParamFillval) == g_decArgo_qcStrMissing) | ...
+                           (varValue(idFParamFillval) == g_decArgo_qcStrBad)));
+                        fprintf('INFO: %d %s values set to ''9'' (because %s = FillValue) (file %s)\n', ...
+                           length(idFQcToSet), varNameIn, varParamName, outputFileName);
+                        varValue(idFAdjFillval(idFQcToSet)) = g_decArgo_qcStrMissing;
+                        inputDmData{2*idVal} = varValue;
+                     end
+                  end
+               end
+
+               % input DM data correction #7
+               % if <PARAM>_ADJUSTED = fillValue
+               % then <PARAM>_ADJUSTED_ERROR = fillValue
+               if (idS == 5)
+
+                  % retrieve <PARAM>_ADJUSTED values
+                  varAdjValue = [];
+                  varAdjName = [paramNamePrefix sufixList{3}];
+                  idValTmp = find(strcmp(varAdjName, inputDmData(1:2:end)) == 1, 1);
+                  if (~isempty(idValTmp))
+                     varAdjValue = inputDmData{2*idValTmp};
+                  end
+                  if (~isempty(varAdjValue))
+                     idFAdjFillval = find(varAdjValue == paramStruct.fillValue);
+                     if (any(varValue(idFAdjFillval) ~= paramStruct.fillValue))
+                        idFFillValToSet = find(varValue(idFAdjFillval) ~= paramStruct.fillValue);
+                        fprintf('INFO: %d %s values set to FillValue (because %s = fillvalue) (file %s)\n', ...
+                           length(idFFillValToSet), varNameIn, varAdjName, outputFileName);
+                        varValue(idFAdjFillval(idFFillValToSet)) = paramStruct.fillValue;
+                        inputDmData{2*idVal} = varValue;
+                     end
+                  end
+               end
+
+               % input DM data correction #10
+               % if PSAL ~= fillValue and PSAL_ADJUSTED == fillValue
+               % then PSAL_ADJUSTED_QC = '4'
+               if (strcmp(paramNamePrefix, 'PSAL') && (idS == 4))
+
+                  % retrieve PSAL values
+                  varParamValue = [];
+                  varName = [paramNamePrefix sufixList{1}];
+                  idValTmp = find(strcmp(varName, inputDmData(1:2:end)) == 1, 1);
+                  if (~isempty(idValTmp))
+                     varParamValue = inputDmData{2*idValTmp};
+                  end
+
+                  % retrieve PSAL_ADJUSTED values
+                  varParamAdjValue = [];
+                  varAdjName = [paramNamePrefix sufixList{3}];
+                  idValTmp = find(strcmp(varAdjName, inputDmData(1:2:end)) == 1, 1);
+                  if (~isempty(idValTmp))
+                     varParamAdjValue = inputDmData{2*idValTmp};
+                  end
+
+                  if (any((varParamValue ~= paramStruct.fillValue) & ...
+                        (varParamAdjValue == paramStruct.fillValue) & ...
+                        (varValue ~= g_decArgo_qcStrBad)))
+                     idFQcToSet = find((varParamValue ~= paramStruct.fillValue) & ...
+                        (varAdjValue == paramStruct.fillValue) & ...
+                        (varValue ~= g_decArgo_qcStrBad));
+                     fprintf('INFO: %d %s values set to ''4'' (because %s ~= fillvalue and %s_ADJUSTED = fillvalue) (file %s)\n', ...
+                        length(idFQcToSet), varNameIn, varParamName, varParamName, outputFileName);
+                     varValue(idFQcToSet) = g_decArgo_qcStrBad;
+                     inputDmData{2*idVal} = varValue;
+                  end
+               end
+
+               % input DM data correction #11
+               % if <PARAM>_QC = '9' then <PARAM>_ADJUSTED_QC = '9'
+               if (idS == 4)
+
+                  % retrieve <PARAM>_QC values
+                  varQcValue = [];
+                  varQcName = [paramNamePrefix sufixList{2}];
+                  idValTmp = find(strcmp(varQcName, inputDmData(1:2:end)) == 1, 1);
+                  if (~isempty(idValTmp))
+                     varQcValue = inputDmData{2*idValTmp};
+                  end
+
+                  if (~isempty(varQcValue))
+                     if (any((varQcValue == g_decArgo_qcStrMissing) & (varValue ~= g_decArgo_qcStrMissing)))
+                        idFQcToSet = find((varQcValue == g_decArgo_qcStrMissing) & (varValue ~= g_decArgo_qcStrMissing));
+                        fprintf('INFO: %d %s values set to ''9'' (because %s = ''9'') (file %s)\n', ...
+                           length(idFQcToSet), varNameIn, varQcName, outputFileName);
+                        varValue(idFQcToSet) = g_decArgo_qcStrMissing;
+                        inputDmData{2*idVal} = varValue;
+                     end
+                  end
+               end
+
+               % input DM data correction #12
+               % if <PARAM>_QC = '4' and <PARAM>_ADJUSTED_QC = '9' then
+               % <PARAM>_ADJUSTED_QC = '4'
+               if (idS == 4)
+
+                  % retrieve <PARAM>_QC values
+                  varQcValue = [];
+                  varQcName = [paramNamePrefix sufixList{2}];
+                  idValTmp = find(strcmp(varQcName, inputDmData(1:2:end)) == 1, 1);
+                  if (~isempty(idValTmp))
+                     varQcValue = inputDmData{2*idValTmp};
+                  end
+
+                  if (~isempty(varQcValue))
+                     if (any((varQcValue == g_decArgo_qcStrBad) & (varValue == g_decArgo_qcStrMissing)))
+                        idFQcToSet = find((varQcValue == g_decArgo_qcStrBad) & (varValue == g_decArgo_qcStrMissing));
+                        fprintf('INFO: %d %s values set to ''4'' (because %s = ''4'') (file %s)\n', ...
+                           length(idFQcToSet), varNameIn, varQcName, outputFileName);
+                        varValue(idFQcToSet) = g_decArgo_qcStrBad;
+                        inputDmData{2*idVal} = varValue;
+                     end
+                  end
+               end
+
+               if (nLevelsPrimary > 0)
                   netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
-                     fliplr([nstProfIdRt-1 0]), ...
-                     fliplr([1 nstLevRt]), varValue(1:nstLevRt));
-                  
+                     fliplr([0 0]), ...
+                     fliplr([1 nLevelsPrimary]), varValue(end-(nLevelsPrimary-1):end, 1));
+
                   if (idS == 4)
-                     
+
                      % update the profile quality flags
                      profParamQcName = ['PROFILE_' paramNamePrefix '_QC'];
-                     profQualityFlag = compute_profile_quality_flag(varValue(1:nstLevRt));
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), nstProfIdRt-1, 1, profQualityFlag);
-                     
+                     profQualityFlag = compute_profile_quality_flag(varValue(end-(nLevelsPrimary-1):end, 1));
+                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), 0, 1, profQualityFlag);
+
                      if (idFile == 2)
-                        
+
                         % find the place of the current parameter in the DM output
                         % b file
                         idF = find(strcmp(paramNamePrefix, outputStationParameters(1, :)) == 1, 1);
-                        
+
                         % update PARAMETER_DATA_MODE
-                        qcData = varValue(1:nstLevRt);
-                        if (length(find((qcData == g_decArgo_qcStrDef) | ...
-                              (qcData == g_decArgo_qcStrNoQc) | ...
-                              (qcData == g_decArgo_qcStrMissing))) ~= length(qcData))
+                        qcData = varValue(end-(nLevelsPrimary-1):end, 1);
+                        if (length(find((qcData == g_decArgo_qcStrDef) | (qcData == g_decArgo_qcStrNoQc) | (qcData == g_decArgo_qcStrMissing))) ~= length(qcData))
                            % QC performed
                            dataMode = 'D';
                         else
@@ -1991,7 +1903,7 @@ for idFile = 1:nbOutputFiles
                            dataMode = 'R';
                         end
                         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER_DATA_MODE'), ...
-                           fliplr([nstProfIdRt-1 idF-1]), dataMode);
+                           fliplr([0 idF-1]), dataMode);
                      end
                   end
                end
@@ -2001,223 +1913,318 @@ for idFile = 1:nbOutputFiles
             end
          end
       end
-   end
-   
-   if (idFile == 2)
-      % when MOLAR_DOXY is missing, we try to recover it from RT input file (the
-      % corresponding levels is recognized using PRES TEMP and PSAL values)
-      molarDoxyAdded = 0;
-      if (~isempty(find(strcmp('MOLAR_DOXY', inputDmMissingParamList) ==1, 1)))
-         
-         % retrieve measurements from input RT C file
-         wantedInputVars = [ ...
-            {'PRES'} ...
-            {'TEMP'} ...
-            {'PSAL'} ...
-            ];
-         [inputRtCMeas] = get_data_from_nc_file(a_inputRtCFileName, wantedInputVars);
-         
-         idVal = find(strcmp('PRES', inputRtCMeas(1:2:end)) == 1, 1);
-         presInputCMeas = inputRtCMeas{2*idVal};
-         idVal = find(strcmp('TEMP', inputRtCMeas(1:2:end)) == 1, 1);
-         tempInputCMeas = inputRtCMeas{2*idVal};
-         idVal = find(strcmp('PSAL', inputRtCMeas(1:2:end)) == 1, 1);
-         psalInputCMeas = inputRtCMeas{2*idVal};
-         
-         % retrieve measurements from input RT B file
-         wantedInputVars = [ ...
-            {'MOLAR_DOXY'} ...
-            ];
-         [inputRtBMeas] = get_data_from_nc_file(a_inputRtBFileName, wantedInputVars);
-         
-         idVal = find(strcmp('MOLAR_DOXY', inputRtBMeas(1:2:end)) == 1, 1);
-         molarDoxyInputBMeas = inputRtBMeas{2*idVal};
-         
-         % retrieve measurements from output DM C file
-         wantedInputVars = [ ...
-            {'PRES'} ...
-            {'TEMP'} ...
-            {'PSAL'} ...
-            ];
-         [ouputDmCMeas] = get_data_from_nc_file(a_outputCFileName, wantedInputVars);
-         
-         idVal = find(strcmp('PRES', ouputDmCMeas(1:2:end)) == 1, 1);
-         presOutputCMeas = ouputDmCMeas{2*idVal};
-         idVal = find(strcmp('TEMP', ouputDmCMeas(1:2:end)) == 1, 1);
-         tempOutputCMeas = ouputDmCMeas{2*idVal};
-         idVal = find(strcmp('PSAL', ouputDmCMeas(1:2:end)) == 1, 1);
-         psalOutputCMeas = ouputDmCMeas{2*idVal};
-         
-         presParam = get_netcdf_param_attributes_3_1('PRES');
-         tempParam = get_netcdf_param_attributes_3_1('TEMP');
-         psalParam = get_netcdf_param_attributes_3_1('PSAL');
-         molarDoxyParam = get_netcdf_param_attributes_3_1('MOLAR_DOXY');
-         
-         for idProf = 1:size(presOutputCMeas, 2)
-            ok = 1;
-            molarDoxy = ones(size(presOutputCMeas, 1), 1)*molarDoxyParam.fillValue;
-            for idLev = 1:size(presOutputCMeas, 1)
-               if((presOutputCMeas(idLev, idProf) ~= presParam.fillValue) && ...
-                     (tempOutputCMeas(idLev, idProf) ~= tempParam.fillValue) && ...
-                     (psalOutputCMeas(idLev, idProf) ~= psalParam.fillValue))
-                  
-                  idF = find((presInputCMeas(:, idProf) == presOutputCMeas(idLev, idProf)) & ...
-                     (tempInputCMeas(:, idProf) == tempOutputCMeas(idLev, idProf)) & ...
-                     (psalInputCMeas(:, idProf) == psalOutputCMeas(idLev, idProf)));
-                  if (length(idF) == 1)
-                     molarDoxy(idLev) = molarDoxyInputBMeas(idF, idProf);
-                  else
-                     ok = 0;
-                     break
+
+      % copy of the RT input measurements of the NST profile into the DM output file
+      if (nstProfRt == 1)
+
+         sufixList = [{''} {'_QC'} {'_ADJUSTED'} {'_ADJUSTED_QC'} {'_ADJUSTED_ERROR'}];
+         for idParam = 1:length(inputRtParamList)
+            paramNamePrefix = inputRtParamList{idParam};
+
+            if (~strcmp(paramNamePrefix, 'PRES'))
+               paramStruct = get_netcdf_param_attributes(paramNamePrefix);
+               if (idFile == 1)
+                  if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
+                     continue
+                  end
+               else
+                  if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
+                     continue
                   end
                end
             end
-            if (ok == 1)
-               
-               % add MOLAR_DOXY in DM output file
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'MOLAR_DOXY'), ...
-                  fliplr([idProf-1 0]), ...
-                  fliplr([1 size(molarDoxy, 1)]), molarDoxy);
-               
-               % add MOLAR_DOXY_QC in DM output file
-               molarDoxyQcStr = repmat(g_decArgo_qcStrDef, size(molarDoxy, 1), 1);
-               molarDoxyQcStr(find(molarDoxy ~= molarDoxyParam.fillValue)) = g_decArgo_qcStrNoQc;
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'MOLAR_DOXY_QC'), ...
-                  fliplr([idProf-1 0]), ...
-                  fliplr([1 size(molarDoxy, 1)]), molarDoxyQcStr);
-               
-               % update PARAMETER_DATA_MODE
-               
-               % find the place of the current parameter in the DM output
-               % b file
-               idF = find(strcmp('MOLAR_DOXY', outputStationParameters(idProf, :)) == 1, 1);
-               
-               % update PARAMETER_DATA_MODE
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER_DATA_MODE'), ...
-                  fliplr([idProf-1 idF-1]), 'R');
-               
-               fprintf('INFO: MOLAR_DOXY data added in DM output file for profile #%d\n', ...
-                  idProf);
-               molarDoxyAdded = 1;
+
+            for idS = 1:length(sufixList)
+               varNameIn = [paramNamePrefix sufixList{idS}];
+               varNameOut = varNameIn;
+
+               if (idFile == 2)
+                  if (strcmp(paramNamePrefix, 'PRES')  && (idS > 1))
+                     continue
+                  end
+               end
+
+               paramStruct = get_netcdf_param_attributes(paramNamePrefix);
+               if (~isempty(paramStruct) && (paramStruct.adjAllowed == 0) && (idS > 2))
+                  continue
+               end
+
+               if (var_is_present(fCdf, varNameOut))
+                  idVal = find(strcmp(varNameIn, inputRtData(1:2:end)) == 1, 1);
+                  if (~isempty(idVal))
+                     varValue = inputRtData{2*idVal};
+                     varValue = varValue(:, nstProfIdRt);
+                     if (isempty(varValue))
+                        continue
+                     end
+                  else
+                     fprintf('WARNING: Variable %s not present in RT input file\n', ...
+                        varNameOut);
+                     continue
+                  end
+
+                  if (nstLevRt > 0)
+                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varNameOut), ...
+                        fliplr([nstProfIdRt-1 0]), ...
+                        fliplr([1 nstLevRt]), varValue(1:nstLevRt));
+
+                     if (idS == 4)
+
+                        % update the profile quality flags
+                        profParamQcName = ['PROFILE_' paramNamePrefix '_QC'];
+                        profQualityFlag = compute_profile_quality_flag(varValue(1:nstLevRt));
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), nstProfIdRt-1, 1, profQualityFlag);
+
+                        if (idFile == 2)
+
+                           % find the place of the current parameter in the DM output
+                           % b file
+                           idF = find(strcmp(paramNamePrefix, outputStationParameters(1, :)) == 1, 1);
+
+                           % update PARAMETER_DATA_MODE
+                           qcData = varValue(1:nstLevRt);
+                           if (length(find((qcData == g_decArgo_qcStrDef) | ...
+                                 (qcData == g_decArgo_qcStrNoQc) | ...
+                                 (qcData == g_decArgo_qcStrMissing))) ~= length(qcData))
+                              % QC performed
+                              dataMode = 'D';
+                           else
+                              % no QC performed
+                              dataMode = 'R';
+                           end
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER_DATA_MODE'), ...
+                              fliplr([nstProfIdRt-1 idF-1]), dataMode);
+                        end
+                     end
+                  end
+               else
+                  fprintf('INFO: Variable %s not present in output format - not copied in output file\n', ...
+                     varNameOut);
+               end
+            end
+         end
+      end
+
+      if (idFile == 2)
+         % when MOLAR_DOXY is missing, we try to recover it from RT input file (the
+         % corresponding levels is recognized using PRES TEMP and PSAL values)
+         molarDoxyAdded = 0;
+         if (~isempty(find(strcmp('MOLAR_DOXY', inputDmMissingParamList) ==1, 1)))
+
+            % retrieve measurements from input RT C file
+            wantedInputVars = [ ...
+               {'PRES'} ...
+               {'TEMP'} ...
+               {'PSAL'} ...
+               ];
+            [inputRtCMeas] = get_data_from_nc_file(a_inputRtCFileName, wantedInputVars);
+
+            idVal = find(strcmp('PRES', inputRtCMeas(1:2:end)) == 1, 1);
+            presInputCMeas = inputRtCMeas{2*idVal};
+            idVal = find(strcmp('TEMP', inputRtCMeas(1:2:end)) == 1, 1);
+            tempInputCMeas = inputRtCMeas{2*idVal};
+            idVal = find(strcmp('PSAL', inputRtCMeas(1:2:end)) == 1, 1);
+            psalInputCMeas = inputRtCMeas{2*idVal};
+
+            % retrieve measurements from input RT B file
+            wantedInputVars = [ ...
+               {'MOLAR_DOXY'} ...
+               ];
+            [inputRtBMeas] = get_data_from_nc_file(a_inputRtBFileName, wantedInputVars);
+
+            idVal = find(strcmp('MOLAR_DOXY', inputRtBMeas(1:2:end)) == 1, 1);
+            molarDoxyInputBMeas = inputRtBMeas{2*idVal};
+
+            % retrieve measurements from output DM C file
+            wantedInputVars = [ ...
+               {'PRES'} ...
+               {'TEMP'} ...
+               {'PSAL'} ...
+               ];
+            [ouputDmCMeas] = get_data_from_nc_file(a_outputCFileName, wantedInputVars);
+
+            idVal = find(strcmp('PRES', ouputDmCMeas(1:2:end)) == 1, 1);
+            presOutputCMeas = ouputDmCMeas{2*idVal};
+            idVal = find(strcmp('TEMP', ouputDmCMeas(1:2:end)) == 1, 1);
+            tempOutputCMeas = ouputDmCMeas{2*idVal};
+            idVal = find(strcmp('PSAL', ouputDmCMeas(1:2:end)) == 1, 1);
+            psalOutputCMeas = ouputDmCMeas{2*idVal};
+
+            presParam = get_netcdf_param_attributes('PRES');
+            tempParam = get_netcdf_param_attributes('TEMP');
+            psalParam = get_netcdf_param_attributes('PSAL');
+            molarDoxyParam = get_netcdf_param_attributes('MOLAR_DOXY');
+
+            for idProf = 1:size(presOutputCMeas, 2)
+               ok = 1;
+               molarDoxy = ones(size(presOutputCMeas, 1), 1)*molarDoxyParam.fillValue;
+               for idLev = 1:size(presOutputCMeas, 1)
+                  if((presOutputCMeas(idLev, idProf) ~= presParam.fillValue) && ...
+                        (tempOutputCMeas(idLev, idProf) ~= tempParam.fillValue) && ...
+                        (psalOutputCMeas(idLev, idProf) ~= psalParam.fillValue))
+
+                     idF = find((presInputCMeas(:, idProf) == presOutputCMeas(idLev, idProf)) & ...
+                        (tempInputCMeas(:, idProf) == tempOutputCMeas(idLev, idProf)) & ...
+                        (psalInputCMeas(:, idProf) == psalOutputCMeas(idLev, idProf)));
+                     if (length(idF) == 1)
+                        molarDoxy(idLev) = molarDoxyInputBMeas(idF, idProf);
+                     else
+                        ok = 0;
+                        break
+                     end
+                  end
+               end
+               if (ok == 1)
+
+                  % add MOLAR_DOXY in DM output file
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'MOLAR_DOXY'), ...
+                     fliplr([idProf-1 0]), ...
+                     fliplr([1 size(molarDoxy, 1)]), molarDoxy);
+
+                  % add MOLAR_DOXY_QC in DM output file
+                  molarDoxyQcStr = repmat(g_decArgo_qcStrDef, size(molarDoxy, 1), 1);
+                  molarDoxyQcStr(find(molarDoxy ~= molarDoxyParam.fillValue)) = g_decArgo_qcStrNoQc;
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'MOLAR_DOXY_QC'), ...
+                     fliplr([idProf-1 0]), ...
+                     fliplr([1 size(molarDoxy, 1)]), molarDoxyQcStr);
+
+                  % update PARAMETER_DATA_MODE
+
+                  % find the place of the current parameter in the DM output
+                  % b file
+                  idF = find(strcmp('MOLAR_DOXY', outputStationParameters(idProf, :)) == 1, 1);
+
+                  % update PARAMETER_DATA_MODE
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER_DATA_MODE'), ...
+                     fliplr([idProf-1 idF-1]), 'R');
+
+                  fprintf('INFO: MOLAR_DOXY data added in DM output file for profile #%d\n', ...
+                     idProf);
+                  molarDoxyAdded = 1;
+               else
+                  fprintf('WARNING: cannot add MOLAR_DOXY data in DM output file for profile #%d\n', ...
+                     idProf);
+               end
+            end
+         end
+
+         % when DOXY is missing, we compute it from DM output c and b files current
+         % contents
+         doxyAdded = 0;
+         if (~isempty(find(strcmp('DOXY', inputDmMissingParamList) ==1, 1)))
+
+            % retrieve measurements from output DM C file
+            wantedInputVars = [ ...
+               {'PRES'} ...
+               {'TEMP'} ...
+               {'PSAL'} ...
+               ];
+            [ouputDmCMeas] = get_data_from_nc_file(a_outputCFileName, wantedInputVars);
+
+            idVal = find(strcmp('PRES', ouputDmCMeas(1:2:end)) == 1, 1);
+            presOutputCMeas = ouputDmCMeas{2*idVal};
+            idVal = find(strcmp('TEMP', ouputDmCMeas(1:2:end)) == 1, 1);
+            tempOutputCMeas = ouputDmCMeas{2*idVal};
+            idVal = find(strcmp('PSAL', ouputDmCMeas(1:2:end)) == 1, 1);
+            psalOutputCMeas = ouputDmCMeas{2*idVal};
+
+            molarDoxyOutputBMeas = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'MOLAR_DOXY'));
+
+            presParam = get_netcdf_param_attributes('PRES');
+            tempParam = get_netcdf_param_attributes('TEMP');
+            psalParam = get_netcdf_param_attributes('PSAL');
+            molarDoxyParam = get_netcdf_param_attributes('MOLAR_DOXY');
+            doxyParam = get_netcdf_param_attributes('DOXY');
+
+            for idProf = 1:size(presOutputCMeas, 2)
+
+               idDef = find((presOutputCMeas(:, idProf) ~= presParam.fillValue) & ...
+                  (tempOutputCMeas(:, idProf) ~= tempParam.fillValue) & ...
+                  (psalOutputCMeas(:, idProf) ~= psalParam.fillValue) & ...
+                  (molarDoxyOutputBMeas(:, idProf) ~= molarDoxyParam.fillValue));
+
+               if (~isempty(idDef))
+
+                  % compute DOXY
+                  [doxyValues] = compute_DOXY(a_floatNum, ...
+                     a_jsonFloatInfoDirName, a_jsonFloatMetaDirName, ...
+                     molarDoxyOutputBMeas(idDef, idProf), presOutputCMeas(idDef, idProf), ...
+                     tempOutputCMeas(idDef, idProf), psalOutputCMeas(idDef, idProf));
+                  doxy = ones(size(presOutputCMeas, 1), 1)*doxyParam.fillValue;
+                  doxy(idDef) = doxyValues;
+
+                  % add DOXY in DM output file
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DOXY'), ...
+                     fliplr([idProf-1 0]), ...
+                     fliplr([1 size(doxy, 1)]), doxy);
+
+                  % add DOXY_QC in DM output file
+                  doxyQcStr = repmat(g_decArgo_qcStrDef, size(doxy, 1), 1);
+                  doxyQcStr(find(doxy ~= doxyParam.fillValue)) = g_decArgo_qcStrNoQc;
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DOXY_QC'), ...
+                     fliplr([idProf-1 0]), ...
+                     fliplr([1 size(doxy, 1)]), doxyQcStr);
+
+                  % update PARAMETER_DATA_MODE
+
+                  % find the place of the current parameter in the DM output
+                  % b file
+                  idF = find(strcmp('DOXY', outputStationParameters(idProf, :)) == 1, 1);
+
+                  % update PARAMETER_DATA_MODE
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER_DATA_MODE'), ...
+                     fliplr([idProf-1 idF-1]), 'R');
+
+                  fprintf('INFO: DOXY data computed and added in DM output file for profile #%d\n', ...
+                     idProf);
+                  doxyAdded = 1;
+               end
+            end
+         end
+
+         if ((molarDoxyAdded == 1) || (doxyAdded == 1))
+            [~, fileName, ~] = fileparts(outputFileName);
+            if ((molarDoxyAdded == 1) && (doxyAdded == 1))
+               fprintf('@#@%d@%s@MOLAR_DOXY added@DOXY added\n', ...
+                  a_floatNum, fileName);
+            elseif (molarDoxyAdded == 1)
+               fprintf('@#@%d@%s@MOLAR_DOXY added\n', ...
+                  a_floatNum, fileName);
             else
-               fprintf('WARNING: cannot add MOLAR_DOXY data in DM output file for profile #%d\n', ...
-                  idProf);
+               fprintf('@#@%d@%s@ @DOXY added\n', ...
+                  a_floatNum, fileName);
             end
          end
       end
-      
-      % when DOXY is missing, we compute it from DM output c and b files current
-      % contents
-      doxyAdded = 0;
-      if (~isempty(find(strcmp('DOXY', inputDmMissingParamList) ==1, 1)))
-         
-         % retrieve measurements from output DM C file
-         wantedInputVars = [ ...
-            {'PRES'} ...
-            {'TEMP'} ...
-            {'PSAL'} ...
-            ];
-         [ouputDmCMeas] = get_data_from_nc_file(a_outputCFileName, wantedInputVars);
-         
-         idVal = find(strcmp('PRES', ouputDmCMeas(1:2:end)) == 1, 1);
-         presOutputCMeas = ouputDmCMeas{2*idVal};
-         idVal = find(strcmp('TEMP', ouputDmCMeas(1:2:end)) == 1, 1);
-         tempOutputCMeas = ouputDmCMeas{2*idVal};
-         idVal = find(strcmp('PSAL', ouputDmCMeas(1:2:end)) == 1, 1);
-         psalOutputCMeas = ouputDmCMeas{2*idVal};
-         
-         molarDoxyOutputBMeas = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'MOLAR_DOXY'));
-         
-         presParam = get_netcdf_param_attributes_3_1('PRES');
-         tempParam = get_netcdf_param_attributes_3_1('TEMP');
-         psalParam = get_netcdf_param_attributes_3_1('PSAL');
-         molarDoxyParam = get_netcdf_param_attributes_3_1('MOLAR_DOXY');
-         doxyParam = get_netcdf_param_attributes_3_1('DOXY');
-         
-         for idProf = 1:size(presOutputCMeas, 2)
-            
-            idDef = find((presOutputCMeas(:, idProf) ~= presParam.fillValue) & ...
-               (tempOutputCMeas(:, idProf) ~= tempParam.fillValue) & ...
-               (psalOutputCMeas(:, idProf) ~= psalParam.fillValue) & ...
-               (molarDoxyOutputBMeas(:, idProf) ~= molarDoxyParam.fillValue));
-            
-            if (~isempty(idDef))
-               
-               % compute DOXY
-               [doxyValues] = compute_DOXY(a_floatNum, ...
-                  a_jsonFloatInfoDirName, a_jsonFloatMetaDirName, ...
-                  molarDoxyOutputBMeas(idDef, idProf), presOutputCMeas(idDef, idProf), ...
-                  tempOutputCMeas(idDef, idProf), psalOutputCMeas(idDef, idProf));
-               doxy = ones(size(presOutputCMeas, 1), 1)*doxyParam.fillValue;
-               doxy(idDef) = doxyValues;
-               
-               % add DOXY in DM output file
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DOXY'), ...
-                  fliplr([idProf-1 0]), ...
-                  fliplr([1 size(doxy, 1)]), doxy);
-               
-               % add DOXY_QC in DM output file
-               doxyQcStr = repmat(g_decArgo_qcStrDef, size(doxy, 1), 1);
-               doxyQcStr(find(doxy ~= doxyParam.fillValue)) = g_decArgo_qcStrNoQc;
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DOXY_QC'), ...
-                  fliplr([idProf-1 0]), ...
-                  fliplr([1 size(doxy, 1)]), doxyQcStr);
-               
-               % update PARAMETER_DATA_MODE
-               
-               % find the place of the current parameter in the DM output
-               % b file
-               idF = find(strcmp('DOXY', outputStationParameters(idProf, :)) == 1, 1);
-               
-               % update PARAMETER_DATA_MODE
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER_DATA_MODE'), ...
-                  fliplr([idProf-1 idF-1]), 'R');
-               
-               fprintf('INFO: DOXY data computed and added in DM output file for profile #%d\n', ...
-                  idProf);
-               doxyAdded = 1;
-            end
-         end
+
+      % add history information that concerns the current program
+      currentHistoId = nHistoryDimOutput;
+      for idProf = 1:nProfDimOutput+nstProfRt
+
+         value = 'IF';
+         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
+            fliplr([currentHistoId idProf-1 0]), ...
+            fliplr([1 1 length(value)]), value');
+         value = 'COFC';
+         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
+            fliplr([currentHistoId idProf-1 0]), ...
+            fliplr([1 1 length(value)]), value');
+         value = g_cofc_ncConvertMonoProfileVersion;
+         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
+            fliplr([currentHistoId idProf-1 0]), ...
+            fliplr([1 1 length(value)]), value');
+         value = outputDateUpdate;
+         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
+            fliplr([currentHistoId idProf-1 0]), ...
+            fliplr([1 1 length(value)]), value');
       end
-      
-      if ((molarDoxyAdded == 1) || (doxyAdded == 1))
-         [~, fileName, ~] = fileparts(outputFileName);
-         if ((molarDoxyAdded == 1) && (doxyAdded == 1))
-            fprintf('@#@%d@%s@MOLAR_DOXY added@DOXY added\n', ...
-               a_floatNum, fileName);
-         elseif (molarDoxyAdded == 1)
-            fprintf('@#@%d@%s@MOLAR_DOXY added\n', ...
-               a_floatNum, fileName);
-         else
-            fprintf('@#@%d@%s@ @DOXY added\n', ...
-               a_floatNum, fileName);
-         end
-      end
+
+      netcdf.close(fCdf);
+
+   catch MException
+      netcdf.close(fCdf);
+      rethrow(MException)
    end
-   
-   % add history information that concerns the current program
-   currentHistoId = nHistoryDimOutput;
-   for idProf = 1:nProfDimOutput+nstProfRt
-      
-      value = 'IF';
-      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
-         fliplr([currentHistoId idProf-1 0]), ...
-         fliplr([1 1 length(value)]), value');
-      value = 'COFC';
-      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
-         fliplr([currentHistoId idProf-1 0]), ...
-         fliplr([1 1 length(value)]), value');
-      value = g_cofc_ncConvertMonoProfileVersion;
-      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
-         fliplr([currentHistoId idProf-1 0]), ...
-         fliplr([1 1 length(value)]), value');
-      value = outputDateUpdate;
-      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
-         fliplr([currentHistoId idProf-1 0]), ...
-         fliplr([1 1 length(value)]), value');
-   end
-   
-   netcdf.close(fCdf);
 end
 
 o_ok = 1;
@@ -2247,7 +2254,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   29/07/2014 - RNU - creation
@@ -2282,10 +2289,10 @@ fileContents = loadjson(floatInfoFileName);
 % float decoder Id
 floatDecId = str2num(getfield(fileContents, 'DECODER_ID'));
 if (floatDecId == -1)
-   
+
    floatType = getfield(fileContents, 'FLOAT_TYPE');
    floatDecVersion = getfield(fileContents, 'DECODER_VERSION');
-   
+
    fprintf('WARNING: Float #%d (FLOAT_TYPE:%s, Coriolis version: %s not enough information to compute DOXY\n', ...
       a_floatNum, floatType, floatDecVersion);
    return
@@ -2303,9 +2310,9 @@ metaData = loadjson(floatMetaDataFileName);
 
 % store DO calibration information
 if ((floatDecId == 4) || (floatDecId == 19))
-   
+
    % read the calibration coefficients in the json meta-data file
-   
+
    % fill the calibration coefficients
    if (isfield(metaData, 'CALIBRATION_COEFFICIENT'))
       if (~isempty(metaData.CALIBRATION_COEFFICIENT))
@@ -2315,31 +2322,31 @@ if ((floatDecId == 4) || (floatDecId == 19))
          end
       end
    end
-   
+
    if (isempty(g_decArgo_calibInfo))
       fprintf('WARNING: Float #%d: DOXY calibration coefficients are missing in the Json meta-data file: %s\n', ...
          a_floatNum, ...
          a_jsonFloatMetaDirName);
       return
    end
-   
+
    % current float WMO number
    global g_decArgo_floatNum;
    g_decArgo_floatNum = a_floatNum;
-   
+
    % current cycle number
    global g_decArgo_cycleNum;
    g_decArgo_cycleNum = -1;
-   
+
    % default values initialization
    init_default_values;
-   
+
    % compute DOXY
    [o_doxyValues] = compute_DOXY_4_19_25(a_molarDoxyValues, ...
       a_presValues, a_tempValues, a_salValues);
-   
+
 else
-   
+
    fprintf('WARNING: Float #%d: DOXY processing not implemented yet for decId #%d\n', ...
       a_floatNum, floatDecId);
 end
@@ -2367,7 +2374,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/09/2014 - RNU - creation
@@ -2399,10 +2406,10 @@ fileContents = loadjson(floatInfoFileName);
 % check if this float should have a JSON meta-data file
 floatDecId = str2num(getfield(fileContents, 'DECODER_ID'));
 if (floatDecId == -1)
-   
+
    floatType = getfield(fileContents, 'FLOAT_TYPE');
    floatDecVersion = getfield(fileContents, 'DECODER_VERSION');
-   
+
    if (strcmp(floatType, 'PROVOR'))
       fprintf('WARNING: Float #%d (FLOAT_TYPE:%s, Coriolis version: %s) not enough information to compute the cut-off pressure of the CTD\n', ...
          a_floatNum, floatType, floatDecVersion);
@@ -2410,31 +2417,31 @@ if (floatDecId == -1)
       fprintf('INFO: Float #%d (FLOAT_TYPE:%s, Coriolis version: %s) no cut-off pressure of the CTD\n', ...
          a_floatNum, floatType, floatDecVersion);
    end
-   
+
    o_cutOffPresVal = -1;
 else
-   
+
    if (floatDecId < 100)
-      
+
       % for Argos floats, the cut-off pressure of the CTD pump is stored in the
       % json meta-data file (as a configuration parameter)
-      
+
       % retrieve the name of the JSON float meta-data file
       floatMetaDataFileName = [a_jsonFloatMetaDirName '/' sprintf('%d_meta.json', a_floatNum)];
       if ~(exist(floatMetaDataFileName, 'file') == 2)
          fprintf('ERROR: Json meta-data file not found: %s\n', floatMetaDataFileName);
          return
       end
-      
+
       % read meta-data file
       metaData = loadjson(floatMetaDataFileName);
-      
+
       % retrieve the configuration
       configNames = [];
       configValues = [];
       if ((isfield(metaData, 'CONFIG_PARAMETER_NAME')) && ...
             (isfield(metaData, 'CONFIG_PARAMETER_VALUE')))
-         
+
          configNames = struct2cell(metaData.CONFIG_PARAMETER_NAME);
          cellConfigValues = metaData.CONFIG_PARAMETER_VALUE;
          configValues = nan(size(configNames, 1), size(cellConfigValues, 2));
@@ -2456,33 +2463,33 @@ else
             end
          end
       end
-      
+
       if (~isempty(configNames))
-         
+
          switch (floatDecId)
-            
+
             case {1, 11, 12, 4, 19, 3}
-               
+
                % retrieve surface slice thickness
                if (floatDecId ~= 3)
                   thickSurf = get_config_value('CONFIG_PM12_', configNames, configValues);
                else
                   thickSurf = get_config_value('CONFIG_PM11_', configNames, configValues);
                end
-               
+
                if (~isempty(thickSurf))
                   o_cutOffPresVal = 5 + thickSurf/2;
                else
                   fprintf('WARNING: Float #%d: Surface slice thickness configuration parameter is missing in the Json meta-data file\n', ...
                      a_floatNum);
                end
-               
+
             case {24, 27, 25, 28, 29, 17}
-               
+
                % retrieve surface slice thickness
                if ((floatDecId == 27) || (floatDecId == 28) || (floatDecId == 29))
                   ctdPumpSwitchOffPres = get_config_value('CONFIG_PT20_', configNames, configValues);
-                  
+
                   if (isempty(ctdPumpSwitchOffPres))
                      ctdPumpSwitchOffPres = 5;
                      fprintf('INFO: Float #%d: CTD switch off pressure parameter is missing in the Json meta-data file - using default value (5 dbars)\n', ...
@@ -2491,9 +2498,9 @@ else
                else
                   ctdPumpSwitchOffPres = 5;
                end
-               
+
                o_cutOffPresVal = ctdPumpSwitchOffPres + 0.5;
-               
+
             otherwise
                o_cutOffPresVal = '';
                fprintf('WARNING: Float #%d: No rules to compute cutoff pressure for decoderId #%d\n', ...
@@ -2502,25 +2509,25 @@ else
          end
       end
    else
-      
+
       % for Iridium floats, the cut-off pressure of the profile is stored in the
       % TECH NetCDF file (as the pressure of the 'sub-surface point'))
-      
+
       techFileName = sprintf('%d_tech.nc', a_floatNum);
       techFilePathName = [a_rtNcDirName '/' num2str(a_floatNum) '/' techFileName];
-      
+
       if (exist(techFilePathName, 'file') == 2)
-         
+
          % retrieve information from TECH file
          wantedTechVars = [ ...
             {'CYCLE_NUMBER'} ...
             {'TECHNICAL_PARAMETER_NAME'} ...
             {'TECHNICAL_PARAMETER_VALUE'} ...
             ];
-         
+
          % retrieve information from TECH netCDF file
          [techData] = get_data_from_nc_file(techFilePathName, wantedTechVars);
-         
+
          idVal = find(strcmp('CYCLE_NUMBER', techData) == 1);
          if (~isempty(idVal))
             cycleNumber = techData{idVal+1};
@@ -2533,7 +2540,7 @@ else
          if (~isempty(idVal))
             techParamValue = techData{idVal+1}';
          end
-         
+
          for idCycle = min(cycleNumber):max(cycleNumber)
             idForCy = find(cycleNumber == idCycle);
             if (~isempty(idForCy))
@@ -2573,7 +2580,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/09/2014 - RNU - creation
@@ -2589,7 +2596,7 @@ idDim = find(strcmp(a_dimName, {a_inputSchema.Dimensions.Name}) == 1, 1);
 
 if (~isempty(idDim))
    a_inputSchema.Dimensions(idDim).Length = a_dimVal;
-   
+
    % update the dimensions of the variables
    for idVar = 1:length(a_inputSchema.Variables)
       var = a_inputSchema.Variables(idVar);
@@ -2621,7 +2628,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/26/2014 - RNU - creation

@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/26/2019 - RNU - creation
@@ -228,7 +228,7 @@ for idFloat = 1:nbFloats
       idVal = find(strcmp('FORMAT_VERSION', profData(1:2:end)) == 1, 1);
       profFileFormatVersion = strtrim(profData{2*idVal}');
       
-      % contrôle de la version
+      % contrÃ´le de la version
       if (~strcmp(profFileFormatVersion, '3.1'))
          fprintf('\n');
          fprintf('ERROR: Profile file (%s) is expected to be of 3.1 format version (but FORMAT_VERSION = %s) - unused\n', ...

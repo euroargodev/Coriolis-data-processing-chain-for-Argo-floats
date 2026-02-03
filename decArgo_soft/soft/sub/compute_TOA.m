@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/18/2021 - RNU - creation
@@ -39,9 +39,9 @@ o_TOA = ones(size(a_RAW_TOA))*a_TOA_fill_value;
 
 
 if (ismember('RAFOS', g_decArgo_sensorMountedOnFloat))
-   
+
    % RAFOS sensor
-   
+
    % calibration coefficients
    if (isempty(g_decArgo_calibInfo))
       fprintf('WARNING: Float #%d Cycle #%d: calibration information is missing\n', ...
@@ -63,10 +63,11 @@ if (ismember('RAFOS', g_decArgo_sensorMountedOnFloat))
          g_decArgo_cycleNum);
       return
    end
-end
 
-% compute output data
-idNoDef = find(a_RAW_TOA ~= a_RAW_TOA_fill_value);
-o_TOA(idNoDef) = a_RAW_TOA(idNoDef).*slopeRafosTOA + offsetRafosTOA;
+   % compute output data
+   idNoDef = find(a_RAW_TOA ~= a_RAW_TOA_fill_value);
+   o_TOA(idNoDef) = a_RAW_TOA(idNoDef).*slopeRafosTOA + offsetRafosTOA;
+   
+end
                
 return

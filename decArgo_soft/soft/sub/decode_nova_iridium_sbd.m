@@ -31,7 +31,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/04/2016 - RNU - creation
@@ -65,9 +65,6 @@ global g_decArgo_outputNcParamIndex;
 
 % output NetCDF technical parameter values
 global g_decArgo_outputNcParamValue;
-
-% output NetCDF technical parameter labels
-global g_decArgo_outputNcParamLabelBis;
 
 % default values
 global g_decArgo_janFirst1950InMatlab;
@@ -211,7 +208,6 @@ if (isempty(g_decArgo_outputCsvFileId))
    
    g_decArgo_outputNcParamIndex = [];
    g_decArgo_outputNcParamValue = [];
-   g_decArgo_outputNcParamLabelBis = [];
    
    % create the configuration parameter names for the META NetCDF file
    [decArgoConfParamNames, ncConfParamNames] = create_config_param_names_ir_sbd(a_decoderId);
@@ -977,7 +973,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/14/2014 - RNU - creation

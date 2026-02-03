@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/03/2016 - RNU - creation
@@ -34,11 +34,12 @@ global g_decArgo_decoderIdListMtime;
 % list of decoder Ids implemented in the current decoder
 decoderIdListNke = [1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32, ...
    105, 106, 107, 109, 110, 111, 112, 113, 114, 115, 116, ...
-   121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, ...
-   201, 202, 203, 204, 205, 206, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225, 226, ...
+   121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, ...
+   201, 202, 203, 204, 205, 206, 208, 209, 210, 211, 212, 222, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, ...
+   401, 402, ...
    301, 302, 303];
 decoderIdListApex = [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1021, 1022, ...
-   1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, ...
+   1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1115, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132, ...
    1314, 1321, 1322, 1323];
 decoderIdListNavis = [1201];
 decoderIdListNova = [2001, 2002, 2003];
@@ -79,571 +80,140 @@ fieldList = [ ...
 if (isfield(o_metaData, 'PARAMETER'))
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % update CTD meta-data
+   % update parameter list
 
    [o_metaData] = update_parameter_list_ctd(o_metaData);
-
-   paramList = struct2cell(o_metaData.PARAMETER);
-   for idP = 1:length(paramList)
-      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_ctd(paramList{idP}, a_decoderId, o_metaData);
-      if (~isempty(param))
-
-         % check meta data length
-         FORMAT_SIZE = 4096;
-         if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
-            preCalibEq = preCalibEq(1:FORMAT_SIZE);
-         end
-         if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
-            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
-         end
-         if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
-            preCalibComment = preCalibComment(1:FORMAT_SIZE);
-         end
-
-         for idF = 1:length(fieldList)
-            if (isfield(o_metaData, fieldList{idF}))
-               if (isempty(o_metaData.(fieldList{idF})))
-                  for id = 1:length(paramList)
-                     o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
-                  end
-               end
-            end
-         end
-
-         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
-         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
-         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
-         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
-         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
-         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
-         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
-      end
-   end
-
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % update OXYGEN meta-data
-
    [o_metaData] = update_parameter_list_oxygen(o_metaData, a_decoderId);
-
-   paramList = struct2cell(o_metaData.PARAMETER);
-   for idP = 1:length(paramList)
-      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_oxygen(paramList{idP}, a_decoderId, o_metaData);
-      if (~isempty(param))
-
-         % check meta data length
-         FORMAT_SIZE = 4096;
-         if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
-            preCalibEq = preCalibEq(1:FORMAT_SIZE);
-         end
-         if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
-            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
-         end
-         if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
-            preCalibComment = preCalibComment(1:FORMAT_SIZE);
-         end
-
-         for idF = 1:length(fieldList)
-            if (isempty(o_metaData.(fieldList{idF})))
-               for id = 1:length(paramList)
-                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
-               end
-            end
-         end
-
-         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
-         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
-         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
-         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
-         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
-         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
-         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
-      end
-   end
-
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % update RADIOMETRY meta-data
-
    [o_metaData] = update_parameter_list_radiometry(o_metaData, a_decoderId);
-
-   paramList = struct2cell(o_metaData.PARAMETER);
-   for idP = 1:length(paramList)
-      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_radiometry(paramList{idP}, a_decoderId);
-      if (~isempty(param))
-
-         % check meta data length
-         FORMAT_SIZE = 4096;
-         if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
-            preCalibEq = preCalibEq(1:FORMAT_SIZE);
-         end
-         if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
-            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
-         end
-         if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
-            preCalibComment = preCalibComment(1:FORMAT_SIZE);
-         end
-
-         for idF = 1:length(fieldList)
-            if (isempty(o_metaData.(fieldList{idF})))
-               for id = 1:length(paramList)
-                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
-               end
-            end
-         end
-
-         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
-         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
-         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
-         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
-         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
-         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
-         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
-      end
-   end
-
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % update BACKSCATTERING meta-data
-
    [o_metaData] = update_parameter_list_backscattering(o_metaData, a_decoderId);
-
-   paramList = struct2cell(o_metaData.PARAMETER);
-   for idP = 1:length(paramList)
-      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_backscattering(paramList{idP}, a_decoderId, o_metaData);
-      if (~isempty(param))
-
-         % check meta data length
-         FORMAT_SIZE = 4096;
-         if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
-            preCalibEq = preCalibEq(1:FORMAT_SIZE);
-         end
-         if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
-            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
-         end
-         if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
-            preCalibComment = preCalibComment(1:FORMAT_SIZE);
-         end
-
-         for idF = 1:length(fieldList)
-            if (isempty(o_metaData.(fieldList{idF})))
-               for id = 1:length(paramList)
-                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
-               end
-            end
-         end
-
-         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
-         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
-         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
-         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
-         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
-         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
-         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
-      end
-   end
-
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % update NITRATE meta-data
-
    [o_metaData] = update_parameter_list_nitrate(o_metaData, a_decoderId);
-
-   paramList = struct2cell(o_metaData.PARAMETER);
-   for idP = 1:length(paramList)
-      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_nitrate(paramList{idP}, a_decoderId);
-      if (~isempty(param))
-
-         % check meta data length
-         FORMAT_SIZE = 4096;
-         if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
-            preCalibEq = preCalibEq(1:FORMAT_SIZE);
-         end
-         if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
-            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
-         end
-         if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
-            preCalibComment = preCalibComment(1:FORMAT_SIZE);
-         end
-
-         for idF = 1:length(fieldList)
-            if (isempty(o_metaData.(fieldList{idF})))
-               for id = 1:length(paramList)
-                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
-               end
-            end
-         end
-
-         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
-         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
-         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
-         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
-         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
-         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
-         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
-      end
-   end
-
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % update CHLA meta-data
-
    [o_metaData] = update_parameter_list_chla(o_metaData, a_decoderId);
-
-   paramList = struct2cell(o_metaData.PARAMETER);
-   for idP = 1:length(paramList)
-      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_chla(paramList{idP}, a_decoderId);
-      if (~isempty(param))
-
-         % check meta data length
-         FORMAT_SIZE = 4096;
-         if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
-            preCalibEq = preCalibEq(1:FORMAT_SIZE);
-         end
-         if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
-            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
-         end
-         if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
-            preCalibComment = preCalibComment(1:FORMAT_SIZE);
-         end
-
-         for idF = 1:length(fieldList)
-            if (isempty(o_metaData.(fieldList{idF})))
-               for id = 1:length(paramList)
-                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
-               end
-            end
-         end
-
-         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
-         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
-         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
-         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
-         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
-         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
-         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
-      end
-   end
-
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % update CDOM meta-data
-
    [o_metaData] = update_parameter_list_cdom(o_metaData, a_decoderId);
-
-   paramList = struct2cell(o_metaData.PARAMETER);
-   for idP = 1:length(paramList)
-      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_cdom(paramList{idP}, a_decoderId);
-      if (~isempty(param))
-
-         % check meta data length
-         FORMAT_SIZE = 4096;
-         if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
-            preCalibEq = preCalibEq(1:FORMAT_SIZE);
-         end
-         if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
-            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
-         end
-         if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
-            preCalibComment = preCalibComment(1:FORMAT_SIZE);
-         end
-
-         for idF = 1:length(fieldList)
-            if (isempty(o_metaData.(fieldList{idF})))
-               for id = 1:length(paramList)
-                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
-               end
-            end
-         end
-
-         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
-         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
-         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
-         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
-         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
-         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
-         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
-      end
-   end
-
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % update PH meta-data
-
    [o_metaData] = update_parameter_list_ph(o_metaData, a_decoderId);
-
-   paramList = struct2cell(o_metaData.PARAMETER);
-   for idP = 1:length(paramList)
-      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_ph(paramList{idP}, a_decoderId);
-      if (~isempty(param))
-
-         % check meta data length
-         FORMAT_SIZE = 4096;
-         if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
-            preCalibEq = preCalibEq(1:FORMAT_SIZE);
-         end
-         if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
-            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
-         end
-         if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
-            preCalibComment = preCalibComment(1:FORMAT_SIZE);
-         end
-
-         for idF = 1:length(fieldList)
-            if (isempty(o_metaData.(fieldList{idF})))
-               for id = 1:length(paramList)
-                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
-               end
-            end
-         end
-
-         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
-         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
-         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
-         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
-         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
-         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
-         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
-      end
-   end
-
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % update CP meta-data
-
    [o_metaData] = update_parameter_list_cp(o_metaData, a_decoderId);
-
-   paramList = struct2cell(o_metaData.PARAMETER);
-   for idP = 1:length(paramList)
-      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_cp(paramList{idP}, a_decoderId);
-      if (~isempty(param))
-
-         % check meta data length
-         FORMAT_SIZE = 4096;
-         if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
-            preCalibEq = preCalibEq(1:FORMAT_SIZE);
-         end
-         if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
-            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
-         end
-         if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
-            preCalibComment = preCalibComment(1:FORMAT_SIZE);
-         end
-
-         for idF = 1:length(fieldList)
-            if (isempty(o_metaData.(fieldList{idF})))
-               for id = 1:length(paramList)
-                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
-               end
-            end
-         end
-
-         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
-         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
-         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
-         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
-         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
-         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
-         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
-      end
-   end
-
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % update TURBIDITY meta-data
-
    [o_metaData] = update_parameter_list_turbidity(o_metaData, a_decoderId);
-
-   paramList = struct2cell(o_metaData.PARAMETER);
-   for idP = 1:length(paramList)
-      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_turbidity(paramList{idP}, a_decoderId);
-      if (~isempty(param))
-
-         % check meta data length
-         FORMAT_SIZE = 4096;
-         if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
-            preCalibEq = preCalibEq(1:FORMAT_SIZE);
-         end
-         if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
-            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
-         end
-         if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
-            preCalibComment = preCalibComment(1:FORMAT_SIZE);
-         end
-
-         for idF = 1:length(fieldList)
-            if (isempty(o_metaData.(fieldList{idF})))
-               for id = 1:length(paramList)
-                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
-               end
-            end
-         end
-
-         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
-         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
-         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
-         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
-         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
-         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
-         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
-      end
-   end
-
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % update RAFOS meta-data
-
    [o_metaData] = update_parameter_list_rafos(o_metaData, a_decoderId);
-
-   paramList = struct2cell(o_metaData.PARAMETER);
-   for idP = 1:length(paramList)
-      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_rafos(paramList{idP}, a_decoderId);
-      if (~isempty(param))
-
-         % check meta data length
-         FORMAT_SIZE = 4096;
-         if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
-            preCalibEq = preCalibEq(1:FORMAT_SIZE);
-         end
-         if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
-            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
-         end
-         if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
-            preCalibComment = preCalibComment(1:FORMAT_SIZE);
-         end
-
-         for idF = 1:length(fieldList)
-            if (isempty(o_metaData.(fieldList{idF})))
-               for id = 1:length(paramList)
-                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
-               end
-            end
-         end
-
-         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
-         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
-         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
-         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
-         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
-         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
-         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
-      end
-   end
-
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % update UVP meta-data
-
    [o_metaData] = update_parameter_list_uvp(o_metaData, a_decoderId);
 
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % create empty meta-data structures
+
    paramList = struct2cell(o_metaData.PARAMETER);
-   for idP = 1:length(paramList)
-      [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
-         preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_uvp(paramList{idP}, a_decoderId);
-      if (~isempty(param))
-
-         % check meta data length
-         FORMAT_SIZE = 4096;
-         if (length(preCalibEq) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
-            preCalibEq = preCalibEq(1:FORMAT_SIZE);
+   fieldNames = fieldnames(o_metaData.PARAMETER);
+   paramNumList = nan(1, length(fieldNames));
+   for id = 1:length(fieldNames)
+      idF = strfind(fieldNames{id}, '_');
+      paramNumList(id) = str2double(fieldNames{id}(idF(end)+1:end));
+   end
+   for idF = 1:length(fieldList)
+      if (isempty(o_metaData.(fieldList{idF})))
+         for id = paramNumList
+            o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
          end
-         if (length(preCalibCoef) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
-            preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
-         end
-         if (length(preCalibComment) > FORMAT_SIZE)
-            fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
-               g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
-            preCalibComment = preCalibComment(1:FORMAT_SIZE);
-         end
-
-         for idF = 1:length(fieldList)
-            if (isempty(o_metaData.(fieldList{idF})))
-               for id = 1:length(paramList)
-                  o_metaData.(fieldList{idF}).([fieldList{idF} '_' num2str(id)]) = '';
-               end
+      else
+         tempStruct = o_metaData.(fieldList{idF});
+         o_metaData.(fieldList{idF}) = [];
+         for id = paramNumList
+            fName = [fieldList{idF} '_' num2str(id)];
+            if (isfield(tempStruct, fName))
+               o_metaData.(fieldList{idF}).(fName) = tempStruct.(fName);
+            else
+               o_metaData.(fieldList{idF}).(fName) = '';
             end
          end
-
-         o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(idP)]) = paramSensor;
-         o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(idP)]) = paramUnits;
-         o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(idP)]) = paramAccuracy;
-         o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(idP)]) = paramResolution;
-         o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(idP)]) = preCalibEq;
-         o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(idP)]) = preCalibCoef;
-         o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(idP)]) = preCalibComment;
       end
    end
 
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % update meta-data (for parameters of the fieldList list)
+
+   for loopNum = 1:12
+      for idP = 1:length(paramList)
+         switch (loopNum)
+            case 1
+               % update CTD meta-data
+               [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+                  preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_ctd(paramList{idP}, a_decoderId, o_metaData);
+            case 2
+               % update OXYGEN meta-data
+               [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+                  preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_oxygen(paramList{idP}, a_decoderId, o_metaData);
+            case 3
+               % update RADIOMETRY meta-data
+               [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+                  preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_radiometry(paramList{idP}, a_decoderId);
+            case 4
+               % update BACKSCATTERING meta-data
+               [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+                  preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_backscattering(paramList{idP}, a_decoderId, o_metaData);
+            case 5
+               % update NITRATE meta-data
+               [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+                  preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_nitrate(paramList{idP}, a_decoderId);
+            case 6
+               % update CHLA meta-data
+               [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+                  preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_chla(paramList{idP}, a_decoderId, o_metaData);
+            case 7
+               % update CDOM meta-data
+               [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+                  preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_cdom(paramList{idP}, a_decoderId, o_metaData);
+            case 8
+               % update PH meta-data
+               [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+                  preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_ph(paramList{idP}, a_decoderId);
+            case 9
+               % update CP meta-data
+               [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+                  preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_cp(paramList{idP}, a_decoderId);
+            case 10
+               % update TURBIDITY meta-data
+               [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+                  preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_turbidity(paramList{idP}, a_decoderId);
+            case 11
+               % update RAFOS meta-data
+               [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+                  preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_rafos(paramList{idP}, a_decoderId);
+            case 12
+               % update UVP meta-data
+               [param, paramSensor, paramUnits, paramAccuracy, paramResolution, ...
+                  preCalibEq, preCalibCoef, preCalibComment] = get_meta_data_uvp(paramList{idP}, a_decoderId);
+            otherwise
+               fprintf('ERROR: Float #%d: inconsistency in implementation\n', ...
+                  g_decArgo_floatNum);
+               continue
+         end
+
+         if (~isempty(param))
+
+            % check meta data length
+            FORMAT_SIZE = 4096;
+            if (length(preCalibEq) > FORMAT_SIZE)
+               fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_EQUATION'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
+                  g_decArgo_floatNum, length(preCalibEq), FORMAT_SIZE);
+               preCalibEq = preCalibEq(1:FORMAT_SIZE);
+            end
+            if (length(preCalibCoef) > FORMAT_SIZE)
+               fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COEFFICIENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
+                  g_decArgo_floatNum, length(preCalibCoef), FORMAT_SIZE);
+               preCalibCoef = preCalibCoef(1:FORMAT_SIZE);
+            end
+            if (length(preCalibComment) > FORMAT_SIZE)
+               fprintf('ERROR: Float #%d: ''PREDEPLOYMENT_CALIB_COMMENT'' information exceeds format size (%d > STRING%d) - cut to fit the format\n', ...
+                  g_decArgo_floatNum, length(preCalibComment), FORMAT_SIZE);
+               preCalibComment = preCalibComment(1:FORMAT_SIZE);
+            end
+
+            o_metaData.PARAMETER_SENSOR.(['PARAMETER_SENSOR_' num2str(paramNumList(idP))]) = paramSensor;
+            o_metaData.PARAMETER_UNITS.(['PARAMETER_UNITS_' num2str(paramNumList(idP))]) = paramUnits;
+            o_metaData.PARAMETER_ACCURACY.(['PARAMETER_ACCURACY_' num2str(paramNumList(idP))]) = paramAccuracy;
+            o_metaData.PARAMETER_RESOLUTION.(['PARAMETER_RESOLUTION_' num2str(paramNumList(idP))]) = paramResolution;
+            o_metaData.PREDEPLOYMENT_CALIB_EQUATION.(['PREDEPLOYMENT_CALIB_EQUATION_' num2str(paramNumList(idP))]) = preCalibEq;
+            o_metaData.PREDEPLOYMENT_CALIB_COEFFICIENT.(['PREDEPLOYMENT_CALIB_COEFFICIENT_' num2str(paramNumList(idP))]) = preCalibCoef;
+            o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(['PREDEPLOYMENT_CALIB_COMMENT_' num2str(paramNumList(idP))]) = preCalibComment;
+         end
+      end
+   end
 else
    fprintf('WARNING: Float #%d: ''PARAMETER'' field not found in Json meta-data information - parameter information cannot be updated\n', ...
       g_decArgo_floatNum);
@@ -667,7 +237,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/27/2021 - RNU - creation
@@ -681,6 +251,7 @@ o_metaData = a_metaData;
 global g_decArgo_floatNum;
 
 % lists of managed decoders
+global g_decArgo_decoderIdListNkePfv2Iridium;
 global g_decArgo_decoderIdListNkeIridiumDeep;
 global g_decArgo_decoderIdListNkeCts5Osean;
 global g_decArgo_decoderIdListNkeCts5Usea;
@@ -730,6 +301,8 @@ if (isfield(o_metaData, 'CONTROLLER_BOARD_TYPE_PRIMARY') && ...
    if (ismember(a_decoderId, g_decArgo_decoderIdListNke))
       if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5))
          o_metaData.CONTROLLER_BOARD_TYPE_PRIMARY = 'APMT';
+      elseif (ismember(a_decoderId, g_decArgo_decoderIdListNkePfv2Iridium))
+         % don't know yet
       else
          o_metaData.CONTROLLER_BOARD_TYPE_PRIMARY = 'I535';
       end
@@ -785,7 +358,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/13/2018 - RNU - creation
@@ -801,6 +374,7 @@ if (isfield(a_metaData, 'SENSOR') && ...
       isfield(a_metaData, 'PLATFORM_MAKER') && ...
       isfield(a_metaData, 'SENSOR_MODEL') && ...
       isfield(a_metaData, 'SENSOR_SERIAL_NO') && ...
+      isfield(a_metaData, 'SENSOR_FIRMWARE_VERSION') && ...
       isfield(a_metaData, 'PARAMETER') && ...
       isfield(a_metaData, 'PARAMETER_SENSOR') && ...
       isfield(a_metaData, 'PARAMETER_UNITS') && ...
@@ -819,6 +393,7 @@ if (isfield(a_metaData, 'SENSOR') && ...
    o_metaData = add_field_in_top(o_metaData, 'SENSOR_MODEL');
    o_metaData.SENSOR_MODEL.SENSOR_MODEL_1 = 'FLOATCLOCK';
    o_metaData = add_field_in_top(o_metaData, 'SENSOR_SERIAL_NO');
+   o_metaData = add_field_in_top(o_metaData, 'SENSOR_FIRMWARE_VERSION');
    o_metaData = add_field_in_top(o_metaData, 'PARAMETER');
    o_metaData.PARAMETER.PARAMETER_1 = 'MTIME';
    o_metaData = add_field_in_top(o_metaData, 'PARAMETER_SENSOR');
@@ -854,7 +429,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/13/2018 - RNU - creation
@@ -870,7 +445,7 @@ if (~isempty(o_metaData.(a_fieldName)))
    for id = length(fieldNames):-1:1
       o_metaData.(a_fieldName).([a_fieldName '_' num2str(id+1)]) = o_metaData.(a_fieldName).([a_fieldName '_' num2str(id)]);
    end
-   o_metaData.(a_fieldName).([a_fieldName '_1']) = ' ';
+   o_metaData.(a_fieldName).([a_fieldName '_1']) = '';
 end
 
 return
@@ -890,7 +465,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/24/2017 - RNU - creation
@@ -921,7 +496,7 @@ return
 %
 % SYNTAX :
 %  [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
-%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_ctd(a_paramName, a_decoderId, o_metaData)
+%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_ctd(a_paramName, a_decoderId, a_metaData)
 %
 % INPUT PARAMETERS :
 %   a_paramName : input parameter to be updated
@@ -941,13 +516,13 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/27/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
-   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_ctd(a_paramName, a_decoderId, o_metaData)
+   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_ctd(a_paramName, a_decoderId, a_metaData)
 
 % output parameters initialization
 o_param = '';
@@ -963,9 +538,13 @@ o_preCalibComment = '';
 global g_decArgo_decoderIdListNkeIridiumRbr;
 global g_decArgo_decoderIdListApexApf11Iridium;
 global g_decArgo_decoderIdListNkeCts5Usea;
+global g_decArgo_decoderIdListNkePfv2Iridium;
 
 % current float WMO number
 global g_decArgo_floatNum;
+
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
 
 
 switch (a_paramName)
@@ -974,72 +553,87 @@ switch (a_paramName)
       o_param = 'PRES';
       o_paramSensor = 'CTD_PRES';
       o_paramUnits = 'decibar';
-      if (~ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
-         o_paramAccuracy = '2.4';
-         o_paramResolution = '0.1';
+      if ~(ismember(a_decoderId, g_decArgo_decoderIdListNkePfv2Iridium))
+         if ~(ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr) && (a_decoderId ~= 228)) % in decId 228 RBR data are in (PRES3, TEMP3, PSAL3, TEMP_CNDC) profile
+            % SBE41
+            o_paramAccuracy = '2.4';
+            o_paramResolution = '0.1';
+         else
+            % RBR
+            o_paramAccuracy = '1';
+            o_paramResolution = '0.02';
+         end
       else
-         o_paramAccuracy = '1';
-         o_paramResolution = '0.02';
+         % Arvor PFV2
+         if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('CTD_RBR', g_decArgo_sensorMountedOnFloat))
+            % RBR
+            o_paramAccuracy = '1';
+            o_paramResolution = '0.02';
+         else
+            % SBE41
+            o_paramAccuracy = '2.4';
+            o_paramResolution = '0.1';
+         end
       end
       o_preCalibEq = 'none';
       o_preCalibCoef = 'none';
       o_preCalibComment = '';
 
-      if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
-         if (isfield(o_metaData, 'PRES_PARAMETER_ACCURACY') && ~isempty(o_metaData.PRES_PARAMETER_ACCURACY))
-            o_paramAccuracy = o_metaData.PRES_PARAMETER_ACCURACY;
+      if ~(ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr) && (a_decoderId ~= 228)) % in decId 228 RBR data are in (PRES3, TEMP3, PSAL3, TEMP_CNDC) profile
+         if (isfield(a_metaData, 'PRES_PARAMETER_ACCURACY') && ~isempty(a_metaData.PRES_PARAMETER_ACCURACY))
+            o_paramAccuracy = a_metaData.PRES_PARAMETER_ACCURACY;
          end
-         if (isfield(o_metaData, 'PRES_PARAMETER_RESOLUTION') && ~isempty(o_metaData.PRES_PARAMETER_RESOLUTION))
-            o_paramResolution = o_metaData.PRES_PARAMETER_RESOLUTION;
+         if (isfield(a_metaData, 'PRES_PARAMETER_RESOLUTION') && ~isempty(a_metaData.PRES_PARAMETER_RESOLUTION))
+            o_paramResolution = a_metaData.PRES_PARAMETER_RESOLUTION;
          end
-         if (isfield(o_metaData, 'PRES_PREDEPLOYMENT_CALIB_EQUATION') && ~isempty(o_metaData.PRES_PREDEPLOYMENT_CALIB_EQUATION))
-            o_preCalibEq = o_metaData.PRES_PREDEPLOYMENT_CALIB_EQUATION;
+         if (isfield(a_metaData, 'PRES_PREDEPLOYMENT_CALIB_EQUATION') && ~isempty(a_metaData.PRES_PREDEPLOYMENT_CALIB_EQUATION))
+            o_preCalibEq = a_metaData.PRES_PREDEPLOYMENT_CALIB_EQUATION;
          end
-         if (isfield(o_metaData, 'PRES_PREDEPLOYMENT_CALIB_COEFFICIENT') && ~isempty(o_metaData.PRES_PREDEPLOYMENT_CALIB_COEFFICIENT))
-            o_preCalibCoef = o_metaData.PRES_PREDEPLOYMENT_CALIB_COEFFICIENT;
+         if (isfield(a_metaData, 'PRES_PREDEPLOYMENT_CALIB_COEFFICIENT') && ~isempty(a_metaData.PRES_PREDEPLOYMENT_CALIB_COEFFICIENT))
+            o_preCalibCoef = a_metaData.PRES_PREDEPLOYMENT_CALIB_COEFFICIENT;
          end
-         if (isfield(o_metaData, 'PRES_PREDEPLOYMENT_CALIB_COMMENT') && ~isempty(o_metaData.PRES_PREDEPLOYMENT_CALIB_COMMENT))
-            o_preCalibComment = o_metaData.PRES_PREDEPLOYMENT_CALIB_COMMENT;
+         if (isfield(a_metaData, 'PRES_PREDEPLOYMENT_CALIB_COMMENT') && ~isempty(a_metaData.PRES_PREDEPLOYMENT_CALIB_COMMENT))
+            o_preCalibComment = a_metaData.PRES_PREDEPLOYMENT_CALIB_COMMENT;
          end
       end
 
       if (ismember(a_decoderId, g_decArgo_decoderIdListApexApf11Iridium))
 
          % Apex APF11 Iridium
-         if (isfield(o_metaData, 'SBE_PRES_COEF_PA0'))
+         if (isfield(a_metaData, 'SBE_PRES_COEF_PA0'))
             o_preCalibEq = 'y=thermistor_output (counts); t=PTHA0+PTHA1*y+PTHA2*y^2; x=instrument_output-PTCA0-PTCA1*t-PTCA2*t^2; n=x*PTCB0/(PTCB0+PTCB1*t+PTCB2*t^2); pressure (PSIA)=PA0+PA1*n+PA2*n^2';
-            if (isfield(o_metaData, 'SBE_PRES_COEF_PA0') && ...
-                  isfield(o_metaData, 'SBE_PRES_COEF_PA1') && ...
-                  isfield(o_metaData, 'SBE_PRES_COEF_PA2') && ...
-                  isfield(o_metaData, 'SBE_PRES_COEF_PTHA0') && ...
-                  isfield(o_metaData, 'SBE_PRES_COEF_PTHA1') && ...
-                  isfield(o_metaData, 'SBE_PRES_COEF_PTHA2') && ...
-                  isfield(o_metaData, 'SBE_PRES_COEF_PTCA0') && ...
-                  isfield(o_metaData, 'SBE_PRES_COEF_PTCA1') && ...
-                  isfield(o_metaData, 'SBE_PRES_COEF_PTCA2') && ...
-                  isfield(o_metaData, 'SBE_PRES_COEF_PTCB0') && ...
-                  isfield(o_metaData, 'SBE_PRES_COEF_PTCB1') && ...
-                  isfield(o_metaData, 'SBE_PRES_COEF_PTCB2'))
+            if (isfield(a_metaData, 'SBE_PRES_COEF_PA0') && ...
+                  isfield(a_metaData, 'SBE_PRES_COEF_PA1') && ...
+                  isfield(a_metaData, 'SBE_PRES_COEF_PA2') && ...
+                  isfield(a_metaData, 'SBE_PRES_COEF_PTHA0') && ...
+                  isfield(a_metaData, 'SBE_PRES_COEF_PTHA1') && ...
+                  isfield(a_metaData, 'SBE_PRES_COEF_PTHA2') && ...
+                  isfield(a_metaData, 'SBE_PRES_COEF_PTCA0') && ...
+                  isfield(a_metaData, 'SBE_PRES_COEF_PTCA1') && ...
+                  isfield(a_metaData, 'SBE_PRES_COEF_PTCA2') && ...
+                  isfield(a_metaData, 'SBE_PRES_COEF_PTCB0') && ...
+                  isfield(a_metaData, 'SBE_PRES_COEF_PTCB1') && ...
+                  isfield(a_metaData, 'SBE_PRES_COEF_PTCB2'))
                o_preCalibCoef = sprintf('%s, %s, %s; %s, %s, %s; %s, %s, %s; %s, %s, %s', ...
-                  o_metaData.SBE_PRES_COEF_PTHA0, ...
-                  o_metaData.SBE_PRES_COEF_PTHA1, ...
-                  o_metaData.SBE_PRES_COEF_PTHA2, ...
-                  o_metaData.SBE_PRES_COEF_PTCA0, ...
-                  o_metaData.SBE_PRES_COEF_PTCA1, ...
-                  o_metaData.SBE_PRES_COEF_PTCA2, ...
-                  o_metaData.SBE_PRES_COEF_PTCB0, ...
-                  o_metaData.SBE_PRES_COEF_PTCB1, ...
-                  o_metaData.SBE_PRES_COEF_PTCB2, ...
-                  o_metaData.SBE_PRES_COEF_PA0, ...
-                  o_metaData.SBE_PRES_COEF_PA1, ...
-                  o_metaData.SBE_PRES_COEF_PA2);
+                  a_metaData.SBE_PRES_COEF_PTHA0, ...
+                  a_metaData.SBE_PRES_COEF_PTHA1, ...
+                  a_metaData.SBE_PRES_COEF_PTHA2, ...
+                  a_metaData.SBE_PRES_COEF_PTCA0, ...
+                  a_metaData.SBE_PRES_COEF_PTCA1, ...
+                  a_metaData.SBE_PRES_COEF_PTCA2, ...
+                  a_metaData.SBE_PRES_COEF_PTCB0, ...
+                  a_metaData.SBE_PRES_COEF_PTCB1, ...
+                  a_metaData.SBE_PRES_COEF_PTCB2, ...
+                  a_metaData.SBE_PRES_COEF_PA0, ...
+                  a_metaData.SBE_PRES_COEF_PA1, ...
+                  a_metaData.SBE_PRES_COEF_PA2);
             end
-            if (isfield(o_metaData, 'PARAMETER'))
-               paramNum = find(strcmp(struct2cell(o_metaData.PARAMETER), o_param));
+            if (isfield(a_metaData, 'PARAMETER'))
+               paramNum = find(strcmp(struct2cell(a_metaData.PARAMETER), o_param));
                fieldName = ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(paramNum)];
-               if (isfield(o_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
-                     isfield(o_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
-                  o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
+               if (isfield(a_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
+                     isfield(a_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
+                  o_preCalibComment = a_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
                end
             end
             if (isempty(o_preCalibCoef))
@@ -1049,36 +643,92 @@ switch (a_paramName)
          end
       end
 
+   case {'PRES_2'} % from SBE61
+      if (ismember(a_decoderId, [228, 229]))
+         % for decIds 228 and 229 SBE61 data are in (PRES_2, TEMP_2, PSAL_2) profiles
+         o_param = 'PRES_2';
+         o_paramSensor = 'CTD_PRES_2';
+         o_paramUnits = 'decibar';
+         o_paramAccuracy = '2.4';
+         o_paramResolution = '0.1';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = '';
+      end
+
+   case {'PRES_3'} % from RBR
+      if (a_decoderId == 228)
+         o_param = 'PRES_3';
+         o_paramSensor = 'CTD_PRES_3';
+         o_paramUnits = 'decibar';
+         o_paramAccuracy = '1';
+         o_paramResolution = '0.02';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = '';
+
+         if (isfield(a_metaData, 'PRES_PARAMETER_ACCURACY') && ~isempty(a_metaData.PRES_PARAMETER_ACCURACY))
+            o_paramAccuracy = a_metaData.PRES_PARAMETER_ACCURACY;
+         end
+         if (isfield(a_metaData, 'PRES_PARAMETER_RESOLUTION') && ~isempty(a_metaData.PRES_PARAMETER_RESOLUTION))
+            o_paramResolution = a_metaData.PRES_PARAMETER_RESOLUTION;
+         end
+         if (isfield(a_metaData, 'PRES_PREDEPLOYMENT_CALIB_EQUATION') && ~isempty(a_metaData.PRES_PREDEPLOYMENT_CALIB_EQUATION))
+            o_preCalibEq = a_metaData.PRES_PREDEPLOYMENT_CALIB_EQUATION;
+         end
+         if (isfield(a_metaData, 'PRES_PREDEPLOYMENT_CALIB_COEFFICIENT') && ~isempty(a_metaData.PRES_PREDEPLOYMENT_CALIB_COEFFICIENT))
+            o_preCalibCoef = a_metaData.PRES_PREDEPLOYMENT_CALIB_COEFFICIENT;
+         end
+         if (isfield(a_metaData, 'PRES_PREDEPLOYMENT_CALIB_COMMENT') && ~isempty(a_metaData.PRES_PREDEPLOYMENT_CALIB_COMMENT))
+            o_preCalibComment = a_metaData.PRES_PREDEPLOYMENT_CALIB_COMMENT;
+         end
+      end
+
    case {'TEMP'}
       o_param = 'TEMP';
       o_paramSensor = 'CTD_TEMP';
       o_paramUnits = 'degree_Celsius';
-      if (~ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
-         o_paramAccuracy = '0.002';
-         o_paramResolution = '0.001';
+      if ~(ismember(a_decoderId, g_decArgo_decoderIdListNkePfv2Iridium))
+         if ~(ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr) && (a_decoderId ~= 228)) % in decId 228 RBR data are in (PRES3, TEMP3, PSAL3, TEMP_CNDC) profile
+            % SBE41
+            o_paramAccuracy = '0.002';
+            o_paramResolution = '0.001';
+         else
+            % RBR
+            o_paramAccuracy = '0.002';
+            o_paramResolution = '0.00005';
+         end
       else
-         o_paramAccuracy = '0.002';
-         o_paramResolution = '0.00005';
+         % Arvor PFV2
+         if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('CTD_RBR', g_decArgo_sensorMountedOnFloat))
+            % RBR
+            o_paramAccuracy = '0.002';
+            o_paramResolution = '0.00005';
+         else
+            % SBE41
+            o_paramAccuracy = '0.002';
+            o_paramResolution = '0.001';
+         end
       end
       o_preCalibEq = 'none';
       o_preCalibCoef = 'none';
       o_preCalibComment = '';
 
-      if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
-         if (isfield(o_metaData, 'TEMP_PARAMETER_ACCURACY') && ~isempty(o_metaData.TEMP_PARAMETER_ACCURACY))
-            o_paramAccuracy = o_metaData.TEMP_PARAMETER_ACCURACY;
+      if ~(ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr) && (a_decoderId ~= 228)) % in decId 228 RBR data are in (PRES3, TEMP3, PSAL3, TEMP_CNDC) profile
+         if (isfield(a_metaData, 'TEMP_PARAMETER_ACCURACY') && ~isempty(a_metaData.TEMP_PARAMETER_ACCURACY))
+            o_paramAccuracy = a_metaData.TEMP_PARAMETER_ACCURACY;
          end
-         if (isfield(o_metaData, 'TEMP_PARAMETER_RESOLUTION') && ~isempty(o_metaData.TEMP_PARAMETER_RESOLUTION))
-            o_paramResolution = o_metaData.TEMP_PARAMETER_RESOLUTION;
+         if (isfield(a_metaData, 'TEMP_PARAMETER_RESOLUTION') && ~isempty(a_metaData.TEMP_PARAMETER_RESOLUTION))
+            o_paramResolution = a_metaData.TEMP_PARAMETER_RESOLUTION;
          end
-         if (isfield(o_metaData, 'TEMP_PREDEPLOYMENT_CALIB_EQUATION') && ~isempty(o_metaData.TEMP_PREDEPLOYMENT_CALIB_EQUATION))
-            o_preCalibEq = o_metaData.TEMP_PREDEPLOYMENT_CALIB_EQUATION;
+         if (isfield(a_metaData, 'TEMP_PREDEPLOYMENT_CALIB_EQUATION') && ~isempty(a_metaData.TEMP_PREDEPLOYMENT_CALIB_EQUATION))
+            o_preCalibEq = a_metaData.TEMP_PREDEPLOYMENT_CALIB_EQUATION;
          end
-         if (isfield(o_metaData, 'TEMP_PREDEPLOYMENT_CALIB_COEFFICIENT') && ~isempty(o_metaData.TEMP_PREDEPLOYMENT_CALIB_COEFFICIENT))
-            o_preCalibCoef = o_metaData.TEMP_PREDEPLOYMENT_CALIB_COEFFICIENT;
+         if (isfield(a_metaData, 'TEMP_PREDEPLOYMENT_CALIB_COEFFICIENT') && ~isempty(a_metaData.TEMP_PREDEPLOYMENT_CALIB_COEFFICIENT))
+            o_preCalibCoef = a_metaData.TEMP_PREDEPLOYMENT_CALIB_COEFFICIENT;
          end
-         if (isfield(o_metaData, 'TEMP_PREDEPLOYMENT_CALIB_COMMENT') && ~isempty(o_metaData.TEMP_PREDEPLOYMENT_CALIB_COMMENT))
-            o_preCalibComment = o_metaData.TEMP_PREDEPLOYMENT_CALIB_COMMENT;
+         if (isfield(a_metaData, 'TEMP_PREDEPLOYMENT_CALIB_COMMENT') && ~isempty(a_metaData.TEMP_PREDEPLOYMENT_CALIB_COMMENT))
+            o_preCalibComment = a_metaData.TEMP_PREDEPLOYMENT_CALIB_COMMENT;
          end
       end
 
@@ -1087,24 +737,24 @@ switch (a_paramName)
 
          % Apex APF11 Iridium
          % Provor CTS5-USEA
-         if (isfield(o_metaData, 'SBE_TEMP_COEF_TA0'))
+         if (isfield(a_metaData, 'SBE_TEMP_COEF_TA0'))
             o_preCalibEq = 'n=instrument_output (counts); temperature ITS-90 (degC)=1/{a0+a1[ln(n)]+a2[ln^2(n)]+a3[ln^3(n)]}-273.15';
-            if (isfield(o_metaData, 'SBE_TEMP_COEF_TA0') && ...
-                  isfield(o_metaData, 'SBE_TEMP_COEF_TA1') && ...
-                  isfield(o_metaData, 'SBE_TEMP_COEF_TA2') && ...
-                  isfield(o_metaData, 'SBE_TEMP_COEF_TA3'))
+            if (isfield(a_metaData, 'SBE_TEMP_COEF_TA0') && ...
+                  isfield(a_metaData, 'SBE_TEMP_COEF_TA1') && ...
+                  isfield(a_metaData, 'SBE_TEMP_COEF_TA2') && ...
+                  isfield(a_metaData, 'SBE_TEMP_COEF_TA3'))
                o_preCalibCoef = sprintf('%s, %s, %s, %s', ...
-                  o_metaData.SBE_TEMP_COEF_TA0, ...
-                  o_metaData.SBE_TEMP_COEF_TA1, ...
-                  o_metaData.SBE_TEMP_COEF_TA2, ...
-                  o_metaData.SBE_TEMP_COEF_TA3);
+                  a_metaData.SBE_TEMP_COEF_TA0, ...
+                  a_metaData.SBE_TEMP_COEF_TA1, ...
+                  a_metaData.SBE_TEMP_COEF_TA2, ...
+                  a_metaData.SBE_TEMP_COEF_TA3);
             end
-            if (isfield(o_metaData, 'PARAMETER'))
-               paramNum = find(strcmp(struct2cell(o_metaData.PARAMETER), o_param));
+            if (isfield(a_metaData, 'PARAMETER'))
+               paramNum = find(strcmp(struct2cell(a_metaData.PARAMETER), o_param));
                fieldName = ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(paramNum)];
-               if (isfield(o_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
-                     isfield(o_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
-                  o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
+               if (isfield(a_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
+                     isfield(a_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
+                  o_preCalibComment = a_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
                end
             end
             if (isempty(o_preCalibCoef))
@@ -1114,36 +764,91 @@ switch (a_paramName)
          end
       end
 
+   case {'TEMP_2'} % from SBE61
+      if (a_decoderId == 228)
+         o_param = 'TEMP_2';
+         o_paramSensor = 'CTD_TEMP_2';
+         o_paramUnits = 'degree_Celsius';
+         o_paramAccuracy = '0.002';
+         o_paramResolution = '0.001';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = '';
+      end
+
+   case {'TEMP_3'} % from RBR
+      if (a_decoderId == 228)
+         o_param = 'TEMP_3';
+         o_paramSensor = 'CTD_TEMP_3';
+         o_paramUnits = 'degree_Celsius';
+         o_paramAccuracy = '0.002';
+         o_paramResolution = '0.00005';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = '';
+
+         if (isfield(a_metaData, 'TEMP_PARAMETER_ACCURACY') && ~isempty(a_metaData.TEMP_PARAMETER_ACCURACY))
+            o_paramAccuracy = a_metaData.TEMP_PARAMETER_ACCURACY;
+         end
+         if (isfield(a_metaData, 'TEMP_PARAMETER_RESOLUTION') && ~isempty(a_metaData.TEMP_PARAMETER_RESOLUTION))
+            o_paramResolution = a_metaData.TEMP_PARAMETER_RESOLUTION;
+         end
+         if (isfield(a_metaData, 'TEMP_PREDEPLOYMENT_CALIB_EQUATION') && ~isempty(a_metaData.TEMP_PREDEPLOYMENT_CALIB_EQUATION))
+            o_preCalibEq = a_metaData.TEMP_PREDEPLOYMENT_CALIB_EQUATION;
+         end
+         if (isfield(a_metaData, 'TEMP_PREDEPLOYMENT_CALIB_COEFFICIENT') && ~isempty(a_metaData.TEMP_PREDEPLOYMENT_CALIB_COEFFICIENT))
+            o_preCalibCoef = a_metaData.TEMP_PREDEPLOYMENT_CALIB_COEFFICIENT;
+         end
+         if (isfield(a_metaData, 'TEMP_PREDEPLOYMENT_CALIB_COMMENT') && ~isempty(a_metaData.TEMP_PREDEPLOYMENT_CALIB_COMMENT))
+            o_preCalibComment = a_metaData.TEMP_PREDEPLOYMENT_CALIB_COMMENT;
+         end
+      end
+
    case {'PSAL'}
       o_param = 'PSAL';
       o_paramSensor = 'CTD_CNDC';
       o_paramUnits = 'psu';
-      if (~ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
-         o_paramAccuracy = '0.005';
-         o_paramResolution = '0.001';
+      if ~(ismember(a_decoderId, g_decArgo_decoderIdListNkePfv2Iridium))
+         if ~(ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr) && (a_decoderId ~= 228)) % in decId 228 RBR data are in (PRES3, TEMP3, PSAL3, TEMP_CNDC) profile
+            % SBE41
+            o_paramAccuracy = '0.005';
+            o_paramResolution = '0.001';
+         else
+            % RBR
+            o_paramAccuracy = '0.003';
+            o_paramResolution = '0.001';
+         end
       else
-         o_paramAccuracy = '0.003';
-         o_paramResolution = '0.001';
+         % Arvor PFV2
+         if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('CTD_RBR', g_decArgo_sensorMountedOnFloat))
+            % RBR
+            o_paramAccuracy = '0.003';
+            o_paramResolution = '0.001';
+         else
+            % SBE41
+            o_paramAccuracy = '0.005';
+            o_paramResolution = '0.001';
+         end
       end
       o_preCalibEq = 'none';
       o_preCalibCoef = 'none';
       o_preCalibComment = '';
 
-      if (ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr))
-         if (isfield(o_metaData, 'PSAL_PARAMETER_ACCURACY') && ~isempty(o_metaData.PSAL_PARAMETER_ACCURACY))
-            o_paramAccuracy = o_metaData.PSAL_PARAMETER_ACCURACY;
+      if ~(ismember(a_decoderId, g_decArgo_decoderIdListNkeIridiumRbr) && (a_decoderId ~= 228)) % in decId 228 RBR data are in (PRES3, TEMP3, PSAL3, TEMP_CNDC) profile
+         if (isfield(a_metaData, 'PSAL_PARAMETER_ACCURACY') && ~isempty(a_metaData.PSAL_PARAMETER_ACCURACY))
+            o_paramAccuracy = a_metaData.PSAL_PARAMETER_ACCURACY;
          end
-         if (isfield(o_metaData, 'PSAL_PARAMETER_RESOLUTION') && ~isempty(o_metaData.PSAL_PARAMETER_RESOLUTION))
-            o_paramResolution = o_metaData.PSAL_PARAMETER_RESOLUTION;
+         if (isfield(a_metaData, 'PSAL_PARAMETER_RESOLUTION') && ~isempty(a_metaData.PSAL_PARAMETER_RESOLUTION))
+            o_paramResolution = a_metaData.PSAL_PARAMETER_RESOLUTION;
          end
-         if (isfield(o_metaData, 'PSAL_PREDEPLOYMENT_CALIB_EQUATION') && ~isempty(o_metaData.PSAL_PREDEPLOYMENT_CALIB_EQUATION))
-            o_preCalibEq = o_metaData.PSAL_PREDEPLOYMENT_CALIB_EQUATION;
+         if (isfield(a_metaData, 'PSAL_PREDEPLOYMENT_CALIB_EQUATION') && ~isempty(a_metaData.PSAL_PREDEPLOYMENT_CALIB_EQUATION))
+            o_preCalibEq = a_metaData.PSAL_PREDEPLOYMENT_CALIB_EQUATION;
          end
-         if (isfield(o_metaData, 'PSAL_PREDEPLOYMENT_CALIB_COEFFICIENT') && ~isempty(o_metaData.PSAL_PREDEPLOYMENT_CALIB_COEFFICIENT))
-            o_preCalibCoef = o_metaData.PSAL_PREDEPLOYMENT_CALIB_COEFFICIENT;
+         if (isfield(a_metaData, 'PSAL_PREDEPLOYMENT_CALIB_COEFFICIENT') && ~isempty(a_metaData.PSAL_PREDEPLOYMENT_CALIB_COEFFICIENT))
+            o_preCalibCoef = a_metaData.PSAL_PREDEPLOYMENT_CALIB_COEFFICIENT;
          end
-         if (isfield(o_metaData, 'PSAL_PREDEPLOYMENT_CALIB_COMMENT') && ~isempty(o_metaData.PSAL_PREDEPLOYMENT_CALIB_COMMENT))
-            o_preCalibComment = o_metaData.PSAL_PREDEPLOYMENT_CALIB_COMMENT;
+         if (isfield(a_metaData, 'PSAL_PREDEPLOYMENT_CALIB_COMMENT') && ~isempty(a_metaData.PSAL_PREDEPLOYMENT_CALIB_COMMENT))
+            o_preCalibComment = a_metaData.PSAL_PREDEPLOYMENT_CALIB_COMMENT;
          end
       end
 
@@ -1152,36 +857,77 @@ switch (a_paramName)
 
          % Apex APF11 Iridium
          % Provor CTS5-USEA
-         if (isfield(o_metaData, 'SBE_CNDC_COEF_WBOTC'))
+         if (isfield(a_metaData, 'SBE_CNDC_COEF_WBOTC'))
             o_preCalibEq = 'f=instrument_output (Hz)*sqrt(1.0+WBOTC*t)/1000.0; t=temperature (degC); p=pressure (decibars); d=CTcor; e=CPcor; conductivity (S/m)=(g+h*f^2+i*f^3+j*f^4)/(1+d*t+e*p)';
-            if (isfield(o_metaData, 'SBE_CNDC_COEF_WBOTC') && ...
-                  isfield(o_metaData, 'SBE_CNDC_COEF_CTCOR') && ...
-                  isfield(o_metaData, 'SBE_CNDC_COEF_CPCOR') && ...
-                  isfield(o_metaData, 'SBE_CNDC_COEF_G') && ...
-                  isfield(o_metaData, 'SBE_CNDC_COEF_H') && ...
-                  isfield(o_metaData, 'SBE_CNDC_COEF_I') && ...
-                  isfield(o_metaData, 'SBE_CNDC_COEF_J'))
+            if (isfield(a_metaData, 'SBE_CNDC_COEF_WBOTC') && ...
+                  isfield(a_metaData, 'SBE_CNDC_COEF_CTCOR') && ...
+                  isfield(a_metaData, 'SBE_CNDC_COEF_CPCOR') && ...
+                  isfield(a_metaData, 'SBE_CNDC_COEF_G') && ...
+                  isfield(a_metaData, 'SBE_CNDC_COEF_H') && ...
+                  isfield(a_metaData, 'SBE_CNDC_COEF_I') && ...
+                  isfield(a_metaData, 'SBE_CNDC_COEF_J'))
                o_preCalibCoef = sprintf('%s; %s; %s; %s, %s, %s, %s', ...
-                  o_metaData.SBE_CNDC_COEF_WBOTC, ...
-                  o_metaData.SBE_CNDC_COEF_CTCOR, ...
-                  o_metaData.SBE_CNDC_COEF_CPCOR, ...
-                  o_metaData.SBE_CNDC_COEF_G, ...
-                  o_metaData.SBE_CNDC_COEF_H, ...
-                  o_metaData.SBE_CNDC_COEF_I, ...
-                  o_metaData.SBE_CNDC_COEF_J);
+                  a_metaData.SBE_CNDC_COEF_WBOTC, ...
+                  a_metaData.SBE_CNDC_COEF_CTCOR, ...
+                  a_metaData.SBE_CNDC_COEF_CPCOR, ...
+                  a_metaData.SBE_CNDC_COEF_G, ...
+                  a_metaData.SBE_CNDC_COEF_H, ...
+                  a_metaData.SBE_CNDC_COEF_I, ...
+                  a_metaData.SBE_CNDC_COEF_J);
             end
-            if (isfield(o_metaData, 'PARAMETER'))
-               paramNum = find(strcmp(struct2cell(o_metaData.PARAMETER), o_param));
+            if (isfield(a_metaData, 'PARAMETER'))
+               paramNum = find(strcmp(struct2cell(a_metaData.PARAMETER), o_param));
                fieldName = ['PREDEPLOYMENT_CALIB_COMMENT_' num2str(paramNum)];
-               if (isfield(o_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
-                     isfield(o_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
-                  o_preCalibComment = o_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
+               if (isfield(a_metaData, 'PREDEPLOYMENT_CALIB_COMMENT') && ...
+                     isfield(a_metaData.PREDEPLOYMENT_CALIB_COMMENT, fieldName))
+                  o_preCalibComment = a_metaData.PREDEPLOYMENT_CALIB_COMMENT.(fieldName);
                end
             end
             if (isempty(o_preCalibCoef))
                fprintf('ERROR: Float #%d: inconsistent CTD_CNDC calibration information\n', ...
                   g_decArgo_floatNum);
             end
+         end
+      end
+
+   case {'PSAL_2'} % from SBE61
+      if (ismember(a_decoderId, [228, 229]))
+         % for decIds 228 and 229 SBE61 data are in (PRES2, TEMP2, PSAL2) profiles
+         o_param = 'PSAL_2';
+         o_paramSensor = 'CTD_CNDC_2';
+         o_paramUnits = 'psu';
+         o_paramAccuracy = '0.005';
+         o_paramResolution = '0.001';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = '';
+      end
+
+   case {'PSAL_3'} % from RBR
+      if (a_decoderId == 228)
+         o_param = 'PSAL_3';
+         o_paramSensor = 'CTD_CNDC_3';
+         o_paramUnits = 'psu';
+         o_paramAccuracy = '0.003';
+         o_paramResolution = '0.001';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = '';
+
+         if (isfield(a_metaData, 'PSAL_PARAMETER_ACCURACY') && ~isempty(a_metaData.PSAL_PARAMETER_ACCURACY))
+            o_paramAccuracy = a_metaData.PSAL_PARAMETER_ACCURACY;
+         end
+         if (isfield(a_metaData, 'PSAL_PARAMETER_RESOLUTION') && ~isempty(a_metaData.PSAL_PARAMETER_RESOLUTION))
+            o_paramResolution = a_metaData.PSAL_PARAMETER_RESOLUTION;
+         end
+         if (isfield(a_metaData, 'PSAL_PREDEPLOYMENT_CALIB_EQUATION') && ~isempty(a_metaData.PSAL_PREDEPLOYMENT_CALIB_EQUATION))
+            o_preCalibEq = a_metaData.PSAL_PREDEPLOYMENT_CALIB_EQUATION;
+         end
+         if (isfield(a_metaData, 'PSAL_PREDEPLOYMENT_CALIB_COEFFICIENT') && ~isempty(a_metaData.PSAL_PREDEPLOYMENT_CALIB_COEFFICIENT))
+            o_preCalibCoef = a_metaData.PSAL_PREDEPLOYMENT_CALIB_COEFFICIENT;
+         end
+         if (isfield(a_metaData, 'PSAL_PREDEPLOYMENT_CALIB_COMMENT') && ~isempty(a_metaData.PSAL_PREDEPLOYMENT_CALIB_COMMENT))
+            o_preCalibComment = a_metaData.PSAL_PREDEPLOYMENT_CALIB_COMMENT;
          end
       end
 
@@ -1265,7 +1011,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/13/2016 - RNU - creation
@@ -1274,6 +1020,9 @@ function [o_metaData] = update_parameter_list_oxygen(a_metaData, a_decoderId)
 
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamListOxygen;
+
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
 
 
 paramList = [];
@@ -1290,12 +1039,14 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
 
-   case {106, 301, 202, 207, 208, 213, 214, 107, 109, 110, 111, 112, 113, 114, 115, 116, ...
-         201, 203, 206, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 215, 216, 217, 218, 221, 223, 225}
-      if (ismember(a_decoderId, [213, 214, 121, 122, 123, 124, 125, 126, 127, 215, 216, 217, 218, 221, 223, 225]))
+   case {201, 202, 203, 206, 207, 208, 213, 214, 215, 216, 217, 218, 221, 223, 225, 232, ...
+         106, 107, 109, 110, 111, 112, 113, 114, 115, 116, ...
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, ...
+         301}
+      if (ismember(a_decoderId, [213, 214, 215, 216, 217, 218, 221, 223, 225, 232, ...
+            121, 122, 123, 124, 125, 126, 127, 134, 136]))
          if (a_decoderId == 124) % no optode on CTS5 UVP #6902968
-            if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-                  any(strcmp('OPTODE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+            if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('OPTODE', g_decArgo_sensorMountedOnFloat))
                paramList = [ ...
                   {'TEMP_DOXY'} ...
                   {'C1PHASE_DOXY'} ...
@@ -1304,9 +1055,10 @@ switch (a_decoderId)
                   {'DOXY'} ...
                   ];
             end
-         elseif (a_decoderId == 221) % since version 5.67, Arvor Deep versions with/without OPTODE are managed with the same decId
-            if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-                  any(strcmp('OPTODE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         elseif (ismember(a_decoderId, [221, 232]))
+            % since version 5.67, Arvor Deep versions with/without OPTODE are managed with the same decId
+            % since version 5.54, Arvor versions with/without OPTODE are managed with the same decId
+            if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('OPTODE', g_decArgo_sensorMountedOnFloat))
                paramList = [ ...
                   {'TEMP_DOXY'} ...
                   {'C1PHASE_DOXY'} ...
@@ -1325,8 +1077,7 @@ switch (a_decoderId)
                ];
          end
       elseif (ismember(a_decoderId, [106, 107, 109, 110, 111, 112, 113, 114, 115, 116])) % CTS3 with PPOX_DOXY
-         if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-               any(strcmp('OPTODE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('OPTODE', g_decArgo_sensorMountedOnFloat))
             paramList = [ ...
                {'TEMP_DOXY'} ...
                {'C1PHASE_DOXY'} ...
@@ -1350,10 +1101,36 @@ switch (a_decoderId)
          {'C1PHASE_DOXY'} ...
          {'C2PHASE_DOXY'} ...
          {'DOXY'} ...
-         {'TEMP_DOXY2'} ...
+         {'TEMP_DOXY_2'} ...
          {'PHASE_DELAY_DOXY'} ...
-         {'DOXY2'} ...
+         {'DOXY_2'} ...
          ];
+
+   case {230}
+      paramList = [ ...
+         {'C1PHASE_DOXY'} ...
+         {'C2PHASE_DOXY'} ...
+         {'TEMP_DOXY'} ...
+         {'PPOX_DOXY'} ...
+         {'DOXY'} ...
+         {'COUNT_DOXY'} ...
+         {'LED_FLASHING_COUNT_DOXY'} ...
+         {'TEMP_COUNT_DOXY'} ...
+         {'TEMP_DOXY_2'} ...
+         {'PPOX_DOXY_2'} ...
+         {'DOXY_2'} ...
+         ];
+
+   case {401, 402}
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('OPTODE', g_decArgo_sensorMountedOnFloat))
+         paramList = [ ...
+            {'TEMP_DOXY'} ...
+            {'C1PHASE_DOXY'} ...
+            {'C2PHASE_DOXY'} ...
+            {'PPOX_DOXY'} ...
+            {'DOXY'} ...
+            ];
+      end
 
    case {302, 303}
       paramList = [ ...
@@ -1415,7 +1192,7 @@ switch (a_decoderId)
          {'DOXY'} ...
          ];
 
-   case {1110, 1111, 1112, 1114}
+   case {1110, 1111, 1112, 1114, 1115}
       paramList = [ ...
          {'TEMP_DOXY'} ...
          {'TPHASE_DOXY'} ...
@@ -1431,14 +1208,13 @@ switch (a_decoderId)
          {'RPHASE_DOXY'} ...
          {'PPOX_DOXY'} ...
          {'DOXY'} ...
-         {'TEMP_DOXY2'} ...
-         {'PHASE_DELAY_DOXY2'} ...
-         {'DOXY2'} ...
+         {'TEMP_DOXY_2'} ...
+         {'PHASE_DELAY_DOXY_2'} ...
+         {'DOXY_2'} ...
          ];
 
-   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130}
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('OPTODE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132}
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('OPTODE', g_decArgo_sensorMountedOnFloat))
          paramList = [ ...
             {'TEMP_DOXY'} ...
             {'C1PHASE_DOXY'} ...
@@ -1491,7 +1267,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/08/2016 - RNU - creation
@@ -1514,6 +1290,9 @@ global g_decArgo_floatNum;
 
 % arrays to store calibration information
 global g_decArgo_calibInfo;
+
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
 
 % retrieve global coefficient default values
 global g_decArgo_doxy_201and202_201_301_d0;
@@ -1745,6 +1524,17 @@ global g_decArgo_doxy_102_207_206_b2;
 global g_decArgo_doxy_102_207_206_b3;
 global g_decArgo_doxy_102_207_206_c0;
 
+global g_decArgo_doxy_301_210_401_d0;
+global g_decArgo_doxy_301_210_401_d1;
+global g_decArgo_doxy_301_210_401_d2;
+global g_decArgo_doxy_301_210_401_d3;
+global g_decArgo_doxy_301_210_401_sPreset;
+global g_decArgo_doxy_301_210_401_b0;
+global g_decArgo_doxy_301_210_401_b1;
+global g_decArgo_doxy_301_210_401_b2;
+global g_decArgo_doxy_301_210_401_b3;
+global g_decArgo_doxy_301_210_401_c0;
+
 
 switch (a_decoderId)
    case {4, 19, 25}
@@ -1795,7 +1585,7 @@ switch (a_decoderId)
                o_paramAccuracy = '8 umol/kg or 10%';
                o_paramResolution = '1 umol/kg';
                o_preCalibEq = 'O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[(PSAL-Sref)*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*(PSAL^2-Sref^2)]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; DOXY=O2/rho; where rho is the potential density [kg/L] calculated from CTD data';
-               o_preCalibCoef = sprintf('Sref=%g; Spreset=%g; Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+               o_preCalibCoef = sprintf('Sref=%e; Spreset=%e; Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
                   doxyCalibRefSalinity, ...
                   g_decArgo_doxy_201and202_201_301_sPreset, ...
                   g_decArgo_doxy_201and202_201_301_pCoef2, ...
@@ -1845,7 +1635,7 @@ switch (a_decoderId)
                o_paramAccuracy = '8 umol/kg or 10%';
                o_paramResolution = '1 umol/kg';
                o_preCalibEq = 'O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[(PSAL-Sref)*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*(PSAL^2-Sref^2)]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; DOXY=O2/rho; where rho is the potential density [kg/L] calculated from CTD data';
-               o_preCalibCoef = sprintf('Sref=%g; Spreset=%g; Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+               o_preCalibCoef = sprintf('Sref=%e; Spreset=%e; Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
                   doxyCalibRefSalinity, ...
                   g_decArgo_doxy_201and202_201_301_sPreset, ...
                   g_decArgo_doxy_201and202_201_301_pCoef2, ...
@@ -1901,7 +1691,7 @@ switch (a_decoderId)
             o_paramAccuracy = '8 umol/kg or 10%';
             o_paramResolution = '1 umol/kg';
             o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; MOLAR_DOXY=[((c3+c4*TEMP)/(c5+c6*CalPhase))-1]/Ksv; Ksv=c0+c1*TEMP+c2*TEMP^2; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
                g_decArgo_doxy_202_204_204_sPreset, ...
                g_decArgo_doxy_202_204_204_pCoef1, ...
                g_decArgo_doxy_202_204_204_pCoef2, ...
@@ -1959,7 +1749,7 @@ switch (a_decoderId)
             o_paramAccuracy = '8 umol/kg or 10%';
             o_paramResolution = '1 umol/kg';
             o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; deltaP=c0*TEMP^m0*CalPhase^n0+c1*TEMP^m1*CalPhase^n1+..+c27*TEMP^m27*CalPhase^n27; AirSat=deltaP*100/[(1013.25-exp[52.57-6690.9/(TEMP+273.15)-4.681*ln(TEMP+273.15)])*0.20946]; MOLAR_DOXY=Cstar*44.614*AirSat/100; ln(Cstar)=A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g, c7=%g, c8=%g, c9=%g, c10=%g, c11=%g, c12=%g, c13=%g, c14=%g, c15=%g, c16=%g, c17=%g, c18=%g, c19=%g, c20=%g, c21=%g, c22=%g, c23=%g, c24=%g, c25=%g, c26=%g, c27=%g; m0=%g, m1=%g, m2=%g, m3=%g, m4=%g, m5=%g, m6=%g, m7=%g, m8=%g, m9=%g, m10=%g, m11=%g, m12=%g, m13=%g, m14=%g, m15=%g, m16=%g, m17=%g, m18=%g, m19=%g, m20=%g, m21=%g, m22=%g, m23=%g, m24=%g, m25=%g, m26=%g, m27=%g; n0=%g, n1=%g, n2=%g, n3=%g, n4=%g, n5=%g, n6=%g, n7=%g, n8=%g, n9=%g, n10=%g, n11=%g, n12=%g, n13=%g, n14=%g, n15=%g, n16=%g, n17=%g, n18=%g, n19=%g, n20=%g, n21=%g, n22=%g, n23=%g, n24=%g, n25=%g, n26=%g, n27=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e, c7=%e, c8=%e, c9=%e, c10=%e, c11=%e, c12=%e, c13=%e, c14=%e, c15=%e, c16=%e, c17=%e, c18=%e, c19=%e, c20=%e, c21=%e, c22=%e, c23=%e, c24=%e, c25=%e, c26=%e, c27=%e; m0=%e, m1=%e, m2=%e, m3=%e, m4=%e, m5=%e, m6=%e, m7=%e, m8=%e, m9=%e, m10=%e, m11=%e, m12=%e, m13=%e, m14=%e, m15=%e, m16=%e, m17=%e, m18=%e, m19=%e, m20=%e, m21=%e, m22=%e, m23=%e, m24=%e, m25=%e, m26=%e, m27=%e; n0=%e, n1=%e, n2=%e, n3=%e, n4=%e, n5=%e, n6=%e, n7=%e, n8=%e, n9=%e, n10=%e, n11=%e, n12=%e, n13=%e, n14=%e, n15=%e, n16=%e, n17=%e, n18=%e, n19=%e, n20=%e, n21=%e, n22=%e, n23=%e, n24=%e, n25=%e, n26=%e, n27=%e; A0=%e, A1=%e, A2=%e, A3=%e, A4=%e, A5=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
                g_decArgo_doxy_202_204_202_sPreset, ...
                g_decArgo_doxy_202_204_202_pCoef1, ...
                g_decArgo_doxy_202_204_202_pCoef2, ...
@@ -2025,7 +1815,7 @@ switch (a_decoderId)
             o_paramAccuracy = '8 umol/kg or 10%';
             o_paramResolution = '1 umol/kg';
             o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; deltaP=c0*TEMP^m0*CalPhase^n0+c1*TEMP^m1*CalPhase^n1+..+c27*TEMP^m27*CalPhase^n27; AirSat=deltaP*100/[(1013.25-exp[52.57-6690.9/(TEMP+273.15)-4.681*ln(TEMP+273.15)])*0.20946]; MOLAR_DOXY=Cstar*44.614*AirSat/100; ln(Cstar)=A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; MOLAR_DOXY=ConcCoef0+ConcCoef1*MOLAR_DOXY; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g, c7=%g, c8=%g, c9=%g, c10=%g, c11=%g, c12=%g, c13=%g, c14=%g, c15=%g, c16=%g, c17=%g, c18=%g, c19=%g, c20=%g, c21=%g, c22=%g, c23=%g, c24=%g, c25=%g, c26=%g, c27=%g; m0=%g, m1=%g, m2=%g, m3=%g, m4=%g, m5=%g, m6=%g, m7=%g, m8=%g, m9=%g, m10=%g, m11=%g, m12=%g, m13=%g, m14=%g, m15=%g, m16=%g, m17=%g, m18=%g, m19=%g, m20=%g, m21=%g, m22=%g, m23=%g, m24=%g, m25=%g, m26=%g, m27=%g; n0=%g, n1=%g, n2=%g, n3=%g, n4=%g, n5=%g, n6=%g, n7=%g, n8=%g, n9=%g, n10=%g, n11=%g, n12=%g, n13=%g, n14=%g, n15=%g, n16=%g, n17=%g, n18=%g, n19=%g, n20=%g, n21=%g, n22=%g, n23=%g, n24=%g, n25=%g, n26=%g, n27=%g; ConcCoef0=%g, ConcCoef1=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e, c7=%e, c8=%e, c9=%e, c10=%e, c11=%e, c12=%e, c13=%e, c14=%e, c15=%e, c16=%e, c17=%e, c18=%e, c19=%e, c20=%e, c21=%e, c22=%e, c23=%e, c24=%e, c25=%e, c26=%e, c27=%e; m0=%e, m1=%e, m2=%e, m3=%e, m4=%e, m5=%e, m6=%e, m7=%e, m8=%e, m9=%e, m10=%e, m11=%e, m12=%e, m13=%e, m14=%e, m15=%e, m16=%e, m17=%e, m18=%e, m19=%e, m20=%e, m21=%e, m22=%e, m23=%e, m24=%e, m25=%e, m26=%e, m27=%e; n0=%e, n1=%e, n2=%e, n3=%e, n4=%e, n5=%e, n6=%e, n7=%e, n8=%e, n9=%e, n10=%e, n11=%e, n12=%e, n13=%e, n14=%e, n15=%e, n16=%e, n17=%e, n18=%e, n19=%e, n20=%e, n21=%e, n22=%e, n23=%e, n24=%e, n25=%e, n26=%e, n27=%e; ConcCoef0=%e, ConcCoef1=%e; A0=%e, A1=%e, A2=%e, A3=%e, A4=%e, A5=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
                g_decArgo_doxy_202_204_203_sPreset, ...
                g_decArgo_doxy_202_204_203_pCoef1, ...
                g_decArgo_doxy_202_204_203_pCoef2, ...
@@ -2071,7 +1861,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 28 for the
             % Aanderaa standard calibration
             if (~isempty(find((size(tabDoxyCoef) == [5 28]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2082,7 +1872,7 @@ switch (a_decoderId)
             o_paramAccuracy = '0.03 degC';
             o_paramResolution = '0.01 degC';
             o_preCalibEq = 'TEMP_DOXY=T0+T1*TEMP_VOLTAGE_DOXY+T2*TEMP_VOLTAGE_DOXY^2+T3*TEMP_VOLTAGE_DOXY^3+T4*TEMP_VOLTAGE_DOXY^4+T5*TEMP_VOLTAGE_DOXY^5; with TEMP_VOLTAGE_DOXY=voltage from thermistor bridge (mV)';
-            o_preCalibCoef = sprintf('T0=%g; T1=%g; T2=%g; T3=%g; T4=%g; T5=%g', ...
+            o_preCalibCoef = sprintf('T0=%e; T1=%e; T2=%e; T3=%e; T4=%e; T5=%e', ...
                tabDoxyCoef(2, 1:6));
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
 
@@ -2119,7 +1909,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 28 for the
             % Aanderaa standard calibration
             if (~isempty(find((size(tabDoxyCoef) == [5 28]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2130,7 +1920,7 @@ switch (a_decoderId)
             o_paramAccuracy = '8 umol/kg or 10%';
             o_paramResolution = '1 umol/kg';
             o_preCalibEq = 'TPHASE_DOXY=C1PHASE_DOXY-C2PHASE_DOXY; Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; deltaP=c0*TEMP_DOXY^m0*CalPhase^n0+c1*TEMP_DOXY^m1*CalPhase^n1+..+c27*TEMP_DOXY^m27*CalPhase^n27; AirSat=deltaP*100/[(1013.25-exp[52.57-6690.9/(TEMP_DOXY+273.15)-4.681*ln(TEMP_DOXY+273.15)])*0.20946]; MOLAR_DOXY=Cstar*44.614*AirSat/100; ln(Cstar)=A0+A1*Ts1+A2*Ts1^2+A3*Ts1^3+A4*Ts1^4+A5*Ts1^5; Ts1=ln[(298.15-TEMP_DOXY)/(273.15+TEMP_DOXY)]; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts2+B2*Ts2^2+B3*Ts2^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Ts2=ln[(298.15-TEMP)/(273.15+TEMP)]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g, c7=%g, c8=%g, c9=%g, c10=%g, c11=%g, c12=%g, c13=%g, c14=%g, c15=%g, c16=%g, c17=%g, c18=%g, c19=%g, c20=%g, c21=%g, c22=%g, c23=%g, c24=%g, c25=%g, c26=%g, c27=%g; m0=%g, m1=%g, m2=%g, m3=%g, m4=%g, m5=%g, m6=%g, m7=%g, m8=%g, m9=%g, m10=%g, m11=%g, m12=%g, m13=%g, m14=%g, m15=%g, m16=%g, m17=%g, m18=%g, m19=%g, m20=%g, m21=%g, m22=%g, m23=%g, m24=%g, m25=%g, m26=%g, m27=%g; n0=%g, n1=%g, n2=%g, n3=%g, n4=%g, n5=%g, n6=%g, n7=%g, n8=%g, n9=%g, n10=%g, n11=%g, n12=%g, n13=%g, n14=%g, n15=%g, n16=%g, n17=%g, n18=%g, n19=%g, n20=%g, n21=%g, n22=%g, n23=%g, n24=%g, n25=%g, n26=%g, n27=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e, c7=%e, c8=%e, c9=%e, c10=%e, c11=%e, c12=%e, c13=%e, c14=%e, c15=%e, c16=%e, c17=%e, c18=%e, c19=%e, c20=%e, c21=%e, c22=%e, c23=%e, c24=%e, c25=%e, c26=%e, c27=%e; m0=%e, m1=%e, m2=%e, m3=%e, m4=%e, m5=%e, m6=%e, m7=%e, m8=%e, m9=%e, m10=%e, m11=%e, m12=%e, m13=%e, m14=%e, m15=%e, m16=%e, m17=%e, m18=%e, m19=%e, m20=%e, m21=%e, m22=%e, m23=%e, m24=%e, m25=%e, m26=%e, m27=%e; n0=%e, n1=%e, n2=%e, n3=%e, n4=%e, n5=%e, n6=%e, n7=%e, n8=%e, n9=%e, n10=%e, n11=%e, n12=%e, n13=%e, n14=%e, n15=%e, n16=%e, n17=%e, n18=%e, n19=%e, n20=%e, n21=%e, n22=%e, n23=%e, n24=%e, n25=%e, n26=%e, n27=%e; A0=%e, A1=%e, A2=%e, A3=%e, A4=%e, A5=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
                g_decArgo_doxy_202_205_302_sPreset, ...
                g_decArgo_doxy_202_205_302_pCoef1, ...
                g_decArgo_doxy_202_205_302_pCoef2, ...
@@ -2181,7 +1971,7 @@ switch (a_decoderId)
             o_paramAccuracy = '';
             o_paramResolution = '';
             o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; deltaP=c0*TEMP_DOXY^m0*CalPhase^n0+c1*TEMP_DOXY^m1*CalPhase^n1+..+c27*TEMP_DOXY^m27*CalPhase^n27; AirSat=deltaP*100/[(1013.25-exp[52.57-6690.9/(TEMP_DOXY+273.15)-4.681*ln(TEMP_DOXY+273.15)])*0.20946]; ln(Cstar)=A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5; MOLAR_DOXY=Cstar*44.614*AirSat/100; Pcorr=1+((Pcoef2*TEMP_DOXY+Pcoef3)*PRES)/1000; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP_DOXY+273.15))+D2*ln((TEMP_DOXY+273.15)/100)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; Ts=ln[(298.15-TEMP_DOXY)/(273.15+TEMP_DOXY)]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP_DOXY+273.15))]';
-            o_preCalibCoef = sprintf('Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g, c7=%g, c8=%g, c9=%g, c10=%g, c11=%g, c12=%g, c13=%g, c14=%g, c15=%g, c16=%g, c17=%g, c18=%g, c19=%g, c20=%g, c21=%g, c22=%g, c23=%g, c24=%g, c25=%g, c26=%g, c27=%g; m0=%g, m1=%g, m2=%g, m3=%g, m4=%g, m5=%g, m6=%g, m7=%g, m8=%g, m9=%g, m10=%g, m11=%g, m12=%g, m13=%g, m14=%g, m15=%g, m16=%g, m17=%g, m18=%g, m19=%g, m20=%g, m21=%g, m22=%g, m23=%g, m24=%g, m25=%g, m26=%g, m27=%g; n0=%g, n1=%g, n2=%g, n3=%g, n4=%g, n5=%g, n6=%g, n7=%g, n8=%g, n9=%g, n10=%g, n11=%g, n12=%g, n13=%g, n14=%g, n15=%g, n16=%g, n17=%g, n18=%g, n19=%g, n20=%g, n21=%g, n22=%g, n23=%g, n24=%g, n25=%g, n26=%g, n27=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; D0=%g, D1=%g, D2=%g', ...
+            o_preCalibCoef = sprintf('Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e, c7=%e, c8=%e, c9=%e, c10=%e, c11=%e, c12=%e, c13=%e, c14=%e, c15=%e, c16=%e, c17=%e, c18=%e, c19=%e, c20=%e, c21=%e, c22=%e, c23=%e, c24=%e, c25=%e, c26=%e, c27=%e; m0=%e, m1=%e, m2=%e, m3=%e, m4=%e, m5=%e, m6=%e, m7=%e, m8=%e, m9=%e, m10=%e, m11=%e, m12=%e, m13=%e, m14=%e, m15=%e, m16=%e, m17=%e, m18=%e, m19=%e, m20=%e, m21=%e, m22=%e, m23=%e, m24=%e, m25=%e, m26=%e, m27=%e; n0=%e, n1=%e, n2=%e, n3=%e, n4=%e, n5=%e, n6=%e, n7=%e, n8=%e, n9=%e, n10=%e, n11=%e, n12=%e, n13=%e, n14=%e, n15=%e, n16=%e, n17=%e, n18=%e, n19=%e, n20=%e, n21=%e, n22=%e, n23=%e, n24=%e, n25=%e, n26=%e, n27=%e; A0=%e, A1=%e, A2=%e, A3=%e, A4=%e, A5=%e; D0=%e, D1=%e, D2=%e', ...
                g_decArgo_doxy_202_205_302_pCoef1, ...
                g_decArgo_doxy_202_205_302_pCoef2, ...
                g_decArgo_doxy_202_205_302_pCoef3, ...
@@ -2220,7 +2010,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 6 28 for the
             % Aanderaa standard calibration + an additional two-point adjustment
             if (~isempty(find((size(tabDoxyCoef) == [6 28]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2231,7 +2021,7 @@ switch (a_decoderId)
             o_paramAccuracy = '0.03 degC';
             o_paramResolution = '0.01 degC';
             o_preCalibEq = 'TEMP_DOXY=T0+T1*TEMP_VOLTAGE_DOXY+T2*TEMP_VOLTAGE_DOXY^2+T3*TEMP_VOLTAGE_DOXY^3+T4*TEMP_VOLTAGE_DOXY^4+T5*TEMP_VOLTAGE_DOXY^5; with TEMP_VOLTAGE_DOXY=voltage from thermistor bridge (mV)';
-            o_preCalibCoef = sprintf('T0=%g; T1=%g; T2=%g; T3=%g; T4=%g; T5=%g', ...
+            o_preCalibCoef = sprintf('T0=%e; T1=%e; T2=%e; T3=%e; T4=%e; T5=%e', ...
                tabDoxyCoef(2, 1:6));
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
 
@@ -2268,7 +2058,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 6 28 for the
             % Aanderaa standard calibration + an additional two-point adjustment
             if (~isempty(find((size(tabDoxyCoef) == [6 28]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2279,7 +2069,7 @@ switch (a_decoderId)
             o_paramAccuracy = '8 umol/kg or 10%';
             o_paramResolution = '1 umol/kg';
             o_preCalibEq = 'TPHASE_DOXY=C1PHASE_DOXY-C2PHASE_DOXY; Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; deltaP=c0*TEMP^m0*CalPhase^n0+c1*TEMP^m1*CalPhase^n1+..+c27*TEMP^m27*CalPhase^n27; AirSat=deltaP*100/[(1013.25-exp[52.57-6690.9/(TEMP+273.15)-4.681*ln(TEMP+273.15)])*0.20946]; MOLAR_DOXY=Cstar*44.614*AirSat/100; ln(Cstar)=A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; MOLAR_DOXY=ConcCoef0+ConcCoef1*MOLAR_DOXY; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g, c7=%g, c8=%g, c9=%g, c10=%g, c11=%g, c12=%g, c13=%g, c14=%g, c15=%g, c16=%g, c17=%g, c18=%g, c19=%g, c20=%g, c21=%g, c22=%g, c23=%g, c24=%g, c25=%g, c26=%g, c27=%g; m0=%g, m1=%g, m2=%g, m3=%g, m4=%g, m5=%g, m6=%g, m7=%g, m8=%g, m9=%g, m10=%g, m11=%g, m12=%g, m13=%g, m14=%g, m15=%g, m16=%g, m17=%g, m18=%g, m19=%g, m20=%g, m21=%g, m22=%g, m23=%g, m24=%g, m25=%g, m26=%g, m27=%g; n0=%g, n1=%g, n2=%g, n3=%g, n4=%g, n5=%g, n6=%g, n7=%g, n8=%g, n9=%g, n10=%g, n11=%g, n12=%g, n13=%g, n14=%g, n15=%g, n16=%g, n17=%g, n18=%g, n19=%g, n20=%g, n21=%g, n22=%g, n23=%g, n24=%g, n25=%g, n26=%g, n27=%g; ConcCoef0=%g, ConcCoef1=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e, c7=%e, c8=%e, c9=%e, c10=%e, c11=%e, c12=%e, c13=%e, c14=%e, c15=%e, c16=%e, c17=%e, c18=%e, c19=%e, c20=%e, c21=%e, c22=%e, c23=%e, c24=%e, c25=%e, c26=%e, c27=%e; m0=%e, m1=%e, m2=%e, m3=%e, m4=%e, m5=%e, m6=%e, m7=%e, m8=%e, m9=%e, m10=%e, m11=%e, m12=%e, m13=%e, m14=%e, m15=%e, m16=%e, m17=%e, m18=%e, m19=%e, m20=%e, m21=%e, m22=%e, m23=%e, m24=%e, m25=%e, m26=%e, m27=%e; n0=%e, n1=%e, n2=%e, n3=%e, n4=%e, n5=%e, n6=%e, n7=%e, n8=%e, n9=%e, n10=%e, n11=%e, n12=%e, n13=%e, n14=%e, n15=%e, n16=%e, n17=%e, n18=%e, n19=%e, n20=%e, n21=%e, n22=%e, n23=%e, n24=%e, n25=%e, n26=%e, n27=%e; ConcCoef0=%e, ConcCoef1=%e; A0=%e, A1=%e, A2=%e, A3=%e, A4=%e, A5=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
                g_decArgo_doxy_202_205_303_sPreset, ...
                g_decArgo_doxy_202_205_303_pCoef1, ...
                g_decArgo_doxy_202_205_303_pCoef2, ...
@@ -2320,7 +2110,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 6 28 for the
             % Aanderaa standard calibration + an additional two-point adjustment
             if (~isempty(find((size(tabDoxyCoef) == [6 28]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2331,7 +2121,7 @@ switch (a_decoderId)
             o_paramAccuracy = '';
             o_paramResolution = '';
             o_preCalibEq = 'TPHASE_DOXY=C1PHASE_DOXY-C2PHASE_DOXY; Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; deltaP=c0*TEMP^m0*CalPhase^n0+c1*TEMP^m1*CalPhase^n1+..+c27*TEMP^m27*CalPhase^n27; AirSat=deltaP*100/[(1013.25-exp[52.57-6690.9/(TEMP+273.15)-4.681*ln(TEMP+273.15)])*0.20946]; MOLAR_DOXY=Cstar*44.614*AirSat/100; ln(Cstar)=A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5; MOLAR_DOXY=ConcCoef0+ConcCoef1*MOLAR_DOXY; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP+273.15))]';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g, c7=%g, c8=%g, c9=%g, c10=%g, c11=%g, c12=%g, c13=%g, c14=%g, c15=%g, c16=%g, c17=%g, c18=%g, c19=%g, c20=%g, c21=%g, c22=%g, c23=%g, c24=%g, c25=%g, c26=%g, c27=%g; m0=%g, m1=%g, m2=%g, m3=%g, m4=%g, m5=%g, m6=%g, m7=%g, m8=%g, m9=%g, m10=%g, m11=%g, m12=%g, m13=%g, m14=%g, m15=%g, m16=%g, m17=%g, m18=%g, m19=%g, m20=%g, m21=%g, m22=%g, m23=%g, m24=%g, m25=%g, m26=%g, m27=%g; n0=%g, n1=%g, n2=%g, n3=%g, n4=%g, n5=%g, n6=%g, n7=%g, n8=%g, n9=%g, n10=%g, n11=%g, n12=%g, n13=%g, n14=%g, n15=%g, n16=%g, n17=%g, n18=%g, n19=%g, n20=%g, n21=%g, n22=%g, n23=%g, n24=%g, n25=%g, n26=%g, n27=%g; ConcCoef0=%g, ConcCoef1=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; D0=%g, D1=%g, D2=%g', ...
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e, c7=%e, c8=%e, c9=%e, c10=%e, c11=%e, c12=%e, c13=%e, c14=%e, c15=%e, c16=%e, c17=%e, c18=%e, c19=%e, c20=%e, c21=%e, c22=%e, c23=%e, c24=%e, c25=%e, c26=%e, c27=%e; m0=%e, m1=%e, m2=%e, m3=%e, m4=%e, m5=%e, m6=%e, m7=%e, m8=%e, m9=%e, m10=%e, m11=%e, m12=%e, m13=%e, m14=%e, m15=%e, m16=%e, m17=%e, m18=%e, m19=%e, m20=%e, m21=%e, m22=%e, m23=%e, m24=%e, m25=%e, m26=%e, m27=%e; n0=%e, n1=%e, n2=%e, n3=%e, n4=%e, n5=%e, n6=%e, n7=%e, n8=%e, n9=%e, n10=%e, n11=%e, n12=%e, n13=%e, n14=%e, n15=%e, n16=%e, n17=%e, n18=%e, n19=%e, n20=%e, n21=%e, n22=%e, n23=%e, n24=%e, n25=%e, n26=%e, n27=%e; ConcCoef0=%e, ConcCoef1=%e; A0=%e, A1=%e, A2=%e, A3=%e, A4=%e, A5=%e; D0=%e, D1=%e, D2=%e', ...
                g_decArgo_doxy_202_205_303_sPreset, ...
                g_decArgo_doxy_202_205_303_pCoef1, ...
                g_decArgo_doxy_202_205_303_pCoef2, ...
@@ -2355,118 +2145,125 @@ switch (a_decoderId)
       end
 
    case {107, 109, 110, 111, 113, 114, 115, 116, ...
-         121, 122, 124, 126, 127, 128, 129, 130, 131, 132, 133, ...
+         121, 122, 124, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, ...
          201, 203, 206, 213, 214, 215, 216, 217, 218, 221, 223, 225, ...
-         1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1322, 1323}
-      % CASE_202_205_304
-      switch (a_paramName)
+         401, 402 ...
+         1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132, 1322, 1323}
 
-         case {'TEMP_DOXY'} % CASE_202_102_001
-            o_param = 'TEMP_DOXY';
-            o_paramSensor = 'OPTODE_DOXY';
-            o_paramUnits = 'degC';
-            o_paramAccuracy = '0.03 degC';
-            o_paramResolution = '0.01 degC';
-            o_preCalibEq = 'TEMP_DOXY=T0+T1*TEMP_VOLTAGE_DOXY+T2*TEMP_VOLTAGE_DOXY^2+T3*TEMP_VOLTAGE_DOXY^3+T4*TEMP_VOLTAGE_DOXY^4+T5*TEMP_VOLTAGE_DOXY^5; with TEMP_VOLTAGE_DOXY=voltage from thermistor bridge (mV)';
-            o_preCalibCoef = 'T0=not available; T1=not available; T2=not available; T3=not available; T4=not available; T5=not available';
-            o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
+      if (~ismember(a_decoderId, [401, 402]) || ...
+            (ismember(a_decoderId, [401, 402]) && ...
+            ~isempty(g_decArgo_sensorMountedOnFloat) && ismember('OPTODE', g_decArgo_sensorMountedOnFloat)))
 
-         case {'C1PHASE_DOXY'}
-            o_param = 'C1PHASE_DOXY';
-            o_paramSensor = 'OPTODE_DOXY';
-            o_paramUnits = 'degree';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'none';
-            o_preCalibCoef = 'none';
-            o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
+         % CASE_202_205_304
+         switch (a_paramName)
 
-         case {'C2PHASE_DOXY'}
-            o_param = 'C2PHASE_DOXY';
-            o_paramSensor = 'OPTODE_DOXY';
-            o_paramUnits = 'degree';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'none';
-            o_preCalibCoef = 'none';
-            o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
+            case {'TEMP_DOXY'} % CASE_202_102_001
+               o_param = 'TEMP_DOXY';
+               o_paramSensor = 'OPTODE_DOXY';
+               o_paramUnits = 'degC';
+               o_paramAccuracy = '0.03 degC';
+               o_paramResolution = '0.01 degC';
+               o_preCalibEq = 'TEMP_DOXY=T0+T1*TEMP_VOLTAGE_DOXY+T2*TEMP_VOLTAGE_DOXY^2+T3*TEMP_VOLTAGE_DOXY^3+T4*TEMP_VOLTAGE_DOXY^4+T5*TEMP_VOLTAGE_DOXY^5; with TEMP_VOLTAGE_DOXY=voltage from thermistor bridge (mV)';
+               o_preCalibCoef = 'T0=not available; T1=not available; T2=not available; T3=not available; T4=not available; T5=not available';
+               o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
 
-         case {'DOXY'}
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo) || ...
-                  ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
-                  ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
-               fprintf('ERROR: Float #%d: inconsistent DOXY calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
-            tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
-            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
-            if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+            case {'C1PHASE_DOXY'}
+               o_param = 'C1PHASE_DOXY';
+               o_paramSensor = 'OPTODE_DOXY';
+               o_paramUnits = 'degree';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'none';
+               o_preCalibCoef = 'none';
+               o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
 
-            o_param = 'DOXY';
-            o_paramSensor = 'OPTODE_DOXY';
-            o_paramUnits = 'umol/kg';
-            o_paramAccuracy = '8 umol/kg or 10%';
-            o_paramResolution = '1 umol/kg';
-            o_preCalibEq = 'TPHASE_DOXY=C1PHASE_DOXY-C2PHASE_DOXY; Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; MOLAR_DOXY=[((c3+c4*TEMP_DOXY)/(c5+c6*CalPhase))-1]/Ksv; Ksv=c0+c1*TEMP_DOXY+c2*TEMP_DOXY^2; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
-               g_decArgo_doxy_202_205_304_sPreset, ...
-               g_decArgo_doxy_202_205_304_pCoef1, ...
-               g_decArgo_doxy_202_205_304_pCoef2, ...
-               g_decArgo_doxy_202_205_304_pCoef3, ...
-               g_decArgo_doxy_202_205_304_b0, ...
-               g_decArgo_doxy_202_205_304_b1, ...
-               g_decArgo_doxy_202_205_304_b2, ...
-               g_decArgo_doxy_202_205_304_b3, ...
-               g_decArgo_doxy_202_205_304_c0, ...
-               tabDoxyCoef(1, 1:4), ...
-               tabDoxyCoef(2, 1:7), ...
-               g_decArgo_doxy_202_205_304_d0, ...
-               g_decArgo_doxy_202_205_304_d1, ...
-               g_decArgo_doxy_202_205_304_d2, ...
-               g_decArgo_doxy_202_205_304_d3 ...
-               );
-            o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+            case {'C2PHASE_DOXY'}
+               o_param = 'C2PHASE_DOXY';
+               o_paramSensor = 'OPTODE_DOXY';
+               o_paramUnits = 'degree';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'none';
+               o_preCalibCoef = 'none';
+               o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
 
-         case {'PPOX_DOXY'}
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo) || ...
-                  ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
-                  ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
-               fprintf('ERROR: Float #%d: inconsistent DOXY calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
-            tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
-            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
-            if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+            case {'DOXY'}
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo) || ...
+                     ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
+                     ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
+                  fprintf('ERROR: Float #%d: inconsistent DOXY calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
+               tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
+               % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
+               if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
+                  fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
 
-            o_param = 'PPOX_DOXY';
-            o_paramSensor = 'OPTODE_DOXY';
-            o_paramUnits = 'mbar';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'TPHASE_DOXY=C1PHASE_DOXY-C2PHASE_DOXY; Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; Ksv=c0+c1*TEMP_DOXY+c2*TEMP_DOXY^2; MOLAR_DOXY=[((c3+c4*TEMP_DOXY)/(c5+c6*CalPhase))-1]/Ksv; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP+273.15))]';
-            o_preCalibCoef = sprintf('Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g; D0=%g, D1=%g, D2=%g', ...
-               g_decArgo_doxy_202_205_304_pCoef1, ...
-               g_decArgo_doxy_202_205_304_pCoef2, ...
-               g_decArgo_doxy_202_205_304_pCoef3, ...
-               tabDoxyCoef(1, 1:4), ...
-               tabDoxyCoef(2, 1:7), ...
-               g_decArgo_doxy_202_205_304_d0, ...
-               g_decArgo_doxy_202_205_304_d1, ...
-               g_decArgo_doxy_202_205_304_d2 ...
-               );
-            o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+               o_param = 'DOXY';
+               o_paramSensor = 'OPTODE_DOXY';
+               o_paramUnits = 'umol/kg';
+               o_paramAccuracy = '8 umol/kg or 10%';
+               o_paramResolution = '1 umol/kg';
+               o_preCalibEq = 'TPHASE_DOXY=C1PHASE_DOXY-C2PHASE_DOXY; Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; MOLAR_DOXY=[((c3+c4*TEMP_DOXY)/(c5+c6*CalPhase))-1]/Ksv; Ksv=c0+c1*TEMP_DOXY+c2*TEMP_DOXY^2; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
+               o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
+                  g_decArgo_doxy_202_205_304_sPreset, ...
+                  g_decArgo_doxy_202_205_304_pCoef1, ...
+                  g_decArgo_doxy_202_205_304_pCoef2, ...
+                  g_decArgo_doxy_202_205_304_pCoef3, ...
+                  g_decArgo_doxy_202_205_304_b0, ...
+                  g_decArgo_doxy_202_205_304_b1, ...
+                  g_decArgo_doxy_202_205_304_b2, ...
+                  g_decArgo_doxy_202_205_304_b3, ...
+                  g_decArgo_doxy_202_205_304_c0, ...
+                  tabDoxyCoef(1, 1:4), ...
+                  tabDoxyCoef(2, 1:7), ...
+                  g_decArgo_doxy_202_205_304_d0, ...
+                  g_decArgo_doxy_202_205_304_d1, ...
+                  g_decArgo_doxy_202_205_304_d2, ...
+                  g_decArgo_doxy_202_205_304_d3 ...
+                  );
+               o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+
+            case {'PPOX_DOXY'}
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo) || ...
+                     ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
+                     ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
+                  fprintf('ERROR: Float #%d: inconsistent DOXY calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
+               tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
+               % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
+               if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
+                  fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
+
+               o_param = 'PPOX_DOXY';
+               o_paramSensor = 'OPTODE_DOXY';
+               o_paramUnits = 'mbar';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'TPHASE_DOXY=C1PHASE_DOXY-C2PHASE_DOXY; Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; Ksv=c0+c1*TEMP_DOXY+c2*TEMP_DOXY^2; MOLAR_DOXY=[((c3+c4*TEMP_DOXY)/(c5+c6*CalPhase))-1]/Ksv; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP+273.15))]';
+               o_preCalibCoef = sprintf('Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e; D0=%e, D1=%e, D2=%e', ...
+                  g_decArgo_doxy_202_205_304_pCoef1, ...
+                  g_decArgo_doxy_202_205_304_pCoef2, ...
+                  g_decArgo_doxy_202_205_304_pCoef3, ...
+                  tabDoxyCoef(1, 1:4), ...
+                  tabDoxyCoef(2, 1:7), ...
+                  g_decArgo_doxy_202_205_304_d0, ...
+                  g_decArgo_doxy_202_205_304_d1, ...
+                  g_decArgo_doxy_202_205_304_d2 ...
+                  );
+               o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+         end
       end
 
    case {209}
@@ -2518,7 +2315,7 @@ switch (a_decoderId)
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 2 7
             if (~isempty(find((size(tabDoxyCoef) == [2 7]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2529,7 +2326,7 @@ switch (a_decoderId)
             o_paramAccuracy = '8 umol/kg or 10%';
             o_paramResolution = '1 umol/kg';
             o_preCalibEq = 'TPHASE_DOXY=C1PHASE_DOXY-C2PHASE_DOXY; Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; MOLAR_DOXY=[((c3+c4*TEMP_DOXY)/(c5+c6*CalPhase))-1]/Ksv; Ksv=c0+c1*TEMP_DOXY+c2*TEMP_DOXY^2; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
                g_decArgo_doxy_202_205_304_sPreset, ...
                g_decArgo_doxy_202_205_304_pCoef1, ...
                g_decArgo_doxy_202_205_304_pCoef2, ...
@@ -2548,15 +2345,15 @@ switch (a_decoderId)
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
 
-         case {'TEMP_DOXY2'} % CASE_103_102_001
-            o_param = 'TEMP_DOXY2';
+         case {'TEMP_DOXY_2'} % CASE_103_102_001
+            o_param = 'TEMP_DOXY_2';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'degC';
             o_paramAccuracy = '';
             o_paramResolution = '';
-            o_preCalibEq = 'TEMP_DOXY2=1/(TA0+TA1*L+TA2*L^2+TA3*L^3)-273.15; L=ln(100000*TEMP_VOLTAGE_DOXY/(3.3-TEMP_VOLTAGE_DOXY)); TEMP_VOLTAGE_DOXY is the thermistor voltage in volts';
+            o_preCalibEq = 'TEMP_DOXY_2=1/(TA0+TA1*L+TA2*L^2+TA3*L^3)-273.15; L=ln(100000*TEMP_VOLTAGE_DOXY/(3.3-TEMP_VOLTAGE_DOXY)); TEMP_VOLTAGE_DOXY is the thermistor voltage in volts';
             o_preCalibCoef = 'TA0=not available; TA1=not available; TA2=not available; TA3=not available';
-            o_preCalibComment = 'optode temperature, see SBE63 User’s Manual (manual version #007, 10/28/13)';
+            o_preCalibComment = 'optode temperature, see SBE63 Userâ€™s Manual (manual version #007, 10/28/13)';
 
             % CASE_103_208_307 for SBE
 
@@ -2570,7 +2367,7 @@ switch (a_decoderId)
             o_preCalibCoef = 'none';
             o_preCalibComment = 'output phase delay';
 
-         case {'DOXY2'}
+         case {'DOXY_2'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
                   ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
@@ -2582,18 +2379,18 @@ switch (a_decoderId)
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 9
             if (~isempty(find((size(tabDoxyCoef) == [1 9]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
                return
             end
 
-            o_param = 'DOXY2';
+            o_param = 'DOXY_2';
             o_paramSensor = 'OPTODE_DOXY';
             o_paramUnits = 'umol/kg';
             o_paramAccuracy = '3 umol/kg or 2%';
             o_paramResolution = '0.2 umol/kg';
-            o_preCalibEq = 'V=(PHASE_DELAY_DOXY+Pcoef1*PRES/1000)/39.457071; Ksv=C0+C1*TEMP_DOXY2+C2*TEMP_DOXY2^2; MLPL_DOXY=[(A0+A1*TEMP_DOXY2+A2*V^2)/(B0+B1*V)-1]/Ksv; O2=MLPL_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(SolB0+SolB1*TS+SolB2*TS^2+SolB3*TS^3)+SolC0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; TS=ln[(298.15–TEMP)/(273.15+TEMP)]; DOXY2[umol/kg]=44.6596*O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; A0=%g, A1=%g, A2=%g; B0=%g, B1=%g; C0=%g, C1=%g, C2=%g; Spreset=%g; D0=%g, D1=%g, D2=%g, D3=%g; SolB0=%g, SolB1=%g, SolB2=%g, SolB3=%g; SolC0=%g', ...
+            o_preCalibEq = 'V=(PHASE_DELAY_DOXY+Pcoef1*PRES/1000)/39.457071; Ksv=C0+C1*TEMP_DOXY_2+C2*TEMP_DOXY_2^2; MLPL_DOXY=[(A0+A1*TEMP_DOXY_2+A2*V^2)/(B0+B1*V)-1]/Ksv; O2=MLPL_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(SolB0+SolB1*TS+SolB2*TS^2+SolB3*TS^3)+SolC0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; TS=ln[(298.15â€“TEMP)/(273.15+TEMP)]; DOXY_2[umol/kg]=44.6596*O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
+            o_preCalibCoef = sprintf('Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; A0=%e, A1=%e, A2=%e; B0=%e, B1=%e; C0=%e, C1=%e, C2=%e; Spreset=%e; D0=%e, D1=%e, D2=%e, D3=%e; SolB0=%e, SolB1=%e, SolB2=%e, SolB3=%e; SolC0=%e', ...
                g_decArgo_doxy_103_208_307_pCoef1, ...
                g_decArgo_doxy_103_208_307_pCoef2, ...
                g_decArgo_doxy_103_208_307_pCoef3, ...
@@ -2609,7 +2406,258 @@ switch (a_decoderId)
                g_decArgo_doxy_103_208_307_solB3, ...
                g_decArgo_doxy_103_208_307_solC0 ...
                );
-            o_preCalibComment = 'see SBE63 User’s Manual (manual version #007, 10/28/13); see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+            o_preCalibComment = 'see SBE63 Userâ€™s Manual (manual version #007, 10/28/13); see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+      end
+
+   case {230}
+      % CASE_202_205_304 for AANDERAA
+      % CASE_301_210_401 for AROD_FT
+      switch (a_paramName)
+
+         case {'TEMP_DOXY'} % CASE_202_102_001
+            o_param = 'TEMP_DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'degC';
+            o_paramAccuracy = '0.03 degC';
+            o_paramResolution = '0.01 degC';
+            o_preCalibEq = 'TEMP_DOXY=T0+T1*TEMP_VOLTAGE_DOXY+T2*TEMP_VOLTAGE_DOXY^2+T3*TEMP_VOLTAGE_DOXY^3+T4*TEMP_VOLTAGE_DOXY^4+T5*TEMP_VOLTAGE_DOXY^5; with TEMP_VOLTAGE_DOXY=voltage from thermistor bridge (mV)';
+            o_preCalibCoef = 'T0=not available; T1=not available; T2=not available; T3=not available; T4=not available; T5=not available';
+            o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
+
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % CASE_202_205_304 for AANDERAA
+
+         case {'C1PHASE_DOXY'}
+            o_param = 'C1PHASE_DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'degree';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Phase measurement with blue excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
+
+         case {'C2PHASE_DOXY'}
+            o_param = 'C2PHASE_DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'degree';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'Phase measurement with red excitation light; see TD269 Operating manual oxygen optode 4330, 4835, 4831';
+
+         case {'DOXY'}
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo) || ...
+                  ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
+                  ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
+               fprintf('ERROR: Float #%d: inconsistent DOXY calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+            tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
+            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 7 7
+            if (~isempty(find((size(tabDoxyCoef) == [7 7]) ~= 1, 1)))
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+
+            o_param = 'DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'umol/kg';
+            o_paramAccuracy = '8 umol/kg or 10%';
+            o_paramResolution = '1 umol/kg';
+            o_preCalibEq = 'TPHASE_DOXY=C1PHASE_DOXY-C2PHASE_DOXY; Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; MOLAR_DOXY=[((c3+c4*TEMP_DOXY)/(c5+c6*CalPhase))-1]/Ksv; Ksv=c0+c1*TEMP_DOXY+c2*TEMP_DOXY^2; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
+               g_decArgo_doxy_202_205_304_sPreset, ...
+               g_decArgo_doxy_202_205_304_pCoef1, ...
+               g_decArgo_doxy_202_205_304_pCoef2, ...
+               g_decArgo_doxy_202_205_304_pCoef3, ...
+               g_decArgo_doxy_202_205_304_b0, ...
+               g_decArgo_doxy_202_205_304_b1, ...
+               g_decArgo_doxy_202_205_304_b2, ...
+               g_decArgo_doxy_202_205_304_b3, ...
+               g_decArgo_doxy_202_205_304_c0, ...
+               tabDoxyCoef(1, 1:4), ...
+               tabDoxyCoef(2, 1:7), ...
+               g_decArgo_doxy_202_205_304_d0, ...
+               g_decArgo_doxy_202_205_304_d1, ...
+               g_decArgo_doxy_202_205_304_d2, ...
+               g_decArgo_doxy_202_205_304_d3 ...
+               );
+            o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+
+         case {'PPOX_DOXY'}
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo) || ...
+                  ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
+                  ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
+               fprintf('ERROR: Float #%d: inconsistent DOXY calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+            tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
+            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 7 7
+            if (~isempty(find((size(tabDoxyCoef) == [7 7]) ~= 1, 1)))
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+
+            o_param = 'PPOX_DOXY';
+            o_paramSensor = 'OPTODE_DOXY';
+            o_paramUnits = 'mbar';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'TPHASE_DOXY=C1PHASE_DOXY-C2PHASE_DOXY; Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; Ksv=c0+c1*TEMP_DOXY+c2*TEMP_DOXY^2; MOLAR_DOXY=[((c3+c4*TEMP_DOXY)/(c5+c6*CalPhase))-1]/Ksv; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP+273.15))]';
+            o_preCalibCoef = sprintf('Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e; D0=%e, D1=%e, D2=%e', ...
+               g_decArgo_doxy_202_205_304_pCoef1, ...
+               g_decArgo_doxy_202_205_304_pCoef2, ...
+               g_decArgo_doxy_202_205_304_pCoef3, ...
+               tabDoxyCoef(1, 1:4), ...
+               tabDoxyCoef(2, 1:7), ...
+               g_decArgo_doxy_202_205_304_d0, ...
+               g_decArgo_doxy_202_205_304_d1, ...
+               g_decArgo_doxy_202_205_304_d2 ...
+               );
+            o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % CASE_301_210_401 for AROD_FT
+
+         case {'TEMP_COUNT_DOXY'}
+            o_param = 'TEMP_COUNT_DOXY';
+            o_paramSensor = 'OPTODE_DOXY_2';
+            o_paramUnits = 'count';
+            o_paramAccuracy = '1';
+            o_paramResolution = '1';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'optode temperature';
+
+         case {'TEMP_DOXY_2'} % CASE_301_103_101
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo) || ...
+                  ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
+                  ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
+               fprintf('ERROR: Float #%d: inconsistent DOXY calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+            tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
+            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 7 7
+            if (~isempty(find((size(tabDoxyCoef) == [7 7]) ~= 1, 1)))
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+
+            o_param = 'TEMP_DOXY_2';
+            o_paramSensor = 'OPTODE_DOXY_2';
+            o_paramUnits = 'degC';
+            o_paramAccuracy = '0.01 degC';
+            o_paramResolution = '0.001 degC';
+            o_preCalibEq = 'TEMP_DOXY_2=A+B*TEMP_COUNT_DOXY+C*TEMP_COUNT_DOXY^2+D*TEMP_COUNT_DOXY^3+E*TEMP_COUNT_DOXY^4+F*TEMP_COUNT_DOXY^5';
+            o_preCalibCoef = sprintf('A=%e; B=%e, C=%e, D=%e; E=%e, F=%e', ...
+               tabDoxyCoef(3, 1:6));
+            o_preCalibComment = 'optode temperature, see ARO_FT manual';
+
+         case {'COUNT_DOXY'}
+            o_param = 'COUNT_DOXY';
+            o_paramSensor = 'OPTODE_DOXY_2';
+            o_paramUnits = 'count';
+            o_paramAccuracy = '1';
+            o_paramResolution = '1';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'The difference between the phase obtained with blue light excitation and the phase obtained with red light excitation in count';
+
+         case {'LED_FLASHING_COUNT_DOXY'}
+            o_param = 'LED_FLASHING_COUNT_DOXY';
+            o_paramSensor = 'OPTODE_DOXY_2';
+            o_paramUnits = 'count';
+            o_paramAccuracy = '1';
+            o_paramResolution = '1';
+            o_preCalibEq = 'none';
+            o_preCalibCoef = 'none';
+            o_preCalibComment = 'LED flashing frequency';
+
+         case {'DOXY_2'}
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo) || ...
+                  ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
+                  ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
+               fprintf('ERROR: Float #%d: inconsistent DOXY calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+            tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
+            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 7 7
+            if (~isempty(find((size(tabDoxyCoef) == [7 7]) ~= 1, 1)))
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+
+            o_param = 'DOXY_2';
+            o_paramSensor = 'OPTODE_DOXY_2';
+            o_paramUnits = 'umol/kg';
+            o_paramAccuracy = '2 umol/kg or 2%';
+            o_paramResolution = '0.01 umol/kg';
+            o_preCalibEq = 'N=0.0001*COUNT_DOXY; t=0.01*LED_FLASHING_COUNT_DOXY; MOLAR_DOXY=[[(1+d0*TEMP)/(d1+d2*N+d3*t+d4*t*N)]^e0-1]*[1/(c0+c1*TEMP+c2*TEMP^2)]; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; pH2O(TEMP,PSAL)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*PSAL]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; Pcorr=1+(Cp*PRES)/100; O2=MOLAR_DOXY*Scorr*Pcorr; DOXY_2=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
+            o_preCalibCoef = sprintf('d0=%e, d1=%e, d2=%e, d3=%e, d4=%e; e0=%e; c0=%e, c1=%e, c2=%e; D0=%e, D1=%e, D2=%e, D3=%e; Spreset=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; Cp=%e', ...
+               tabDoxyCoef(5, 1:5), ...
+               tabDoxyCoef(6, 1), ...
+               tabDoxyCoef(4, 1:3), ...
+               g_decArgo_doxy_301_210_401_d0, ...
+               g_decArgo_doxy_301_210_401_d1, ...
+               g_decArgo_doxy_301_210_401_d2, ...
+               g_decArgo_doxy_301_210_401_d3, ...
+               g_decArgo_doxy_301_210_401_sPreset, ...
+               g_decArgo_doxy_301_210_401_b0, ...
+               g_decArgo_doxy_301_210_401_b1, ...
+               g_decArgo_doxy_301_210_401_b2, ...
+               g_decArgo_doxy_301_210_401_b3, ...
+               g_decArgo_doxy_301_210_401_c0, ...
+               tabDoxyCoef(7, 1) ...
+               );
+            o_preCalibComment = 'see ARO_FT manual; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+
+         case {'PPOX_DOXY_2'}
+            % get calibration information
+            if (isempty(g_decArgo_calibInfo) || ...
+                  ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
+                  ~isfield(g_decArgo_calibInfo.OPTODE, 'TabDoxyCoef'))
+               fprintf('ERROR: Float #%d: inconsistent DOXY calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+            tabDoxyCoef = g_decArgo_calibInfo.OPTODE.TabDoxyCoef;
+            % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 7 7
+            if (~isempty(find((size(tabDoxyCoef) == [7 7]) ~= 1, 1)))
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
+                  g_decArgo_floatNum);
+               return
+            end
+
+            o_param = 'PPOX_DOXY_2';
+            o_paramSensor = 'OPTODE_DOXY_2';
+            o_paramUnits = 'mbar';
+            o_paramAccuracy = '';
+            o_paramResolution = '';
+            o_preCalibEq = 'N=0.0001*COUNT_DOXY; t=0.01*LED_FLASHING_COUNT_DOXY; MOLAR_DOXY=[[(1+d0*TEMP)/(d1+d2*N+d3*t+d4*t*N)]^e0-1]*[1/(c0+c1*TEMP+c2*TEMP^2)]; Pcorr=1+(Cp*PRES)/100; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)]; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP+273.15))]';
+            o_preCalibCoef = sprintf('d0=%e, d1=%e, d2=%e, d3=%e, d4=%e; e0=%e; c0=%e, c1=%e, c2=%e; Cp=%e; D0=%e, D1=%e, D2=%e', ...
+               tabDoxyCoef(5, 1:5), ...
+               tabDoxyCoef(6, 1), ...
+               tabDoxyCoef(4, 1:3), ...
+               tabDoxyCoef(7, 1), ...
+               g_decArgo_doxy_301_210_401_d0, ...
+               g_decArgo_doxy_301_210_401_d1, ...
+               g_decArgo_doxy_301_210_401_d2 ...
+               );
+            o_preCalibComment = 'see ARO_FT manual; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
 
    case {302, 303}
@@ -2649,7 +2697,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 4 for the
             % Aanderaa standard calibration (tabDoxyCoef(i,j) = Cij).
             if (~isempty(find((size(tabDoxyCoef) == [5 4]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2660,7 +2708,7 @@ switch (a_decoderId)
             o_paramAccuracy = '8 umol/kg or 10%';
             o_paramResolution = '1 umol/kg';
             o_preCalibEq = 'Phase_Pcorr=DPHASE_DOXY+Pcoef1*PRES/1000; MOLAR_DOXY=c0+c1*Phase_Pcorr+c2*Phase_Pcorr^2+c3*Phase_Pcorr^3+c4*Phase_Pcorr^4; ci=ci0+ci1*TEMP+ci2*TEMP^2+ci3*TEMP^3, i=0..4; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; c00=%g, c01=%g, c02=%g, c03=%g, c10=%g, c11=%g, c12=%g, c13=%g, c20=%g, c21=%g, c22=%g, c23=%g, c30=%g, c31=%g, c32=%g, c33=%g, c40=%g, c41=%g, c42=%g, c43=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; c00=%e, c01=%e, c02=%e, c03=%e, c10=%e, c11=%e, c12=%e, c13=%e, c20=%e, c21=%e, c22=%e, c23=%e, c30=%e, c31=%e, c32=%e, c33=%e, c40=%e, c41=%e, c42=%e, c43=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
                g_decArgo_doxy_201_203_202_sPreset, ...
                g_decArgo_doxy_201_203_202_pCoef1, ...
                g_decArgo_doxy_201_203_202_pCoef2, ...
@@ -2695,7 +2743,7 @@ switch (a_decoderId)
             o_paramResolution = '';
             o_preCalibEq = 'TEMP_DOXY=1/(TA0+TA1*L+TA2*L^2+TA3*L^3)-273.15; L=ln(100000*TEMP_VOLTAGE_DOXY/(3.3-TEMP_VOLTAGE_DOXY)); TEMP_VOLTAGE_DOXY is the thermistor voltage in volts';
             o_preCalibCoef = 'TA0=not available; TA1=not available; TA2=not available; TA3=not available';
-            o_preCalibComment = 'optode temperature, see SBE63 User’s Manual (manual version #007, 10/28/13)';
+            o_preCalibComment = 'optode temperature, see SBE63 Userâ€™s Manual (manual version #007, 10/28/13)';
 
          case {'PHASE_DELAY_DOXY'}
             o_param = 'PHASE_DELAY_DOXY';
@@ -2719,7 +2767,7 @@ switch (a_decoderId)
             tabDoxyCoef = g_decArgo_calibInfo.OPTODE.SbeTabDoxyCoef;
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 1 9
             if (~isempty(find((size(tabDoxyCoef) == [1 9]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2730,7 +2778,7 @@ switch (a_decoderId)
             o_paramAccuracy = '3 umol/kg or 2%';
             o_paramResolution = '0.2 umol/kg';
             o_preCalibEq = 'V=(PHASE_DELAY_DOXY+Pcoef1*PRES/1000)/39.457071; Ksv=C0+C1*TEMP_DOXY+C2*TEMP_DOXY^2; MLPL_DOXY=[(A0+A1*TEMP_DOXY+A2*V^2)/(B0+B1*V)-1]/Ksv; MOLAR_DOXY=44.6596*MLPL_DOXY; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP+273.15))]';
-            o_preCalibCoef = sprintf('Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; A0=%g, A1=%g, A2=%g; B0=%g, B1=%g; C0=%g, C1=%g, C2=%g; Spreset=%g; D0=%g, D1=%g, D2=%g, D3=%g; SolB0=%g, SolB1=%g, SolB2=%g, SolB3=%g; SolC0=%g', ...
+            o_preCalibCoef = sprintf('Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; A0=%e, A1=%e, A2=%e; B0=%e, B1=%e; C0=%e, C1=%e, C2=%e; Spreset=%e; D0=%e, D1=%e, D2=%e, D3=%e; SolB0=%e, SolB1=%e, SolB2=%e, SolB3=%e; SolC0=%e', ...
                g_decArgo_doxy_103_208_307_pCoef1, ...
                g_decArgo_doxy_103_208_307_pCoef2, ...
                g_decArgo_doxy_103_208_307_pCoef3, ...
@@ -2745,7 +2793,7 @@ switch (a_decoderId)
                g_decArgo_doxy_103_208_307_solB3, ...
                g_decArgo_doxy_103_208_307_solC0 ...
                );
-            o_preCalibComment = 'see SBE63 User’s Manual (manual version #007, 10/28/13); see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+            o_preCalibComment = 'see SBE63 Userâ€™s Manual (manual version #007, 10/28/13); see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
 
    case {1006, 1008, 1014, 1016}
@@ -2771,7 +2819,7 @@ switch (a_decoderId)
             if (isempty(tabDoxyTempCoef))
                o_preCalibCoef = 'T0=not available; T1=not available; T2=not available; T3=not available; T4=not available; T5=not available';
             else
-               o_preCalibCoef = sprintf('T0=%g; T1=%g; T2=%g; T3=%g; T4=%g; T5=%g', ...
+               o_preCalibCoef = sprintf('T0=%e; T1=%e; T2=%e; T3=%e; T4=%e; T5=%e', ...
                   tabDoxyTempCoef(1, 1:6));
             end
             o_preCalibComment = 'optode temperature, see TD218 Operating manual oxygen optode 3830, 3835, 3930, 3975, 4130, 4175';
@@ -2800,7 +2848,7 @@ switch (a_decoderId)
             % the size of the tabPhaseCoef should be: size(tabPhaseCoef) = 1 4 for the
             % Aanderaa standard calibration (tabPhaseCoef(i) = PhaseCoefi).
             if (~isempty(find((size(tabPhaseCoef) == [1 4]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2808,7 +2856,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 4 for the
             % Aanderaa standard calibration (tabDoxyCoef(i,j) = Cij).
             if (~isempty(find((size(tabDoxyCoef) == [5 4]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2819,7 +2867,7 @@ switch (a_decoderId)
             o_paramAccuracy = '8 umol/kg or 10%';
             o_paramResolution = '1 umol/kg';
             o_preCalibEq = 'UNCAL_Phase=BPHASE_DOXY-RPHASE_DOXY; Phase_Pcorr=UNCAL_Phase+Pcoef1*PRES/1000; DPHASE_DOXY=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Pcorr_Phase^2+PhaseCoef3*Pcorr_Phase^3; MOLAR_DOXY=c0+c1*DPHASE_DOXY+c2*DPHASE_DOXY^2+c3*DPHASE_DOXY^3+c4*DPHASE_DOXY^4; ci=ci0+ci1*TEMP+ci2*TEMP^2+ci3*TEMP^3, i=0..4; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c00=%g, c01=%g, c02=%g, c03=%g, c10=%g, c11=%g, c12=%g, c13=%g, c20=%g, c21=%g, c22=%g, c23=%g, c30=%g, c31=%g, c32=%g, c33=%g, c40=%g, c41=%g, c42=%g, c43=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c00=%e, c01=%e, c02=%e, c03=%e, c10=%e, c11=%e, c12=%e, c13=%e, c20=%e, c21=%e, c22=%e, c23=%e, c30=%e, c31=%e, c32=%e, c33=%e, c40=%e, c41=%e, c42=%e, c43=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
                g_decArgo_doxy_201_202_202_sPreset, ...
                g_decArgo_doxy_201_202_202_pCoef1, ...
                g_decArgo_doxy_201_202_202_pCoef2, ...
@@ -2856,7 +2904,7 @@ switch (a_decoderId)
             % the size of the tabPhaseCoef should be: size(tabPhaseCoef) = 1 4 for the
             % Aanderaa standard calibration (tabPhaseCoef(i) = PhaseCoefi).
             if (~isempty(find((size(tabPhaseCoef) == [1 4]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2864,7 +2912,7 @@ switch (a_decoderId)
             % the size of the tabDoxyCoef should be: size(tabDoxyCoef) = 5 4 for the
             % Aanderaa standard calibration (tabDoxyCoef(i,j) = Cij).
             if (~isempty(find((size(tabDoxyCoef) == [5 4]) ~= 1, 1)))
-               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent - DOXY data set to fill value in ''%c'' profile of OPTODE sensor\n', ...
+               fprintf('ERROR: Float #%d: DOXY calibration coefficients are inconsistent\n', ...
                   g_decArgo_floatNum);
                return
             end
@@ -2875,7 +2923,7 @@ switch (a_decoderId)
             o_paramAccuracy = '';
             o_paramResolution = '';
             o_preCalibEq = 'UNCAL_Phase=BPHASE_DOXY-RPHASE_DOXY; Phase_Pcorr=UNCAL_Phase+Pcoef1*PRES/1000; DPHASE_DOXY=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Pcorr_Phase^2+PhaseCoef3*Pcorr_Phase^3; ci=ci0+ci1*TEMP_DOXY+ci2*TEMP_DOXY^2+ci3*TEMP_DOXY^3, i=0..4; MOLAR_DOXY=c0+c1*DPHASE_DOXY+c2*DPHASE_DOXY^2+c3*DPHASE_DOXY^3+c4*DPHASE_DOXY^4; Pcorr=1+((Pcoef2*TEMP_DOXY+Pcoef3)*PRES)/1000; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP_DOXY+273.15))+D2*ln((TEMP_DOXY+273.15)/100)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; Ts=ln[(298.15-TEMP_DOXY)/(273.15+TEMP_DOXY)]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP_DOXY+273.15))]';
-            o_preCalibCoef = sprintf('Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c00=%g, c01=%g, c02=%g, c03=%g, c10=%g, c11=%g, c12=%g, c13=%g, c20=%g, c21=%g, c22=%g, c23=%g, c30=%g, c31=%g, c32=%g, c33=%g, c40=%g, c41=%g, c42=%g, c43=%g; D0=%g, D1=%g, D2=%g', ...
+            o_preCalibCoef = sprintf('Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c00=%e, c01=%e, c02=%e, c03=%e, c10=%e, c11=%e, c12=%e, c13=%e, c20=%e, c21=%e, c22=%e, c23=%e, c30=%e, c31=%e, c32=%e, c33=%e, c40=%e, c41=%e, c42=%e, c43=%e; D0=%e, D1=%e, D2=%e', ...
                g_decArgo_doxy_201_202_202_pCoef1, ...
                g_decArgo_doxy_201_202_202_pCoef2, ...
                g_decArgo_doxy_201_202_202_pCoef3, ...
@@ -2892,7 +2940,7 @@ switch (a_decoderId)
             o_preCalibComment = 'see TD218 operating manual oxygen optode 3830, 3835, 3930, 3975, 4130, 4175; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
 
-   case {1009, 1107, 1112, 1113}
+   case {1009, 1107, 1112, 1113, 1115}
       % CASE_202_204_304
       switch (a_paramName)
 
@@ -2915,7 +2963,7 @@ switch (a_decoderId)
             if (isempty(tabDoxyTempCoef))
                o_preCalibCoef = 'T0=not available; T1=not available; T2=not available; T3=not available; T4=not available; T5=not available';
             else
-               o_preCalibCoef = sprintf('T0=%g; T1=%g; T2=%g; T3=%g; T4=%g; T5=%g', ...
+               o_preCalibCoef = sprintf('T0=%e; T1=%e; T2=%e; T3=%e; T4=%e; T5=%e', ...
                   tabDoxyTempCoef(1, 1:6));
             end
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
@@ -2973,7 +3021,7 @@ switch (a_decoderId)
             o_paramAccuracy = '8 umol/kg or 10%';
             o_paramResolution = '1 umol/kg';
             o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; MOLAR_DOXY=[((c3+c4*TEMP_DOXY)/(c5+c6*CalPhase))-1]/Ksv; Ksv=c0+c1*TEMP_DOXY+c2*TEMP_DOXY^2; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
                g_decArgo_doxy_202_204_304_sPreset, ...
                g_decArgo_doxy_202_204_304_pCoef1, ...
                g_decArgo_doxy_202_204_304_pCoef2, ...
@@ -3015,7 +3063,7 @@ switch (a_decoderId)
             o_paramAccuracy = '';
             o_paramResolution = '';
             o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; Ksv=c0+c1*TEMP_DOXY+c2*TEMP_DOXY^2; MOLAR_DOXY=[((c3+c4*TEMP_DOXY)/(c5+c6*CalPhase))-1]/Ksv; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP+273.15))]';
-            o_preCalibCoef = sprintf('Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g; D0=%g, D1=%g, D2=%g', ...
+            o_preCalibCoef = sprintf('Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e; D0=%e, D1=%e, D2=%e', ...
                g_decArgo_doxy_202_204_304_pCoef1, ...
                g_decArgo_doxy_202_204_304_pCoef2, ...
                g_decArgo_doxy_202_204_304_pCoef3, ...
@@ -3065,7 +3113,7 @@ switch (a_decoderId)
             o_paramAccuracy = '4 umol/kg or 2%';
             o_paramResolution = '0.4 umol/kg';
             o_preCalibEq = 'Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; Oxsol=exp[A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5+PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; MLPL_DOXY=Soc*(FREQUENCY_DOXY+Foffset)*Oxsol*(1.0+A*TEMP+B*TEMP^2+C*TEMP^3)*exp[E*PRES/(273.15+TEMP)]; DOXY=44.6596*MLPL_DOXY/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Soc=%g, Foffset=%g, A=%g, B=%g, C=%g, E=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g', ...
+            o_preCalibCoef = sprintf('Soc=%e, Foffset=%e, A=%e, B=%e, C=%e, E=%e; A0=%e, A1=%e, A2=%e, A3=%e, A4=%e, A5=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e', ...
                tabDoxyCoef(1:6), ...
                g_decArgo_doxy_102_207_206_a0, ...
                g_decArgo_doxy_102_207_206_a1, ...
@@ -3078,7 +3126,7 @@ switch (a_decoderId)
                g_decArgo_doxy_102_207_206_b2, ...
                g_decArgo_doxy_102_207_206_b3, ...
                g_decArgo_doxy_102_207_206_c0);
-            o_preCalibComment = 'see Application note #64: SBE43 Dissolved Oxygen Sensor – Background Information, Deployment Recommendations and Clearing and Storage (revised June 2013); see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+            o_preCalibComment = 'see Application note #64: SBE43 Dissolved Oxygen Sensor â€“ Background Information, Deployment Recommendations and Clearing and Storage (revised June 2013); see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
 
    case {1104, 1105, 1110, 1111}
@@ -3104,7 +3152,7 @@ switch (a_decoderId)
             if (isempty(tabDoxyTempCoef))
                o_preCalibCoef = 'T0=not available; T1=not available; T2=not available; T3=not available; T4=not available; T5=not available';
             else
-               o_preCalibCoef = sprintf('T0=%g; T1=%g; T2=%g; T3=%g; T4=%g; T5=%g', ...
+               o_preCalibCoef = sprintf('T0=%e; T1=%e; T2=%e; T3=%e; T4=%e; T5=%e', ...
                   tabDoxyTempCoef(1, 1:6));
             end
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
@@ -3153,7 +3201,7 @@ switch (a_decoderId)
             o_paramAccuracy = '8 umol/kg or 10%';
             o_paramResolution = '1 umol/kg';
             o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; deltaP=c0*TEMP_DOXY^m0*CalPhase^n0+c1*TEMP_DOXY^m1*CalPhase^n1+..+c27*TEMP^m27*CalPhase^n27; AirSat=deltaP*100/[(1013.25-exp[52.57-6690.9/(TEMP_DOXY+273.15)-4.681*ln(TEMP_DOXY+273.15)])*0.20946]; MOLAR_DOXY=Cstar*44.614*AirSat/100; ln(Cstar)=A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g, c7=%g, c8=%g, c9=%g, c10=%g, c11=%g, c12=%g, c13=%g, c14=%g, c15=%g, c16=%g, c17=%g, c18=%g, c19=%g, c20=%g, c21=%g, c22=%g, c23=%g, c24=%g, c25=%g, c26=%g, c27=%g; m0=%g, m1=%g, m2=%g, m3=%g, m4=%g, m5=%g, m6=%g, m7=%g, m8=%g, m9=%g, m10=%g, m11=%g, m12=%g, m13=%g, m14=%g, m15=%g, m16=%g, m17=%g, m18=%g, m19=%g, m20=%g, m21=%g, m22=%g, m23=%g, m24=%g, m25=%g, m26=%g, m27=%g; n0=%g, n1=%g, n2=%g, n3=%g, n4=%g, n5=%g, n6=%g, n7=%g, n8=%g, n9=%g, n10=%g, n11=%g, n12=%g, n13=%g, n14=%g, n15=%g, n16=%g, n17=%g, n18=%g, n19=%g, n20=%g, n21=%g, n22=%g, n23=%g, n24=%g, n25=%g, n26=%g, n27=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e, c7=%e, c8=%e, c9=%e, c10=%e, c11=%e, c12=%e, c13=%e, c14=%e, c15=%e, c16=%e, c17=%e, c18=%e, c19=%e, c20=%e, c21=%e, c22=%e, c23=%e, c24=%e, c25=%e, c26=%e, c27=%e; m0=%e, m1=%e, m2=%e, m3=%e, m4=%e, m5=%e, m6=%e, m7=%e, m8=%e, m9=%e, m10=%e, m11=%e, m12=%e, m13=%e, m14=%e, m15=%e, m16=%e, m17=%e, m18=%e, m19=%e, m20=%e, m21=%e, m22=%e, m23=%e, m24=%e, m25=%e, m26=%e, m27=%e; n0=%e, n1=%e, n2=%e, n3=%e, n4=%e, n5=%e, n6=%e, n7=%e, n8=%e, n9=%e, n10=%e, n11=%e, n12=%e, n13=%e, n14=%e, n15=%e, n16=%e, n17=%e, n18=%e, n19=%e, n20=%e, n21=%e, n22=%e, n23=%e, n24=%e, n25=%e, n26=%e, n27=%e; A0=%e, A1=%e, A2=%e, A3=%e, A4=%e, A5=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
                g_decArgo_doxy_202_204_302_sPreset, ...
                g_decArgo_doxy_202_204_302_pCoef1, ...
                g_decArgo_doxy_202_204_302_pCoef2, ...
@@ -3204,7 +3252,7 @@ switch (a_decoderId)
             o_paramAccuracy = '';
             o_paramResolution = '';
             o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; deltaP=c0*TEMP_DOXY^m0*CalPhase^n0+c1*TEMP_DOXY^m1*CalPhase^n1+..+c27*TEMP_DOXY^m27*CalPhase^n27; AirSat=deltaP*100/[(1013.25-exp[52.57-6690.9/(TEMP_DOXY+273.15)-4.681*ln(TEMP_DOXY+273.15)])*0.20946]; ln(Cstar)=A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5; MOLAR_DOXY=Cstar*44.614*AirSat/100; Pcorr=1+((Pcoef2*TEMP_DOXY+Pcoef3)*PRES)/1000; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP_DOXY+273.15))+D2*ln((TEMP_DOXY+273.15)/100)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; Ts=ln[(298.15-TEMP_DOXY)/(273.15+TEMP_DOXY)]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP_DOXY+273.15))]';
-            o_preCalibCoef = sprintf('Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g, c7=%g, c8=%g, c9=%g, c10=%g, c11=%g, c12=%g, c13=%g, c14=%g, c15=%g, c16=%g, c17=%g, c18=%g, c19=%g, c20=%g, c21=%g, c22=%g, c23=%g, c24=%g, c25=%g, c26=%g, c27=%g; m0=%g, m1=%g, m2=%g, m3=%g, m4=%g, m5=%g, m6=%g, m7=%g, m8=%g, m9=%g, m10=%g, m11=%g, m12=%g, m13=%g, m14=%g, m15=%g, m16=%g, m17=%g, m18=%g, m19=%g, m20=%g, m21=%g, m22=%g, m23=%g, m24=%g, m25=%g, m26=%g, m27=%g; n0=%g, n1=%g, n2=%g, n3=%g, n4=%g, n5=%g, n6=%g, n7=%g, n8=%g, n9=%g, n10=%g, n11=%g, n12=%g, n13=%g, n14=%g, n15=%g, n16=%g, n17=%g, n18=%g, n19=%g, n20=%g, n21=%g, n22=%g, n23=%g, n24=%g, n25=%g, n26=%g, n27=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; D0=%g, D1=%g, D2=%g', ...
+            o_preCalibCoef = sprintf('Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e, c7=%e, c8=%e, c9=%e, c10=%e, c11=%e, c12=%e, c13=%e, c14=%e, c15=%e, c16=%e, c17=%e, c18=%e, c19=%e, c20=%e, c21=%e, c22=%e, c23=%e, c24=%e, c25=%e, c26=%e, c27=%e; m0=%e, m1=%e, m2=%e, m3=%e, m4=%e, m5=%e, m6=%e, m7=%e, m8=%e, m9=%e, m10=%e, m11=%e, m12=%e, m13=%e, m14=%e, m15=%e, m16=%e, m17=%e, m18=%e, m19=%e, m20=%e, m21=%e, m22=%e, m23=%e, m24=%e, m25=%e, m26=%e, m27=%e; n0=%e, n1=%e, n2=%e, n3=%e, n4=%e, n5=%e, n6=%e, n7=%e, n8=%e, n9=%e, n10=%e, n11=%e, n12=%e, n13=%e, n14=%e, n15=%e, n16=%e, n17=%e, n18=%e, n19=%e, n20=%e, n21=%e, n22=%e, n23=%e, n24=%e, n25=%e, n26=%e, n27=%e; A0=%e, A1=%e, A2=%e, A3=%e, A4=%e, A5=%e; D0=%e, D1=%e, D2=%e', ...
                g_decArgo_doxy_202_204_302_pCoef1, ...
                g_decArgo_doxy_202_204_302_pCoef2, ...
                g_decArgo_doxy_202_204_302_pCoef3, ...
@@ -3248,7 +3296,7 @@ switch (a_decoderId)
             if (isempty(tabDoxyTempCoef))
                o_preCalibCoef = 'T0=not available; T1=not available; T2=not available; T3=not available; T4=not available; T5=not available';
             else
-               o_preCalibCoef = sprintf('T0=%g; T1=%g; T2=%g; T3=%g; T4=%g; T5=%g', ...
+               o_preCalibCoef = sprintf('T0=%e; T1=%e; T2=%e; T3=%e; T4=%e; T5=%e', ...
                   tabDoxyTempCoef(1, 1:6));
             end
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
@@ -3297,7 +3345,7 @@ switch (a_decoderId)
             o_paramAccuracy = '8 umol/kg or 10%';
             o_paramResolution = '1 umol/kg';
             o_preCalibEq = 'TPHASE_DOXY=C1PHASE_DOXY-C2PHASE_DOXY; Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; deltaP=c0*TEMP^m0*CalPhase^n0+c1*TEMP^m1*CalPhase^n1+..+c27*TEMP^m27*CalPhase^n27; AirSat=deltaP*100/[(1013.25-exp[52.57-6690.9/(TEMP+273.15)-4.681*ln(TEMP+273.15)])*0.20946]; MOLAR_DOXY=Cstar*44.614*AirSat/100; ln(Cstar)=A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; MOLAR_DOXY=ConcCoef0+ConcCoef1*MOLAR_DOXY; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g, c7=%g, c8=%g, c9=%g, c10=%g, c11=%g, c12=%g, c13=%g, c14=%g, c15=%g, c16=%g, c17=%g, c18=%g, c19=%g, c20=%g, c21=%g, c22=%g, c23=%g, c24=%g, c25=%g, c26=%g, c27=%g; m0=%g, m1=%g, m2=%g, m3=%g, m4=%g, m5=%g, m6=%g, m7=%g, m8=%g, m9=%g, m10=%g, m11=%g, m12=%g, m13=%g, m14=%g, m15=%g, m16=%g, m17=%g, m18=%g, m19=%g, m20=%g, m21=%g, m22=%g, m23=%g, m24=%g, m25=%g, m26=%g, m27=%g; n0=%g, n1=%g, n2=%g, n3=%g, n4=%g, n5=%g, n6=%g, n7=%g, n8=%g, n9=%g, n10=%g, n11=%g, n12=%g, n13=%g, n14=%g, n15=%g, n16=%g, n17=%g, n18=%g, n19=%g, n20=%g, n21=%g, n22=%g, n23=%g, n24=%g, n25=%g, n26=%g, n27=%g; ConcCoef0=%g, ConcCoef1=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e, c7=%e, c8=%e, c9=%e, c10=%e, c11=%e, c12=%e, c13=%e, c14=%e, c15=%e, c16=%e, c17=%e, c18=%e, c19=%e, c20=%e, c21=%e, c22=%e, c23=%e, c24=%e, c25=%e, c26=%e, c27=%e; m0=%e, m1=%e, m2=%e, m3=%e, m4=%e, m5=%e, m6=%e, m7=%e, m8=%e, m9=%e, m10=%e, m11=%e, m12=%e, m13=%e, m14=%e, m15=%e, m16=%e, m17=%e, m18=%e, m19=%e, m20=%e, m21=%e, m22=%e, m23=%e, m24=%e, m25=%e, m26=%e, m27=%e; n0=%e, n1=%e, n2=%e, n3=%e, n4=%e, n5=%e, n6=%e, n7=%e, n8=%e, n9=%e, n10=%e, n11=%e, n12=%e, n13=%e, n14=%e, n15=%e, n16=%e, n17=%e, n18=%e, n19=%e, n20=%e, n21=%e, n22=%e, n23=%e, n24=%e, n25=%e, n26=%e, n27=%e; ConcCoef0=%e, ConcCoef1=%e; A0=%e, A1=%e, A2=%e, A3=%e, A4=%e, A5=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
                g_decArgo_doxy_202_204_303_sPreset, ...
                g_decArgo_doxy_202_204_303_pCoef1, ...
                g_decArgo_doxy_202_204_303_pCoef2, ...
@@ -3349,7 +3397,7 @@ switch (a_decoderId)
             o_paramAccuracy = '';
             o_paramResolution = '';
             o_preCalibEq = 'TPHASE_DOXY=C1PHASE_DOXY-C2PHASE_DOXY; Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; deltaP=c0*TEMP^m0*CalPhase^n0+c1*TEMP^m1*CalPhase^n1+..+c27*TEMP^m27*CalPhase^n27; AirSat=deltaP*100/[(1013.25-exp[52.57-6690.9/(TEMP+273.15)-4.681*ln(TEMP+273.15)])*0.20946]; MOLAR_DOXY=Cstar*44.614*AirSat/100; ln(Cstar)=A0+A1*Ts+A2*Ts^2+A3*Ts^3+A4*Ts^4+A5*Ts^5; MOLAR_DOXY=ConcCoef0+ConcCoef1*MOLAR_DOXY; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP+273.15))]';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g, c7=%g, c8=%g, c9=%g, c10=%g, c11=%g, c12=%g, c13=%g, c14=%g, c15=%g, c16=%g, c17=%g, c18=%g, c19=%g, c20=%g, c21=%g, c22=%g, c23=%g, c24=%g, c25=%g, c26=%g, c27=%g; m0=%g, m1=%g, m2=%g, m3=%g, m4=%g, m5=%g, m6=%g, m7=%g, m8=%g, m9=%g, m10=%g, m11=%g, m12=%g, m13=%g, m14=%g, m15=%g, m16=%g, m17=%g, m18=%g, m19=%g, m20=%g, m21=%g, m22=%g, m23=%g, m24=%g, m25=%g, m26=%g, m27=%g; n0=%g, n1=%g, n2=%g, n3=%g, n4=%g, n5=%g, n6=%g, n7=%g, n8=%g, n9=%g, n10=%g, n11=%g, n12=%g, n13=%g, n14=%g, n15=%g, n16=%g, n17=%g, n18=%g, n19=%g, n20=%g, n21=%g, n22=%g, n23=%g, n24=%g, n25=%g, n26=%g, n27=%g; ConcCoef0=%g, ConcCoef1=%g; A0=%g, A1=%g, A2=%g, A3=%g, A4=%g, A5=%g; D0=%g, D1=%g, D2=%g', ...
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e, c7=%e, c8=%e, c9=%e, c10=%e, c11=%e, c12=%e, c13=%e, c14=%e, c15=%e, c16=%e, c17=%e, c18=%e, c19=%e, c20=%e, c21=%e, c22=%e, c23=%e, c24=%e, c25=%e, c26=%e, c27=%e; m0=%e, m1=%e, m2=%e, m3=%e, m4=%e, m5=%e, m6=%e, m7=%e, m8=%e, m9=%e, m10=%e, m11=%e, m12=%e, m13=%e, m14=%e, m15=%e, m16=%e, m17=%e, m18=%e, m19=%e, m20=%e, m21=%e, m22=%e, m23=%e, m24=%e, m25=%e, m26=%e, m27=%e; n0=%e, n1=%e, n2=%e, n3=%e, n4=%e, n5=%e, n6=%e, n7=%e, n8=%e, n9=%e, n10=%e, n11=%e, n12=%e, n13=%e, n14=%e, n15=%e, n16=%e, n17=%e, n18=%e, n19=%e, n20=%e, n21=%e, n22=%e, n23=%e, n24=%e, n25=%e, n26=%e, n27=%e; ConcCoef0=%e, ConcCoef1=%e; A0=%e, A1=%e, A2=%e, A3=%e, A4=%e, A5=%e; D0=%e, D1=%e, D2=%e', ...
                g_decArgo_doxy_202_204_303_sPreset, ...
                g_decArgo_doxy_202_204_303_pCoef1, ...
                g_decArgo_doxy_202_204_303_pCoef2, ...
@@ -3396,7 +3444,7 @@ switch (a_decoderId)
             if (isempty(tabDoxyTempCoef))
                o_preCalibCoef = 'T0=not available; T1=not available; T2=not available; T3=not available; T4=not available; T5=not available';
             else
-               o_preCalibCoef = sprintf('T0=%g; T1=%g; T2=%g; T3=%g; T4=%g; T5=%g', ...
+               o_preCalibCoef = sprintf('T0=%e; T1=%e; T2=%e; T3=%e; T4=%e; T5=%e', ...
                   tabDoxyTempCoef(1, 1:6));
             end
             o_preCalibComment = 'optode temperature, see TD269 Operating manual oxygen optode 4330, 4835, 4831';
@@ -3446,7 +3494,7 @@ switch (a_decoderId)
             o_paramAccuracy = '8 umol/kg or 10%';
             o_paramResolution = '1 umol/kg';
             o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; MOLAR_DOXY=[((c3+c4*TEMP_DOXY)/(c5+c6*CalPhase))-1]/Ksv; Ksv=c0+c1*TEMP_DOXY+c2*TEMP_DOXY^2; O2=MOLAR_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(B0+B1*Ts+B2*Ts^2+B3*Ts^3)+C0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; DOXY=O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Spreset=%g; Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; B0=%g, B1=%g, B2=%g, B3=%g; C0=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g; D0=%g, D1=%g, D2=%g, D3=%g', ...
+            o_preCalibCoef = sprintf('Spreset=%e; Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; B0=%e, B1=%e, B2=%e, B3=%e; C0=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e; D0=%e, D1=%e, D2=%e, D3=%e', ...
                g_decArgo_doxy_202_204_304_sPreset, ...
                g_decArgo_doxy_202_204_304_pCoef1, ...
                g_decArgo_doxy_202_204_304_pCoef2, ...
@@ -3488,7 +3536,7 @@ switch (a_decoderId)
             o_paramAccuracy = '';
             o_paramResolution = '';
             o_preCalibEq = 'Phase_Pcorr=TPHASE_DOXY+Pcoef1*PRES/1000; CalPhase=PhaseCoef0+PhaseCoef1*Phase_Pcorr+PhaseCoef2*Phase_Pcorr^2+PhaseCoef3*Phase_Pcorr^3; Ksv=c0+c1*TEMP_DOXY+c2*TEMP_DOXY^2; MOLAR_DOXY=[((c3+c4*TEMP_DOXY)/(c5+c6*CalPhase))-1]/Ksv; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; MOLAR_DOXY=MOLAR_DOXY*Pcorr; pH2Osat=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)]; Tcorr=44.6596*exp[2.00907+3.22014*Ts+4.05010*Ts^2+4.94457*Ts^3-2.56847e-1*Ts^4+3.88767*Ts^5]; Ts=ln[(298.15-TEMP)/(273.15+TEMP)]; PPOX_DOXY=MOLAR_DOXY*(0.20946*(1013.25-pH2Osat))/Tcorr*exp[0.317*PRES/(8.314*(TEMP+273.15))]';
-            o_preCalibCoef = sprintf('Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; PhaseCoef0=%g, PhaseCoef1=%g, PhaseCoef2=%g, PhaseCoef3=%g; c0=%g, c1=%g, c2=%g, c3=%g, c4=%g, c5=%g, c6=%g; D0=%g, D1=%g, D2=%g', ...
+            o_preCalibCoef = sprintf('Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; PhaseCoef0=%e, PhaseCoef1=%e, PhaseCoef2=%e, PhaseCoef3=%e; c0=%e, c1=%e, c2=%e, c3=%e, c4=%e, c5=%e, c6=%e; D0=%e, D1=%e, D2=%e', ...
                g_decArgo_doxy_202_204_304_pCoef1, ...
                g_decArgo_doxy_202_204_304_pCoef2, ...
                g_decArgo_doxy_202_204_304_pCoef3, ...
@@ -3500,21 +3548,21 @@ switch (a_decoderId)
                );
             o_preCalibComment = 'see TD269 Operating manual oxygen optode 4330, 4835, 4831; see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
 
-         case {'TEMP_DOXY2'} % CASE_103_102_001
-            o_param = 'TEMP_DOXY2';
-            o_paramSensor = 'OPTODE_DOXY2';
+         case {'TEMP_DOXY_2'} % CASE_103_102_001
+            o_param = 'TEMP_DOXY_2';
+            o_paramSensor = 'OPTODE_DOXY_2';
             o_paramUnits = 'degC';
             o_paramAccuracy = '';
             o_paramResolution = '';
-            o_preCalibEq = 'TEMP_DOXY2=1/(TA0+TA1*L+TA2*L^2+TA3*L^3)-273.15; L=ln(100000*TEMP_VOLTAGE_DOXY/(3.3-TEMP_VOLTAGE_DOXY)); TEMP_VOLTAGE_DOXY is the thermistor voltage in volts';
+            o_preCalibEq = 'TEMP_DOXY_2=1/(TA0+TA1*L+TA2*L^2+TA3*L^3)-273.15; L=ln(100000*TEMP_VOLTAGE_DOXY/(3.3-TEMP_VOLTAGE_DOXY)); TEMP_VOLTAGE_DOXY is the thermistor voltage in volts';
             o_preCalibCoef = 'TA0=not available; TA1=not available; TA2=not available; TA3=not available';
-            o_preCalibComment = 'optode temperature, see SBE63 User’s Manual (manual version #007, 10/28/13)';
+            o_preCalibComment = 'optode temperature, see SBE63 Userâ€™s Manual (manual version #007, 10/28/13)';
 
             % CASE_103_208_307 for SBE
 
-         case {'PHASE_DELAY_DOXY2'}
-            o_param = 'PHASE_DELAY_DOXY2';
-            o_paramSensor = 'OPTODE_DOXY2';
+         case {'PHASE_DELAY_DOXY_2'}
+            o_param = 'PHASE_DELAY_DOXY_2';
+            o_paramSensor = 'OPTODE_DOXY_2';
             o_paramUnits = 'usec';
             o_paramAccuracy = '';
             o_paramResolution = '';
@@ -3522,7 +3570,7 @@ switch (a_decoderId)
             o_preCalibCoef = 'none';
             o_preCalibComment = 'output phase delay';
 
-         case {'DOXY2'}
+         case {'DOXY_2'}
             % get calibration information
             if (isempty(g_decArgo_calibInfo) || ...
                   ~isfield(g_decArgo_calibInfo, 'OPTODE') || ...
@@ -3539,13 +3587,13 @@ switch (a_decoderId)
                return
             end
 
-            o_param = 'DOXY2';
-            o_paramSensor = 'OPTODE_DOXY2';
+            o_param = 'DOXY_2';
+            o_paramSensor = 'OPTODE_DOXY_2';
             o_paramUnits = 'umol/kg';
             o_paramAccuracy = '3 umol/kg or 2%';
             o_paramResolution = '0.2 umol/kg';
-            o_preCalibEq = 'V=(PHASE_DELAY_DOXY+Pcoef1*PRES/1000)/39.457071; Ksv=C0+C1*TEMP_DOXY2+C2*TEMP_DOXY2^2; MLPL_DOXY=[(A0+A1*TEMP_DOXY2+A2*V^2)/(B0+B1*V)-1]/Ksv; O2=MLPL_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(SolB0+SolB1*TS+SolB2*TS^2+SolB3*TS^3)+SolC0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; TS=ln[(298.15–TEMP)/(273.15+TEMP)]; DOXY2[umol/kg]=44.6596*O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
-            o_preCalibCoef = sprintf('Pcoef1=%g, Pcoef2=%g, Pcoef3=%g; A0=%g, A1=%g, A2=%g; B0=%g, B1=%g; C0=%g, C1=%g, C2=%g; Spreset=%g; D0=%g, D1=%g, D2=%g, D3=%g; SolB0=%g, SolB1=%g, SolB2=%g, SolB3=%g; SolC0=%g', ...
+            o_preCalibEq = 'V=(PHASE_DELAY_DOXY+Pcoef1*PRES/1000)/39.457071; Ksv=C0+C1*TEMP_DOXY_2+C2*TEMP_DOXY_2^2; MLPL_DOXY=[(A0+A1*TEMP_DOXY_2+A2*V^2)/(B0+B1*V)-1]/Ksv; O2=MLPL_DOXY*Scorr*Pcorr; Scorr=A*exp[PSAL*(SolB0+SolB1*TS+SolB2*TS^2+SolB3*TS^3)+SolC0*PSAL^2]; A=[(1013.25-pH2O(TEMP,Spreset))/(1013.25-pH2O(TEMP,PSAL))]; pH2O(TEMP,S)=1013.25*exp[D0+D1*(100/(TEMP+273.15))+D2*ln((TEMP+273.15)/100)+D3*S]; Pcorr=1+((Pcoef2*TEMP+Pcoef3)*PRES)/1000; TS=ln[(298.15â€“TEMP)/(273.15+TEMP)]; DOXY_2[umol/kg]=44.6596*O2/rho, where rho is the potential density [kg/L] calculated from CTD data';
+            o_preCalibCoef = sprintf('Pcoef1=%e, Pcoef2=%e, Pcoef3=%e; A0=%e, A1=%e, A2=%e; B0=%e, B1=%e; C0=%e, C1=%e, C2=%e; Spreset=%e; D0=%e, D1=%e, D2=%e, D3=%e; SolB0=%e, SolB1=%e, SolB2=%e, SolB3=%e; SolC0=%e', ...
                g_decArgo_doxy_103_208_307_pCoef1, ...
                g_decArgo_doxy_103_208_307_pCoef2, ...
                g_decArgo_doxy_103_208_307_pCoef3, ...
@@ -3561,7 +3609,7 @@ switch (a_decoderId)
                g_decArgo_doxy_103_208_307_solB3, ...
                g_decArgo_doxy_103_208_307_solC0 ...
                );
-            o_preCalibComment = 'see SBE63 User’s Manual (manual version #007, 10/28/13); see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
+            o_preCalibComment = 'see SBE63 Userâ€™s Manual (manual version #007, 10/28/13); see Processing Argo OXYGEN data at the DAC level, Version 2.2 (DOI: http://dx.doi.org/10.13155/39795)';
       end
 end
 
@@ -3667,7 +3715,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/27/2017 - RNU - creation
@@ -3686,13 +3734,15 @@ global g_decArgo_calibInfo;
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamListRadiometry;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 
 paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, 132}
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 132, 135, 136, 137, 141}
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('OCR', g_decArgo_sensorMountedOnFloat))
          paramList = [ ...
             {'RAW_DOWNWELLING_IRRADIANCE380'} ...
             {'RAW_DOWNWELLING_IRRADIANCE412'} ...
@@ -3704,17 +3754,15 @@ switch (a_decoderId)
             {'DOWNWELLING_PAR'} ...
             ];
       end
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('MPE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('MPE', g_decArgo_sensorMountedOnFloat))
          paramList = [paramList ...
             {'VOLTAGE_DOWNWELLING_PAR'} ...
             {'TEMP_DOWNWELLING_PAR'} ...
-            {'DOWNWELLING_PAR2'} ...
+            {'DOWNWELLING_PAR_2'} ...
             ];
       end
    case {130, 131}
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('OCR', g_decArgo_sensorMountedOnFloat))
          paramList = [ ...
             {'RAW_DOWNWELLING_IRRADIANCE412'} ...
             {'RAW_DOWNWELLING_IRRADIANCE443'} ...
@@ -3726,17 +3774,15 @@ switch (a_decoderId)
             {'DOWN_IRRADIANCE665'} ...
             ];
       end
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('MPE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('MPE', g_decArgo_sensorMountedOnFloat))
          paramList = [paramList ...
             {'VOLTAGE_DOWNWELLING_PAR'} ...
             {'TEMP_DOWNWELLING_PAR'} ...
-            {'DOWNWELLING_PAR2'} ...
+            {'DOWNWELLING_PAR_2'} ...
             ];
       end
-   case {133}
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+   case {133, 138, 139, 140}
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('OCR', g_decArgo_sensorMountedOnFloat))
          paramList = [ ...
             {'RAW_DOWNWELLING_IRRADIANCE380'} ...
             {'RAW_DOWNWELLING_IRRADIANCE443'} ...
@@ -3748,17 +3794,35 @@ switch (a_decoderId)
             {'DOWN_IRRADIANCE555'} ...
             ];
       end
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('MPE', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('MPE', g_decArgo_sensorMountedOnFloat))
          paramList = [paramList ...
             {'VOLTAGE_DOWNWELLING_PAR'} ...
             {'TEMP_DOWNWELLING_PAR'} ...
-            {'DOWNWELLING_PAR2'} ...
+            {'DOWNWELLING_PAR_2'} ...
             ];
       end
-   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130}
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('OCR', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+   case {134}
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('OCR', g_decArgo_sensorMountedOnFloat))
+         paramList = [ ...
+            {'RAW_DOWNWELLING_IRRADIANCE443'} ...
+            {'RAW_DOWNWELLING_IRRADIANCE490'} ...
+            {'RAW_DOWNWELLING_IRRADIANCE555'} ...
+            {'RAW_DOWNWELLING_PAR'} ...
+            {'DOWN_IRRADIANCE443'} ...
+            {'DOWN_IRRADIANCE490'} ...
+            {'DOWN_IRRADIANCE555'} ...
+            {'DOWNWELLING_PAR'} ...
+            ];
+      end
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('MPE', g_decArgo_sensorMountedOnFloat))
+         paramList = [paramList ...
+            {'VOLTAGE_DOWNWELLING_PAR'} ...
+            {'TEMP_DOWNWELLING_PAR'} ...
+            {'DOWNWELLING_PAR_2'} ...
+            ];
+      end
+   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132}
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('OCR', g_decArgo_sensorMountedOnFloat))
          % for Apex APF11 floats, parameter names is defined from calibration
          % information
          if (~isempty(g_decArgo_calibInfo) && isfield(g_decArgo_calibInfo, 'OCR'))
@@ -3864,7 +3928,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/30/2016 - RNU - creation
@@ -3891,8 +3955,8 @@ global g_decArgo_calibInfo;
 
 switch (a_decoderId)
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, ...
-         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130}
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, ...
+         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132}
       switch (a_paramName)
 
          case {'RAW_DOWNWELLING_IRRADIANCE380'}
@@ -4205,28 +4269,28 @@ switch (a_decoderId)
                a1PAR, a0PAR, lmPAR);
             o_preCalibComment = '';
 
-         case {'DOWNWELLING_PAR2'}
+         case {'DOWNWELLING_PAR_2'}
 
             % get calibration information
             if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing DOWNWELLING_PAR2 calibration information\n', ...
+               fprintf('ERROR: Float #%d: missing DOWNWELLING_PAR_2 calibration information\n', ...
                   g_decArgo_floatNum);
                return
             elseif (isfield(g_decArgo_calibInfo, 'MPE') && ...
                   isfield(g_decArgo_calibInfo.MPE, 'ResponsivityW'))
                responsivityW = str2double(g_decArgo_calibInfo.MPE.ResponsivityW);
             else
-               fprintf('ERROR: Float #%d: inconsistent DOWNWELLING_PAR2 calibration information\n', ...
+               fprintf('ERROR: Float #%d: inconsistent DOWNWELLING_PAR_2 calibration information\n', ...
                   g_decArgo_floatNum);
                return
             end
 
-            o_param = 'DOWNWELLING_PAR2';
+            o_param = 'DOWNWELLING_PAR_2';
             o_paramSensor = 'AUX_RADIOMETER_PAR';
             o_paramUnits = 'microMoleQuanta/m^2/sec';
             o_paramAccuracy = '';
             o_paramResolution = '';
-            o_preCalibEq = 'DOWNWELLING_PAR2=1E4*VOLTAGE_DOWNWELLING_PAR/ResponsivityW';
+            o_preCalibEq = 'DOWNWELLING_PAR_2=1E4*VOLTAGE_DOWNWELLING_PAR/ResponsivityW';
             o_preCalibCoef = sprintf('ResponsivityW=%.5f', ...
                responsivityW);
             o_preCalibComment = '';
@@ -4396,7 +4460,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/30/2016 - RNU - creation
@@ -4406,23 +4470,23 @@ function [o_metaData] = update_parameter_list_backscattering(a_metaData, a_decod
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamListBackscattering;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 
 paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 110, 111, 112, 113, 114, 116, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, ...
-         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130}
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            (any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))) || ...
-            any(strcmp('ECO2', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT)))))
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, ...
+         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132}
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && any(ismember(g_decArgo_sensorMountedOnFloat, [{'ECO2'} {'ECO3'}])))
          paramList = [ ...
             {'BETA_BACKSCATTERING700'} ...
             {'BBP700'} ...
             ];
       end
    case {108, 109, 115}
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('ECO3', g_decArgo_sensorMountedOnFloat))
          paramList = [ ...
             {'BETA_BACKSCATTERING700'} ...
             {'BBP700'} ...
@@ -4431,18 +4495,34 @@ switch (a_decoderId)
             ];
       end
    case {301}
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('FLBB', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('FLBB', g_decArgo_sensorMountedOnFloat))
          paramList = [ ...
             {'BETA_BACKSCATTERING700'} ...
             {'BBP700'} ...
             ];
       end
-   case {1015, 1101, 1105, 1110, 1111, 1112, 1114}
+   case {1015, 1101, 1105, 1110, 1111, 1112, 1114, 1115}
       paramList = [ ...
          {'BETA_BACKSCATTERING700'} ...
          {'BBP700'} ...
          ];
+end
+
+if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('TRIDENTE', g_decArgo_sensorMountedOnFloat) && ~ismember('TRIDENTE2', g_decArgo_sensorMountedOnFloat))
+   paramList = [ ...
+      {'BETA_BACKSCATTERING700_SCALED'} ...
+      {'BBP700'} ...
+      ];
+end
+if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('TRIDENTE2', g_decArgo_sensorMountedOnFloat))
+   paramList = [ ...
+      {'BETA_BACKSCATTERING700'} ... % from ECO2
+      {'BBP700'} ... % from ECO2
+      {'BETA_BACKSCATTERING700_SCALED'} ...
+      {'BETA_BACKSCATTERING700_SCALED_2'} ...
+      {'BBP700_2'} ...
+      {'BBP700_3'} ...
+      ];
 end
 
 if (~isempty(g_decArgo_addParamListBackscattering))
@@ -4459,7 +4539,7 @@ return
 %
 % SYNTAX :
 %  [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
-%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_backscattering(a_paramName, a_decoderId)
+%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_backscattering(a_paramName, a_decoderId, a_metaData)
 %
 % INPUT PARAMETERS :
 %   a_paramName : input parameter to be updated
@@ -4479,7 +4559,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/30/2016 - RNU - creation
@@ -4503,196 +4583,422 @@ global g_decArgo_floatNum;
 % arrays to store calibration information
 global g_decArgo_calibInfo;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
 
-switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 114, 116, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, ...
-         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130}
-      switch (a_paramName)
 
-         case {'BETA_BACKSCATTERING700'}
-            o_param = 'BETA_BACKSCATTERING700';
-            o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
-            o_paramUnits = 'count';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'none';
-            o_preCalibCoef = 'none';
-            o_preCalibComment = 'Uncalibrated backscattering measurement';
+if ~(~isempty(g_decArgo_sensorMountedOnFloat) && ismember('TRIDENTE', g_decArgo_sensorMountedOnFloat) && ~ismember('TRIDENTE2', g_decArgo_sensorMountedOnFloat))
 
-         case {'BBP700'}
+   switch (a_decoderId)
+      case {105, 106, 107, 110, 111, 112, 113, 114, 116, ...
+            121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, ...
+            1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132}
+         switch (a_paramName)
 
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing BBP700 calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            elseif (isfield(g_decArgo_calibInfo, 'ECO2') && ...
-                  isfield(g_decArgo_calibInfo.ECO2, 'ScaleFactBackscatter700') && ...
-                  isfield(g_decArgo_calibInfo.ECO2, 'DarkCountBackscatter700') && ...
-                  isfield(g_decArgo_calibInfo.ECO2, 'KhiCoefBackscatter'))
-               scaleFactBackscatter700 = double(g_decArgo_calibInfo.ECO2.ScaleFactBackscatter700);
-               darkCountBackscatter700 = double(g_decArgo_calibInfo.ECO2.DarkCountBackscatter700);
-               khiCoefBackscatter = double(g_decArgo_calibInfo.ECO2.KhiCoefBackscatter);
-               % determine angle of measurement
-               % if SENSOR_MODEL == ECO_FLBB => 142°
-               % if (ECO_FLBBCD || ECO_FLBB2) == ECO_FLBB => 124°
-               angle = 142;
-            elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactBackscatter700') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter700') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'KhiCoefBackscatter'))
-               scaleFactBackscatter700 = double(g_decArgo_calibInfo.ECO3.ScaleFactBackscatter700);
-               darkCountBackscatter700 = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter700);
-               khiCoefBackscatter = double(g_decArgo_calibInfo.ECO3.KhiCoefBackscatter);
-               angle = 124;
-            else
-               fprintf('ERROR: Float #%d: inconsistent BBP700 calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+            case {'BETA_BACKSCATTERING700'}
+               o_param = 'BETA_BACKSCATTERING700';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
+               o_paramUnits = 'count';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'none';
+               o_preCalibCoef = 'none';
+               o_preCalibComment = 'Uncalibrated backscattering measurement';
 
-            o_param = 'BBP700';
-            o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
-            o_paramUnits = 'm-1';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700)*SCALE_BACKSCATTERING700-BETASW700)';
-            o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at %d angularDeg', ...
-               darkCountBackscatter700, scaleFactBackscatter700, khiCoefBackscatter, angle);
-            o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
+            case {'BBP700'}
 
-      end
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo))
+                  fprintf('ERROR: Float #%d: missing BBP700 calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               elseif (isfield(g_decArgo_calibInfo, 'ECO2') && ...
+                     isfield(g_decArgo_calibInfo.ECO2, 'ScaleFactBackscatter700') && ...
+                     isfield(g_decArgo_calibInfo.ECO2, 'DarkCountBackscatter700') && ...
+                     isfield(g_decArgo_calibInfo.ECO2, 'KhiCoefBackscatter'))
+                  scaleFactBackscatter700 = double(g_decArgo_calibInfo.ECO2.ScaleFactBackscatter700);
+                  darkCountBackscatter700 = double(g_decArgo_calibInfo.ECO2.DarkCountBackscatter700);
+                  khiCoefBackscatter = double(g_decArgo_calibInfo.ECO2.KhiCoefBackscatter);
+                  % determine angle of measurement
+                  % if SENSOR_MODEL == ECO_FLBB => 142Â°
+                  % if (ECO_FLBBCD || ECO_FLBB2) == ECO_FLBB => 124Â°
+                  angle = 142;
+               elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactBackscatter700') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter700') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'KhiCoefBackscatter'))
+                  scaleFactBackscatter700 = double(g_decArgo_calibInfo.ECO3.ScaleFactBackscatter700);
+                  darkCountBackscatter700 = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter700);
+                  khiCoefBackscatter = double(g_decArgo_calibInfo.ECO3.KhiCoefBackscatter);
+                  angle = 124;
+               else
+                  fprintf('ERROR: Float #%d: inconsistent BBP700 calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
 
-   case {108, 109, 115}
-      switch (a_paramName)
+               o_param = 'BBP700';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
+               o_paramUnits = 'm-1';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700)*SCALE_BACKSCATTERING700-BETASW700)';
+               o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at %d angularDeg', ...
+                  darkCountBackscatter700, scaleFactBackscatter700, khiCoefBackscatter, angle);
+               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
 
-         case {'BETA_BACKSCATTERING700'}
-            o_param = 'BETA_BACKSCATTERING700';
-            o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
-            o_paramUnits = 'count';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'none';
-            o_preCalibCoef = 'none';
-            o_preCalibComment = 'Uncalibrated backscattering measurement';
+         end
 
-         case {'BBP700'}
+      case {108, 109, 115}
+         switch (a_paramName)
 
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing BBP700 calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactBackscatter700') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter700') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'KhiCoefBackscatter'))
-               scaleFactBackscatter700 = double(g_decArgo_calibInfo.ECO3.ScaleFactBackscatter700);
-               darkCountBackscatter700 = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter700);
-               khiCoefBackscatter = double(g_decArgo_calibInfo.ECO3.KhiCoefBackscatter);
-            else
-               fprintf('ERROR: Float #%d: inconsistent BBP700 calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+            case {'BETA_BACKSCATTERING700'}
+               o_param = 'BETA_BACKSCATTERING700';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
+               o_paramUnits = 'count';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'none';
+               o_preCalibCoef = 'none';
+               o_preCalibComment = 'Uncalibrated backscattering measurement';
 
-            o_param = 'BBP700';
-            o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
-            o_paramUnits = 'm-1';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700)*SCALE_BACKSCATTERING700-BETASW700)';
-            o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at 124 angularDeg', ...
-               darkCountBackscatter700, scaleFactBackscatter700, khiCoefBackscatter);
-            o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
+            case {'BBP700'}
 
-         case {'BETA_BACKSCATTERING532'}
-            o_param = 'BETA_BACKSCATTERING532';
-            o_paramSensor = 'BACKSCATTERINGMETER_BBP532';
-            o_paramUnits = 'count';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'none';
-            o_preCalibCoef = 'none';
-            o_preCalibComment = 'Uncalibrated backscattering measurement';
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo))
+                  fprintf('ERROR: Float #%d: missing BBP700 calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactBackscatter700') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter700') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'KhiCoefBackscatter'))
+                  scaleFactBackscatter700 = double(g_decArgo_calibInfo.ECO3.ScaleFactBackscatter700);
+                  darkCountBackscatter700 = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter700);
+                  khiCoefBackscatter = double(g_decArgo_calibInfo.ECO3.KhiCoefBackscatter);
+               else
+                  fprintf('ERROR: Float #%d: inconsistent BBP700 calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
 
-         case {'BBP532'}
+               o_param = 'BBP700';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
+               o_paramUnits = 'm-1';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700)*SCALE_BACKSCATTERING700-BETASW700)';
+               o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at 124 angularDeg', ...
+                  darkCountBackscatter700, scaleFactBackscatter700, khiCoefBackscatter);
+               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
 
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing BBP532 calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactBackscatter532') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter532') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'KhiCoefBackscatter'))
-               scaleFactBackscatter532 = double(g_decArgo_calibInfo.ECO3.ScaleFactBackscatter532);
-               darkCountBackscatter532 = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter532);
-               khiCoefBackscatter = double(g_decArgo_calibInfo.ECO3.KhiCoefBackscatter);
-            else
-               fprintf('ERROR: Float #%d: inconsistent BBP532 calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+            case {'BETA_BACKSCATTERING532'}
+               o_param = 'BETA_BACKSCATTERING532';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP532';
+               o_paramUnits = 'count';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'none';
+               o_preCalibCoef = 'none';
+               o_preCalibComment = 'Uncalibrated backscattering measurement';
 
-            o_param = 'BBP532';
-            o_paramSensor = 'BACKSCATTERINGMETER_BBP532';
-            o_paramUnits = 'm-1';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'BBP532=2*pi*khi*((BETA_BACKSCATTERING532-DARK_BACKSCATTERING532)*SCALE_BACKSCATTERING532-BETASW532)';
-            o_preCalibCoef = sprintf('DARK_BACKSCATTERING532=%g, SCALE_BACKSCATTERING532=%g, khi=%g, BETASW532 (contribution of pure sea water) is calculated at 124 angularDeg', ...
-               darkCountBackscatter532, scaleFactBackscatter532, khiCoefBackscatter);
-            o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW532 is the contribution by the pure seawater at 532nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
+            case {'BBP532'}
 
-      end
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo))
+                  fprintf('ERROR: Float #%d: missing BBP532 calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactBackscatter532') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'DarkCountBackscatter532') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'KhiCoefBackscatter'))
+                  scaleFactBackscatter532 = double(g_decArgo_calibInfo.ECO3.ScaleFactBackscatter532);
+                  darkCountBackscatter532 = double(g_decArgo_calibInfo.ECO3.DarkCountBackscatter532);
+                  khiCoefBackscatter = double(g_decArgo_calibInfo.ECO3.KhiCoefBackscatter);
+               else
+                  fprintf('ERROR: Float #%d: inconsistent BBP532 calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
 
-   case {301, 1015, 1101, 1105, 1110, 1111, 1112, 1114}
-      switch (a_paramName)
+               o_param = 'BBP532';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP532';
+               o_paramUnits = 'm-1';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'BBP532=2*pi*khi*((BETA_BACKSCATTERING532-DARK_BACKSCATTERING532)*SCALE_BACKSCATTERING532-BETASW532)';
+               o_preCalibCoef = sprintf('DARK_BACKSCATTERING532=%g, SCALE_BACKSCATTERING532=%g, khi=%g, BETASW532 (contribution of pure sea water) is calculated at 124 angularDeg', ...
+                  darkCountBackscatter532, scaleFactBackscatter532, khiCoefBackscatter);
+               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW532 is the contribution by the pure seawater at 532nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
 
-         case {'BETA_BACKSCATTERING700'}
-            o_param = 'BETA_BACKSCATTERING700';
-            o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
-            o_paramUnits = 'count';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'none';
-            o_preCalibCoef = 'none';
-            o_preCalibComment = 'Uncalibrated backscattering measurement';
+         end
 
-         case {'BBP700'}
+      case {301, 1015, 1101, 1105, 1110, 1111, 1112, 1114, 1115}
+         switch (a_paramName)
 
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing BBP700 calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            elseif (isfield(g_decArgo_calibInfo, 'FLBB') && ...
-                  isfield(g_decArgo_calibInfo.FLBB, 'ScaleFactBackscatter700') && ...
-                  isfield(g_decArgo_calibInfo.FLBB, 'DarkCountBackscatter700') && ...
-                  isfield(g_decArgo_calibInfo.FLBB, 'KhiCoefBackscatter'))
-               scaleFactBackscatter700 = double(g_decArgo_calibInfo.FLBB.ScaleFactBackscatter700);
-               darkCountBackscatter700 = double(g_decArgo_calibInfo.FLBB.DarkCountBackscatter700);
-               khiCoefBackscatter = double(g_decArgo_calibInfo.FLBB.KhiCoefBackscatter);
-            else
-               fprintf('ERROR: Float #%d: inconsistent BBP700 calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+            case {'BETA_BACKSCATTERING700'}
+               o_param = 'BETA_BACKSCATTERING700';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
+               o_paramUnits = 'count';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'none';
+               o_preCalibCoef = 'none';
+               o_preCalibComment = 'Uncalibrated backscattering measurement';
 
-            o_param = 'BBP700';
-            o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
-            o_paramUnits = 'm-1';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700)*SCALE_BACKSCATTERING700-BETASW700)';
-            o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at 142 angularDeg', ...
-               darkCountBackscatter700, scaleFactBackscatter700, khiCoefBackscatter);
-            o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
+            case {'BBP700'}
 
-      end
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo))
+                  fprintf('ERROR: Float #%d: missing BBP700 calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               elseif (isfield(g_decArgo_calibInfo, 'FLBB') && ...
+                     isfield(g_decArgo_calibInfo.FLBB, 'ScaleFactBackscatter700') && ...
+                     isfield(g_decArgo_calibInfo.FLBB, 'DarkCountBackscatter700') && ...
+                     isfield(g_decArgo_calibInfo.FLBB, 'KhiCoefBackscatter'))
+                  scaleFactBackscatter700 = double(g_decArgo_calibInfo.FLBB.ScaleFactBackscatter700);
+                  darkCountBackscatter700 = double(g_decArgo_calibInfo.FLBB.DarkCountBackscatter700);
+                  khiCoefBackscatter = double(g_decArgo_calibInfo.FLBB.KhiCoefBackscatter);
+               else
+                  fprintf('ERROR: Float #%d: inconsistent BBP700 calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
+
+               o_param = 'BBP700';
+               o_paramSensor = 'BACKSCATTERINGMETER_BBP700';
+               o_paramUnits = 'm-1';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'BBP700=2*pi*khi*((BETA_BACKSCATTERING700-DARK_BACKSCATTERING700)*SCALE_BACKSCATTERING700-BETASW700)';
+               o_preCalibCoef = sprintf('DARK_BACKSCATTERING700=%g, SCALE_BACKSCATTERING700=%g, khi=%g, BETASW700 (contribution of pure sea water) is calculated at 142 angularDeg', ...
+                  darkCountBackscatter700, scaleFactBackscatter700, khiCoefBackscatter);
+               o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916. Reprocessed from the file provided by Andrew Bernard (Seabird) following ADMT18. This file is accessible at http://doi.org/10.17882/54520.';
+
+         end
+   end
+
+else % TRIDENTE sensor
+
+   switch (a_paramName)
+
+      case {'BETA_BACKSCATTERING700_SCALED'}
+         o_param = 'BETA_BACKSCATTERING700_SCALED';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700';
+         o_paramUnits = 'm-1sr-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = 'Factory calibrated backscattering measurement';
+
+      case {'BETA_BACKSCATTERING700_SCALED_STD'}
+         o_param = 'BETA_BACKSCATTERING700_SCALED_STD';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700';
+         o_paramUnits = 'm-1sr-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = '';
+
+      case {'BETA_BACKSCATTERING700_SCALED_MED'}
+         o_param = 'BETA_BACKSCATTERING700_SCALED_MED';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700';
+         o_paramUnits = 'm-1sr-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = '';
+
+      case {'BBP700'}
+         KHI_COEF_BACKSCATTER = 1.0801;
+         ANGLE = 120;
+         o_param = 'BBP700';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700';
+         o_paramUnits = 'm-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'BBP700=2*pi*khi*(BETA_BACKSCATTERING700_SCALED-BETASW700)';
+         o_preCalibCoef = sprintf('khi=%g, BETASW700 (contribution of pure sea water) is calculated at %d angularDeg', ...
+            KHI_COEF_BACKSCATTER, ANGLE);
+         o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916.';
+
+      case {'BBP700_STD'}
+         KHI_COEF_BACKSCATTER = 1.0801;
+         ANGLE = 120;
+         o_param = 'BBP700_STD';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700';
+         o_paramUnits = 'm-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'BBP700_STD=2*pi*khi*(BETA_BACKSCATTERING700_SCALED_STD-BETASW700)';
+         o_preCalibCoef = sprintf('khi=%g, BETASW700 (contribution of pure sea water) is calculated at %d angularDeg', ...
+            KHI_COEF_BACKSCATTER, ANGLE);
+         o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916.';
+
+      case {'BBP700_MED'}
+         KHI_COEF_BACKSCATTER = 1.0801;
+         ANGLE = 120;
+         o_param = 'BBP700_MED';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700';
+         o_paramUnits = 'm-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'BBP700_MED=2*pi*khi*(BETA_BACKSCATTERING700_SCALED_MED-BETASW700)';
+         o_preCalibCoef = sprintf('khi=%g, BETASW700 (contribution of pure sea water) is calculated at %d angularDeg', ...
+            KHI_COEF_BACKSCATTER, ANGLE);
+         o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916.';
+
+   end
+end
+
+if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('TRIDENTE2', g_decArgo_sensorMountedOnFloat))
+
+   switch (a_paramName)
+
+      case {'BETA_BACKSCATTERING700_SCALED'}
+         o_param = 'BETA_BACKSCATTERING700_SCALED';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700_2';
+         o_paramUnits = 'm-1sr-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = 'Factory calibrated backscattering measurement';
+
+      case {'BETA_BACKSCATTERING700_SCALED_2'}
+         o_param = 'BETA_BACKSCATTERING700_SCALED_2';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700_3';
+         o_paramUnits = 'm-1sr-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = 'Factory calibrated backscattering measurement';
+
+      case {'BETA_BACKSCATTERING700_SCALED_STD'}
+         o_param = 'BETA_BACKSCATTERING700_SCALED_STD';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700_2';
+         o_paramUnits = 'm-1sr-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = '';
+
+      case {'BETA_BACKSCATTERING700_SCALED_2_STD'}
+         o_param = 'BETA_BACKSCATTERING700_SCALED_2_STD';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700_3';
+         o_paramUnits = 'm-1sr-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = '';
+
+      case {'BETA_BACKSCATTERING700_SCALED_MED'}
+         o_param = 'BETA_BACKSCATTERING700_SCALED_MED';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700_2';
+         o_paramUnits = 'm-1sr-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = '';
+
+      case {'BETA_BACKSCATTERING700_SCALED_2_MED'}
+         o_param = 'BETA_BACKSCATTERING700_SCALED_2_MED';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700_3';
+         o_paramUnits = 'm-1sr-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'none';
+         o_preCalibCoef = 'none';
+         o_preCalibComment = '';
+
+      case {'BBP700_2'}
+         KHI_COEF_BACKSCATTER = 1.0801;
+         ANGLE = 120;
+         o_param = 'BBP700_2';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700_2';
+         o_paramUnits = 'm-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'BBP700=2*pi*khi*(BETA_BACKSCATTERING700_SCALED-BETASW700)';
+         o_preCalibCoef = sprintf('khi=%g, BETASW700 (contribution of pure sea water) is calculated at %d angularDeg', ...
+            KHI_COEF_BACKSCATTER, ANGLE);
+         o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916.';
+
+      case {'BBP700_3'}
+         KHI_COEF_BACKSCATTER = 1.0801;
+         ANGLE = 120;
+         o_param = 'BBP700_3';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700_3';
+         o_paramUnits = 'm-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'BBP700=2*pi*khi*(BETA_BACKSCATTERING700_SCALED-BETASW700)';
+         o_preCalibCoef = sprintf('khi=%g, BETASW700 (contribution of pure sea water) is calculated at %d angularDeg', ...
+            KHI_COEF_BACKSCATTER, ANGLE);
+         o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916.';
+
+      case {'BBP700_2_STD'}
+         KHI_COEF_BACKSCATTER = 1.0801;
+         ANGLE = 120;
+         o_param = 'BBP700_2_STD';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700_2';
+         o_paramUnits = 'm-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'BBP700_STD=2*pi*khi*(BETA_BACKSCATTERING700_SCALED_STD-BETASW700)';
+         o_preCalibCoef = sprintf('khi=%g, BETASW700 (contribution of pure sea water) is calculated at %d angularDeg', ...
+            KHI_COEF_BACKSCATTER, ANGLE);
+         o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916.';
+
+      case {'BBP700_3_STD'}
+         KHI_COEF_BACKSCATTER = 1.0801;
+         ANGLE = 120;
+         o_param = 'BBP700_3_STD';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700_3';
+         o_paramUnits = 'm-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'BBP700_STD=2*pi*khi*(BETA_BACKSCATTERING700_SCALED_STD-BETASW700)';
+         o_preCalibCoef = sprintf('khi=%g, BETASW700 (contribution of pure sea water) is calculated at %d angularDeg', ...
+            KHI_COEF_BACKSCATTER, ANGLE);
+         o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916.';
+
+      case {'BBP700_2_MED'}
+         KHI_COEF_BACKSCATTER = 1.0801;
+         ANGLE = 120;
+         o_param = 'BBP700_2_MED';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700_2';
+         o_paramUnits = 'm-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'BBP700_MED=2*pi*khi*(BETA_BACKSCATTERING700_SCALED_MED-BETASW700)';
+         o_preCalibCoef = sprintf('khi=%g, BETASW700 (contribution of pure sea water) is calculated at %d angularDeg', ...
+            KHI_COEF_BACKSCATTER, ANGLE);
+         o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916.';
+
+      case {'BBP700_3_MED'}
+         KHI_COEF_BACKSCATTER = 1.0801;
+         ANGLE = 120;
+         o_param = 'BBP700_3_MED';
+         o_paramSensor = 'AUX_BACKSCATTERINGMETER_BBP700_3';
+         o_paramUnits = 'm-1';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'BBP700_MED=2*pi*khi*(BETA_BACKSCATTERING700_SCALED_MED-BETASW700)';
+         o_preCalibCoef = sprintf('khi=%g, BETASW700 (contribution of pure sea water) is calculated at %d angularDeg', ...
+            KHI_COEF_BACKSCATTER, ANGLE);
+         o_preCalibComment = 'Sullivan et al., 2012, Zhang et al., 2009, BETASW700 is the contribution by the pure seawater at 700nm, the calculation can be found at http://doi.org/10.17882/42916.';
+
+   end
 end
 
 switch (a_paramName)
@@ -4757,7 +5063,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/30/2016 - RNU - creation
@@ -4767,32 +5073,42 @@ function [o_metaData] = update_parameter_list_chla(a_metaData, a_decoderId)
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamListChla;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 
 paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 133, ...
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 133, 134, 135, 136, 138, 139, 141, ...
          301, 302, 303, ...
-         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130}
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            (any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))) || ...
-            any(strcmp('ECO2', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT)))))
+         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132}
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && any(ismember(g_decArgo_sensorMountedOnFloat, [{'ECO2'} {'ECO3'} {'ECO_FLNTU'}])))
          paramList = [ ...
-               
             {'CHLA'} ...
             {'CHLA_FLUORESCENCE'} ...
             ];
       end
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('CYCLOPS', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('TRIDENTE', g_decArgo_sensorMountedOnFloat) && ~ismember('TRIDENTE2', g_decArgo_sensorMountedOnFloat))
          paramList = [ ...
-            {'FLUORESCENCE_VOLTAGE_CHLA'} ...
-            {'CHLA2'} ...
+            {'CHLA'} ...
             ];
       end
-   case {131, 132}
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('TRIDENTE2', g_decArgo_sensorMountedOnFloat))
+         paramList = [ ...
+            {'CHLA'} ... % from ECO2
+            {'CHLA_FLUORESCENCE'} ... % from ECO2
+            {'CHLA_2'} ...
+            ];
+      end
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('CYCLOPS', g_decArgo_sensorMountedOnFloat))
+         paramList = [ ...
+            {'FLUORESCENCE_VOLTAGE_CHLA'} ...
+            {'CHLA_2'} ...
+            ];
+      end
+   case {131, 132, 137, 140}
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('ECO3', g_decArgo_sensorMountedOnFloat))
          paramList = [ ...
             {'FLUORESCENCE_CHLA'} ...
             {'CHLA'} ...
@@ -4801,7 +5117,7 @@ switch (a_decoderId)
             {'CHLA435'} ...
             ];
       end
-   case {1015, 1101, 1105, 1110, 1111, 1112, 1114}
+   case {1015, 1101, 1105, 1110, 1111, 1112, 1114, 1115}
       paramList = [ ...
          {'FLUORESCENCE_CHLA'} ...
          {'TEMP_CPU_CHLA'} ...
@@ -4830,11 +5146,12 @@ return
 %
 % SYNTAX :
 %  [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
-%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_chla(a_paramName, a_decoderId)
+%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_chla(a_paramName, a_decoderId, a_metaData)
 %
 % INPUT PARAMETERS :
 %   a_paramName : input parameter to be updated
 %   a_decoderId : float decoder Id
+%   a_metaData  : input meta-data
 %
 % OUTPUT PARAMETERS :
 %   o_param           : output updated PARAMETER information
@@ -4849,13 +5166,13 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/30/2016 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
-   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_chla(a_paramName, a_decoderId)
+   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_chla(a_paramName, a_decoderId, a_metaData)
 
 % output parameters initialization
 o_param = '';
@@ -4873,370 +5190,459 @@ global g_decArgo_floatNum;
 % arrays to store calibration information
 global g_decArgo_calibInfo;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
 
-switch (a_decoderId)
-   case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, ...
-         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130}
-      switch (a_paramName)
 
-         case {'FLUORESCENCE_CHLA'}
-            o_param = 'FLUORESCENCE_CHLA';
-            o_paramSensor = 'FLUOROMETER_CHLA';
-            o_paramUnits = 'count';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'none';
-            o_preCalibCoef = 'none';
-            o_preCalibComment = 'Uncalibrated chlorophyll-a fluorescence measurement';
+if ~(~isempty(g_decArgo_sensorMountedOnFloat) && ismember('TRIDENTE', g_decArgo_sensorMountedOnFloat) && ~ismember('TRIDENTE2', g_decArgo_sensorMountedOnFloat))
 
-         case {'CHLA'}
+   switch (a_decoderId)
+      case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, ...
+            121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, ...
+            1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132}
+         switch (a_paramName)
 
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            elseif (isfield(g_decArgo_calibInfo, 'ECO2') && ...
-                  isfield(g_decArgo_calibInfo.ECO2, 'ScaleFactChloroA') && ...
-                  isfield(g_decArgo_calibInfo.ECO2, 'DarkCountChloroA'))
-               scaleFactChloroA = double(g_decArgo_calibInfo.ECO2.ScaleFactChloroA);
-               darkCountChloroA = double(g_decArgo_calibInfo.ECO2.DarkCountChloroA);
-            elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactChloroA') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'DarkCountChloroA'))
-               scaleFactChloroA = double(g_decArgo_calibInfo.ECO3.ScaleFactChloroA);
-               darkCountChloroA = double(g_decArgo_calibInfo.ECO3.DarkCountChloroA);
-            else
-               fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+            case {'FLUORESCENCE_CHLA'}
+               o_param = 'FLUORESCENCE_CHLA';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'count';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'none';
+               o_preCalibCoef = 'none';
+               o_preCalibComment = 'Uncalibrated chlorophyll-a fluorescence measurement';
 
-            o_param = 'CHLA';
-            o_paramSensor = 'FLUOROMETER_CHLA';
-            o_paramUnits = 'mg/m3';
-            o_paramAccuracy = '0.08 mg/m3';
-            o_paramResolution = '0.025 mg/m3';
-            o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
-            o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
-               scaleFactChloroA, darkCountChloroA);
-            o_preCalibComment = '';
+            case {'CHLA'}
 
-         case {'CHLA_FLUORESCENCE'}
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo))
+                  fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               elseif (isfield(g_decArgo_calibInfo, 'ECO2') && ...
+                     isfield(g_decArgo_calibInfo.ECO2, 'ScaleFactChloroA') && ...
+                     isfield(g_decArgo_calibInfo.ECO2, 'DarkCountChloroA'))
+                  scaleFactChloroA = double(g_decArgo_calibInfo.ECO2.ScaleFactChloroA);
+                  darkCountChloroA = double(g_decArgo_calibInfo.ECO2.DarkCountChloroA);
+               elseif (isfield(g_decArgo_calibInfo, 'ECO_FLNTU') && ...
+                     isfield(g_decArgo_calibInfo.ECO_FLNTU, 'ScaleFactChloroA') && ...
+                     isfield(g_decArgo_calibInfo.ECO_FLNTU, 'DarkCountChloroA'))
+                  scaleFactChloroA = double(g_decArgo_calibInfo.ECO_FLNTU.ScaleFactChloroA);
+                  darkCountChloroA = double(g_decArgo_calibInfo.ECO_FLNTU.DarkCountChloroA);
+               elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactChloroA') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'DarkCountChloroA'))
+                  scaleFactChloroA = double(g_decArgo_calibInfo.ECO3.ScaleFactChloroA);
+                  darkCountChloroA = double(g_decArgo_calibInfo.ECO3.DarkCountChloroA);
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
 
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            elseif (isfield(g_decArgo_calibInfo, 'ECO2') && ...
-                  isfield(g_decArgo_calibInfo.ECO2, 'ScaleFactChloroA') && ...
-                  isfield(g_decArgo_calibInfo.ECO2, 'DarkCountChloroA'))
-               scaleFactChloroA = double(g_decArgo_calibInfo.ECO2.ScaleFactChloroA);
-               darkCountChloroA = double(g_decArgo_calibInfo.ECO2.DarkCountChloroA);
-            elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactChloroA') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'DarkCountChloroA'))
-               scaleFactChloroA = double(g_decArgo_calibInfo.ECO3.ScaleFactChloroA);
-               darkCountChloroA = double(g_decArgo_calibInfo.ECO3.DarkCountChloroA);
-            else
-               fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+               o_param = 'CHLA';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'mg/m3';
+               o_paramAccuracy = '0.08 mg/m3';
+               o_paramResolution = '0.025 mg/m3';
+               o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
+               o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
+                  scaleFactChloroA, darkCountChloroA);
+               o_preCalibComment = '';
 
-            o_param = 'CHLA_FLUORESCENCE';
-            o_paramSensor = 'FLUOROMETER_CHLA';
-            o_paramUnits = 'ru';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'CHLA_FLUORESCENCE=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
-            o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
-               scaleFactChloroA, darkCountChloroA);
-            o_preCalibComment = '';
+            case {'CHLA_FLUORESCENCE'}
 
-         case {'FLUORESCENCE_CHLA435'}
-            o_param = 'FLUORESCENCE_CHLA435';
-            o_paramSensor = 'AUX_FLUOROMETER_CHLA435';
-            o_paramUnits = 'count';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'none';
-            o_preCalibCoef = 'none';
-            o_preCalibComment = 'Uncalibrated chlorophyll-a at 435 nanometers fluorescence measurement';
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo))
+                  fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               elseif (isfield(g_decArgo_calibInfo, 'ECO2') && ...
+                     isfield(g_decArgo_calibInfo.ECO2, 'ScaleFactChloroA') && ...
+                     isfield(g_decArgo_calibInfo.ECO2, 'DarkCountChloroA'))
+                  scaleFactChloroA = double(g_decArgo_calibInfo.ECO2.ScaleFactChloroA);
+                  darkCountChloroA = double(g_decArgo_calibInfo.ECO2.DarkCountChloroA);
+               elseif (isfield(g_decArgo_calibInfo, 'ECO_FLNTU') && ...
+                     isfield(g_decArgo_calibInfo.ECO_FLNTU, 'ScaleFactChloroA') && ...
+                     isfield(g_decArgo_calibInfo.ECO_FLNTU, 'DarkCountChloroA'))
+                  scaleFactChloroA = double(g_decArgo_calibInfo.ECO_FLNTU.ScaleFactChloroA);
+                  darkCountChloroA = double(g_decArgo_calibInfo.ECO_FLNTU.DarkCountChloroA);
+               elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactChloroA') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'DarkCountChloroA'))
+                  scaleFactChloroA = double(g_decArgo_calibInfo.ECO3.ScaleFactChloroA);
+                  darkCountChloroA = double(g_decArgo_calibInfo.ECO3.DarkCountChloroA);
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
 
-         case {'CHLA435'}
+               o_param = 'CHLA_FLUORESCENCE';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'ru';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'CHLA_FLUORESCENCE=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
+               o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
+                  scaleFactChloroA, darkCountChloroA);
+               o_preCalibComment = '';
 
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing CHLA435 calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactChloroA435') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'DarkCountChloroA435'))
-               scaleFactChloroA435 = double(g_decArgo_calibInfo.ECO3.ScaleFactChloroA435);
-               darkCountChloroA435 = double(g_decArgo_calibInfo.ECO3.DarkCountChloroA435);
-            else
-               fprintf('ERROR: Float #%d: inconsistent CHLA435 calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+            case {'FLUORESCENCE_CHLA435'}
+               o_param = 'FLUORESCENCE_CHLA435';
+               o_paramSensor = 'AUX_FLUOROMETER_CHLA435';
+               o_paramUnits = 'count';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'none';
+               o_preCalibCoef = 'none';
+               o_preCalibComment = 'Uncalibrated chlorophyll-a at 435 nanometers fluorescence measurement';
 
-            o_param = 'CHLA435';
-            o_paramSensor = 'AUX_FLUOROMETER_CHLA435';
-            o_paramUnits = 'mg/m3';
-            o_paramAccuracy = '0.08 mg/m3';
-            o_paramResolution = '0.025 mg/m3';
-            o_preCalibEq = 'CHLA435=(FLUORESCENCE_CHLA435-DARK_CHLA435)*SCALE_CHLA435';
-            o_preCalibCoef = sprintf('SCALE_CHLA435=%g, DARK_CHLA435=%g', ...
-               scaleFactChloroA435, darkCountChloroA435);
-            o_preCalibComment = '';
+            case {'CHLA435'}
 
-      end
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo))
+                  fprintf('ERROR: Float #%d: missing CHLA435 calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactChloroA435') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'DarkCountChloroA435'))
+                  scaleFactChloroA435 = double(g_decArgo_calibInfo.ECO3.ScaleFactChloroA435);
+                  darkCountChloroA435 = double(g_decArgo_calibInfo.ECO3.DarkCountChloroA435);
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CHLA435 calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
 
-   case {302, 303}
-      switch (a_paramName)
+               o_param = 'CHLA435';
+               o_paramSensor = 'AUX_FLUOROMETER_CHLA435';
+               o_paramUnits = 'mg/m3';
+               o_paramAccuracy = '0.08 mg/m3';
+               o_paramResolution = '0.025 mg/m3';
+               o_preCalibEq = 'CHLA435=(FLUORESCENCE_CHLA435-DARK_CHLA435)*SCALE_CHLA435';
+               o_preCalibCoef = sprintf('SCALE_CHLA435=%g, DARK_CHLA435=%g', ...
+                  scaleFactChloroA435, darkCountChloroA435);
+               o_preCalibComment = '';
 
-         case {'FLUORESCENCE_CHLA'}
-            o_param = 'FLUORESCENCE_CHLA';
-            o_paramSensor = 'FLUOROMETER_CHLA';
-            o_paramUnits = 'count';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'none';
-            o_preCalibCoef = 'none';
-            o_preCalibComment = 'Uncalibrated chlorophyll-a fluorescence measurement';
+         end
 
-         case {'CHLA'}
+      case {302, 303}
+         switch (a_paramName)
 
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            elseif (isfield(g_decArgo_calibInfo, 'FLNTU') && ...
-                  isfield(g_decArgo_calibInfo.FLNTU, 'ScaleFactChloroA') && ...
-                  isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA'))
-               scaleFactChloroA = double(g_decArgo_calibInfo.FLNTU.ScaleFactChloroA);
-               darkCountChloroA = double(g_decArgo_calibInfo.FLNTU.DarkCountChloroA);
-            else
-               fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+            case {'FLUORESCENCE_CHLA'}
+               o_param = 'FLUORESCENCE_CHLA';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'count';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'none';
+               o_preCalibCoef = 'none';
+               o_preCalibComment = 'Uncalibrated chlorophyll-a fluorescence measurement';
 
-            o_param = 'CHLA';
-            o_paramSensor = 'FLUOROMETER_CHLA';
-            o_paramUnits = 'mg/m3';
-            o_paramAccuracy = '0.08 mg/m3';
-            o_paramResolution = '0.025 mg/m3';
-            o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
-            o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
-               scaleFactChloroA, darkCountChloroA);
-            o_preCalibComment = '';
+            case {'CHLA'}
 
-         case {'CHLA_FLUORESCENCE'}
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo))
+                  fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               elseif (isfield(g_decArgo_calibInfo, 'FLNTU') && ...
+                     isfield(g_decArgo_calibInfo.FLNTU, 'ScaleFactChloroA') && ...
+                     isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA'))
+                  scaleFactChloroA = double(g_decArgo_calibInfo.FLNTU.ScaleFactChloroA);
+                  darkCountChloroA = double(g_decArgo_calibInfo.FLNTU.DarkCountChloroA);
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
 
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            elseif (isfield(g_decArgo_calibInfo, 'FLNTU') && ...
-                  isfield(g_decArgo_calibInfo.FLNTU, 'ScaleFactChloroA') && ...
-                  isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA'))
-               scaleFactChloroA = double(g_decArgo_calibInfo.FLNTU.ScaleFactChloroA);
-               darkCountChloroA = double(g_decArgo_calibInfo.FLNTU.DarkCountChloroA);
-            else
-               fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+               o_param = 'CHLA';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'mg/m3';
+               o_paramAccuracy = '0.08 mg/m3';
+               o_paramResolution = '0.025 mg/m3';
+               o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
+               o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
+                  scaleFactChloroA, darkCountChloroA);
+               o_preCalibComment = '';
 
-            o_param = 'CHLA_FLUORESCENCE';
-            o_paramSensor = 'FLUOROMETER_CHLA';
-            o_paramUnits = 'ru';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'CHLA_FLUORESCENCE=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
-            o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
-               scaleFactChloroA, darkCountChloroA);
-            o_preCalibComment = '';
+            case {'CHLA_FLUORESCENCE'}
 
-      end
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo))
+                  fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               elseif (isfield(g_decArgo_calibInfo, 'FLNTU') && ...
+                     isfield(g_decArgo_calibInfo.FLNTU, 'ScaleFactChloroA') && ...
+                     isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA'))
+                  scaleFactChloroA = double(g_decArgo_calibInfo.FLNTU.ScaleFactChloroA);
+                  darkCountChloroA = double(g_decArgo_calibInfo.FLNTU.DarkCountChloroA);
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
 
-   case {301, 1015, 1101, 1105, 1110, 1111, 1112, 1114}
-      switch (a_paramName)
+               o_param = 'CHLA_FLUORESCENCE';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'ru';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'CHLA_FLUORESCENCE=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
+               o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
+                  scaleFactChloroA, darkCountChloroA);
+               o_preCalibComment = '';
 
-         case {'FLUORESCENCE_CHLA'}
-            o_param = 'FLUORESCENCE_CHLA';
-            o_paramSensor = 'FLUOROMETER_CHLA';
-            o_paramUnits = 'count';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'none';
-            o_preCalibCoef = 'none';
-            o_preCalibComment = 'Uncalibrated chlorophyll-a fluorescence measurement';
+         end
 
-         case {'TEMP_CPU_CHLA'}
-            o_param = 'TEMP_CPU_CHLA';
-            o_paramSensor = 'FLUOROMETER_CHLA';
-            o_paramUnits = 'count';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'none';
-            o_preCalibCoef = 'none';
-            o_preCalibComment = 'Thermistor signal from backscattering sensor';
+      case {301, 1015, 1101, 1105, 1110, 1111, 1112, 1114, 1115}
+         switch (a_paramName)
 
-         case {'CHLA'}
+            case {'FLUORESCENCE_CHLA'}
+               o_param = 'FLUORESCENCE_CHLA';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'count';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'none';
+               o_preCalibCoef = 'none';
+               o_preCalibComment = 'Uncalibrated chlorophyll-a fluorescence measurement';
 
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            elseif (isfield(g_decArgo_calibInfo, 'FLBB') && ...
-                  isfield(g_decArgo_calibInfo.FLBB, 'ScaleFactChloroA') && ...
-                  isfield(g_decArgo_calibInfo.FLBB, 'DarkCountChloroA'))
-               scaleFactChloroA = double(g_decArgo_calibInfo.FLBB.ScaleFactChloroA);
-               darkCountChloroA = double(g_decArgo_calibInfo.FLBB.DarkCountChloroA);
-            else
-               fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+            case {'TEMP_CPU_CHLA'}
+               o_param = 'TEMP_CPU_CHLA';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'count';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'none';
+               o_preCalibCoef = 'none';
+               o_preCalibComment = 'Thermistor signal from backscattering sensor';
 
-            o_param = 'CHLA';
-            o_paramSensor = 'FLUOROMETER_CHLA';
-            o_paramUnits = 'mg/m3';
-            o_paramAccuracy = '0.08 mg/m3';
-            o_paramResolution = '0.025 mg/m3';
-            o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
-            o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
-               scaleFactChloroA, darkCountChloroA);
-            o_preCalibComment = '';
+            case {'CHLA'}
 
-         case {'CHLA_FLUORESCENCE'}
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo))
+                  fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               elseif (isfield(g_decArgo_calibInfo, 'FLBB') && ...
+                     isfield(g_decArgo_calibInfo.FLBB, 'ScaleFactChloroA') && ...
+                     isfield(g_decArgo_calibInfo.FLBB, 'DarkCountChloroA'))
+                  scaleFactChloroA = double(g_decArgo_calibInfo.FLBB.ScaleFactChloroA);
+                  darkCountChloroA = double(g_decArgo_calibInfo.FLBB.DarkCountChloroA);
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
 
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            elseif (isfield(g_decArgo_calibInfo, 'FLBB') && ...
-                  isfield(g_decArgo_calibInfo.FLBB, 'ScaleFactChloroA') && ...
-                  isfield(g_decArgo_calibInfo.FLBB, 'DarkCountChloroA'))
-               scaleFactChloroA = double(g_decArgo_calibInfo.FLBB.ScaleFactChloroA);
-               darkCountChloroA = double(g_decArgo_calibInfo.FLBB.DarkCountChloroA);
-            else
-               fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+               o_param = 'CHLA';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'mg/m3';
+               o_paramAccuracy = '0.08 mg/m3';
+               o_paramResolution = '0.025 mg/m3';
+               o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
+               o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
+                  scaleFactChloroA, darkCountChloroA);
+               o_preCalibComment = '';
 
-            o_param = 'CHLA_FLUORESCENCE';
-            o_paramSensor = 'FLUOROMETER_CHLA';
-            o_paramUnits = 'ru';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'CHLA_FLUORESCENCE=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
-            o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
-               scaleFactChloroA, darkCountChloroA);
-            o_preCalibComment = '';
-            
-         case {'FLUORESCENCE_VOLTAGE_CHLA'}
-            o_param = 'FLUORESCENCE_VOLTAGE_CHLA';
-            o_paramSensor = 'FLUOROMETER_CHLA2';
-            o_paramUnits = 'volt';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'n/a';
-            o_preCalibCoef = 'n/a';
-            o_preCalibComment = '';
+            case {'CHLA_FLUORESCENCE'}
 
-         case {'CHLA2'}
-            o_param = 'CHLA2';
-            o_paramSensor = 'FLUOROMETER_CHLA2';
-            o_paramUnits = 'mg/m3';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'n/a';
-            o_preCalibCoef = 'n/a';
-            o_preCalibComment = '';
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo))
+                  fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               elseif (isfield(g_decArgo_calibInfo, 'FLBB') && ...
+                     isfield(g_decArgo_calibInfo.FLBB, 'ScaleFactChloroA') && ...
+                     isfield(g_decArgo_calibInfo.FLBB, 'DarkCountChloroA'))
+                  scaleFactChloroA = double(g_decArgo_calibInfo.FLBB.ScaleFactChloroA);
+                  darkCountChloroA = double(g_decArgo_calibInfo.FLBB.DarkCountChloroA);
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
 
-      end
+               o_param = 'CHLA_FLUORESCENCE';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'ru';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'CHLA_FLUORESCENCE=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
+               o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
+                  scaleFactChloroA, darkCountChloroA);
+               o_preCalibComment = '';
 
-   case {1014}
-      switch (a_paramName)
+            case {'FLUORESCENCE_VOLTAGE_CHLA'}
+               o_param = 'FLUORESCENCE_VOLTAGE_CHLA';
+               o_paramSensor = 'FLUOROMETER_CHLA_2';
+               o_paramUnits = 'volt';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'n/a';
+               o_preCalibCoef = 'n/a';
+               o_preCalibComment = '';
 
-         case {'FLUORESCENCE_CHLA'}
-            o_param = 'FLUORESCENCE_CHLA';
-            o_paramSensor = 'FLUOROMETER_CHLA';
-            o_paramUnits = 'count';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'none';
-            o_preCalibCoef = 'none';
-            o_preCalibComment = 'Uncalibrated chlorophyll-a fluorescence measurement';
+            case {'CHLA_2'}
+               o_param = 'CHLA_2';
+               o_paramSensor = 'FLUOROMETER_CHLA_2';
+               o_paramUnits = 'mg/m3';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'n/a';
+               o_preCalibCoef = 'n/a';
+               o_preCalibComment = '';
 
-         case {'CHLA'}
+         end
 
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            elseif (isfield(g_decArgo_calibInfo, 'FLNTU') && ...
-                  isfield(g_decArgo_calibInfo.FLNTU, 'ScaleFactChloroA') && ...
-                  isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA'))
-               scaleFactChloroA = double(g_decArgo_calibInfo.FLNTU.ScaleFactChloroA);
-               darkCountChloroA = double(g_decArgo_calibInfo.FLNTU.DarkCountChloroA);
-            else
-               fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+      case {1014}
+         switch (a_paramName)
 
-            o_param = 'CHLA';
-            o_paramSensor = 'FLUOROMETER_CHLA';
-            o_paramUnits = 'mg/m3';
-            o_paramAccuracy = '0.08 mg/m3';
-            o_paramResolution = '0.025 mg/m3';
-            o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
-            o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
-               scaleFactChloroA, darkCountChloroA);
-            o_preCalibComment = '';
+            case {'FLUORESCENCE_CHLA'}
+               o_param = 'FLUORESCENCE_CHLA';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'count';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'none';
+               o_preCalibCoef = 'none';
+               o_preCalibComment = 'Uncalibrated chlorophyll-a fluorescence measurement';
 
-         case {'CHLA_FLUORESCENCE'}
+            case {'CHLA'}
 
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            elseif (isfield(g_decArgo_calibInfo, 'FLNTU') && ...
-                  isfield(g_decArgo_calibInfo.FLNTU, 'ScaleFactChloroA') && ...
-                  isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA'))
-               scaleFactChloroA = double(g_decArgo_calibInfo.FLNTU.ScaleFactChloroA);
-               darkCountChloroA = double(g_decArgo_calibInfo.FLNTU.DarkCountChloroA);
-            else
-               fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo))
+                  fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               elseif (isfield(g_decArgo_calibInfo, 'FLNTU') && ...
+                     isfield(g_decArgo_calibInfo.FLNTU, 'ScaleFactChloroA') && ...
+                     isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA'))
+                  scaleFactChloroA = double(g_decArgo_calibInfo.FLNTU.ScaleFactChloroA);
+                  darkCountChloroA = double(g_decArgo_calibInfo.FLNTU.DarkCountChloroA);
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
 
-            o_param = 'CHLA_FLUORESCENCE';
-            o_paramSensor = 'FLUOROMETER_CHLA';
-            o_paramUnits = 'ru';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'CHLA_FLUORESCENCE=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
-            o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
-               scaleFactChloroA, darkCountChloroA);
-            o_preCalibComment = '';
-      end
+               o_param = 'CHLA';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'mg/m3';
+               o_paramAccuracy = '0.08 mg/m3';
+               o_paramResolution = '0.025 mg/m3';
+               o_preCalibEq = 'CHLA=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
+               o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
+                  scaleFactChloroA, darkCountChloroA);
+               o_preCalibComment = '';
+
+            case {'CHLA_FLUORESCENCE'}
+
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo))
+                  fprintf('ERROR: Float #%d: missing CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               elseif (isfield(g_decArgo_calibInfo, 'FLNTU') && ...
+                     isfield(g_decArgo_calibInfo.FLNTU, 'ScaleFactChloroA') && ...
+                     isfield(g_decArgo_calibInfo.FLNTU, 'DarkCountChloroA'))
+                  scaleFactChloroA = double(g_decArgo_calibInfo.FLNTU.ScaleFactChloroA);
+                  darkCountChloroA = double(g_decArgo_calibInfo.FLNTU.DarkCountChloroA);
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CHLA calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
+
+               o_param = 'CHLA_FLUORESCENCE';
+               o_paramSensor = 'FLUOROMETER_CHLA';
+               o_paramUnits = 'ru';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'CHLA_FLUORESCENCE=(FLUORESCENCE_CHLA-DARK_CHLA)*SCALE_CHLA';
+               o_preCalibCoef = sprintf('SCALE_CHLA=%g, DARK_CHLA=%g', ...
+                  scaleFactChloroA, darkCountChloroA);
+               o_preCalibComment = '';
+         end
+   end
+
+else % TRIDENTE sensor
+
+   switch (a_paramName)
+
+      case {'CHLA'}
+         o_param = 'CHLA';
+         o_paramSensor = 'AUX_FLUOROMETER_CHLA';
+         o_paramUnits = 'mg/m3';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'n/a';
+         o_preCalibCoef = 'n/a';
+         o_preCalibComment = '';
+
+      case {'CHLA_STD'}
+         o_param = 'CHLA_STD';
+         o_paramSensor = 'AUX_FLUOROMETER_CHLA';
+         o_paramUnits = 'mg/m3';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'n/a';
+         o_preCalibCoef = 'n/a';
+         o_preCalibComment = '';
+
+      case {'CHLA_MED'}
+         o_param = 'CHLA_MED';
+         o_paramSensor = 'AUX_FLUOROMETER_CHLA';
+         o_paramUnits = 'mg/m3';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'n/a';
+         o_preCalibCoef = 'n/a';
+         o_preCalibComment = '';
+
+   end
+end
+
+if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('TRIDENTE2', g_decArgo_sensorMountedOnFloat))
+
+   switch (a_paramName)
+
+      case {'CHLA_2'}
+         o_param = 'CHLA_2';
+         o_paramSensor = 'AUX_FLUOROMETER_CHLA_2';
+         o_paramUnits = 'mg/m3';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'n/a';
+         o_preCalibCoef = 'n/a';
+         o_preCalibComment = '';
+
+      case {'CHLA_2_STD'}
+         o_param = 'CHLA_2_STD';
+         o_paramSensor = 'AUX_FLUOROMETER_CHLA_2';
+         o_paramUnits = 'mg/m3';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'n/a';
+         o_preCalibCoef = 'n/a';
+         o_preCalibComment = '';
+
+      case {'CHLA_2_MED'}
+         o_param = 'CHLA_2_MED';
+         o_paramSensor = 'AUX_FLUOROMETER_CHLA_2';
+         o_paramUnits = 'mg/m3';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'n/a';
+         o_preCalibCoef = 'n/a';
+         o_preCalibComment = '';
+
+   end
 end
 
 switch (a_paramName)
@@ -5301,7 +5707,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/24/2017 - RNU - creation
@@ -5311,14 +5717,16 @@ function [o_metaData] = update_parameter_list_cdom(a_metaData, a_decoderId)
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamListCdom;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 
 paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 110, 111, 112, 113, 114, 116, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, ...
-         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130}
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('ECO3', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 134, 135, 136, 138, 139, 141, ...
+         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132}
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('ECO3', g_decArgo_sensorMountedOnFloat))
          paramList = [ ...
             {'FLUORESCENCE_CDOM'} ...
             {'CDOM'} ...
@@ -5340,11 +5748,12 @@ return
 %
 % SYNTAX :
 %  [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
-%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_cdom(a_paramName, a_decoderId)
+%    o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_cdom(a_paramName, a_decoderId, a_metaData)
 %
 % INPUT PARAMETERS :
 %   a_paramName : input parameter to be updated
 %   a_decoderId : float decoder Id
+%   a_metaData  : input meta-data
 %
 % OUTPUT PARAMETERS :
 %   o_param           : output updated PARAMETER information
@@ -5359,13 +5768,13 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/24/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_param, o_paramSensor, o_paramUnits, o_paramAccuracy, o_paramResolution, ...
-   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_cdom(a_paramName, a_decoderId)
+   o_preCalibEq, o_preCalibCoef, o_preCalibComment] = get_meta_data_cdom(a_paramName, a_decoderId, a_metaData)
 
 % output parameters initialization
 o_param = '';
@@ -5383,53 +5792,94 @@ global g_decArgo_floatNum;
 % arrays to store calibration information
 global g_decArgo_calibInfo;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
 
-switch (a_decoderId)
-   case {105, 106, 107, 110, 111, 112, 113, 114, 116, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, ...
-         1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130}
-      switch (a_paramName)
 
-         case {'FLUORESCENCE_CDOM'}
-            o_param = 'FLUORESCENCE_CDOM';
-            o_paramSensor = 'FLUOROMETER_CDOM';
-            o_paramUnits = 'count';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'none';
-            o_preCalibCoef = 'none';
-            o_preCalibComment = 'Uncalibrated fluorescence from coloured dissolved organic matter sensor';
+if ~(~isempty(g_decArgo_sensorMountedOnFloat) && ismember('TRIDENTE', g_decArgo_sensorMountedOnFloat) && ~ismember('TRIDENTE2', g_decArgo_sensorMountedOnFloat))
 
-         case {'CDOM'}
+   switch (a_decoderId)
+      case {105, 106, 107, 110, 111, 112, 113, 114, 116, ...
+            121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 134, 135, 136, 138, 139, 141, ...
+            1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132}
+         switch (a_paramName)
 
-            % get calibration information
-            if (isempty(g_decArgo_calibInfo))
-               fprintf('ERROR: Float #%d: missing CDOM calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactCDOM') && ...
-                  isfield(g_decArgo_calibInfo.ECO3, 'DarkCountCDOM'))
-               scaleFactCDOM = double(g_decArgo_calibInfo.ECO3.ScaleFactCDOM);
-               darkCountCDOM = double(g_decArgo_calibInfo.ECO3.DarkCountCDOM);
-            else
-               fprintf('ERROR: Float #%d: inconsistent CDOM calibration information\n', ...
-                  g_decArgo_floatNum);
-               return
-            end
+            case {'FLUORESCENCE_CDOM'}
+               o_param = 'FLUORESCENCE_CDOM';
+               o_paramSensor = 'FLUOROMETER_CDOM';
+               o_paramUnits = 'count';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'none';
+               o_preCalibCoef = 'none';
+               o_preCalibComment = 'Uncalibrated fluorescence from coloured dissolved organic matter sensor';
 
-            o_param = 'CDOM';
-            o_paramSensor = 'FLUOROMETER_CDOM';
-            o_paramUnits = 'ppb';
-            o_paramAccuracy = '';
-            o_paramResolution = '';
-            o_preCalibEq = 'CDOM=(FLUORESCENCE_CDOM-DARK_CDOM)*SCALE_CDOM';
-            o_preCalibCoef = sprintf('SCALE_CDOM=%g, DARK_CDOM=%g', ...
-               scaleFactCDOM, darkCountCDOM);
-            o_preCalibComment = '';
+            case {'CDOM'}
 
-      end
+               % get calibration information
+               if (isempty(g_decArgo_calibInfo))
+                  fprintf('ERROR: Float #%d: missing CDOM calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               elseif (isfield(g_decArgo_calibInfo, 'ECO3') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'ScaleFactCDOM') && ...
+                     isfield(g_decArgo_calibInfo.ECO3, 'DarkCountCDOM'))
+                  scaleFactCDOM = double(g_decArgo_calibInfo.ECO3.ScaleFactCDOM);
+                  darkCountCDOM = double(g_decArgo_calibInfo.ECO3.DarkCountCDOM);
+               else
+                  fprintf('ERROR: Float #%d: inconsistent CDOM calibration information\n', ...
+                     g_decArgo_floatNum);
+                  return
+               end
 
+               o_param = 'CDOM';
+               o_paramSensor = 'FLUOROMETER_CDOM';
+               o_paramUnits = 'ppb';
+               o_paramAccuracy = '';
+               o_paramResolution = '';
+               o_preCalibEq = 'CDOM=(FLUORESCENCE_CDOM-DARK_CDOM)*SCALE_CDOM';
+               o_preCalibCoef = sprintf('SCALE_CDOM=%g, DARK_CDOM=%g', ...
+                  scaleFactCDOM, darkCountCDOM);
+               o_preCalibComment = '';
+
+         end
+   end
+
+else % TRIDENTE sensor
+
+   switch (a_paramName)
+
+      case {'CDOM'}
+         o_param = 'CDOM';
+         o_paramSensor = 'AUX_FLUOROMETER_CDOM';
+         o_paramUnits = 'ppb';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'n/a';
+         o_preCalibCoef = 'n/a';
+         o_preCalibComment = '';
+
+      case {'CDOM_STD'}
+         o_param = 'CDOM_STD';
+         o_paramSensor = 'AUX_FLUOROMETER_CDOM';
+         o_paramUnits = 'ppb';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'n/a';
+         o_preCalibCoef = 'n/a';
+         o_preCalibComment = '';
+
+      case {'CDOM_MED'}
+         o_param = 'CDOM_MED';
+         o_paramSensor = 'AUX_FLUOROMETER_CDOM';
+         o_paramUnits = 'ppb';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'n/a';
+         o_preCalibCoef = 'n/a';
+         o_preCalibComment = '';
+
+   end
 end
 
 switch (a_paramName)
@@ -5474,20 +5924,22 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/27/2016 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_metaData] = update_parameter_list_nitrate(a_metaData, a_decoderId)
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
+
 paramList = [];
 switch (a_decoderId)
    case {105, 106, 107, 109, 111, 112, 114, 115, ...
-         121, 122, 123, 124, 125, 126, 128, 129, 130, 131, 132, 133}
-      % check that a SUNA sensor is mounted on the float
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp(struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT), 'SUNA')))
+         121, 122, 123, 124, 125, 126, 128, 129, 130, 131, 132, 133, 135, 138, 139, 140}
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('SUNA', g_decArgo_sensorMountedOnFloat))
          paramList = [ ...
             {'UV_INTENSITY_NITRATE'} ...
             {'UV_INTENSITY_DARK_NITRATE'} ...
@@ -5499,10 +5951,8 @@ switch (a_decoderId)
             {'HUMIDITY_NITRATE'} ...
             ];
       end
-   case {110, 113, 116, 127}
-      % check that a SUNA sensor is mounted on the float
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp(struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT), 'SUNA')))
+   case {110, 113, 116, 127, 134, 136, 137, 141}
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('SUNA', g_decArgo_sensorMountedOnFloat))
          paramList = [ ...
             {'UV_INTENSITY_NITRATE'} ...
             {'UV_INTENSITY_DARK_NITRATE'} ...
@@ -5546,7 +5996,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/27/2016 - RNU - creation
@@ -5581,7 +6031,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 
 switch (a_decoderId)
    case {105, 106, 107, 109, 110, 111, 112, 113, 114, 115, 116, ...
-         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133}
+         121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
       switch (a_paramName)
 
          case {'UV_INTENSITY_NITRATE'}
@@ -5616,7 +6066,7 @@ switch (a_decoderId)
 
          case {'NITRATE'}
 
-            if (~ismember(a_decoderId, [110, 113, 116, 127]))
+            if (~ismember(a_decoderId, [110, 113, 116, 127, 134, 136]))
 
                % get calibration information
                if (isempty(g_decArgo_calibInfo))
@@ -6147,7 +6597,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/23/2018 - RNU - creation
@@ -6157,12 +6607,14 @@ function [o_metaData] = update_parameter_list_ph(a_metaData, a_decoderId)
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamListPh;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 
 paramList = [];
 switch (a_decoderId)
    case {121, 122, 123, 124, 125}
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('TRANSISTOR_PH', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('TRANSISTOR_PH', g_decArgo_sensorMountedOnFloat))
          paramList = [ ...
             {'VRS_PH'} ...
             {'VK_PH'} ...
@@ -6172,11 +6624,10 @@ switch (a_decoderId)
             {'PH_IN_SITU_TOTAL'} ...
             ];
       end
-   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, ...
+   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132, ...
          111, 113, 114, 115, 116, ...
-         126, 127, 128}
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('TRANSISTOR_PH', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+         126, 127, 128, 134, 136}
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('TRANSISTOR_PH', g_decArgo_sensorMountedOnFloat))
          paramList = [ ...
             {'VRS_PH'} ...
             {'PH_IN_SITU_FREE'} ...
@@ -6218,7 +6669,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/23/2018 - RNU - creation
@@ -6244,7 +6695,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133}
+   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
       switch (a_paramName)
 
          case {'VRS_PH'}
@@ -6296,8 +6747,11 @@ switch (a_decoderId)
                fprintf('WARNING: Float #%d: missing PH_IN_SITU_FREE calibration information\n', ...
                   g_decArgo_floatNum);
                return
-            elseif ((isfield(g_decArgo_calibInfo, 'TRANSISTOR_PH')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k0')) && ...
+            elseif (~isfield(g_decArgo_calibInfo, 'TRANSISTOR_PH'))
+               fprintf('WARNING: Float #%d: missing PH_IN_SITU_FREE calibration information\n', ...
+                  g_decArgo_floatNum);
+               return
+            elseif ((isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k0')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k2')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f0')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f1')) && ...
@@ -6330,13 +6784,7 @@ switch (a_decoderId)
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f3')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f4')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f5')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f6')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f7')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f8')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f9')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f10')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f11')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f12')))
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f6')))
                transPhK0 = double(g_decArgo_calibInfo.TRANSISTOR_PH.k0);
                transPhK2F0 = double(g_decArgo_calibInfo.TRANSISTOR_PH.k2f0);
                transPhK2F1 = double(g_decArgo_calibInfo.TRANSISTOR_PH.k2f1);
@@ -6349,12 +6797,30 @@ switch (a_decoderId)
                transPhF4 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f4);
                transPhF5 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f5);
                transPhF6 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f6);
-               transPhF7 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f7);
-               transPhF8 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f8);
-               transPhF9 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f9);
-               transPhF10 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f10);
-               transPhF11 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f11);
-               transPhF12 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f12);
+               transPhF7 = [];
+               transPhF8 = [];
+               transPhF9 = [];
+               transPhF10 = [];
+               transPhF11 = [];
+               transPhF12 = [];
+               if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f7'))
+                  transPhF7 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f7);
+                  if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f8'))
+                     transPhF8 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f8);
+                     if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f9'))
+                        transPhF9 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f9);
+                        if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f10'))
+                           transPhF10 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f10);
+                           if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f11'))
+                              transPhF11 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f11);
+                              if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f12'))
+                                 transPhF12 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f12);
+                              end
+                           end
+                        end
+                     end
+                  end
+               end
             else
                fprintf('ERROR: Float #%d: inconsistent PH_IN_SITU_FREE calibration information\n', ...
                   g_decArgo_floatNum);
@@ -6379,11 +6845,19 @@ switch (a_decoderId)
                      transPhF1, transPhF2, transPhF3, transPhF4);
                end
             else
-               o_preCalibEq = 'k2cor=k2f0+k2f1*PRES+k2f2*PRES^2+k2f3*PRES^3;k0T=k0+k2cor*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4+f5*PRES^5+f6*PRES^6+f7*PRES^7+f8*PRES^8+f9*PRES^9+f10*PRES^10+f11*PRES^11+f12*PRES^12; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
-               o_preCalibCoef = sprintf('R=8.31446; F=96485; k2f0=%g, k2f1=%g, k2f2=%g, k2f3=%g; k0=%g; f1=%g, f2=%g, f3=%g, f4=%g, f5=%g, f6=%g, f7=%g, f8=%g, f9=%g, f10=%g, f11=%g, f12=%g', ...
-                  transPhK2F0, transPhK2F1, transPhK2F2, transPhK2F3, ...
-                  transPhK0, ...
-                  transPhF1, transPhF2, transPhF3, transPhF4, transPhF5, transPhF6, transPhF7, transPhF8, transPhF9, transPhF10, transPhF11, transPhF12);
+               if (~isempty(transPhF7))
+                  o_preCalibEq = 'k2cor=k2f0+k2f1*PRES+k2f2*PRES^2+k2f3*PRES^3;k0T=k0+k2cor*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4+f5*PRES^5+f6*PRES^6+f7*PRES^7+f8*PRES^8+f9*PRES^9+f10*PRES^10+f11*PRES^11+f12*PRES^12; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
+                  o_preCalibCoef = sprintf('R=8.31446; F=96485; k2f0=%g, k2f1=%g, k2f2=%g, k2f3=%g; k0=%g; f1=%g, f2=%g, f3=%g, f4=%g, f5=%g, f6=%g, f7=%g, f8=%g, f9=%g, f10=%g, f11=%g, f12=%g', ...
+                     transPhK2F0, transPhK2F1, transPhK2F2, transPhK2F3, ...
+                     transPhK0, ...
+                     transPhF1, transPhF2, transPhF3, transPhF4, transPhF5, transPhF6, transPhF7, transPhF8, transPhF9, transPhF10, transPhF11, transPhF12);
+               else
+                  o_preCalibEq = 'k2cor=k2f0+k2f1*PRES+k2f2*PRES^2+k2f3*PRES^3;k0T=k0+k2cor*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4+f5*PRES^5+f6*PRES^6+f7*PRES^7+f8*PRES^8+f9*PRES^9+f10*PRES^10+f11*PRES^11+f12*PRES^12; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
+                  o_preCalibCoef = sprintf('R=8.31446; F=96485; k2f0=%g, k2f1=%g, k2f2=%g, k2f3=%g; k0=%g; f1=%g, f2=%g, f3=%g, f4=%g, f5=%g, f6=%g', ...
+                     transPhK2F0, transPhK2F1, transPhK2F2, transPhK2F3, ...
+                     transPhK0, ...
+                     transPhF1, transPhF2, transPhF3, transPhF4, transPhF5, transPhF6);
+               end
             end
             o_preCalibComment = 'Voltage difference between reference and source from pH sensor (in volt).';
 
@@ -6399,7 +6873,7 @@ switch (a_decoderId)
             o_preCalibComment = '';
       end
 
-   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, ...
+   case {1322, 1323, 1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132, ...
          111, 113, 114, 115}
 
       switch (a_paramName)
@@ -6424,8 +6898,10 @@ switch (a_decoderId)
                fprintf('WARNING: Float #%d: missing PH_IN_SITU_FREE calibration information\n', ...
                   g_decArgo_floatNum);
                return
-            elseif ((isfield(g_decArgo_calibInfo, 'TRANSISTOR_PH')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k0')) && ...
+            elseif (~isfield(g_decArgo_calibInfo, 'TRANSISTOR_PH'))
+               fprintf('WARNING: Float #%d: missing PH_IN_SITU_FREE calibration information\n', ...
+                  g_decArgo_floatNum);
+            elseif ((isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k0')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'k2')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f0')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f1')) && ...
@@ -6458,13 +6934,7 @@ switch (a_decoderId)
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f3')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f4')) && ...
                   (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f5')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f6')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f7')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f8')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f9')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f10')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f11')) && ...
-                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f12')))
+                  (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f6')))
                transPhK0 = double(g_decArgo_calibInfo.TRANSISTOR_PH.k0);
                transPhK2F0 = double(g_decArgo_calibInfo.TRANSISTOR_PH.k2f0);
                transPhK2F1 = double(g_decArgo_calibInfo.TRANSISTOR_PH.k2f1);
@@ -6477,12 +6947,30 @@ switch (a_decoderId)
                transPhF4 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f4);
                transPhF5 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f5);
                transPhF6 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f6);
-               transPhF7 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f7);
-               transPhF8 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f8);
-               transPhF9 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f9);
-               transPhF10 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f10);
-               transPhF11 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f11);
-               transPhF12 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f12);
+               transPhF7 = [];
+               transPhF8 = [];
+               transPhF9 = [];
+               transPhF10 = [];
+               transPhF11 = [];
+               transPhF12 = [];
+               if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f7'))
+                  transPhF7 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f7);
+                  if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f8'))
+                     transPhF8 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f8);
+                     if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f9'))
+                        transPhF9 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f9);
+                        if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f10'))
+                           transPhF10 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f10);
+                           if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f11'))
+                              transPhF11 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f11);
+                              if (isfield(g_decArgo_calibInfo.TRANSISTOR_PH, 'f12'))
+                                 transPhF12 = double(g_decArgo_calibInfo.TRANSISTOR_PH.f12);
+                              end
+                           end
+                        end
+                     end
+                  end
+               end
             else
                fprintf('ERROR: Float #%d: inconsistent PH_IN_SITU_FREE calibration information\n', ...
                   g_decArgo_floatNum);
@@ -6507,11 +6995,19 @@ switch (a_decoderId)
                      transPhF1, transPhF2, transPhF3, transPhF4);
                end
             else
-               o_preCalibEq = 'k2cor=k2f0+k2f1*PRES+k2f2*PRES^2+k2f3*PRES^3;k0T=k0+k2cor*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4+f5*PRES^5+f6*PRES^6+f7*PRES^7+f8*PRES^8+f9*PRES^9+f10*PRES^10+f11*PRES^11+f12*PRES^12; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
-               o_preCalibCoef = sprintf('R=8.31446; F=96485; k2f0=%g, k2f1=%g, k2f2=%g, k2f3=%g; k0=%g; f1=%g, f2=%g, f3=%g, f4=%g, f5=%g, f6=%g, f7=%g, f8=%g, f9=%g, f10=%g, f11=%g, f12=%g', ...
-                  transPhK2F0, transPhK2F1, transPhK2F2, transPhK2F3, ...
-                  transPhK0, ...
-                  transPhF1, transPhF2, transPhF3, transPhF4, transPhF5, transPhF6, transPhF7, transPhF8, transPhF9, transPhF10, transPhF11, transPhF12);
+               if (~isempty(transPhF7))
+                  o_preCalibEq = 'k2cor=k2f0+k2f1*PRES+k2f2*PRES^2+k2f3*PRES^3;k0T=k0+k2cor*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4+f5*PRES^5+f6*PRES^6+f7*PRES^7+f8*PRES^8+f9*PRES^9+f10*PRES^10+f11*PRES^11+f12*PRES^12; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
+                  o_preCalibCoef = sprintf('R=8.31446; F=96485; k2f0=%g, k2f1=%g, k2f2=%g, k2f3=%g; k0=%g; f1=%g, f2=%g, f3=%g, f4=%g, f5=%g, f6=%g, f7=%g, f8=%g, f9=%g, f10=%g, f11=%g, f12=%g', ...
+                     transPhK2F0, transPhK2F1, transPhK2F2, transPhK2F3, ...
+                     transPhK0, ...
+                     transPhF1, transPhF2, transPhF3, transPhF4, transPhF5, transPhF6, transPhF7, transPhF8, transPhF9, transPhF10, transPhF11, transPhF12);
+               else
+                  o_preCalibEq = 'k2cor=k2f0+k2f1*PRES+k2f2*PRES^2+k2f3*PRES^3;k0T=k0+k2cor*TEMP; pcorr=f1*PRES+f2*PRES^2+f3*PRES^3+f4*PRES^4+f5*PRES^5+f6*PRES^6+f7*PRES^7+f8*PRES^8+f9*PRES^9+f10*PRES^10+f11*PRES^11+f12*PRES^12; k0TP=k0T+pcorr; Tk=273.15+TEMP; Cltotal=(0.99889/35.453*PSAL/1.80655)/(1-0.001005*PSAL); ADH=3.4286e-6*TEMP^2+6.7524e-4*TEMP+0.49172143; IonS=19.924*PSAL/(1000-1.005*PSAL); log10gammaHCl=[-ADH*sqrt(IonS)/(1+1.394*sqrt(IonS))]+[(0.08885-0.000111*TEMP)*IonS]; deltaVHCl=17.85+0.1044*TEMP-0.001316*TEMP^2; log10gammaHCLtP=log10gammaHCl+[deltaVHCl*(PRES/10)/(R*Tk*ln(10))/2/10]; PH_IN_SITU_FREE=[(VRS_PH-k0TP)/(R*Tk/F*ln(10))]+[ln(Cltotal)/ln(10)]+2*log10gammaHCLtP-log10(1-0.001005*PSAL)';
+                  o_preCalibCoef = sprintf('R=8.31446; F=96485; k2f0=%g, k2f1=%g, k2f2=%g, k2f3=%g; k0=%g; f1=%g, f2=%g, f3=%g, f4=%g, f5=%g, f6=%g', ...
+                     transPhK2F0, transPhK2F1, transPhK2F2, transPhK2F3, ...
+                     transPhK0, ...
+                     transPhF1, transPhF2, transPhF3, transPhF4, transPhF5, transPhF6);
+               end
             end
             o_preCalibComment = 'Voltage difference between reference and source from pH sensor (in volt).';
 
@@ -6641,7 +7137,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/10/2022 - RNU - creation
@@ -6655,18 +7151,19 @@ global g_decArgo_decoderIdListNkeCts5Usea;
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamListCp;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 
 paramList = [];
 if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts4))
-   if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-         any(strcmp('CROVER', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+   if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('CROVER', g_decArgo_sensorMountedOnFloat))
       paramList = [ ...
          {'CP660'} ...
          ];
    end
 elseif (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
-   if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-         any(strcmp('CROVER', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+   if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('CROVER', g_decArgo_sensorMountedOnFloat))
       paramList = [ ...
          {'TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660'} ...
          {'CP660'} ...
@@ -6707,7 +7204,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/10/2022 - RNU - creation
@@ -6847,7 +7344,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/10/2022 - RNU - creation
@@ -6856,33 +7353,41 @@ function [o_metaData] = update_parameter_list_turbidity(a_metaData, a_decoderId)
 
 % lists of managed decoders
 global g_decArgo_decoderIdListNkeCts4;
+global g_decArgo_decoderIdListNkeCts5Usea;
 
 % parameter added "on the fly" to meta-data file
 global g_decArgo_addParamListTurbidity;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 
 paramList = [];
 if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts4))
-   if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-         any(strcmp('FLNTU', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+   if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('FLNTU', g_decArgo_sensorMountedOnFloat))
+      paramList = [ ...
+         {'SIDE_SCATTERING_TURBIDITY'} ...
+         {'TURBIDITY'} ...
+         ];
+   end
+elseif (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
+   if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('ECO_FLNTU', g_decArgo_sensorMountedOnFloat))
       paramList = [ ...
          {'SIDE_SCATTERING_TURBIDITY'} ...
          {'TURBIDITY'} ...
          ];
    end
 elseif (ismember(a_decoderId, [302 303]))
-   if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-         any(strcmp('FLNTU', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+   if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('FLNTU', g_decArgo_sensorMountedOnFloat))
       paramList = [ ...
          {'SIDE_SCATTERING_TURBIDITY'} ...
          {'TURBIDITY'} ...
          ];
    end
-   if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-         any(strcmp('SEAPOINT', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+   if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('SEAPOINT', g_decArgo_sensorMountedOnFloat))
       paramList = [ ...
          {'VOLTAGE_TURBIDITY'} ...
-         {'TURBIDITY2'} ...
+         {'TURBIDITY_2'} ...
          ];
    end
 elseif (ismember(a_decoderId, [1014]))
@@ -6925,7 +7430,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/10/2022 - RNU - creation
@@ -6943,6 +7448,16 @@ o_preCalibEq = '';
 o_preCalibCoef = '';
 o_preCalibComment = '';
 
+% lists of managed decoders
+global g_decArgo_decoderIdListNkeCts5Usea;
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% arrays to store calibration information
+global g_decArgo_calibInfo;
+
+
 switch (a_paramName)
 
    case {'SIDE_SCATTERING_TURBIDITY'}
@@ -6956,18 +7471,47 @@ switch (a_paramName)
       o_preCalibComment = '';
 
    case {'TURBIDITY'}
-      o_param = 'TURBIDITY';
-      o_paramSensor = 'BACKSCATTERINGMETER_TURBIDITY';
-      o_paramUnits = 'ntu';
-      o_paramAccuracy = '';
-      o_paramResolution = '';
-      o_preCalibEq = 'n/a';
-      o_preCalibCoef = 'n/a';
-      o_preCalibComment = '';
+
+      if (ismember(a_decoderId, g_decArgo_decoderIdListNkeCts5Usea))
+         % get calibration information
+         if (isempty(g_decArgo_calibInfo))
+            fprintf('ERROR: Float #%d: missing ECO_FLNTU calibration information\n', ...
+               g_decArgo_floatNum);
+            return
+         elseif (isfield(g_decArgo_calibInfo, 'ECO_FLNTU') && ...
+               isfield(g_decArgo_calibInfo.ECO_FLNTU, 'ScaleFactTurbi') && ...
+               isfield(g_decArgo_calibInfo.ECO_FLNTU, 'DarkCountTurbi'))
+            scaleFactTurbi = double(g_decArgo_calibInfo.ECO_FLNTU.ScaleFactTurbi);
+            darkCountTurbi = double(g_decArgo_calibInfo.ECO_FLNTU.DarkCountTurbi);
+         else
+            fprintf('ERROR: Float #%d: inconsistent ECO_FLNTU calibration information\n', ...
+               g_decArgo_floatNum);
+            return
+         end
+
+         o_param = 'TURBIDITY';
+         o_paramSensor = 'BACKSCATTERINGMETER_TURBIDITY';
+         o_paramUnits = 'ntu';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'TURBIDITY=(SIDE_SCATTERING_TURBIDITY-DARK_TURBIDITY)*SCALE_TURBIDITY';
+         o_preCalibCoef = sprintf('SCALE_TURBIDITY=%g, DARK_TURBIDITY=%g', ...
+            scaleFactTurbi, darkCountTurbi);
+         o_preCalibComment = '';
+      else
+         o_param = 'TURBIDITY';
+         o_paramSensor = 'BACKSCATTERINGMETER_TURBIDITY';
+         o_paramUnits = 'ntu';
+         o_paramAccuracy = '';
+         o_paramResolution = '';
+         o_preCalibEq = 'n/a';
+         o_preCalibCoef = 'n/a';
+         o_preCalibComment = '';
+      end
 
    case {'VOLTAGE_TURBIDITY'}
       o_param = 'VOLTAGE_TURBIDITY';
-      o_paramSensor = 'AUX_BACKSCATTERINGMETER_TURBIDITY2';
+      o_paramSensor = 'AUX_BACKSCATTERINGMETER_TURBIDITY_2';
       o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';
@@ -6975,9 +7519,9 @@ switch (a_paramName)
       o_preCalibCoef = 'n/a';
       o_preCalibComment = '';
 
-   case {'TURBIDITY2'}
-      o_param = 'TURBIDITY2';
-      o_paramSensor = 'AUX_BACKSCATTERINGMETER_TURBIDITY2';
+   case {'TURBIDITY_2'}
+      o_param = 'TURBIDITY_2';
+      o_paramSensor = 'AUX_BACKSCATTERINGMETER_TURBIDITY_2';
       o_paramUnits = 'ntu';
       o_paramAccuracy = '';
       o_paramResolution = '';
@@ -7007,7 +7551,7 @@ switch (a_paramName)
 
    case {'VOLTAGE_TURBIDITY_STD'}
       o_param = 'VOLTAGE_TURBIDITY_STD';
-      o_paramSensor = 'AUX_BACKSCATTERINGMETER_TURBIDITY2';
+      o_paramSensor = 'AUX_BACKSCATTERINGMETER_TURBIDITY_2';
       o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';
@@ -7017,7 +7561,7 @@ switch (a_paramName)
 
    case {'VOLTAGE_TURBIDITY_MED'}
       o_param = 'VOLTAGE_TURBIDITY_MED';
-      o_paramSensor = 'AUX_BACKSCATTERINGMETER_TURBIDITY2';
+      o_paramSensor = 'AUX_BACKSCATTERINGMETER_TURBIDITY_2';
       o_paramUnits = 'volt';
       o_paramAccuracy = '';
       o_paramResolution = '';
@@ -7045,18 +7589,21 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/24/2021 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_metaData] = update_parameter_list_rafos(a_metaData, a_decoderId)
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
+
 paramList = [];
 switch (a_decoderId)
-   case {1125, 1128, 1129, 1130}
-      if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-            any(strcmp('RAFOS', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+   case {1125, 1128, 1129, 1130, 1131, 1132}
+      if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('RAFOS', g_decArgo_sensorMountedOnFloat))
          paramList = [ ...
             {'COR'} ...
             {'RAW_TOA'} ...
@@ -7095,7 +7642,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/24/2021 - RNU - creation
@@ -7121,7 +7668,7 @@ global g_decArgo_calibInfo;
 
 
 switch (a_decoderId)
-   case {1125, 1128, 1129, 1130}
+   case {1125, 1128, 1129, 1130, 1131, 1132}
       switch (a_paramName)
 
          case {'COR'}
@@ -7202,7 +7749,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/04/2023 - RNU - creation
@@ -7217,10 +7764,11 @@ global g_decArgo_floatNum;
 % json meta-data
 global g_decArgo_jsonMetaData;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
 
-if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
-      ~isempty(a_metaData.SENSOR_MOUNTED_ON_FLOAT) && ...
-      any(strcmp('UVP', struct2cell(a_metaData.SENSOR_MOUNTED_ON_FLOAT))))
+
+if (~isempty(g_decArgo_sensorMountedOnFloat) && ismember('UVP', g_decArgo_sensorMountedOnFloat))
 
    if (isfield(g_decArgo_jsonMetaData, 'META_AUX_UVP_FIRMWARE_VERSION'))
       uvpFirmVersion = g_decArgo_jsonMetaData.META_AUX_UVP_FIRMWARE_VERSION;
@@ -7233,7 +7781,7 @@ if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
    switch (uvpFirmVersion)
       case '2022.01'
          switch (a_decoderId)
-            case {129, 130, 131, 132, 133}
+            case {129, 130, 131, 132, 133, 135, 137, 138, 139, 140, 141}
                paramList = [ ...
                   {'NB_IMAGE_PARTICLES'} ... % LPM_V2
                   {'TEMP_PARTICLES'} ... % LPM_V2
@@ -7266,7 +7814,7 @@ if (isfield(a_metaData, 'SENSOR_MOUNTED_ON_FLOAT') && ...
                   {'NB_SIZE_SPECTRA_PARTICLES_PER_IMAGE'} ... % LPM
                   {'GREY_SIZE_SPECTRA_PARTICLES'} ... % LPM
                   ];
-            case {126, 127, 128}
+            case {126, 127, 128, 134, 136}
                paramList = [ ...
                   {'NB_IMAGE_PARTICLES'} ... % LPM
                   {'TEMP_PARTICLES'} ... % LPM
@@ -7316,7 +7864,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/04/2023 - RNU - creation
@@ -7581,7 +8129,7 @@ switch (a_paramName)
       o_paramUnits = '';
       o_paramAccuracy = '';
       o_paramResolution = '';
-      o_preCalibEq = 'BIOVOLUME_CATEGORY = CONCENTRATION_CATEGORY * OBJECT_MEAN_VOLUME_CATEGORY * UvpPixelSize^3 * 1000';
+      o_preCalibEq = 'BIOVOLUME_CATEGORY = CONCENTRATION_CATEGORY * OBJECT_MEAN_VOLUME_CATEGORY * UvpPixelSize^3 / 1000';
       o_preCalibCoef = sprintf('UvpPixelSize=%g', pixelSize);
       o_preCalibComment = '';
 
@@ -7605,7 +8153,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/27/2017 - RNU - creation

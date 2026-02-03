@@ -41,7 +41,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/14/2014 - RNU - creation
@@ -72,47 +72,14 @@ global g_decArgo_c1C2PhaseDoxyDef;
 global g_decArgo_tempDoxyDef;
 global g_decArgo_doxyDef;
 
-% look for the CTD pump cut-off pressure
-presCutOffProf = '';
-tabTech = '';
-if (~isempty(a_tabTech))
-   
-   % retrieve the last pumped PRES from the tech msg #2
-   idF2 = find(a_tabTech(:, 1) == 4);
-   if (~isempty(idF2))
-      if (length(idF2) > 1)
-         fprintf('ERROR: Float #%d cycle #%d: %d decoded tech message #2  - using the last one\n', ...
-            g_decArgo_floatNum, g_decArgo_cycleNum, ...
-            length(idF2));
-      end
-      
-      tabTech = a_tabTech(idF2(end), :);
-      pres = sensor_2_value_for_pressure_201_203_215_216_218_221(tabTech(10));
-      temp = sensor_2_value_for_temperature_201_to_203_215_216_218_221(tabTech(11));
-      psal = tabTech(12)/1000;
-      if (any([pres temp psal] ~= 0))
-         presCutOffProf = pres;
-      end
-   end
-end
-if (isempty(presCutOffProf))
-      
-   % retrieve the CTD pump cut-off pressure from the configuration
-   presCutOffProf = [];
-   [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
-   ctpPumpSwitchOffPres = get_config_value('CONFIG_PT20', configNames, configValues);
-   if (~isempty(ctpPumpSwitchOffPres))
-      presCutOffProf = ctpPumpSwitchOffPres + 0.5;
-      
-      fprintf('DEC_WARNING: Float #%d Cycle #%d: PRES_CUT_OFF_PROF parameter is missing in the tech data - value retrieved from the configuration\n', ...
-         g_decArgo_floatNum, g_decArgo_cycleNum);
-   else
-      presCutOffProf = 5 + 0.5;
-      
-      fprintf('DEC_WARNING: Float #%d Cycle #%d: PRES_CUT_OFF_PROF parameter is missing in the tech data and in the configuration - value set to 5 dbars\n', ...
-         g_decArgo_floatNum, g_decArgo_cycleNum);
-   end
-end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PROFILE CTD CUT OFF PRESSURE DETERMINATION
+
+[subSurfacePres, presCutOffProfConfig, presCutOffProf, tabTech] = ...
+   get_pres_cut_off_prof(a_tabTech, a_decoderId);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % process the descending and ascending profiles
 for idProf = 1:3
@@ -166,7 +133,15 @@ for idProf = 1:3
       % ascending profile      
       if (idProf == 2)
          % primary profile
-         idLev = find((a_ascProfPres ~= g_decArgo_presDef) & (a_ascProfPres > presCutOffProf));
+         if (~isempty(subSurfacePres))
+            if (ismember(a_decoderId, [201:218, 221:223, 225, 228, 230]))
+               idLev = find((a_ascProfPres ~= g_decArgo_presDef) & (a_ascProfPres > subSurfacePres)); % not compliant with Argo profile cookbook but historical implementation
+            else
+               idLev = find((a_ascProfPres ~= g_decArgo_presDef) & (a_ascProfPres >= subSurfacePres));
+            end
+         else
+            idLev = find((a_ascProfPres ~= g_decArgo_presDef) & (a_ascProfPres > presCutOffProfConfig));
+         end
          if (~isempty(idLev))
             tabDate = a_ascProfDate(1:idLev(end));
             tabPres = a_ascProfPres(1:idLev(end));
@@ -181,7 +156,15 @@ for idProf = 1:3
          end
       else
          % unpumped profile
-         idLev = find((a_ascProfPres ~= g_decArgo_presDef) & (a_ascProfPres <= presCutOffProf));
+         if (~isempty(subSurfacePres))
+            if (ismember(a_decoderId, [201:218, 221:223, 225, 228, 230]))
+               idLev = find((a_ascProfPres ~= g_decArgo_presDef) & (a_ascProfPres <= subSurfacePres)); % not compliant with Argo profile cookbook but historical implementation
+            else
+               idLev = find((a_ascProfPres ~= g_decArgo_presDef) & (a_ascProfPres < subSurfacePres));
+            end
+         else
+            idLev = find((a_ascProfPres ~= g_decArgo_presDef) & (a_ascProfPres <= presCutOffProfConfig));
+         end
          if (~isempty(idLev))
             tabDate = a_ascProfDate(idLev(1):end);
             tabPres = a_ascProfPres(idLev(1):end);
@@ -280,7 +263,7 @@ for idProf = 1:3
       end
       
       % add profile date and location information
-      [profStruct] = add_profile_date_and_location_201_to_226_2001_to_2003( ...
+      [profStruct] = add_profile_date_and_location_201_to_230_40x_2001_to_2003( ...
          profStruct, a_gpsData, a_iridiumMailData, ...
          a_descentToParkStartDate, a_ascentEndDate, a_transStartDate);
       

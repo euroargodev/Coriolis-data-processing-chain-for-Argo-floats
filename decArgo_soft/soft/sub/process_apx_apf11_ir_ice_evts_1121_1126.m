@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/28/2020 - RNU - creation
@@ -28,25 +28,31 @@ global g_decArgo_dateDef;
 global g_decArgo_presDef;
 
 
-PATTERN_THERMAL_DETECT = 'thermal_detect|';
 PATTERN_THERMAL_DETECT_SAMPLE = 'thermal_detect|sample';
-PATTERN_THERMAL_DETECT_MEDIAN_TEMP = 'median temperature';
-PATTERN_THERMAL_DETECT_TRUE = 'thermal_detect|TRUE|';
+PATTERN_THERMAL_DETECT_TRUE = 'thermal_detect|TRUE';
+PATTERN_THERMAL_DETECT_MEDIAN_TEMP = 'thermal_detect|median temperature';
 PATTERN_BREAKUP_DETECT = 'breakup_detect|';
 PATTERN_BREAKUP_DETECT_TRUE = 'breakup_detect|TRUE';
 PATTERN_BREAKUP_DETECT_FALSE = 'breakup_detect|FALSE';
+PATTERN_CAP_DETECT_TRUE = 'cap_detect|TRUE';
+PATTERN_ASCENT_ICE_ABORT = 'Ice Detected, aborting mission';
+PATTERN_ASCENT_BREAKUP_ABORT = 'Ice Breakup still in effect, aborting mission';
+PATTERN_SKY_SEARCH_FOUND_SKY = 'Found the sky';
+PATTERN_SKY_SEARCH_NO_SKY = 'No sky';
 
-set = 0;
-iceDetection = get_ice_detection_apx_apf11_init_struct;
-
-events = a_events(find(strcmp({a_events.functionName}, 'ICE')));
+iceDetection = '';
+thermalDetect = '';
+breakupDetect = '';
+capDetect = '';
+ascentAbort = '';
+events = a_events;
 for idEv = 1:length(events)
    evt = events(idEv);
    eventTime = evt.timestamp;
    dataStr = evt.message;
-   if (any(strfind(dataStr, PATTERN_THERMAL_DETECT)))
+   if (strcmp(evt.functionName, 'ICE'))
       if (any(strfind(dataStr, PATTERN_THERMAL_DETECT_SAMPLE)))
-         
+
          sample = textscan(dataStr, '%s', 'delimiter', '|');
          sample = sample{:};
          sampleNum = sample{2};
@@ -55,91 +61,182 @@ for idEv = 1:length(events)
          samplePres = str2double(samplePres(strfind(samplePres, '=')+1:end));
          sampleTemp = sample{4};
          sampleTemp = str2double(sampleTemp(strfind(sampleTemp, '=')+1:end));
-         
-         iceDetection.thermalDetect.sampleTime = [iceDetection.thermalDetect.sampleTime eventTime];
-         iceDetection.thermalDetect.sampleTimeAdj = [iceDetection.thermalDetect.sampleTimeAdj g_decArgo_dateDef];
-         iceDetection.thermalDetect.sampleNum = [iceDetection.thermalDetect.sampleNum sampleNum];
-         iceDetection.thermalDetect.samplePres = [iceDetection.thermalDetect.samplePres samplePres];
-         iceDetection.thermalDetect.samplePresAdj = [iceDetection.thermalDetect.samplePresAdj g_decArgo_presDef];
-         iceDetection.thermalDetect.sampleTemp = [iceDetection.thermalDetect.sampleTemp sampleTemp];
-         set = 1;
-         
+
+         % due to Ice cycles, we can have multiple detections in the same cycle
+         if (sampleNum == 1)
+
+            % store any previous Ice detection for the current cyle
+            if (~isempty(thermalDetect))
+               if (isempty(iceDetection))
+                  iceDetection = get_ice_detection_apx_apf11_init_struct;
+               end
+               iceDetection.thermalDetect = [iceDetection.thermalDetect thermalDetect];
+            end
+            thermalDetect = get_ice_thermal_detect_apx_apf11_init_struct;
+         end
+
+         thermalDetect.sampleTime = [thermalDetect.sampleTime eventTime];
+         thermalDetect.sampleTimeAdj = [thermalDetect.sampleTimeAdj g_decArgo_dateDef];
+         thermalDetect.sampleNum = [thermalDetect.sampleNum sampleNum];
+         thermalDetect.samplePres = [thermalDetect.samplePres samplePres];
+         thermalDetect.samplePresAdj = [thermalDetect.samplePresAdj g_decArgo_presDef];
+         thermalDetect.sampleTemp = [thermalDetect.sampleTemp sampleTemp];
+
       elseif (any(strfind(dataStr, PATTERN_THERMAL_DETECT_MEDIAN_TEMP)))
-         
-         dataStr2 = textscan(dataStr, '%s', 'delimiter', '|');
-         dataStr2 = dataStr2{:};
-         dataStr3 = textscan(dataStr2{2}, '%s', 'delimiter', ' ');
-         dataStr3 = dataStr3{:};
-         medianTemp = str2double(dataStr3{3});         
-         iceDetection.thermalDetect.medianTempTime = eventTime;
-         iceDetection.thermalDetect.medianTempTimeAdj = g_decArgo_dateDef;
-         iceDetection.thermalDetect.medianTemp = medianTemp;
-         set = 1;
-         
+
+         detect = textscan(dataStr, '%s', 'delimiter', ' ');
+         detect = detect{:};
+         medianTemp = str2double(detect{3});
+
+         thermalDetect.medianTempTime = eventTime;
+         thermalDetect.medianTempTimeAdj = g_decArgo_dateDef;
+         thermalDetect.detectTime = g_decArgo_dateDef;
+         thermalDetect.detectTimeAdj = g_decArgo_dateDef;
+         thermalDetect.detectPres = g_decArgo_presDef;
+         thermalDetect.detectPresAdj = g_decArgo_presDef;
+         thermalDetect.medianTemp = medianTemp;
+         if (~isempty(thermalDetect.sampleTime))
+            thermalDetect.detectNbSample = length(thermalDetect.sampleTime);
+         end
+
       elseif (any(strfind(dataStr, PATTERN_THERMAL_DETECT_TRUE)))
-         
+
          detect = textscan(dataStr, '%s', 'delimiter', ' ');
          detect = detect{:};
          detectPres = str2double(detect{3});
-         detectMedianPres = str2double(detect{10});
-         detectNbSample = str2double(detect{12});
-         
-         iceDetection.thermalDetect.detectTime = eventTime;
-         iceDetection.thermalDetect.detectTimeAdj = g_decArgo_dateDef;
-         iceDetection.thermalDetect.detectPres = detectPres;
-         iceDetection.thermalDetect.detectPresAdj = g_decArgo_presDef;
-         iceDetection.thermalDetect.detectMedianPres = detectMedianPres;
-         iceDetection.thermalDetect.detectMedianPresAdj = g_decArgo_presDef;
-         iceDetection.thermalDetect.detectNbSample = detectNbSample;
-         set = 1;
-         
+
+         medianTemp = '';
+         if (~isempty(thermalDetect.sampleTemp))
+            medianTemp = median(thermalDetect.sampleTemp);
+         end
+
+         thermalDetect.medianTempTime = eventTime;
+         thermalDetect.medianTempTimeAdj = g_decArgo_dateDef;
+         thermalDetect.medianTemp = medianTemp;
+         thermalDetect.detectTime = eventTime;
+         thermalDetect.detectTimeAdj = g_decArgo_dateDef;
+         thermalDetect.detectPres = detectPres;
+         thermalDetect.detectPresAdj = g_decArgo_presDef;
+         if (~isempty(thermalDetect.sampleTime))
+            thermalDetect.detectNbSample = length(thermalDetect.sampleTime);
+         end
+
+      elseif (any(strfind(dataStr, PATTERN_BREAKUP_DETECT)))
+
+         if (any(strfind(dataStr, PATTERN_BREAKUP_DETECT_TRUE)))
+
+            if (~isempty(breakupDetect))
+               if (isempty(iceDetection))
+                  iceDetection = get_ice_detection_apx_apf11_init_struct;
+               end
+               iceDetection.breakupDetect = [iceDetection.breakupDetect breakupDetect];
+            end
+            breakupDetect = get_ice_breakup_detect_apx_apf11_init_struct;
+
+            breakupDetect.detectTime = eventTime;
+            breakupDetect.detectTimeAdj =  g_decArgo_dateDef;
+            breakupDetect.detectFlag = 1;
+
+         elseif (any(strfind(dataStr, PATTERN_BREAKUP_DETECT_FALSE)))
+
+            if (~isempty(breakupDetect))
+               if (isempty(iceDetection))
+                  iceDetection = get_ice_detection_apx_apf11_init_struct;
+               end
+               iceDetection.breakupDetect = [iceDetection.breakupDetect breakupDetect];
+            end
+            breakupDetect = get_ice_breakup_detect_apx_apf11_init_struct;
+
+            breakupDetect.detectTime = eventTime;
+            breakupDetect.detectTimeAdj =  g_decArgo_dateDef;
+            breakupDetect.detectFlag = 0;
+
+         end
+
+      elseif (any(strfind(dataStr, PATTERN_CAP_DETECT_TRUE)))
+
+         detect = textscan(dataStr, '%s', 'delimiter', ' ');
+         detect = detect{:};
+         detectPres = str2double(detect{3});
+         detecTemp = str2double(detect{6});
+
+         if (isempty(capDetect))
+            capDetect = get_ice_cap_detect_apx_apf11_init_struct;
+         end
+
+         capDetect.detectTime = eventTime;
+         capDetect.detectTimeAdj = g_decArgo_dateDef;
+         capDetect.detectPres = detectPres;
+         capDetect.detectPresAdj = g_decArgo_presDef;
+         capDetect.detectTemp = detecTemp;
+         capDetect.detectFlag = 1;
+
+         if (isempty(iceDetection))
+            iceDetection = get_ice_detection_apx_apf11_init_struct;
+         end
+         iceDetection.capDetect = capDetect;
       end
-   elseif (any(strfind(dataStr, PATTERN_BREAKUP_DETECT)))
-      if (any(strfind(dataStr, PATTERN_BREAKUP_DETECT_TRUE)))
-         
-         iceDetection.breakupDetect.detectTime = [iceDetection.breakupDetect.detectTime eventTime];
-         iceDetection.breakupDetect.detectTimeAdj = [iceDetection.breakupDetect.detectTimeAdj g_decArgo_dateDef];
-         iceDetection.breakupDetect.detectFlag = [iceDetection.breakupDetect.detectFlag 1];
-         set = 1;
-         
-      elseif (any(strfind(dataStr, PATTERN_BREAKUP_DETECT_FALSE)))
-         
-         iceDetection.breakupDetect.detectTime = [iceDetection.breakupDetect.detectTime eventTime];
-         iceDetection.breakupDetect.detectTimeAdj = [iceDetection.breakupDetect.detectTimeAdj g_decArgo_dateDef];
-         iceDetection.breakupDetect.detectFlag = [iceDetection.breakupDetect.detectFlag 0];
-         set = 1;
-         
-      end         
+
+   elseif (strcmp(evt.functionName, 'ASCENT'))
+
+      if (any(strfind(dataStr, PATTERN_ASCENT_ICE_ABORT)))
+
+         if (isempty(ascentAbort))
+            ascentAbort = get_ice_ascent_abort_apx_apf11_init_struct;
+         end
+
+         ascentAbort.abortTypeTime = eventTime;
+         ascentAbort.abortTypeTimeAdj = g_decArgo_dateDef;
+         ascentAbort.abortType = 1;
+
+      elseif (any(strfind(dataStr, PATTERN_ASCENT_BREAKUP_ABORT)))
+
+         if (isempty(ascentAbort))
+            ascentAbort = get_ice_ascent_abort_apx_apf11_init_struct;
+         end
+
+         ascentAbort.abortTypeTime = eventTime;
+         ascentAbort.abortTypeTimeAdj = g_decArgo_dateDef;
+         ascentAbort.abortType = 2;
+      end
+
+   elseif (strcmp(evt.functionName, 'sky_search'))
+      
+      if (any(strfind(dataStr, PATTERN_SKY_SEARCH_FOUND_SKY)))
+
+         if (~isempty(iceDetection))
+            iceDetection.foundSkyFlag = 1;
+         end
+
+      elseif (any(strfind(dataStr, PATTERN_SKY_SEARCH_NO_SKY)))
+
+         if (~isempty(iceDetection))
+            iceDetection.foundSkyFlag = 0;
+         end
+      end
    end
 end
 
-PATTERN_ASCENT_ICE_ABORT = 'Ice Detected, aborting mission';
-PATTERN_ASCENT_BREAKUP_ABORT = 'Ice Breakup still in effect, aborting mission';
-
-events = a_events(find(strcmp({a_events.functionName}, 'ASCENT')));
-for idEv = 1:length(events)
-   evt = events(idEv);
-   eventTime = evt.timestamp;
-   dataStr = evt.message;
-   if (any(strfind(dataStr, PATTERN_ASCENT_ICE_ABORT)))
-      
-      iceDetection.ascent.abortTypeTime = eventTime;
-      iceDetection.ascent.abortTypeTimeAdj = g_decArgo_dateDef;
-      iceDetection.ascent.abortType = 1;
-      set = 1;
-      
-   elseif (any(strfind(dataStr, PATTERN_ASCENT_BREAKUP_ABORT)))
-      
-      iceDetection.ascent.abortTypeTime = eventTime;
-      iceDetection.ascent.abortTypeTimeAdj = g_decArgo_dateDef;
-      iceDetection.ascent.abortType = 2;
-      set = 1;
-      
+if (~isempty(thermalDetect) || (~isempty(breakupDetect)) || ...
+      (~isempty(capDetect)) || (~isempty(ascentAbort)))
+   if (isempty(iceDetection))
+      iceDetection = get_ice_detection_apx_apf11_init_struct;
    end
 end
-
-if (set)
-   o_iceDetection{end+1} = iceDetection;
+if (~isempty(iceDetection))
+   if (~isempty(thermalDetect))
+      iceDetection.thermalDetect = [iceDetection.thermalDetect thermalDetect];
+   end
+   if (~isempty(breakupDetect))
+      iceDetection.breakupDetect = [iceDetection.breakupDetect breakupDetect];
+   end
+   if (~isempty(capDetect))
+      iceDetection.capDetect = capDetect;
+   end
+   if (~isempty(ascentAbort))
+      iceDetection.ascentAbort = [iceDetection.ascentAbort ascentAbort];
+   end
+   o_iceDetection = iceDetection;
 end
 
 return

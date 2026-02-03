@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/21/2019 - RNU - creation
@@ -51,7 +51,7 @@ if (nargin == 0)
          fprintf('File not found: %s\n', FLOAT_LIST_FILE_NAME);
          return
       end
-      
+
       fprintf('Floats from list: %s\n', FLOAT_LIST_FILE_NAME);
       floatList = load(FLOAT_LIST_FILE_NAME);
    end
@@ -78,29 +78,29 @@ fprintf(fidOut, '%s\n', header);
 floatNum = 1;
 floatDir = dir(DIR_INPUT_NC_FILES);
 for idDir = 1:length(floatDir)
-   
+
    floatDirName = floatDir(idDir).name;
    floatDirPathName = [DIR_INPUT_NC_FILES '/' floatDirName];
    if ((exist(floatDirPathName, 'dir') == 7) && ~strcmp(floatDirName, '.') && ~strcmp(floatDirName, '..'))
-      
+
       [floatWmo, status] = str2num(floatDirName);
       if (status == 1)
-         
+
          if ((isempty(floatList)) || (~isempty(floatList) && ismember(floatWmo, floatList)))
-            
+
             if (isempty(floatList))
                fprintf('%03d/%03d %d\n', floatNum, length(floatDir)-2, floatWmo);
             else
                fprintf('%03d/%03d %d\n', floatNum, length(floatList), floatWmo);
             end
             g_cortqc_floatNum = floatWmo;
-            
+
             % B mono-profile files
             profDirPathName = [floatDirPathName '/profiles'];
             if (exist(profDirPathName, 'dir') == 7)
                floatFiles = dir([profDirPathName '/' sprintf('B*%d_*.nc', floatWmo)]);
                for idFile = 1:length(floatFiles)
-                  
+
                   floatFileName = floatFiles(idFile).name;
                   floatFilePathName = [floatDirPathName '/profiles/' floatFileName];
                   if (exist(floatFilePathName, 'file') == 2)
@@ -124,7 +124,7 @@ if (~isempty(g_cortqc_reportData.float))
          g_cortqc_reportData.spikeTestFlag(idL));
    end
 end
-        
+
 fclose(fidOut);
 
 ellapsedTime = toc;
@@ -148,7 +148,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/21/2019 - RNU - creation
@@ -161,7 +161,7 @@ global g_cortqc_reportData;
 
 
 if (exist(a_ncPathFileName, 'file') == 2)
-   
+
    % get information from the file
    wantedInputVars = [ ...
       {'FORMAT_VERSION'} ...
@@ -175,11 +175,11 @@ if (exist(a_ncPathFileName, 'file') == 2)
       ];
    [inputData] = get_data_from_nc_file(a_ncPathFileName, wantedInputVars);
    if (~isempty(inputData))
-      
+
       idVal = find(strcmp('FORMAT_VERSION', inputData(1:2:end)) == 1, 1);
       formatVersion = strtrim(inputData{2*idVal}');
       if (strcmp(formatVersion, '3.1'))
-         
+
          % get profiles with CHLA
          idVal = find(strcmp('STATION_PARAMETERS', inputData(1:2:end)) == 1, 1);
          stationParameters = inputData{2*idVal};
@@ -194,10 +194,10 @@ if (exist(a_ncPathFileName, 'file') == 2)
                end
             end
          end
-         
+
          % process profiles with CHLA
          if (~isempty(profWithParam))
-            
+
             idVal = find(strcmp('HISTORY_INSTITUTION', inputData(1:2:end)) == 1, 1);
             historyInstitution = inputData{2*idVal};
             [~, inputNProf, inputNHistory] = size(historyInstitution);
@@ -211,7 +211,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
             historyAction = inputData{2*idVal};
             idVal = find(strcmp('HISTORY_QCTEST', inputData(1:2:end)) == 1, 1);
             historyQcTest = inputData{2*idVal};
-            
+
             for idProf = profWithParam
                for idHisto = inputNHistory:-1:1
                   histoAct = deblank(historyAction(:, idProf, idHisto)');
@@ -221,11 +221,11 @@ if (exist(a_ncPathFileName, 'file') == 2)
                      histoSoft = deblank(historySoftware(:, idProf, idHisto)');
                      histoDate = deblank(historyDate(:, idProf, idHisto)');
                      histoQctest = deblank(historyQcTest(:, idProf, idHisto)');
-                     
+
                      if (strcmp(histoInst, 'IF') && strcmp(histoStep, 'ARGQ') && strcmp(histoSoft, 'COQC'))
                         qcTestFlag = get_qctest_flag(histoQctest);
                         spikeTestFlag = qcTestFlag(9);
-                        
+
                         g_cortqc_reportData.float = [g_cortqc_reportData.float g_cortqc_floatNum];
                         g_cortqc_reportData.profFile = [g_cortqc_reportData.profFile {a_ncPathFileName}];
                         g_cortqc_reportData.profId = [g_cortqc_reportData.profId idProf];
@@ -239,62 +239,6 @@ if (exist(a_ncPathFileName, 'file') == 2)
          end
       end
    end
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         fprintf('WARNING: Variable %s not present in file : %s\n', ...
-            varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {''}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
 end
 
 return
@@ -314,7 +258,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/21/2019 - RNU - creation

@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2018 - RNU - creation
@@ -20,29 +20,16 @@
 function generate_csv_meta_apex_apf11(varargin)
 
 % meta-data file exported from Coriolis data base
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\Apex_APF11_Norway_DB_export.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\APF11_2.11.3.R_finlande.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\APF11_2.11.3.R_7900562.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\APF11_DBexport_7900559_7900560.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_ApexRudics_Norway_APF11_2.13.1.R_from_vb_20200528.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.15.0.R_6903552.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_6903567_test.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.15.0.R_7900973_RAFOS.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.14.3.R_7900563_RAMSES.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.14.3.R_7900563_RAMSES.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.15.2.R_7900586_7900587.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\new_apex_meta.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DB_export_APF11_2.15.2.R_6904113.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\db_export_APF11_Rafos_20220408.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\new_apex_meta_apf11_2.16.0.txt';
-FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\DBexport_Apex2.17.4.R.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB_apx_olaf\dbExport_Olaf.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB_apx_olaf2\dbexport_ApexOlaf2.txt';
+% FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\_configParamNames\DB_Export\db_export_APF11_2.18.1_7900989.txt';
 
 % list of sensors mounted on floats
-SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\float_sensor_list.txt';
+% SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\float_sensor_list.txt';
 SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
 
 % calibration coefficient file
-CALIB_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\calib_coef.txt';
+% CALIB_FILE_NAME = 'C:\Users\jprannou\Contacts\Desktop\SOS_VB\calib_coef.txt';
 CALIB_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\_CalibCoef\calib_coef.txt';
 
 % directory to store the log and csv files
@@ -202,7 +189,7 @@ for idFloat = 1:nbFloats
    end
    
    for idSensor = 1:length(sensorList)
-      [sensorName, sensorDimLevel, sensorMaker, sensorModel] = get_sensor_info(sensorList{idSensor}, floatDecId, floatNum, metaWmoList, metaData, calibCoefStruct);
+      [sensorName, sensorDimLevel, sensorMaker, sensorModel] = get_sensor_info(sensorList{idSensor}, floatNum, metaWmoList, metaData, calibCoefStruct);
       for idS = 1:length(sensorName)
          fprintf(fidOut, '%d;408;%d;%s;SENSOR;%s\n', floatNum, sensorDimLevel(idS), sensorName{idS}, floatVersion);
          fprintf(fidOut, '%d;409;%d;%s;SENSOR_MAKER;%s\n', floatNum, sensorDimLevel(idS), sensorMaker{idS}, floatVersion);
@@ -217,7 +204,7 @@ for idFloat = 1:nbFloats
    % parameter information
    for idSensor = 1:length(sensorList)
       [paramName, paramDimLevel, paramSensor, paramUnits, paramAccuracy, paramResolution] = ...
-         get_sensor_parameter_info(sensorList{idSensor}, floatNum, floatDecId, metaWmoList, metaData, calibCoefStruct);
+         get_sensor_parameter_info(sensorList{idSensor}, floatNum, metaWmoList, metaData, calibCoefStruct);
       for idP = 1:length(paramName)
          fprintf(fidOut, '%d;415;%d;%s;PARAMETER;%s\n', floatNum, paramDimLevel(idP), paramName{idP}, floatVersion);
          fprintf(fidOut, '%d;2100;%d;%s;PARAMETER_SENSOR;%s\n', floatNum, paramDimLevel(idP), paramSensor{idP}, floatVersion);
@@ -229,7 +216,7 @@ for idFloat = 1:nbFloats
    
    % sensor misc information
    [techParId, techParDimLev, techParCode, techParValue] = ...
-      get_sensor_misc_info(sensorList, floatNum, floatDecId, metaWmoList, metaData, calibCoefStruct);
+      get_sensor_misc_info(sensorList, floatNum, metaWmoList, metaData, calibCoefStruct);
    if (~isempty(techParId))
       for idT = 1:length(techParId)
          fprintf(fidOut, '%d;%s;%s;%s;%s;%s\n', ...
@@ -250,7 +237,7 @@ return
 
 % ------------------------------------------------------------------------------
 function [o_sensorName, o_sensorDimLevel, o_sensorMaker, o_sensorModel] = ...
-   get_sensor_info(a_inputSensorName, a_decId, a_floatNum, a_metaWmoList, a_metaData, a_calibCoefStruct)
+   get_sensor_info(a_inputSensorName, a_floatNum, a_metaWmoList, a_metaData, a_calibCoefStruct)
 
 o_sensorName = [];
 o_sensorDimLevel = [];
@@ -407,7 +394,7 @@ return
 
 % ------------------------------------------------------------------------------
 function [o_techParId, o_techParDimLev, o_techParCode, o_techParValue] = ...
-   get_sensor_misc_info(a_sensorList, a_floatNum, a_decId, a_metaWmoList, a_metaData, a_calibCoefStruct)
+   get_sensor_misc_info(a_sensorList, a_floatNum, a_metaWmoList, a_metaData, a_calibCoefStruct)
 
 o_techParId = [];
 o_techParDimLev = [];
@@ -893,7 +880,7 @@ return
 % ------------------------------------------------------------------------------
 function [o_paramName, o_paramDimLevel, o_paramSensor, ...
    o_paramUnits, o_paramAccuracy, o_paramResolution] = ...
-   get_sensor_parameter_info(a_inputSensorName, a_floatNum, a_decId, ...
+   get_sensor_parameter_info(a_inputSensorName, a_floatNum, ...
    a_metaWmoList, a_metaData, a_calibCoefStruct)
 
 o_paramName = [];
@@ -1099,9 +1086,9 @@ switch a_inputSensorName
 
    case 'RAMSES'
       o_paramName = [ ...
-         {'RAW_DOWNWELLING_IRRADIANCE'} {'RADIOMETER_INTEGRATION_TIME'} ...
-         {'RADIOMETER_TEMP'} {'RADIOMETER_PRES'} ...
-         {'RADIOMETER_PRE_INCLINATION'} {'RADIOMETER_POST_INCLINATION'} ...
+         {'RAW_DOWNWELLING_IRRADIANCE'} {'RADIOMETER_DOWN_IRR_INTEGRATION_TIME'} ...
+         {'RADIOMETER_DOWN_IRR_TEMP'} {'RADIOMETER_DOWN_IRR_PRES'} ...
+         {'RADIOMETER_DOWN_IRR_PRE_INCLINATION'} {'RADIOMETER_DOWN_IRR_POST_INCLINATION'} ...
          ];
       o_paramDimLevel = [1201 1202 1203 1204 1205 1206];
       o_paramSensor = [ ...

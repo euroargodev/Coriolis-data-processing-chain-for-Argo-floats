@@ -6,7 +6,7 @@
 %  generate_json_float_meta_prv_cts4_ir_sbd_( ...
 %    a_floatMetaFileName, a_sensorListFileName, a_floatListFileName, ...
 %    a_calibFileName, a_configDirName, ...
-%    a_outputDirName)
+%    a_outputDirName, a_rtVersionFlag)
 %
 % INPUT PARAMETERS :
 %   a_floatMetaFileName  : meta-data file exported from Coriolis data base
@@ -16,13 +16,14 @@
 %                          decoded data)
 %   a_configDirName      : directory of float configuration at launch files
 %   a_outputDirName      : directory of individual json float meta-data files
+%   a_rtVersionFlag      : 1 if it is the RT version of the tool, 0 otherwise
 %
 % OUTPUT PARAMETERS :
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/01/2014 - RNU - creation
@@ -31,7 +32,7 @@
 function generate_json_float_meta_prv_cts4_ir_sbd_( ...
    a_floatMetaFileName, a_sensorListFileName, a_floatListFileName, ...
    a_calibFileName, a_configDirName, ...
-   a_outputDirName)
+   a_outputDirName, a_rtVersionFlag)
 
 % report information structure
 global g_cogj_reportData;
@@ -242,6 +243,7 @@ for idFloat = 1:length(floatList)
       {'SENSOR_MAKER'} ...
       {'SENSOR_MODEL'} ...
       {'SENSOR_SERIAL_NO'} ...
+      {'SENSOR_FIRMWARE_VERSION'} ...
       ];
    [metaStruct] = add_multi_dim_data( ...
       itemList, ...
@@ -390,7 +392,7 @@ for idFloat = 1:length(floatList)
    % retrieve configuration names and values at launch from configuration
    % commands report files
    configReportFileName = [a_configDirName '/' metaStruct.PLATFORM_NUMBER '_2.txt'];
-   [configParamNames, configParamValues] = read_conf_cmd_report_flbb(configReportFileName, sensorList, floatNum);
+   [configParamNames, configParamValues] = read_conf_cmd_report_flbb(configReportFileName, sensorList, floatNum, a_rtVersionFlag);
    
    idF = find(strcmp('CONFIG_PT_27', configParamNames) ==1, 1);
    if (~isempty(idF))
@@ -507,7 +509,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/01/2014 - RNU - creation
@@ -543,7 +545,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/01/2014 - RNU - creation
@@ -581,6 +583,7 @@ o_metaStruct = struct( ...
    'CONTROLLER_BOARD_SERIAL_NO_PRIMARY', 'CONTROLLER_BOARD_SERIAL_NO_PRIMA', ...
    'CONTROLLER_BOARD_SERIAL_NO_SECONDARY', 'CONTROLLER_BOARD_SERIAL_NO_SECON', ...
    'SPECIAL_FEATURES', 'SPECIAL_FEATURES', ...
+   'PROGRAM_NAME', 'PROGRAM_NAME', ...
    'FLOAT_OWNER', 'FLOAT_OWNER', ...
    'OPERATING_INSTITUTION', 'OPERATING_INSTITUTION', ...
    'CUSTOMISATION', 'CUSTOMISATION', ...

@@ -5,14 +5,14 @@
 %   nc_get_profile_max_pressure ou nc_get_profile_max_pressure(6900189, 7900118)
 %
 % INPUT PARAMETERS :
-%   varargin : éventuellement la liste des numéros de flotteurs à traiter
+%   varargin : Ã©ventuellement la liste des numÃ©ros de flotteurs Ã  traiter
 %
 % OUTPUT PARAMETERS :
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/24/2019 - RNU - creation
@@ -70,7 +70,7 @@ end
 header = 'WMO;FILE;N_PROF;CY_NUM;DIR;MODE;MIN_PRES;MIN_PRES_QC;MAX_PRES;MAX_PRES_QC';
 fprintf(fidOut, '%s\n', header);
 
-paramPres = get_netcdf_param_attributes_3_1('PRES');
+paramPres = get_netcdf_param_attributes('PRES');
 
 % process the floats
 nbFloats = length(floatList);

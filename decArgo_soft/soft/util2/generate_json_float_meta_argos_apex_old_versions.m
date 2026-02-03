@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/26/2019 - RNU - creation
@@ -222,6 +222,7 @@ for idFloat = 1:length(floatList)
       {'SENSOR_MAKER'} ...
       {'SENSOR_MODEL'} ...
       {'SENSOR_SERIAL_NO'} ...
+      {'SENSOR_FIRMWARE_VERSION'} ...
       ];
    [metaStruct] = add_multi_dim_data( ...
       itemList, ...
@@ -794,6 +795,7 @@ o_metaStruct = struct( ...
    'CONTROLLER_BOARD_SERIAL_NO_PRIMARY', 'CONTROLLER_BOARD_SERIAL_NO_PRIMA', ...
    'CONTROLLER_BOARD_SERIAL_NO_SECONDARY', 'CONTROLLER_BOARD_SERIAL_NO_SECON', ...
    'SPECIAL_FEATURES', 'SPECIAL_FEATURES', ...
+   'PROGRAM_NAME', 'PROGRAM_NAME', ...
    'FLOAT_OWNER', 'FLOAT_OWNER', ...
    'OPERATING_INSTITUTION', 'OPERATING_INSTITUTION', ...
    'CUSTOMISATION', 'CUSTOMISATION', ...
@@ -825,7 +827,7 @@ o_metaStruct = struct( ...
 return
 
 % ------------------------------------------------------------------------------
-% Lecture des mÈta-donnÈes corrigÈes d'un flotteur.
+% Lecture des m√©ta-donn√©es corrig√©es d'un flotteur.
 %
 % SYNTAX :
 %  [o_ptt, o_missionNum, o_repRate, o_downTime, o_upTime, ...
@@ -834,27 +836,27 @@ return
 %    get_dep_meta_for_dep2(a_wmo, a_metaFileName)
 %
 % INPUT PARAMETERS :
-%   a_wmo          : numÈro WMO du flotteur concernÈ
-%   a_metaFileName : fichier des mÈta-donnÈes
+%   a_wmo          : num√©ro WMO du flotteur concern√©
+%   a_metaFileName : fichier des m√©ta-donn√©es
 %
 % OUTPUT PARAMETERS :
 %   o_ptt         : Argos ou Iridium Id
-%   o_missionNum  : numÈro de mission
+%   o_missionNum  : num√©ro de mission
 %   o_repRate     : repetition rate de la mission
 %   o_downTime    : down time
 %   o_upTime      : up time
-%   o_cycleTime   : durÈe du cycle
+%   o_cycleTime   : dur√©e du cycle
 %   o_parkPres    : pression de parking
 %   o_profPres    : pression de profil
-%   o_launchDate  : date de l‚cher
-%   o_launchLon   : longitude de l‚cher
-%   o_launchLat   : latitude de l‚cher
+%   o_launchDate  : date de l√¢cher
+%   o_launchLon   : longitude de l√¢cher
+%   o_launchLat   : latitude de l√¢cher
 %   o_startUpDate : date de descente pour le premier cycle
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   25/08/2014 - RNU - creation
@@ -879,14 +881,14 @@ o_launchLat = [];
 o_startUpDate = [];
 
 
-% ouverture du de mÈta donnÈes
+% ouverture du de m√©ta donn√©es
 fId = fopen(a_metaFileName, 'r');
 if (fId == -1)
    fprintf('Erreur ouverture fichier : %s\n', a_metaFileName);
    return
 end
 
-% lecture et stockage des donnÈes du fichier DEP
+% lecture et stockage des donn√©es du fichier DEP
 metaData = textscan(fId, '%u %d64 %u %u %d %d %f %u %u %s %s %f %f %s %s');
 
 wmoTab = metaData{1}(:);
@@ -924,23 +926,23 @@ fclose(fId);
 return
 
 % ------------------------------------------------------------------------------
-% Calcul des dates juliennes ‡ partir des dates grÈgoriennes.
+% Calcul des dates juliennes √† partir des dates gr√©goriennes.
 %
 % SYNTAX :
 % [o_julD] = compute_juld(a_dayStr, a_hourStr, , a_reOrder)
 %
 % INPUT PARAMETERS :
-%   a_dayStr  : partie jour de la date grÈgorienne (yyyy/mm/jj)
-%   a_hourStr : partie heure de la date grÈgorienne (hh:mm:ss)
+%   a_dayStr  : partie jour de la date gr√©gorienne (yyyy/mm/jj)
+%   a_hourStr : partie heure de la date gr√©gorienne (hh:mm:ss)
 %   a_reOrder : 1 si les jour sont au format (jj/mm/yyyy)
 %
 % OUTPUT PARAMETERS :
-%   o_julD : date julienne calculÈe
+%   o_julD : date julienne calcul√©e
 %
 % EXAMPLES :
 %
 % SEE ALSO : init_valdef, gregorian_2_julian
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   13/05/2008 - RNU - creation

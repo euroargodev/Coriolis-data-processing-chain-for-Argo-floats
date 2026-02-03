@@ -1,11 +1,11 @@
 % ------------------------------------------------------------------------------
-% Ecriture d'une entête d'un fichier kml.
+% Ecriture d'une entÃªte d'un fichier kml.
 %
 % SYNTAX :
 %   ge_put_header1(a_fId, a_fileDescription, a_fileName)
 %
 % INPUT PARAMETERS :
-%   a_fId             : pointeur du fichier kml à écrire
+%   a_fId             : pointeur du fichier kml Ã  Ã©crire
 %   a_fileDescription : contenu du champ 'description'
 %   a_fileName        : contenu du champ 'name'
 %
@@ -14,14 +14,14 @@
 % EXAMPLES :
 %
 % SEE ALSO : ge_rgb_2_hex
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/01/2009 - RNU - creation
 % ------------------------------------------------------------------------------
 function ge_put_header1(a_fId, a_fileDescription, a_fileName)
 
-% blanc pour la position de lâcher
+% blanc pour la position de lÃ¢cher
 launchPosColor = ge_rgb_2_hex(1, 1, 1);
 % rouge pour les positions Argos de classe 1
 argosPos1Color = ge_rgb_2_hex(1, 0, 0);
@@ -33,7 +33,7 @@ argosPos3Color = ge_rgb_2_hex(0, 1, 0);
 argosPosGColor = ge_rgb_2_hex(0, 1, 1);
 % rouge pour la trajectoire Argos/Gps de surface
 argosTrajColor = ge_rgb_2_hex(1, 0, 0);
-% blanc pour les déplacements
+% blanc pour les dÃ©placements
 dispColor = ge_rgb_2_hex(1, 1, 1);
 % jaune pour la trajectoire Iridium de surface
 iridiumTrajColor = ge_rgb_2_hex(1, 1, 0);

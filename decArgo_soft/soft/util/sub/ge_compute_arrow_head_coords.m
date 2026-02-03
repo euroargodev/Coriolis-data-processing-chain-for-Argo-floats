@@ -1,24 +1,24 @@
 % ------------------------------------------------------------------------------
-% Génération des coordonnées d'une flêche utilisée pour figurer un déplacement.
+% GÃ©nÃ©ration des coordonnÃ©es d'une flÃªche utilisÃ©e pour figurer un dÃ©placement.
 %
 % SYNTAX :
 %   [o_lonArrowHead o_latArrowHead] = ge_compute_arrow_head_coords( ...
 %      a_lon1, a_lat1, a_lon2, a_lat2, a_alphaArrow, a_heightArrow)
 %
 % INPUT PARAMETERS :
-%   a_lon1, a_lat1 : coordonnées du point début du déplacement
-%   a_lon2, a_lat2 : coordonnées du point fin du déplacement
-%   a_alphaArrow   : valeur du demi angle de la flêche
-%   a_heightArrow  : valeur de la hauteur de la flêche
+%   a_lon1, a_lat1 : coordonnÃ©es du point dÃ©but du dÃ©placement
+%   a_lon2, a_lat2 : coordonnÃ©es du point fin du dÃ©placement
+%   a_alphaArrow   : valeur du demi angle de la flÃªche
+%   a_heightArrow  : valeur de la hauteur de la flÃªche
 %
 % OUTPUT PARAMETERS :
-%   o_lonArrowHead, o_latArrowHead : coordonnées des segments constituant la
-%                                    flêche
+%   o_lonArrowHead, o_latArrowHead : coordonnÃ©es des segments constituant la
+%                                    flÃªche
 %
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/01/2009 - RNU - creation

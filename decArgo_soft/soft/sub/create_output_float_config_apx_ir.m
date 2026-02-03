@@ -17,7 +17,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -239,6 +239,13 @@ if (~isempty(a_decArgoConfParamNames))
                               {'<cycle_phase_name>'} {phaseName} ...
                               {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
                            finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                        case 'MaxNumberOfSamples'
+                           idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE07'));
+                           finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                              [{'<short_sensor_name>'} {sensorNameOut} ...
+                              {'<cycle_phase_name>'} {phaseName} ...
+                              {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                           finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
                         otherwise
                            fprintf('WARNING: Float #%d: Configuration parameter (*%s) not managed yet for decoderId #%d\n', ...
                               g_decArgo_floatNum, ...
@@ -296,6 +303,13 @@ if (~isempty(a_decArgoConfParamNames))
                            finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
                         case 'NumberOfSamples'
                            idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE006'));
+                           finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
+                              [{'<short_sensor_name>'} {sensorNameOut} ...
+                              {'<cycle_phase_name>'} {phaseName} ...
+                              {'<N>'} {num2str(finalConfigName{idConfParam}(idFUs(4)+1:idFUs(5)-1))}]);
+                           finalConfigId{idConfParam} = a_ncConfParamIds{idF2};
+                        case 'MaxNumberOfSamples'
+                           idF2 = find(strcmp(a_decArgoConfParamNames, 'CONFIG_SAMPLE007'));
                            finalConfigName{idConfParam} = create_param_name_ir_rudics_sbd2(a_ncConfParamNames{idF2}, ...
                               [{'<short_sensor_name>'} {sensorNameOut} ...
                               {'<cycle_phase_name>'} {phaseName} ...
@@ -461,7 +475,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/06/2022 - RNU - creation
@@ -514,22 +528,27 @@ if (~isempty(idF1))
             label = [baseName '_PTS_' num2str(idZ) '_StartPressure'];
             idD = find(strcmp(label, o_configName));
             idDel = [idDel idD];
-            ptsConfig(idZ+1+(idZ-1)*3, :) = a_configValue(idD, :);
+            ptsConfig(idZ+1+(idZ-1)*4, :) = a_configValue(idD, :);
 
             label = [baseName '_PTS_' num2str(idZ) '_StopPressure'];
             idD = find(strcmp(label, o_configName));
             idDel = [idDel idD];
-            ptsConfig(idZ+2+(idZ-1)*3, :) = a_configValue(idD, :);
+            ptsConfig(idZ+2+(idZ-1)*4, :) = a_configValue(idD, :);
 
             label = [baseName '_PTS_' num2str(idZ) '_DepthInterval'];
             idD = find(strcmp(label, o_configName));
             idDel = [idDel idD];
-            ptsConfig(idZ+3+(idZ-1)*3, :) = a_configValue(idD, :);
+            ptsConfig(idZ+3+(idZ-1)*4, :) = a_configValue(idD, :);
 
             label = [baseName '_PTS_' num2str(idZ) '_NumberOfSamples'];
             idD = find(strcmp(label, o_configName));
             idDel = [idDel idD];
-            ptsConfig(idZ+4+(idZ-1)*3, :) = a_configValue(idD, :);
+            ptsConfig(idZ+4+(idZ-1)*4, :) = a_configValue(idD, :);
+
+            label = [baseName '_PTS_' num2str(idZ) '_MaxNumberOfSamples'];
+            idD = find(strcmp(label, o_configName));
+            idDel = [idDel idD];
+            ptsConfig(idZ+5+(idZ-1)*4, :) = a_configValue(idD, :);
          end
 
          % add PT configuration
@@ -549,49 +568,61 @@ if (~isempty(idF1))
             idD = find(strcmp(label, o_configName));
             idDel = [idDel idD];
             ptStartPres = a_configValue(idD, :);
-            idNoNan = find(~isnan(ptsConfig(idZ+1+(idZ-1)*3, :)) & ~isnan(ptStartPres));
-            if (any(ptsConfig(idZ+1+(idZ-1)*3, idNoNan) ~= ptStartPres(idNoNan)))
+            idNoNan = find(~isnan(ptsConfig(idZ+1+(idZ-1)*4, :)) & ~isnan(ptStartPres));
+            if (any(ptsConfig(idZ+1+(idZ-1)*4, idNoNan) ~= ptStartPres(idNoNan)))
                fprintf('ERROR: Float #%d: PTS and PT configuration are not consistent - PTS used in merged configuration\n', ...
                   g_decArgo_floatNum);
             end
-            idGo = find(isnan(ptsConfig(idZ+1+(idZ-1)*3, :)) & ~isnan(ptStartPres));
-            ptsConfig(idZ+1+(idZ-1)*3, idGo) = ptStartPres(idGo);
+            idGo = find(isnan(ptsConfig(idZ+1+(idZ-1)*4, :)) & ~isnan(ptStartPres));
+            ptsConfig(idZ+1+(idZ-1)*4, idGo) = ptStartPres(idGo);
 
             label = [baseName '_PT_' num2str(idZ) '_StopPressure'];
             idD = find(strcmp(label, o_configName));
             idDel = [idDel idD];
             ptStopPres = a_configValue(idD, :);
-            idNoNan = find(~isnan(ptsConfig(idZ+2+(idZ-1)*3, :)) & ~isnan(ptStopPres));
-            if (any(ptsConfig(idZ+2+(idZ-1)*3, idNoNan) ~= ptStopPres(idNoNan)))
+            idNoNan = find(~isnan(ptsConfig(idZ+2+(idZ-1)*4, :)) & ~isnan(ptStopPres));
+            if (any(ptsConfig(idZ+2+(idZ-1)*4, idNoNan) ~= ptStopPres(idNoNan)))
                fprintf('ERROR: Float #%d: PTS and PT configuration are not consistent - PTS used in merged configuration\n', ...
                   g_decArgo_floatNum);
             end
-            idGo = find(isnan(ptsConfig(idZ+2+(idZ-1)*3, :)) & ~isnan(ptStopPres));
-            ptsConfig(idZ+2+(idZ-1)*3, idGo) = ptStopPres(idGo);
+            idGo = find(isnan(ptsConfig(idZ+2+(idZ-1)*4, :)) & ~isnan(ptStopPres));
+            ptsConfig(idZ+2+(idZ-1)*4, idGo) = ptStopPres(idGo);
 
             label = [baseName '_PT_' num2str(idZ) '_DepthInterval'];
             idD = find(strcmp(label, o_configName));
             idDel = [idDel idD];
             ptDepthInt = a_configValue(idD, :);
-            idNoNan = find(~isnan(ptsConfig(idZ+3+(idZ-1)*3, :)) & ~isnan(ptDepthInt));
-            if (any(ptsConfig(idZ+3+(idZ-1)*3, idNoNan) ~= ptDepthInt(idNoNan)))
+            idNoNan = find(~isnan(ptsConfig(idZ+3+(idZ-1)*4, :)) & ~isnan(ptDepthInt));
+            if (any(ptsConfig(idZ+3+(idZ-1)*4, idNoNan) ~= ptDepthInt(idNoNan)))
                fprintf('ERROR: Float #%d: PTS and PT configuration are not consistent - PTS used in merged configuration\n', ...
                   g_decArgo_floatNum);
             end
-            idGo = find(isnan(ptsConfig(idZ+3+(idZ-1)*3, :)) & ~isnan(ptDepthInt));
-            ptsConfig(idZ+3+(idZ-1)*3, idGo) = ptDepthInt(idGo);
+            idGo = find(isnan(ptsConfig(idZ+3+(idZ-1)*4, :)) & ~isnan(ptDepthInt));
+            ptsConfig(idZ+3+(idZ-1)*4, idGo) = ptDepthInt(idGo);
 
             label = [baseName '_PT_' num2str(idZ) '_NumberOfSamples'];
             idD = find(strcmp(label, o_configName));
             idDel = [idDel idD];
             ptNumOfSamp = a_configValue(idD, :);
-            idNoNan = find(~isnan(ptsConfig(idZ+4+(idZ-1)*3, :)) & ~isnan(ptNumOfSamp));
-            if (any(ptsConfig(idZ+4+(idZ-1)*3, idNoNan) ~= ptNumOfSamp(idNoNan)))
+            idNoNan = find(~isnan(ptsConfig(idZ+4+(idZ-1)*4, :)) & ~isnan(ptNumOfSamp));
+            if (any(ptsConfig(idZ+4+(idZ-1)*4, idNoNan) ~= ptNumOfSamp(idNoNan)))
                fprintf('ERROR: Float #%d: PTS and PT configuration are not consistent - PTS used in merged configuration\n', ...
                   g_decArgo_floatNum);
             end
-            idGo = find(isnan(ptsConfig(idZ+4+(idZ-1)*3, :)) & ~isnan(ptNumOfSamp));
-            ptsConfig(idZ+4+(idZ-1)*3, idGo) = ptNumOfSamp(idGo);
+            idGo = find(isnan(ptsConfig(idZ+4+(idZ-1)*4, :)) & ~isnan(ptNumOfSamp));
+            ptsConfig(idZ+4+(idZ-1)*4, idGo) = ptNumOfSamp(idGo);
+
+            label = [baseName '_PT_' num2str(idZ) '_MaxNumberOfSamples'];
+            idD = find(strcmp(label, o_configName));
+            idDel = [idDel idD];
+            ptNumOfSamp = a_configValue(idD, :);
+            idNoNan = find(~isnan(ptsConfig(idZ+4+(idZ-1)*4, :)) & ~isnan(ptNumOfSamp));
+            if (any(ptsConfig(idZ+4+(idZ-1)*4, idNoNan) ~= ptNumOfSamp(idNoNan)))
+               fprintf('ERROR: Float #%d: PTS and PT configuration are not consistent - PTS used in merged configuration\n', ...
+                  g_decArgo_floatNum);
+            end
+            idGo = find(isnan(ptsConfig(idZ+4+(idZ-1)*4, :)) & ~isnan(ptNumOfSamp));
+            ptsConfig(idZ+4+(idZ-1)*4, idGo) = ptNumOfSamp(idGo);
          end
 
          % remove existing configurations
@@ -601,18 +632,21 @@ if (~isempty(idF1))
          % store new configuration labels
          newConfigName = cell(size(ptsConfig, 1), 1);
          newConfigName{1} = [baseName '_PTS_NumberOfZones'];
-         for idZ = 1:(size(ptsConfig, 1)-1)/4
+         for idZ = 1:(size(ptsConfig, 1)-1)/5
             label = [baseName '_PTS_' num2str(idZ) '_StartPressure'];
-            newConfigName{idZ+1+(idZ-1)*3} = label;
+            newConfigName{idZ+1+(idZ-1)*4} = label;
 
             label = [baseName '_PTS_' num2str(idZ) '_StopPressure'];
-            newConfigName{idZ+2+(idZ-1)*3} = label;
+            newConfigName{idZ+2+(idZ-1)*4} = label;
 
             label = [baseName '_PTS_' num2str(idZ) '_DepthInterval'];
-            newConfigName{idZ+3+(idZ-1)*3} = label;
+            newConfigName{idZ+3+(idZ-1)*4} = label;
 
             label = [baseName '_PTS_' num2str(idZ) '_NumberOfSamples'];
-            newConfigName{idZ+4+(idZ-1)*3} = label;
+            newConfigName{idZ+4+(idZ-1)*4} = label;
+
+            label = [baseName '_PTS_' num2str(idZ) '_MaxNumberOfSamples'];
+            newConfigName{idZ+4+(idZ-1)*4} = label;
          end
 
          % add new configuration

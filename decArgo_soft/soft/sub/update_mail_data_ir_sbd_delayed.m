@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/17/2018 - RNU - creation
@@ -40,7 +40,8 @@ end
 
 % specific
 if (ismember(g_decArgo_floatNum, [6903230, 6903256, 6902957, 6901880, 6903800, ...
-      6904236, 3901645, 6904080]))
+      6904236, 3901645, 6904080, 6903000, 7900555, 6903212, 6903703, 1902575, ...
+      6903866, 6903867, 5906866, 3902474, 6904097]))
    switch g_decArgo_floatNum
       case 6903230
          idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == gregorian_2_julian_dec_argo('2018/06/26 06:02:14'));
@@ -105,6 +106,61 @@ if (ismember(g_decArgo_floatNum, [6903230, 6903256, 6902957, 6901880, 6903800, .
          idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == gregorian_2_julian_dec_argo('2022/08/31 06:36:36'));
          if (~isempty(idF))
             g_decArgo_iridiumMailData(idF).cycleNumber = 21;
+         end
+      case 6903000
+         idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == gregorian_2_julian_dec_argo('2024/04/09 17:27:21'));
+         if (~isempty(idF))
+            g_decArgo_iridiumMailData(idF).cycleNumber = 145;
+         end
+         idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == gregorian_2_julian_dec_argo('2024/05/21 09:33:56'));
+         if (~isempty(idF))
+            g_decArgo_iridiumMailData(idF).cycleNumber = 153;
+         end
+      case 7900555
+         idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == gregorian_2_julian_dec_argo('2024/08/16 18:03:38'));
+         if (~isempty(idF))
+            g_decArgo_iridiumMailData(idF).cycleNumber = 160;
+         end
+      case 6903212
+         idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == gregorian_2_julian_dec_argo('2023/10/14 09:04:58'));
+         if (~isempty(idF))
+            g_decArgo_iridiumMailData(idF).cycleNumber = 248;
+         end
+      case 6903703
+         idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] > gregorian_2_julian_dec_argo('2022/01/31 22:59:16'));
+         if (~isempty(idF))
+            % [g_decArgo_iridiumMailData(idF).cycleNumber] = deal(ones(1, length(idF))*114);
+            [g_decArgo_iridiumMailData(idF).cycleNumber] = deal(114);
+         end
+      case 1902575
+         idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == gregorian_2_julian_dec_argo('2024/12/13 23:14:46'));
+         if (~isempty(idF))
+            g_decArgo_iridiumMailData(idF).cycleNumber = 38;
+         end
+      case 6903866
+         idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == gregorian_2_julian_dec_argo('2025/04/01 17:24:33'));
+         if (~isempty(idF))
+            g_decArgo_iridiumMailData(idF).cycleNumber = 248;
+         end
+      case 6903867
+         idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == gregorian_2_julian_dec_argo('2025/06/28 20:21:12'));
+         if (~isempty(idF))
+            g_decArgo_iridiumMailData(idF).cycleNumber = 258;
+         end
+      case 5906866
+         idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == gregorian_2_julian_dec_argo('2025/06/21 17:09:19'));
+         if (~isempty(idF))
+            g_decArgo_iridiumMailData(idF).cycleNumber = 95;
+         end
+      case 3902474
+         idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == gregorian_2_julian_dec_argo('2025/12/27 04:29:39'));
+         if (~isempty(idF))
+            g_decArgo_iridiumMailData(idF).cycleNumber = 126;
+         end
+      case 6904097
+         idF = find([g_decArgo_iridiumMailData.timeOfSessionJuld] == gregorian_2_julian_dec_argo('2021/02/27 06:57:23'));
+         if (~isempty(idF))
+            g_decArgo_iridiumMailData(idF).cycleNumber = 23;
          end
    end
 end

@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/29/2018 - RNU - creation
@@ -23,6 +23,9 @@ function copy_apx_apf11_iridium_rudics_files(varargin)
 % mode processing flags
 global g_decArgo_realtimeFlag;
 global g_decArgo_delayedModeFlag;
+
+% default values
+global g_decArgo_janFirst1950InMatlab;
 
 % default values initialization
 init_default_values;
@@ -95,21 +98,64 @@ for idFloat = 1:nbFloats
    for idFile = 1:length(floatFiles)
       floatFileName = floatFiles(idFile).name;
       floatFilePathName = [inputDirName '/' floatLoginName '/' floatFileName];
-      
-      floatFilePathNameOut = [floatOutputDirName '/' floatFileName];
+
+      floatFileNameOut = floatFileName;
+
+      % specific
+      switch(floatNum)
+         case 2903802
+            idF1 = strfind(floatFileName, '.');
+            cyNumPrev = str2double(floatFileName(idF1(1)+1:idF1(2)-1));
+            fileDateStr = floatFileName(idF1(2)+1:idF1(3)-1);
+            fileDateRef = datenum('20250706T230408', 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
+            if (strcmp(fileDateStr, '20250618T025934') || strcmp(fileDateStr, '20250618T025936'))
+               cyNum = 2;
+            elseif (strcmp(fileDateStr, '20250618T042652'))
+               cyNum = 3;
+            elseif (strcmp(fileDateStr, '20250618T114032'))
+               cyNum = 4;
+            elseif (strcmp(fileDateStr, '20250618T125800') || strcmp(fileDateStr, '20250618T125802'))
+               cyNum = 5;
+            elseif (strcmp(fileDateStr, '20250618T181632') || strcmp(fileDateStr, '20250618T181634'))
+               cyNum = 6;
+            elseif (strcmp(fileDateStr, '20250618T193544'))
+               cyNum = 7;
+            elseif (strcmp(fileDateStr, '20250618T235006'))
+               cyNum = 8;
+            elseif (strcmp(fileDateStr, '20250619T005336') || strcmp(fileDateStr, '20250619T005338'))
+               cyNum = 9;
+            elseif (strcmp(fileDateStr, '20250622T201420'))
+               cyNum = 10;
+            elseif (strcmp(fileDateStr, '20250622T212400'))
+               cyNum = 11;
+            elseif (strcmp(fileDateStr, '20250706T230406') || strcmp(fileDateStr, '20250706T230408'))
+               cyNum = 12;
+            else
+               fileDate = datenum(fileDateStr, 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
+               if (fileDate > fileDateRef)
+                  cyNum = cyNumPrev + 12;
+               else
+                  cyNum = cyNumPrev;
+               end
+            end
+
+            floatFileNameOut(idF1(1)+1:idF1(2)-1) = sprintf('%03d', cyNum);
+      end
+
+      floatFilePathNameOut = [floatOutputDirName '/' floatFileNameOut];
       if (exist(floatFilePathNameOut, 'file') == 2)
          % when the file already exists, check (with its date) if it needs to be
          % updated
          floatFileOut = dir(floatFilePathNameOut);
          if (~strcmp(floatFiles(idFile).date, floatFileOut.date))
-            copy_file(floatFilePathName, floatOutputDirName);
+            copy_file(floatFilePathName, floatFilePathNameOut);
             fprintf('%s => copy\n', floatFileName);
          else
             fprintf('%s => unchanged\n', floatFileName);
          end
       else
          % copy the file if it doesn't exist
-         copy_file(floatFilePathName, floatOutputDirName);
+         copy_file(floatFilePathName, floatFilePathNameOut);
          fprintf('%s => copy\n', floatFileName);
       end
    end

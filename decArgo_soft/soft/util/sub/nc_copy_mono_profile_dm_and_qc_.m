@@ -24,7 +24,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/10/2018 - RNU - creation
@@ -99,34 +99,34 @@ end
 errorProfInfoAll = [];
 nbFloats = length(a_floatList);
 for idFloat = 1:nbFloats
-   
+
    g_cocd_floatNum = a_floatList(idFloat);
    floatNum = g_cocd_floatNum;
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
-   
+
    errorProfInfo = [];
 
    if (g_cocd_realtimeFlag == 1)
       % initialize data structure to store report information
       g_cocd_reportStruct = get_report_init_struct(floatNum);
    end
-   
+
    % check that float directory exists in OLD and NEW file directories
    floatOldDirPathName = [DIR_INPUT_OLD_NC_FILES '/' floatNumStr '/'];
    floatNewDirPathName = [DIR_INPUT_NEW_NC_FILES '/' floatNumStr '/'];
    if ((exist(floatOldDirPathName, 'dir') == 7) && (exist(floatNewDirPathName, 'dir') == 7))
-      
+
       oldProfDir = [DIR_INPUT_OLD_NC_FILES '/' floatNumStr '/profiles/'];
       newProfDir = [DIR_INPUT_NEW_NC_FILES '/' floatNumStr '/profiles/'];
-      
+
       % check that it is a BGC float
       files = dir([newProfDir '/' 'B*' floatNumStr '_' '*.nc']);
       if (isempty(files))
          fprintf('   => not a BGC float\n');
          continue
       end
-      
+
       % create the list of available cycle numbers (from PROF files)
       cyNumListOld = [];
       cyNumListOldNot31 = [];
@@ -173,7 +173,7 @@ for idFloat = 1:nbFloats
             cyNumListNew = cyNumList;
          end
       end
-      
+
       % compare cycle lists
       if (~isempty(setdiff([cyNumListOld cyNumListOldNot31], cyNumListNew)))
          cyNumMissingList = setdiff([cyNumListOld cyNumListOldNot31], cyNumListNew);
@@ -187,22 +187,22 @@ for idFloat = 1:nbFloats
          fprintf('INFO: Following cycles (%s) are only in "NEW DIRECTORY" (%s)\n', ...
             cyNumMissingListStr(1:end-1), floatNewDirPathName);
       end
-      
+
       % process PROF files
       cyNumList = intersect(cyNumListOld, cyNumListNew);
       for idCy = 1:length(cyNumList)
-         
+
          g_cocd_cycleNum = cyNumList(idCy);
-                  
+
          % process descending and ascending profiles
          for idDir = 1:2
-            
+
             if (idDir == 1)
                g_cocd_cycleDir = 'D';
             else
                g_cocd_cycleDir = '';
             end
-            
+
             profFileNameOld = '';
             cProfFileDmOld = '';
             bProfFileNameOld = '';
@@ -247,15 +247,15 @@ for idFloat = 1:nbFloats
                   bProfFileDmNew = bProfFileDm;
                end
             end
-            
+
             if (~isempty(profFileNameOld) && ~isempty(bProfFileNameOld) && ...
                   ~isempty(profFileNameNew) && ~isempty(bProfFileNameNew))
                if ((cProfFileDmOld >= cProfFileDmNew) && ...
                      (bProfFileDmOld >= bProfFileDmNew))
-                  
+
                   fprintf('   %02d/%02d: Float #%d Cycle #%d%c\n', ...
                      idCy, length(cyNumList), g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir);
-                  
+
                   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                   % process current cycle files
                   process_cycle( ...
@@ -264,7 +264,7 @@ for idFloat = 1:nbFloats
                      profFileNameNew, cProfFileDmNew, ...
                      bProfFileNameNew, bProfFileDmNew, ...
                      a_ignoredParameterList, ignoredParamListAll, a_dirOutputNcFiles);
-                  
+
                else
                   if (cProfFileDmOld < cProfFileDmNew)
                      fprintf('ERROR: Float #%d Cycle #%d%c: C-PROF file in DM in "NEW DIRECTORY" only\n', ...
@@ -424,7 +424,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/10/2018 - RNU - creation
@@ -478,7 +478,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/10/2018 - RNU - creation
@@ -699,7 +699,7 @@ if (~isempty(a_ignoredParameterListAll))
             end
          end
       end
-   end   
+   end
 end
 
 profStructOld = [];
@@ -723,7 +723,7 @@ for idLoop = 1:2
    end
 
    % create the list of parameters to be retrieved from PROF file
-   
+
    % add parameter measurements
    parameterList = [];
    [~, nParam, nProf] = size(stationParameters);
@@ -755,10 +755,10 @@ for idLoop = 1:2
       end
       parameterList = [parameterList; {profParamList}];
    end
-   
+
    % retrieve information from PROF file
    profData = get_data_from_nc_file(profFileName, wantedVars);
-   
+
    profStruct = [];
    profStruct.bFileFlag = a_bFileFlag;
    profStruct.dataMode = dataMode;
@@ -777,7 +777,7 @@ for idLoop = 1:2
          profStruct.data.(profData{id}) = data;
       end
    end
-   
+
    if (idLoop == 1)
       profStructOld = profStruct;
       parameterListOld = parameterList;
@@ -836,7 +836,7 @@ end
 
 % check consistency between N_PROF dimension
 if (length(profStructOld.dataMode) ~= length(profStructNew.dataMode))
-   
+
    % try to concatenate additional profile
    ok = 0;
    if (length(profStructOld.dataMode) == length(profStructNew.dataMode) + 1)
@@ -848,37 +848,37 @@ if (length(profStructOld.dataMode) ~= length(profStructNew.dataMode))
       if ((length(idUnpumped) == 2) && any(idSecondary == max(idUnpumped)-1))
          idUnpumped = max(idUnpumped);
          idSecondary = idUnpumped-1;
-         
+
          idSecondaryNew = cellfun(@(x) strfind(x, 'Secondary sampling'), cellstr(profStructNew.verticalSamplingScheme), 'UniformOutput', 0);
          idSecondaryNew = min(find(~cellfun(@isempty, idSecondaryNew) == 1));
          newPresData = profStructNew.data.PRES(idSecondaryNew, :);
          nLevelNew = length(newPresData);
-         
+
          paramPres = get_netcdf_param_attributes('PRES');
          concatPresAxis = ones(size(newPresData))*paramPres.fillValue;
          idUnpumpedLength = find(profStructOld.data.PRES(idUnpumped, :) ~= paramPres.fillValue, 1, 'last');
          idSecondaryLength = find(profStructOld.data.PRES(idSecondary, :) ~= paramPres.fillValue, 1, 'last');
          concatPresAxis(1:idUnpumpedLength) = profStructOld.data.PRES(idUnpumped, 1:idUnpumpedLength);
          concatPresAxis(idUnpumpedLength+1:idUnpumpedLength+idSecondaryLength) = profStructOld.data.PRES(idSecondary, 1:idSecondaryLength);
-         
+
          if (~any(newPresData ~= concatPresAxis))
-            
+
             % the concatenated profile matches the NEW one => update the
             % OLD data structure so that the comparison could be done
             paramListUnpumped = parameterListOld{idUnpumped};
             paramListSecondary = parameterListOld{idSecondary};
             if (isempty(setdiff(paramListUnpumped, paramListSecondary)) && ...
                   isempty(setdiff(paramListSecondary, paramListUnpumped)))
-               
+
                % extend OLD data set if needed
                nLevelOld = size(profStructOld.data.PRES, 2);
                if (nLevelOld < nLevelNew)
-                  
+
                   paramListAll = unique([parameterListOld{:}]);
                   for idParam = 1:length(paramListAll)
                      paramName = paramListAll{idParam};
                      paramInfo = get_netcdf_param_attributes(paramName);
-                     
+
                      for idLoop = 1:2
                         if (idLoop == 1)
                            param = paramName;
@@ -891,21 +891,21 @@ if (length(profStructOld.dataMode) ~= length(profStructNew.dataMode))
                               break
                            end
                         end
-                        
+
                         profStructOld.data.(param) = cat(2, ...
                            profStructOld.data.(param), ...
                            ones(size(profStructOld.data.(param), 1), nLevelNew-nLevelOld)*paramInfo.fillValue);
-                        
+
                         if ~((a_bFileFlag == 1) && (strcmp(paramName, 'PRES')))
-                           
+
                            paramQc = [param '_QC'];
                            profStructOld.data.(paramQc) = cat(2, ...
                               profStructOld.data.(paramQc), ...
                               repmat(' ', size(profStructOld.data.(param), 1), nLevelNew-nLevelOld));
-                           
+
                            if (idLoop == 2)
                               param = [paramName '_ADJUSTED_ERROR'];
-                              
+
                               profStructOld.data.(param) = cat(2, ...
                                  profStructOld.data.(param), ...
                                  ones(size(profStructOld.data.(param), 1), nLevelNew-nLevelOld)*paramInfo.fillValue);
@@ -914,13 +914,13 @@ if (length(profStructOld.dataMode) ~= length(profStructNew.dataMode))
                      end
                   end
                end
-               
+
                % update OLD data set
                paramList = parameterListOld{idUnpumped};
                for idParam = 1:length(paramList)
                   paramName = paramList{idParam};
                   paramInfo = get_netcdf_param_attributes(paramName);
-                  
+
                   for idLoop = 1:2
                      if (idLoop == 1)
                         param = paramName;
@@ -937,28 +937,28 @@ if (length(profStructOld.dataMode) ~= length(profStructNew.dataMode))
                            break
                         end
                      end
-                  
+
                      concatParamData = ones(1, nLevelNew)*paramInfo.fillValue;
                      idUnpumpedLength = find(profStructOld.data.(param)(idUnpumped, :) ~= paramInfo.fillValue, 1, 'last');
                      idSecondaryLength = find(profStructOld.data.(param)(idSecondary, :) ~= paramInfo.fillValue, 1, 'last');
                      concatParamData(1:idUnpumpedLength) = profStructOld.data.(param)(idUnpumped, 1:idUnpumpedLength);
                      concatParamData(idUnpumpedLength+1:idUnpumpedLength+idSecondaryLength) = profStructOld.data.(param)(idSecondary, 1:idSecondaryLength);
                      profStructOld.data.(param)(idSecondary, :) = concatParamData;
-                     
+
                      if ~((a_bFileFlag == 1) && (strcmp(paramName, 'PRES')))
-                        
+
                         paramQc = [param '_QC'];
                         concatParamQcData = repmat(' ', 1, nLevelNew);
                         concatParamQcData(1:idUnpumpedLength) = profStructOld.data.(paramQc)(idUnpumped, 1:idUnpumpedLength);
                         concatParamQcData(idUnpumpedLength+1:idUnpumpedLength+idSecondaryLength) = profStructOld.data.(paramQc)(idSecondary, 1:idSecondaryLength);
                         profStructOld.data.(paramQc)(idSecondary, :) = concatParamQcData;
-                        
+
                         profParamQc = ['PROFILE_' paramName '_QC'];
                         profStructOld.data.(profParamQc)(idSecondary) = compute_profile_quality_flag(concatParamQcData);
-                        
+
                         if (idLoop == 2)
                            param = [paramName '_ADJUSTED_ERROR'];
-                           
+
                            concatParamData = ones(1, nLevelNew)*paramInfo.fillValue;
                            idUnpumpedLength = find(profStructOld.data.(param)(idUnpumped, :) ~= paramInfo.fillValue, 1, 'last');
                            idSecondaryLength = find(profStructOld.data.(param)(idSecondary, :) ~= paramInfo.fillValue, 1, 'last');
@@ -969,12 +969,12 @@ if (length(profStructOld.dataMode) ~= length(profStructNew.dataMode))
                      end
                   end
                end
-               
+
                % remove idUnpumped profile
                paramListAll = unique([parameterListOld{:}]);
                for idParam = 1:length(paramListAll)
                   paramName = paramListAll{idParam};
-                  
+
                   for idLoop = 1:2
                      if (idLoop == 1)
                         param = paramName;
@@ -988,12 +988,12 @@ if (length(profStructOld.dataMode) ~= length(profStructNew.dataMode))
                         end
                      end
                      profStructOld.data.(param)(idUnpumped, :) = [];
-                     
+
                      if ~((a_bFileFlag == 1) && (strcmp(paramName, 'PRES')))
-                        
+
                         paramQc = [param '_QC'];
                         profStructOld.data.(paramQc)(idUnpumped, :) = [];
-                        
+
                         if (idLoop == 1)
                            profParamQc = ['PROFILE_' paramName '_QC'];
                            profStructOld.data.(profParamQc)(idUnpumped) = [];
@@ -1012,7 +1012,7 @@ if (length(profStructOld.dataMode) ~= length(profStructNew.dataMode))
          end
       end
    end
-   
+
    if (~ok)
       fprintf('ERROR: Float #%d Cycle #%d%c: N_PROF=%d in OLD %c file whereas N_PROF=%d in NEW %c file\n', ...
          g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir, ...
@@ -1051,7 +1051,7 @@ for idProf = 1:length(profStructOld.dataMode)
             newHisto.HISTORY_STOP_PRES = profStructOld.info.HISTORY_STOP_PRES(idHisto, idProf);
             newHisto.HISTORY_PREVIOUS_VALUE = profStructOld.info.HISTORY_PREVIOUS_VALUE(idHisto, idProf);
             newHisto.HISTORY_QCTEST = squeeze(profStructOld.info.HISTORY_QCTEST(idHisto, idProf, :))';
-            
+
             nHistoryData = [nHistoryData newHisto];
             rtProfIdToUpdate = [rtProfIdToUpdate idProf];
          end
@@ -1066,7 +1066,7 @@ updatedData = [];
 profIdToUpdate = unique(rtProfIdToUpdate);
 for idProf = 1:length(profIdToUpdate)
    profId = profIdToUpdate(idProf);
-   
+
    % check that PRES axis are identical
    oldPresData = profStructOld.data.PRES(profId, :);
    newPresData = profStructNew.data.PRES(profId, :);
@@ -1079,7 +1079,7 @@ for idProf = 1:length(profIdToUpdate)
       nHistoryData(idDel) = [];
       continue
    end
-   
+
    % check that parameter lists are identical
    paramListOld = parameterListOld{profId};
    paramListNew = parameterListNew{profId};
@@ -1092,7 +1092,7 @@ for idProf = 1:length(profIdToUpdate)
       nHistoryData(idDel) = [];
       continue
    end
-   
+
    % update the NEW structure data
    historyIdList = find(rtProfIdToUpdate == profId);
    for idH = 1:length(historyIdList)
@@ -1101,7 +1101,7 @@ for idProf = 1:length(profIdToUpdate)
       stopPres = nHistoryData(historyIdList(idH)).HISTORY_STOP_PRES;
       prevVal = nHistoryData(historyIdList(idH)).HISTORY_PREVIOUS_VALUE;
       softwareRelease = nHistoryData(historyIdList(idH)).HISTORY_SOFTWARE_RELEASE;
-      
+
       % check that PARAM exists
       if (~isfield(profStructOld.data, parameter) || ~isfield(profStructNew.data, parameter))
          if (~isfield(profStructOld.data, parameter))
@@ -1116,7 +1116,7 @@ for idProf = 1:length(profIdToUpdate)
          end
          continue
       end
-      
+
       % check that PARAM values are identical
       oldParamData = profStructOld.data.(parameter)(profId, :);
       newParamData = profStructNew.data.(parameter)(profId, :);
@@ -1126,13 +1126,13 @@ for idProf = 1:length(profIdToUpdate)
             parameter, profId, fileType);
          continue
       end
-      
+
       % check consistency of HISTORY information
       oldParamQcData = profStructOld.data.([parameter '_QC'])(profId, :);
       newParamQcData = profStructNew.data.([parameter '_QC'])(profId, :);
       idDiff = find(oldParamQcData ~= newParamQcData);
       if (ismember(parameter, [{'PRES'} {'PRES_ADJUSTED'}]))
-         
+
          % SCOOP2 1.x  PRES => value
          % SCOOP3 0.15 PRES => value
          % SCOOP3 0.19 PRES => imm_level
@@ -1140,7 +1140,7 @@ for idProf = 1:length(profIdToUpdate)
          % SCOOP3 0.34 PRES => imm_level
          % SCOOP3 0.36 PRES => value
          % SCOOP3 0.38 PRES => value
-         
+
          if (ismember(strtrim(softwareRelease), [{'0.19'} {'0.33'} {'0.34'}]))
             idFStart = startPres;
             idFStop = stopPres;
@@ -1179,7 +1179,7 @@ for idProf = 1:length(profIdToUpdate)
          end
          continue
       end
-      
+
       % update QC in the NEW structure data
       profStructNew.data.([parameter '_QC'])(profId, idFStart:idFStop) = ...
          profStructOld.data.([parameter '_QC'])(profId, idFStart:idFStop);
@@ -1229,7 +1229,7 @@ if (~isempty(profIdToUpdate))
 end
 
 if (needUpdate)
-   
+
    % create the list of new global attributes to copy in output file
    newGlobalAtt = [];
    for idG = 1:size(globalAttOld, 1)
@@ -1247,7 +1247,7 @@ if (needUpdate)
          newGlobalAtt = [newGlobalAtt; globalAttOld(idG, :)];
       end
    end
-   
+
    % update the PROF file
    update_prof_file( ...
       a_profFileNameOld, a_profFileNameNew, ...
@@ -1285,7 +1285,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/10/2018 - RNU - creation
@@ -1326,7 +1326,7 @@ copy_file(a_profFileNameNew, outputProfFileName);
 
 % check if N_CALIB dimension should be updated
 if (~isempty(a_dmProfIdToUpdate))
-   
+
    if (ndims(a_profStructOld.info.PARAMETER) == 4)
       nCalibOld = size(a_profStructOld.info.PARAMETER, 2);
    elseif (ndims(a_profStructOld.info.PARAMETER) == 3)
@@ -1341,7 +1341,7 @@ if (~isempty(a_dmProfIdToUpdate))
    else
       nCalibNew = 1;
    end
-   
+
    if (nCalibOld ~= nCalibNew)
       if (nCalibNew > nCalibOld)
          fprintf('ERROR: Float #%d Cycle #%d%c: N_CALIB=%d in OLD file and N_CALIB=%d in NEW\n', ...
@@ -1349,7 +1349,7 @@ if (~isempty(a_dmProfIdToUpdate))
             nCalibOld, nCalibNew);
          return
       end
-      
+
       % update N_CALIB dimension in new file
       ok = update_n_calib_dim_in_prof_file(outputProfFileName, nCalibOld);
       if (~ok)
@@ -1422,7 +1422,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/10/2018 - RNU - creation
@@ -1554,361 +1554,287 @@ if (isempty(fCdf))
    return
 end
 
-% copy variables with N_PROF dimension for DM profiles
-if (~isempty(a_dmProfIdToUpdate))
-   
-   for idProf = 1:length(a_dmProfIdToUpdate)
-      profId = a_dmProfIdToUpdate(idProf);
-      paramListOld = a_profStructOld.parameterList{profId};
-      paramListNew = a_profStructNew.parameterList{profId};
-   
-      % copy variables
-      for idVar = 1:length(varList1)
-         varName = varList1{idVar};
-         value = a_profStructOld.info.(varName);
-         if (ischar(value))
-            if (ismember(varName, varList1_1))
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
-                  profId-1, 1, value(profId));
-            else
-               value = value(profId, :)';
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
-                  fliplr([profId-1  0]), fliplr([1 length(value)]), value');
-            end
-         else
-            value = value(profId);
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
-               profId-1, 1, value);
-         end
-      end
+try
 
-      % copy positions information
-      if (~isempty(varList1Pos))
-         for idVar = 1:length(varList1Pos)
-            varName = varList1Pos{idVar};
+   % copy variables with N_PROF dimension for DM profiles
+   if (~isempty(a_dmProfIdToUpdate))
+
+      for idProf = 1:length(a_dmProfIdToUpdate)
+         profId = a_dmProfIdToUpdate(idProf);
+         paramListOld = a_profStructOld.parameterList{profId};
+         paramListNew = a_profStructNew.parameterList{profId};
+
+         % copy variables
+         for idVar = 1:length(varList1)
+            varName = varList1{idVar};
             value = a_profStructOld.info.(varName);
             if (ischar(value))
                if (ismember(varName, varList1_1))
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
+                     profId-1, 1, value(profId));
+               else
+                  value = value(profId, :)';
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
+                     fliplr([profId-1  0]), fliplr([1 length(value)]), value');
+               end
+            else
+               value = value(profId);
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
+                  profId-1, 1, value);
+            end
+         end
+
+         % copy positions information
+         if (~isempty(varList1Pos))
+            for idVar = 1:length(varList1Pos)
+               varName = varList1Pos{idVar};
+               value = a_profStructOld.info.(varName);
+               if (ischar(value))
+                  if (ismember(varName, varList1_1))
+                     if (g_cocd_reportProfLocAllFlag)
+                        value = repmat(value(a_dmProfIdToUpdate(1)), size(value));
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), value);
+                     else
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
+                           profId-1, 1, value(profId));
+                     end
+                  else
+                     if (g_cocd_reportProfLocAllFlag)
+                        value = repmat(value(a_dmProfIdToUpdate(1), :)', 1, size(value, 1));
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), value);
+                     else
+                        value = value(profId, :)';
+                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
+                           fliplr([profId-1  0]), fliplr([1 length(value)]), value');
+                     end
+                  end
+               else
                   if (g_cocd_reportProfLocAllFlag)
                      value = repmat(value(a_dmProfIdToUpdate(1)), size(value));
                      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), value);
                   else
+                     value = value(profId);
                      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
-                        profId-1, 1, value(profId));
+                        profId-1, 1, value);
                   end
-               else
-                  if (g_cocd_reportProfLocAllFlag)
-                     value = repmat(value(a_dmProfIdToUpdate(1), :)', 1, size(value, 1));
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), value);
-                  else
-                     value = value(profId, :)';
-                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
-                        fliplr([profId-1  0]), fliplr([1 length(value)]), value');
-                  end
-               end
-            else
-               if (g_cocd_reportProfLocAllFlag)
-                  value = repmat(value(a_dmProfIdToUpdate(1)), size(value));
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), value);
-               else
-                  value = value(profId);
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
-                     profId-1, 1, value);
                end
             end
          end
-      end
-      
-      if (a_profStructNew.bFileFlag)
-         parameterDataModeOld = a_profStructOld.parameterDataMode(profId, :);
-         dmIdList = find(parameterDataModeOld == 'D');
-         for idParam = dmIdList
-            idParamNew = find(strcmp(paramListOld{idParam}, paramListNew));
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER_DATA_MODE'), ...
-               fliplr([profId-1  idParamNew-1]), fliplr([1 1]), parameterDataModeOld(idParam));
-         end
-      end
-      
-      %       stationParameters = a_profStructOld.info.STATION_PARAMETERS;
-      %       if (ndims(stationParameters) == 3)
-      %          nProf = size(stationParameters, 1);
-      %          nParam = size(stationParameters, 2);
-      %       elseif (ndims(stationParameters) == 2)
-      %          nProf = 1;
-      %          nParam = size(stationParameters, 1);
-      %       end
-      %       stationParametersVarId = netcdf.inqVarID(fCdf, 'STATION_PARAMETERS');
-      %       for idParam = 1:nParam
-      %          if (nProf == 1)
-      %             valueStr = stationParameters(idParam, :);
-      %          else
-      %             valueStr = squeeze(stationParameters(profId, idParam, :))';
-      %          end
-      %          netcdf.putVar(fCdf, stationParametersVarId, ...
-      %             fliplr([profId-1 idParam-1 0]), fliplr([1 1 length(valueStr)]), valueStr');
-      %       end
 
-      % for varList2 parameters, only N_PARAM with PARAMETER_DATA_MODE = 'D' are
-      % copied
-      parameter = a_profStructOld.info.PARAMETER;
-      if (ndims(parameter) == 4)
-         nProf = size(parameter, 1);
-         nCalib = size(parameter, 2);
-         nParam = size(parameter, 3);
-      elseif (ndims(parameter) == 3)
-         nProf = 1;
-         nCalib = size(parameter, 1);
-         nParam = size(parameter, 2);
-      elseif (ndims(parameter) == 2)
-         nProf = 1;
-         nCalib = 1;
-         nParam = size(parameter, 1);
-      end
-
-      if (a_profStructOld.bFileFlag)
-         parameterDataModeOld = a_profStructOld.parameterDataMode(profId, :);
-         parameterListOld = a_profStructOld.parameterList{profId};
-      end
-
-      dmList = [];
-      for idCalib = 1:nCalib
-         for idParam = 1:nParam
-            if (a_profStructOld.bFileFlag)
-               if (ndims(parameter) == 4)
-                  paramName = strtrim(squeeze(parameter(profId, idCalib, idParam, :))');
-               elseif (ndims(parameter) == 3)
-                  paramName = strtrim(squeeze(parameter(idCalib, idParam, :))');
-               elseif (ndims(parameter) == 2)
-                  paramName = strtrim(squeeze(parameter(idParam, :)));
-               end
-               paramNameId  = find(strcmp(parameterListOld, paramName), 1);
-               if (parameterDataModeOld(paramNameId) == 'D')
-                  dmList = [dmList; [idCalib idParam]];
-               end
-            else
-               dmList = [dmList; [idCalib idParam]];
+         if (a_profStructNew.bFileFlag)
+            parameterDataModeOld = a_profStructOld.parameterDataMode(profId, :);
+            dmIdList = find(parameterDataModeOld == 'D');
+            for idParam = dmIdList
+               idParamNew = find(strcmp(paramListOld{idParam}, paramListNew));
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER_DATA_MODE'), ...
+                  fliplr([profId-1  idParamNew-1]), fliplr([1 1]), parameterDataModeOld(idParam));
             end
          end
-      end
 
-      for idVar = 1:length(varList2)
-         varName = varList2{idVar};
-         value = a_profStructOld.info.(varName);
-         if (ndims(value) == 4)
-            nProf = size(value, 1);
-            nCalib = size(value, 2);
-            nParam = size(value, 3);
-         elseif (ndims(value) == 3)
+         %       stationParameters = a_profStructOld.info.STATION_PARAMETERS;
+         %       if (ndims(stationParameters) == 3)
+         %          nProf = size(stationParameters, 1);
+         %          nParam = size(stationParameters, 2);
+         %       elseif (ndims(stationParameters) == 2)
+         %          nProf = 1;
+         %          nParam = size(stationParameters, 1);
+         %       end
+         %       stationParametersVarId = netcdf.inqVarID(fCdf, 'STATION_PARAMETERS');
+         %       for idParam = 1:nParam
+         %          if (nProf == 1)
+         %             valueStr = stationParameters(idParam, :);
+         %          else
+         %             valueStr = squeeze(stationParameters(profId, idParam, :))';
+         %          end
+         %          netcdf.putVar(fCdf, stationParametersVarId, ...
+         %             fliplr([profId-1 idParam-1 0]), fliplr([1 1 length(valueStr)]), valueStr');
+         %       end
+
+         % for varList2 parameters, only N_PARAM with PARAMETER_DATA_MODE = 'D' are
+         % copied
+         parameter = a_profStructOld.info.PARAMETER;
+         if (ndims(parameter) == 4)
+            nProf = size(parameter, 1);
+            nCalib = size(parameter, 2);
+            nParam = size(parameter, 3);
+         elseif (ndims(parameter) == 3)
             nProf = 1;
-            nCalib = size(value, 1);
-            nParam = size(value, 2);
-         elseif (ndims(value) == 2)
+            nCalib = size(parameter, 1);
+            nParam = size(parameter, 2);
+         elseif (ndims(parameter) == 2)
             nProf = 1;
             nCalib = 1;
-            nParam = size(value, 1);
+            nParam = size(parameter, 1);
          end
-
-         for idCalib = 1:nCalib
-            for idParam = 1:nParam
-               if (any((dmList(:, 1) == idCalib) & (dmList(:, 2) == idParam)))
-                  if (nProf == 1)
-                     if (nCalib == 1)
-                        valueStr = value(idParam, :);
-                     else
-                        valueStr = squeeze(value(idCalib, idParam, :))';
-                     end
-                  else
-                     valueStr = squeeze(value(profId, idCalib, idParam, :))';
-                  end
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
-                     fliplr([profId-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(valueStr)]), valueStr');
-               end
-            end
-         end
-      end
-      
-      for idVar = 1:length(varList3)
-         varName = varList3{idVar};
-         value = a_profStructOld.info.(varName);
-         
-         if (ismember(varName, varList3_1))
-            if (ndims(value) == 2)
-               nHisto = size(value, 1);
-               nProf = size(value, 2);
-            elseif (ndims(value) == 1)
-               nHisto = 1;
-               nProf = size(value, 1);
-            end
-            
-            for idHisto = 1:nHisto
-               if (nHisto == 1)
-                  valueFloat = value(profId, :);
-               else
-                  valueFloat = value(idHisto, profId);
-               end
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
-                  fliplr([idHisto-1 profId-1]), fliplr([1 1]), valueFloat);
-            end
-         else
-            if (ndims(value) == 3)
-               nHisto = size(value, 1);
-               nProf = size(value, 2);
-            elseif (ndims(value) == 2)
-               nHisto = 1;
-               nProf = size(value, 1);
-            end
-            
-            for idHisto = 1:nHisto
-               if (nHisto == 1)
-                  valueStr = value(profId, :);
-               else
-                  valueStr = squeeze(value(idHisto, profId, :))';
-               end
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
-                  fliplr([idHisto-1 profId-1 0]), fliplr([1 1 length(valueStr)]), valueStr');
-            end
-         end
-      end
-      
-      % copy parameters
-      paramList = a_profStructOld.parameterList{profId};
-      if (a_profStructOld.bFileFlag)
-         parameterDataModeOld = a_profStructOld.parameterDataMode(profId, :);
-      end
-      for idParam = 1:length(paramList)
 
          if (a_profStructOld.bFileFlag)
-            if (parameterDataModeOld(idParam) ~= 'D')
-               continue
+            parameterDataModeOld = a_profStructOld.parameterDataMode(profId, :);
+            parameterListOld = a_profStructOld.parameterList{profId};
+         end
+
+         dmList = [];
+         for idCalib = 1:nCalib
+            for idParam = 1:nParam
+               if (a_profStructOld.bFileFlag)
+                  if (ndims(parameter) == 4)
+                     paramName = strtrim(squeeze(parameter(profId, idCalib, idParam, :))');
+                  elseif (ndims(parameter) == 3)
+                     paramName = strtrim(squeeze(parameter(idCalib, idParam, :))');
+                  elseif (ndims(parameter) == 2)
+                     paramName = strtrim(squeeze(parameter(idParam, :)));
+                  end
+                  paramNameId  = find(strcmp(parameterListOld, paramName), 1);
+                  if (parameterDataModeOld(paramNameId) == 'D')
+                     dmList = [dmList; [idCalib idParam]];
+                  end
+               else
+                  dmList = [dmList; [idCalib idParam]];
+               end
             end
          end
 
-         paramName = paramList{idParam};
-         paramInfo = get_netcdf_param_attributes(paramName);
+         for idVar = 1:length(varList2)
+            varName = varList2{idVar};
+            value = a_profStructOld.info.(varName);
+            if (ndims(value) == 4)
+               nProf = size(value, 1);
+               nCalib = size(value, 2);
+               nParam = size(value, 3);
+            elseif (ndims(value) == 3)
+               nProf = 1;
+               nCalib = size(value, 1);
+               nParam = size(value, 2);
+            elseif (ndims(value) == 2)
+               nProf = 1;
+               nCalib = 1;
+               nParam = size(value, 1);
+            end
 
-         for idLoop = 1:2
-            if (idLoop == 1)
-               param = paramName;
-            else
-               if (paramInfo.adjAllowed && ...
-                     ((a_profStructOld.bFileFlag == 0) || ...
-                     ((a_profStructOld.bFileFlag == 1) && (~strcmp(paramName, 'PRES')))))
-                  param = [paramName '_ADJUSTED'];
-               else
-                  break
+            for idCalib = 1:nCalib
+               for idParam = 1:nParam
+                  if (any((dmList(:, 1) == idCalib) & (dmList(:, 2) == idParam)))
+                     if (nProf == 1)
+                        if (nCalib == 1)
+                           valueStr = value(idParam, :);
+                        else
+                           valueStr = squeeze(value(idCalib, idParam, :))';
+                        end
+                     else
+                        valueStr = squeeze(value(profId, idCalib, idParam, :))';
+                     end
+                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
+                        fliplr([profId-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(valueStr)]), valueStr');
+                  end
                end
             end
-            
-            if (ndims(a_profStructOld.data.(param)) == 2)
-               value = a_profStructOld.data.(param)(profId, :);
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, param), ...
-                  fliplr([profId-1 0]), fliplr([1 length(value)]), value);
-            else
-               % for UV_INTENSITY_NITRATE
-               value = a_profStructOld.data.(param)(profId, :, :);
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, param), ...
-                  fliplr([profId-1 0 0]), fliplr(size(value)), permute(value, fliplr(1:ndims(value))));
-            end
-            
-            if ~((a_profStructOld.bFileFlag == 1) && (strcmp(paramName, 'PRES')))
-               
-               param = [param '_QC'];
-               value = a_profStructOld.data.(param)(profId, :);
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, param), ...
-                  fliplr([profId-1 0]), fliplr([1 length(value)]), value);
+         end
 
+         for idVar = 1:length(varList3)
+            varName = varList3{idVar};
+            value = a_profStructOld.info.(varName);
+
+            if (ismember(varName, varList3_1))
+               if (ndims(value) == 2)
+                  nHisto = size(value, 1);
+                  nProf = size(value, 2);
+               elseif (ndims(value) == 1)
+                  nHisto = 1;
+                  nProf = size(value, 1);
+               end
+
+               for idHisto = 1:nHisto
+                  if (nHisto == 1)
+                     valueFloat = value(profId, :);
+                  else
+                     valueFloat = value(idHisto, profId);
+                  end
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
+                     fliplr([idHisto-1 profId-1]), fliplr([1 1]), valueFloat);
+               end
+            else
+               if (ndims(value) == 3)
+                  nHisto = size(value, 1);
+                  nProf = size(value, 2);
+               elseif (ndims(value) == 2)
+                  nHisto = 1;
+                  nProf = size(value, 1);
+               end
+
+               for idHisto = 1:nHisto
+                  if (nHisto == 1)
+                     valueStr = value(profId, :);
+                  else
+                     valueStr = squeeze(value(idHisto, profId, :))';
+                  end
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
+                     fliplr([idHisto-1 profId-1 0]), fliplr([1 1 length(valueStr)]), valueStr');
+               end
+            end
+         end
+
+         % copy parameters
+         paramList = a_profStructOld.parameterList{profId};
+         if (a_profStructOld.bFileFlag)
+            parameterDataModeOld = a_profStructOld.parameterDataMode(profId, :);
+         end
+         for idParam = 1:length(paramList)
+
+            if (a_profStructOld.bFileFlag)
+               if (parameterDataModeOld(idParam) ~= 'D')
+                  continue
+               end
+            end
+
+            paramName = paramList{idParam};
+            paramInfo = get_netcdf_param_attributes(paramName);
+
+            for idLoop = 1:2
                if (idLoop == 1)
-                  param = ['PROFILE_' paramName '_QC'];
-                  value = a_profStructOld.data.(param)(profId);
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, param), ...
-                     profId-1, 1, value);
+                  param = paramName;
                else
-                  param = [paramName '_ADJUSTED_ERROR'];
+                  if (paramInfo.adjAllowed && ...
+                        ((a_profStructOld.bFileFlag == 0) || ...
+                        ((a_profStructOld.bFileFlag == 1) && (~strcmp(paramName, 'PRES')))))
+                     param = [paramName '_ADJUSTED'];
+                  else
+                     break
+                  end
+               end
+
+               if (ndims(a_profStructOld.data.(param)) == 2)
                   value = a_profStructOld.data.(param)(profId, :);
                   netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, param), ...
                      fliplr([profId-1 0]), fliplr([1 length(value)]), value);
+               else
+                  % for UV_INTENSITY_NITRATE
+                  value = a_profStructOld.data.(param)(profId, :, :);
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, param), ...
+                     fliplr([profId-1 0 0]), fliplr(size(value)), permute(value, fliplr(1:ndims(value))));
+               end
+
+               if ~((a_profStructOld.bFileFlag == 1) && (strcmp(paramName, 'PRES')))
+
+                  param = [param '_QC'];
+                  value = a_profStructOld.data.(param)(profId, :);
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, param), ...
+                     fliplr([profId-1 0]), fliplr([1 length(value)]), value);
+
+                  if (idLoop == 1)
+                     param = ['PROFILE_' paramName '_QC'];
+                     value = a_profStructOld.data.(param)(profId);
+                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, param), ...
+                        profId-1, 1, value);
+                  else
+                     param = [paramName '_ADJUSTED_ERROR'];
+                     value = a_profStructOld.data.(param)(profId, :);
+                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, param), ...
+                        fliplr([profId-1 0]), fliplr([1 length(value)]), value);
+                  end
                end
             end
          end
-      end
-      
-      % add history information that concerns the current program
-      [~, nHistory] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, 'N_HISTORY'));
-      value = 'IF';
-      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
-         fliplr([nHistory profId-1 0]), ...
-         fliplr([1 1 length(value)]), value');
-      value = 'COCD';
-      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
-         fliplr([nHistory profId-1 0]), ...
-         fliplr([1 1 length(value)]), value');
-      value = g_cocd_ncCopyMonoProfileDmAndQcVersion;
-      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
-         fliplr([nHistory profId-1 0]), ...
-         fliplr([1 1 length(value)]), value');
-      value = g_cocd_historyReferenceToReport;
-      if (~isempty(value))
-      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_REFERENCE'), ...
-         fliplr([nHistory profId-1 0]), ...
-         fliplr([1 1 length(value)]), value');
-      end
-      value = dateUpdate;
-      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
-         fliplr([nHistory profId-1 0]), ...
-         fliplr([1 1 length(value)]), value');
-   end   
-end
 
-% update QC that have been set with SCOOP
-if (~isempty(a_rtProfIdToUpdate))
-      
-   for idProf = 1:length(a_rtProfIdToUpdate)
-      profId = a_rtProfIdToUpdate(idProf); 
-      profNHistory = a_nHistoryData(idProf);
-      
-      % update QC data
-      if (~isempty(a_updatedData))
-         paramList = a_updatedData(find([a_updatedData{:, 1}] == profId), 2);
-         for idParam = 1:length(paramList)
-            paramNameQc = [paramList{idParam} '_QC'];
-            value = a_profStructNew.data.(paramNameQc)(profId, :);
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramNameQc), ...
-               fliplr([profId-1 0]), fliplr([1 length(value)]), value);
-
-            paramName = regexprep(paramList{idParam}, '_ADJUSTED', '');
-            profParamQc = ['PROFILE_' paramName '_QC'];
-            value = a_profStructNew.data.(profParamQc)(profId);
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQc), ...
-               profId-1, 1, value);
-         end
-      end
-      
-      % update HISTORY data
-      if (sum(sum(sum(sum(a_profStructNew.info.PARAMETER ~= a_profStructOld.info.PARAMETER, 1), 2), 3), 4) ~= 0)
-         fprintf('ERROR: Float #%d Cycle #%d%c: PARAMETER information differ - SCCOP HISTORY cannot be reported\n', ...
-            g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir);
-      else
-         [~, nHistory] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, 'N_HISTORY'));
-         fielNames = fields(profNHistory);
-         for idVar = 2:length(fielNames)
-            varName = fielNames{idVar};
-            value = profNHistory.(varName);
-            if (ischar(value))
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
-                  fliplr([nHistory profId-1 0]), fliplr([1 1 length(value)]), value');
-            else
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
-                  fliplr([nHistory profId-1]), fliplr([1 1]), value);
-            end
-         end
-      end
-   end
-   
-   % add history information that concerns the current program
-   uniqueDmProfIdToUpdate = unique(a_dmProfIdToUpdate);
-   for idProf = 1:length(uniqueDmProfIdToUpdate)
-      profId = uniqueDmProfIdToUpdate(idProf);
-      if (~ismember(profId, a_dmProfIdToUpdate))
+         % add history information that concerns the current program
          [~, nHistory] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, 'N_HISTORY'));
          value = 'IF';
          netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
@@ -1934,27 +1860,108 @@ if (~isempty(a_rtProfIdToUpdate))
             fliplr([1 1 length(value)]), value');
       end
    end
+
+   % update QC that have been set with SCOOP
+   if (~isempty(a_rtProfIdToUpdate))
+
+      for idProf = 1:length(a_rtProfIdToUpdate)
+         profId = a_rtProfIdToUpdate(idProf);
+         profNHistory = a_nHistoryData(idProf);
+
+         % update QC data
+         if (~isempty(a_updatedData))
+            paramList = a_updatedData(find([a_updatedData{:, 1}] == profId), 2);
+            for idParam = 1:length(paramList)
+               paramNameQc = [paramList{idParam} '_QC'];
+               value = a_profStructNew.data.(paramNameQc)(profId, :);
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramNameQc), ...
+                  fliplr([profId-1 0]), fliplr([1 length(value)]), value);
+
+               paramName = regexprep(paramList{idParam}, '_ADJUSTED', '');
+               profParamQc = ['PROFILE_' paramName '_QC'];
+               value = a_profStructNew.data.(profParamQc)(profId);
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQc), ...
+                  profId-1, 1, value);
+            end
+         end
+
+         % update HISTORY data
+         if (sum(sum(sum(sum(a_profStructNew.info.PARAMETER ~= a_profStructOld.info.PARAMETER, 1), 2), 3), 4) ~= 0)
+            fprintf('ERROR: Float #%d Cycle #%d%c: PARAMETER information differ - SCCOP HISTORY cannot be reported\n', ...
+               g_cocd_floatNum, g_cocd_cycleNum, g_cocd_cycleDir);
+         else
+            [~, nHistory] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, 'N_HISTORY'));
+            fielNames = fields(profNHistory);
+            for idVar = 2:length(fielNames)
+               varName = fielNames{idVar};
+               value = profNHistory.(varName);
+               if (ischar(value))
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
+                     fliplr([nHistory profId-1 0]), fliplr([1 1 length(value)]), value');
+               else
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, varName), ...
+                     fliplr([nHistory profId-1]), fliplr([1 1]), value);
+               end
+            end
+         end
+      end
+
+      % add history information that concerns the current program
+      uniqueDmProfIdToUpdate = unique(a_dmProfIdToUpdate);
+      for idProf = 1:length(uniqueDmProfIdToUpdate)
+         profId = uniqueDmProfIdToUpdate(idProf);
+         if (~ismember(profId, a_dmProfIdToUpdate))
+            [~, nHistory] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, 'N_HISTORY'));
+            value = 'IF';
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
+               fliplr([nHistory profId-1 0]), ...
+               fliplr([1 1 length(value)]), value');
+            value = 'COCD';
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
+               fliplr([nHistory profId-1 0]), ...
+               fliplr([1 1 length(value)]), value');
+            value = g_cocd_ncCopyMonoProfileDmAndQcVersion;
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
+               fliplr([nHistory profId-1 0]), ...
+               fliplr([1 1 length(value)]), value');
+            value = g_cocd_historyReferenceToReport;
+            if (~isempty(value))
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_REFERENCE'), ...
+                  fliplr([nHistory profId-1 0]), ...
+                  fliplr([1 1 length(value)]), value');
+            end
+            value = dateUpdate;
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
+               fliplr([nHistory profId-1 0]), ...
+               fliplr([1 1 length(value)]), value');
+         end
+      end
+   end
+
+   % update the update date of the Output file
+   netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), dateUpdate);
+
+   % update the 'history' global attribute of the Output file
+   creationDate = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_CREATION'));
+   globalHistoryText = [ ...
+      datestr(datenum(creationDate', 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; ' ...
+      datestr(datenum(dateUpdate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COCD (V' g_cocd_ncCopyMonoProfileDmAndQcVersion ') tool)'];
+   netcdf.reDef(fCdf);
+   netcdf.putAtt(fCdf, netcdf.getConstant('NC_GLOBAL'), 'history', globalHistoryText);
+
+   % add new global attributes
+   for idG = 1:size(a_newGlobalAtt, 1)
+      netcdf.putAtt(fCdf, netcdf.getConstant('NC_GLOBAL'), a_newGlobalAtt{idG, 1}, a_newGlobalAtt{idG, 2});
+   end
+
+   netcdf.endDef(fCdf);
+
+   netcdf.close(fCdf);
+
+catch MException
+   netcdf.close(fCdf);
+   rethrow(MException)
 end
-
-% update the update date of the Output file
-netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), dateUpdate);
-
-% update the 'history' global attribute of the Output file
-creationDate = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_CREATION'));
-globalHistoryText = [ ...
-   datestr(datenum(creationDate', 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; ' ...
-   datestr(datenum(dateUpdate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COCD (V' g_cocd_ncCopyMonoProfileDmAndQcVersion ') tool)'];
-netcdf.reDef(fCdf);
-netcdf.putAtt(fCdf, netcdf.getConstant('NC_GLOBAL'), 'history', globalHistoryText);
-
-% add new global attributes
-for idG = 1:size(a_newGlobalAtt, 1)
-   netcdf.putAtt(fCdf, netcdf.getConstant('NC_GLOBAL'), a_newGlobalAtt{idG, 1}, a_newGlobalAtt{idG, 2});
-end
-
-netcdf.endDef(fCdf);
-
-netcdf.close(fCdf);
 
 o_ok = 1;
 
@@ -1976,7 +1983,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/10/2018 - RNU - creation
@@ -2048,7 +2055,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/09/2014 - RNU - creation
@@ -2064,7 +2071,7 @@ idDim = find(strcmp(a_dimName, {a_inputSchema.Dimensions.Name}) == 1, 1);
 
 if (~isempty(idDim))
    a_inputSchema.Dimensions(idDim).Length = a_dimVal;
-   
+
    % update the dimensions of the variables
    for idVar = 1:length(a_inputSchema.Variables)
       var = a_inputSchema.Variables(idVar);
@@ -2095,7 +2102,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/10/2018 - RNU - creation
@@ -2106,12 +2113,12 @@ function [o_paramNameList] = get_associated_param(a_paramNameList)
 o_paramNameList = [];
 
 for idP = 1:length(a_paramNameList)
-   
+
    switch (a_paramNameList{idP})
-      
+
       case {'CNDC', 'PRES', 'PSAL', 'TEMP'}
          fprintf('WARNING: You set "PARAMETER TO IGNORE" to ''%s'': a core parameter is not accepted by this tool - exit\n', a_paramNameList{idP});
-         
+
       case 'DOXY'
          o_paramNameList = [o_paramNameList ...
             {'DOXY'} ...
@@ -2133,43 +2140,61 @@ for idP = 1:length(a_paramNameList)
             {'LED_FLASHING_COUNT_DOXY'} ...
             {'PPOX_DOXY'} ...
             {'DOXY2'} ...
+            {'DOXY_2'} ...
             {'TEMP_DOXY2'} ...
+            {'TEMP_DOXY_2'} ...
             {'TEMP_VOLTAGE_DOXY2'} ...
+            {'TEMP_VOLTAGE_DOXY_2'} ...
             {'VOLTAGE_DOXY2'} ...
+            {'VOLTAGE_DOXY_2'} ...
             {'FREQUENCY_DOXY2'} ...
+            {'FREQUENCY_DOXY_2'} ...
             {'COUNT_DOXY2'} ...
+            {'COUNT_DOXY_2'} ...
             {'BPHASE_DOXY2'} ...
+            {'BPHASE_DOXY_2'} ...
             {'DPHASE_DOXY2'} ...
+            {'DPHASE_DOXY_2'} ...
             {'TPHASE_DOXY2'} ...
+            {'TPHASE_DOXY_2'} ...
             {'C1PHASE_DOXY2'} ...
+            {'C1PHASE_DOXY_2'} ...
             {'C2PHASE_DOXY2'} ...
+            {'C2PHASE_DOXY_2'} ...
             {'MOLAR_DOXY2'} ...
+            {'MOLAR_DOXY_2'} ...
             {'PHASE_DELAY_DOXY2'} ...
+            {'PHASE_DELAY_DOXY_2'} ...
             {'MLPL_DOXY2'} ...
+            {'MLPL_DOXY_2'} ...
             {'RPHASE_DOXY2'} ...
+            {'RPHASE_DOXY_2'} ...
             {'TEMP_COUNT_DOXY2'} ...
+            {'TEMP_COUNT_DOXY_2'} ...
             {'LED_FLASHING_COUNT_DOXY2'} ...
+            {'LED_FLASHING_COUNT_DOXY_2'} ...
             {'PPOX_DOXY2'} ...
+            {'PPOX_DOXY_2'} ...
             ];
-         
+
       case 'BBP532'
          o_paramNameList = [o_paramNameList ...
             {'BBP532'} ...
             {'BETA_BACKSCATTERING532'} ...
             ];
-         
+
       case 'BBP700'
          o_paramNameList = [o_paramNameList ...
             {'BBP700'} ...
             {'BETA_BACKSCATTERING700'} ...
             ];
-         
+
       case 'CDOM'
          o_paramNameList = [o_paramNameList ...
             {'CDOM'} ...
             {'FLUORESCENCE_CDOM'} ...
             ];
-         
+
       case 'CHLA'
          o_paramNameList = [o_paramNameList ...
             {'CHLA'} ...
@@ -2178,43 +2203,43 @@ for idP = 1:length(a_paramNameList)
             {'FLUORESCENCE_VOLTAGE_CHLA'} ...
             {'TEMP_CPU_CHLA'} ...
             ];
-         
+
       case 'DOWN_IRRADIANCE380'
          o_paramNameList = [o_paramNameList ...
             {'DOWN_IRRADIANCE380'} ...
             {'RAW_DOWNWELLING_IRRADIANCE380'} ...
             ];
-         
+
       case 'DOWN_IRRADIANCE412'
          o_paramNameList = [o_paramNameList ...
             {'DOWN_IRRADIANCE412'} ...
             {'RAW_DOWNWELLING_IRRADIANCE412'} ...
             ];
-         
+
       case 'DOWN_IRRADIANCE443'
          o_paramNameList = [o_paramNameList ...
             {'DOWN_IRRADIANCE443'} ...
             {'RAW_DOWNWELLING_IRRADIANCE443'} ...
             ];
-         
+
       case 'DOWN_IRRADIANCE490'
          o_paramNameList = [o_paramNameList ...
             {'DOWN_IRRADIANCE490'} ...
             {'RAW_DOWNWELLING_IRRADIANCE490'} ...
             ];
-         
+
       case 'DOWN_IRRADIANCE555'
          o_paramNameList = [o_paramNameList ...
             {'DOWN_IRRADIANCE555'} ...
             {'RAW_DOWNWELLING_IRRADIANCE555'} ...
             ];
-         
+
       case 'DOWNWELLING_PAR'
          o_paramNameList = [o_paramNameList ...
             {'DOWNWELLING_PAR'} ...
             {'RAW_DOWNWELLING_PAR'} ...
             ];
-         
+
       case 'NITRATE'
          o_paramNameList = [o_paramNameList ...
             {'NITRATE'} ...
@@ -2227,7 +2252,7 @@ for idP = 1:length(a_paramNameList)
             {'TEMP_SPECTROPHOTOMETER_NITRATE'} ...
             {'HUMIDITY_NITRATE'} ...
             ];
-         
+
       case 'BISULFIDE'
          o_paramNameList = [o_paramNameList ...
             {'BISULFIDE'} ...
@@ -2239,7 +2264,7 @@ for idP = 1:length(a_paramNameList)
             {'TEMP_SPECTROPHOTOMETER_NITRATE'} ...
             {'HUMIDITY_NITRATE'} ...
             ];
-         
+
       case 'PH_IN_SITU_TOTAL'
          o_paramNameList = [o_paramNameList ...
             {'PH_IN_SITU_TOTAL'} ...
@@ -2252,14 +2277,14 @@ for idP = 1:length(a_paramNameList)
             {'TEMP_PH'} ...
             {'TEMP_SPECTROPHOTOMETER_NITRATE'} ...
             ];
-         
+
       case 'TURBIDITY'
          o_paramNameList = [o_paramNameList ...
             {'TURBIDITY'} ...
             {'SIDE_SCATTERING_TURBIDITY'} ...
             {'TURBIDITY_VOLTAGE'} ...
             ];
-         
+
       otherwise
          fprintf('WARNING: You set "PARAMETER TO IGNORE" to ''%s'': this parameter is not managed yet by this tool - exit\n', a_paramNameList{idP});
    end
@@ -2287,7 +2312,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/15/2022 - RNU - creation
@@ -2402,7 +2427,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/15/2022 - RNU - creation
@@ -2460,7 +2485,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/12/2018 - RNU - creation
@@ -2473,62 +2498,6 @@ o_dataValues = [];
 idVal = find(strcmp(a_dataName, a_dataList(1:2:end)) == 1, 1);
 if (~isempty(idVal))
    o_dataValues = a_dataList{2*idVal};
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         %          fprintf('WARNING: Variable %s not present in file : %s\n', ...
-         %             varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {''}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
 end
 
 return
@@ -2547,8 +2516,8 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/04/2020 - RNU - creation
@@ -2560,24 +2529,31 @@ o_globalAttData = [];
 
 
 if (exist(a_ncPathFileName, 'file') == 2)
-   
+
    % open NetCDF file
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
       return
    end
-   
-   [nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(fCdf);
-   
-   % store global attributes
-   for idGAtt = 0:nbGAtts-1
-      attName = netcdf.inqAttName(fCdf, netcdf.getConstant('NC_GLOBAL'), idGAtt);
-      attValue = netcdf.getAtt(fCdf, netcdf.getConstant('NC_GLOBAL'), attName);
-      o_globalAttData = [o_globalAttData; [{attName} {attValue}]];
+
+   try
+
+      [nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(fCdf);
+
+      % store global attributes
+      for idGAtt = 0:nbGAtts-1
+         attName = netcdf.inqAttName(fCdf, netcdf.getConstant('NC_GLOBAL'), idGAtt);
+         attValue = netcdf.getAtt(fCdf, netcdf.getConstant('NC_GLOBAL'), attName);
+         o_globalAttData = [o_globalAttData; [{attName} {attValue}]];
+      end
+
+      netcdf.close(fCdf);
+
+   catch MException
+      netcdf.close(fCdf);
+      rethrow(MException)
    end
-   
-   netcdf.close(fCdf);
 end
 
 return
@@ -2598,7 +2574,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/12/2013 - RNU - creation

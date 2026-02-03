@@ -42,7 +42,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/27/2018 - RNU - creation
@@ -514,11 +514,11 @@ paramRafosRtcTime = get_netcdf_param_attributes('RAFOS_RTC_TIME');
 paramRafosCorrelation = get_netcdf_param_attributes('COR');
 paramRafosRawToa = get_netcdf_param_attributes('RAW_TOA');
 
-paramRadiometerIntegrationTime = get_netcdf_param_attributes('RADIOMETER_INTEGRATION_TIME');
-paramRadiometerTemp = get_netcdf_param_attributes('RADIOMETER_TEMP');
-paramRadiometerPres = get_netcdf_param_attributes('RADIOMETER_PRES');
-paramRadiometerPreInclination = get_netcdf_param_attributes('RADIOMETER_PRE_INCLINATION');
-paramRadiometerPostInclination = get_netcdf_param_attributes('RADIOMETER_POST_INCLINATION');
+paramRadiometerDownIrrIntegrationTime = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_INTEGRATION_TIME');
+paramRadiometerDownIrrTemp = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_TEMP');
+paramRadiometerDownIrrPres = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_PRES');
+paramRadiometerDownIrrPreInclination = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_PRE_INCLINATION');
+paramRadiometerDownIrrPostInclination = get_netcdf_param_attributes('RADIOMETER_DOWN_IRR_POST_INCLINATION');
 paramRawDownwellingIrradiance = get_netcdf_param_attributes('RAW_DOWNWELLING_IRRADIANCE');
 
 if (~isempty(ctdP))
@@ -856,15 +856,15 @@ if (~isempty(ramses) && ~isempty(ramsesSpectrum))
    o_profRamses.dateList = paramJuld;
    o_profRamses.dates = dates;
    o_profRamses.paramList = [paramPres ...
-      paramRadiometerIntegrationTime ...
-      paramRadiometerTemp paramRadiometerPres ...
-      paramRadiometerPreInclination paramRadiometerPostInclination ...
+      paramRadiometerDownIrrIntegrationTime ...
+      paramRadiometerDownIrrTemp paramRadiometerDownIrrPres ...
+      paramRadiometerDownIrrPreInclination paramRadiometerDownIrrPostInclination ...
       paramRawDownwellingIrradiance];
    o_profRamses.paramNumberWithSubLevels = 7;
    o_profRamses.paramNumberOfSubLevels = 255;
    o_profRamses.data = [ones(size(data, 1), 1)*paramPres.fillValue data];
    
-   % RADIOMETER_PRES is provided in bars
+   % RADIOMETER_DOWN_IRR_PRES is provided in bars
    o_profRamses.data(:, 4) = o_profRamses.data(:, 4)*10;
    
    if (any(isnan(o_profRamses.dates)))

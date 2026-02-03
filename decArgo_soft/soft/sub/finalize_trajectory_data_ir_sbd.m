@@ -17,7 +17,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/14/2014 - RNU - creation
@@ -58,10 +58,6 @@ global g_decArgo_argosLonDef;
 
 % array to store Iridium mail contents
 global g_decArgo_iridiumMailData;
-
-% list of cycle numbers and ice detection flag
-global g_decArgo_cycleNumListForIce;
-global g_decArgo_cycleNumListIceDetected;
 
 
 % when the transmission failed, only one mail file without attachment can be
@@ -169,12 +165,16 @@ for idCy = 1:length(tabCyNum)
             % record
             idF1 = find([a_tabTrajNMeas(idCyDeep).tabMeas.measCode] == g_MC_FMT);
             idF2 = find([a_tabTrajNMeas(idCySurf(end)).tabMeas.measCode] == g_MC_FMT);
-            a_tabTrajNMeas(idCyDeep).tabMeas(idF1) = a_tabTrajNMeas(idCySurf(end)).tabMeas(idF2);
-            
+            if (~isempty(idF1) && ~isempty(idF2))
+               a_tabTrajNMeas(idCyDeep).tabMeas(idF1) = a_tabTrajNMeas(idCySurf(end)).tabMeas(idF2);
+            end
+
             idF1 = find([a_tabTrajNMeas(idCyDeep).tabMeas.measCode] == g_MC_LMT);
             idF2 = find([a_tabTrajNMeas(idCySurf(end)).tabMeas.measCode] == g_MC_LMT);
-            a_tabTrajNMeas(idCyDeep).tabMeas(idF1) = a_tabTrajNMeas(idCySurf(end)).tabMeas(idF2);
-            
+            if (~isempty(idF1) && ~isempty(idF2))
+               a_tabTrajNMeas(idCyDeep).tabMeas(idF1) = a_tabTrajNMeas(idCySurf(end)).tabMeas(idF2);
+            end
+
             idF1 = find([a_tabTrajNMeas(idCyDeep).tabMeas.measCode] == g_MC_Surface);
             idF2 = find([a_tabTrajNMeas(idCySurf(end)).tabMeas.measCode] == g_MC_Surface);
             a_tabTrajNMeas(idCyDeep).tabMeas(idF1) = [];
@@ -193,69 +193,31 @@ end
 
 % assign cycle start time of the current cycle to the TET of the previous cycle
 tabCyNum = sort(unique([a_tabTrajNMeas.cycleNumber]));
-if (isempty(g_decArgo_cycleNumListForIce))
-   for idCy = 1:length(tabCyNum)
-      cycleNum = tabCyNum(idCy);
-      
-      idC = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
+for idCy = 1:length(tabCyNum)
+   cycleNum = tabCyNum(idCy);
+
+   idC = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
+   if (~isempty([a_tabTrajNMeas(idC).tabMeas]))
       idF1 = find([a_tabTrajNMeas(idC).tabMeas.measCode] == g_MC_CycleStart);
       if (~isempty(idF1) && ~isempty(a_tabTrajNMeas(idC).tabMeas(idF1).juld))
          idCyPrec = find([a_tabTrajNMeas.cycleNumber] == cycleNum-1);
          if (~isempty(idCyPrec))
-            idF2 = find([a_tabTrajNMeas(idCyPrec).tabMeas.measCode] == g_MC_TET);
-            if (~isempty(idF2))
-               
-               % retrieve the clock offset of the previous cycle
-               idCyPrec2 = find([a_tabTrajNCycle.cycleNumber] == cycleNum-1);
-               clockDrift = a_tabTrajNCycle(idCyPrec2).clockOffset;
-               
-               if (~isempty(clockDrift))
-                  transEndDate = a_tabTrajNMeas(idC).tabMeas(idF1).juldAdj;
-               else
-                  transEndDate = a_tabTrajNMeas(idC).tabMeas(idF1).juld;
-               end
-               measStruct = create_one_meas_float_time(g_MC_TET, ...
-                  transEndDate, g_JULD_STATUS_2, clockDrift);
-               a_tabTrajNMeas(idCyPrec).tabMeas(idF2) = measStruct;
-            end
-         end
-      end
-   end
-else
-   % ICE floats
-   for idCy = 1:length(tabCyNum)
-      cycleNum = tabCyNum(idCy);
-      
-      idFCy = find(g_decArgo_cycleNumListForIce == cycleNum-1);
-      if (~isempty(idFCy))
-         if (g_decArgo_cycleNumListIceDetected(idFCy) == 1)
-            continue
-         end
-      end
-      
-      idC = find([a_tabTrajNMeas.cycleNumber] == cycleNum);
-      if (~isempty(a_tabTrajNMeas(idC).tabMeas))
-         idF1 = find([a_tabTrajNMeas(idC).tabMeas.measCode] == g_MC_CycleStart);
-         if (~isempty(idF1) && ~isempty(a_tabTrajNMeas(idC).tabMeas(idF1).juld))
-            idCyPrec = find([a_tabTrajNMeas.cycleNumber] == cycleNum-1);
-            if (~isempty(idCyPrec))
-               if (any(~isempty(a_tabTrajNMeas(idCyPrec).tabMeas)))
-                  idF2 = find([a_tabTrajNMeas(idCyPrec).tabMeas.measCode] == g_MC_TET);
-                  if (~isempty(idF2))
-                     
-                     % retrieve the clock offset of the previous cycle
-                     idCyPrec2 = find([a_tabTrajNCycle.cycleNumber] == cycleNum-1);
-                     clockDrift = a_tabTrajNCycle(idCyPrec2).clockOffset;
-                     
-                     if (~isempty(clockDrift))
-                        transEndDate = a_tabTrajNMeas(idC).tabMeas(idF1).juldAdj;
-                     else
-                        transEndDate = a_tabTrajNMeas(idC).tabMeas(idF1).juld;
-                     end
-                     measStruct = create_one_meas_float_time(g_MC_TET, ...
-                        transEndDate, g_JULD_STATUS_2, clockDrift);
-                     a_tabTrajNMeas(idCyPrec).tabMeas(idF2) = measStruct;
+            if (~isempty([a_tabTrajNMeas(idCyPrec).tabMeas]))
+               idF2 = find([a_tabTrajNMeas(idCyPrec).tabMeas.measCode] == g_MC_TET);
+               if (~isempty(idF2))
+
+                  % retrieve the clock offset of the previous cycle
+                  idCyPrec2 = find([a_tabTrajNCycle.cycleNumber] == cycleNum-1);
+                  clockDrift = a_tabTrajNCycle(idCyPrec2).clockOffset;
+
+                  if (~isempty(clockDrift))
+                     transEndDate = a_tabTrajNMeas(idC).tabMeas(idF1).juldAdj;
+                  else
+                     transEndDate = a_tabTrajNMeas(idC).tabMeas(idF1).juld;
                   end
+                  measStruct = create_one_meas_float_time(g_MC_TET, ...
+                     transEndDate, g_JULD_STATUS_2, clockDrift);
+                  a_tabTrajNMeas(idCyPrec).tabMeas(idF2) = measStruct;
                end
             end
          end
@@ -438,7 +400,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/14/2017 - RNU - creation
@@ -511,7 +473,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/28/2021 - RNU - creation

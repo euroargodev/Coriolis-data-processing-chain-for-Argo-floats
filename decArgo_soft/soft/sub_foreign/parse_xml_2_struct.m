@@ -1,4 +1,4 @@
-% Copy of "Read XML File into MATLAB® Structure Array" example from the
+% Copy of "Read XML File into MATLABÂ® Structure Array" example from the
 % "xmlread" function of the Matlab documentation
 
 

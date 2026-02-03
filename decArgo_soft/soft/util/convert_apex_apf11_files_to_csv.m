@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/21/2018 - RNU - creation
@@ -27,11 +27,13 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_ir
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\apf11_ir_sbd.txt';
 % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\APF11\_apex_apf11_ALL.R.txt';
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
+FLOAT_LIST_FILE_NAME = 'F:\ICE_check\ICE_check_lists\apex_apf11_rudics_ice_activated.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\ICE_check_lists\apex_apf11_rudics_sbd_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\ICE_check_lists\apex_apf11_rudics_sbd_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB_apx_olaf\_apex_olaf.txt';
 
 % output directory
-DIR_OUTPUT_CSV_FILES = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\IRIDIUM_RUDICS\20190114\CSV\';
-DIR_OUTPUT_CSV_FILES = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\IRIDIUM_SBD\20190114\CSV\';
-DIR_OUTPUT_CSV_FILES = 'C:\Users\jprannou\_DATA\OUT\APEX_APF11_FILES\';
+DIR_OUTPUT_CSV_FILES = 'C:\Users\jprannou\_DATA\OUT\APEX_APF11_FILES';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -87,7 +89,7 @@ else
    name = sprintf('_%d', floatList);
 end
 
-logFile = [DIR_LOG_FILE '/' 'nc_meta_2_csv' name '_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
+logFile = [DIR_LOG_FILE '/' 'convert_apex_apf11_files_to_csv' name '_' datestr(now, 'yyyymmddTHHMMSS') '.log'];
 diary(logFile);
 tic;
 
@@ -196,7 +198,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/21/2018 - RNU - creation
@@ -281,7 +283,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/21/2018 - RNU - creation
@@ -415,7 +417,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/21/2018 - RNU - creation

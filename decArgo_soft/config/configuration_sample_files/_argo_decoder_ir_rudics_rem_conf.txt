@@ -166,7 +166,7 @@ TEST011_GRADIENT = 1
 TEST012_DIGIT_ROLLOVER = 1
 TEST013_STUCK_VALUE = 1
 TEST014_DENSITY_INVERSION = 1
-TEST015_GREY_LIST = 1
+TEST015_EXCLUSION_LIST = 1
 
 TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT = 0
 %TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT = 1
@@ -189,9 +189,18 @@ TEST062_BBP = 1
 TEST063_CHLA = 1
 
 % additional information needed for some RTQC test
-TEST004_GEBCO_FILE = C:\Users\jprannou\_RNU\_ressources\GEBCO_2020\GEBCO_2020.nc
-TEST015_GREY_LIST_FILE = C:\Users\jprannou\_RNU\DecArgo_soft\work\ar_greylist.txt
+TEST004_GEBCO_FILE = C:\Users\jprannou\_RNU\_ressources\GEBCO_2024\GEBCO_2024.nc
+TEST015_EXCLUSION_LIST_FILE = C:\Users\jprannou\_RNU\DecArgo_soft\work\ar_exclusionlist.txt
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% RT ADJUSTMENT (external files)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% World Ocean Atlas used for NITRATE RT adjustment
+WOA_FILE = C:\Users\jprannou\_RNU\_ressources\WOA\woa13_all_n00_01.nc
+
+% Global Distribution of the Correction Factor used for CHLA RT adjustment
+CHLA_COR_FACT_FILE = C:\Users\jprannou\_RNU\_ressources\CHLA_COR_FACT\SLOPE_RT_2024.txt
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ADD 3 MINUTES TO FLOAT TECHNICAL TIMES (1 => yes, 0 => no)

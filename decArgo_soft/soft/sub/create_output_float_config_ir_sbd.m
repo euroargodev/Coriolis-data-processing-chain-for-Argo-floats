@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/14/2014 - RNU - creation
@@ -56,7 +56,7 @@ switch (a_decoderId)
       
       % nothing for Nova floats
 
-   case {201, 202, 203, 204, 205, 206, 208, 209, 215, 216, 218, 221}
+   case {201, 202, 203, 204, 205, 206, 208, 209, 215, 216, 218, 221, 228, 229, 230}
       
       % use CONFIG_PT20 to fill CONFIG_PX02 = CONFIG_PT20 + 0.5
       idPos1 = find(strcmp(finalConfigName, 'CONFIG_PT20') == 1, 1);
@@ -67,7 +67,7 @@ switch (a_decoderId)
          finalConfigValue(idPos2, idNoNan) = finalConfigValue(idPos2, idNoNan) + 0.5;
       end
       
-      if (a_decoderId == 216)
+      if (ismember(a_decoderId, [216]))
          
          % ice mode is supposed to be activated
          
@@ -82,7 +82,7 @@ switch (a_decoderId)
             end
          end
          
-      elseif (ismember(a_decoderId, [218 221]))
+      elseif (ismember(a_decoderId, [218, 221, 230]))
 
          if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
             
@@ -149,7 +149,7 @@ switch (a_decoderId)
          finalConfigValue(idPos2, idNoNan) = finalConfigValue(idPos2, idNoNan) + 0.5;
       end
       
-   case {212, 222, 214, 217, 223, 225}
+   case {212, 222, 214, 217, 223, 225, 232}
       
       % use CONFIG_MC28 to fill CONFIG_PX02 = CONFIG_MC28 + 0.5
       idPos1 = find(strcmp(finalConfigName, 'CONFIG_MC28_') == 1, 1);
@@ -167,7 +167,7 @@ switch (a_decoderId)
          % if ice detection is used for at least one cycle, set ice float mandatory
          % parameter (CONFIG_BitMaskMonthsIceDetectionActive_NUMBER) to 4095
          idPos1 = find(strcmp(finalConfigName, 'CONFIG_IC00_') == 1, 1);
-         if (ismember(a_decoderId, [212, 222, 223, 225]))
+         if (ismember(a_decoderId, [212, 222, 223, 225, 232]))
             idPos2 = find(strcmp(finalConfigName, 'CONFIG_PX03_') == 1, 1);
          else
             idPos2 = find(strcmp(finalConfigName, 'CONFIG_PX05_') == 1, 1);
@@ -206,7 +206,7 @@ switch (a_decoderId)
          finalConfigValue(idDel, :) = [];
       end
       
-   case {224, 226}
+   case {224, 226, 227}
             
       if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
          
@@ -250,6 +250,59 @@ switch (a_decoderId)
          finalConfigValue(idDel, :) = [];
       end
       
+   case {231}
+          
+      % use CONFIG_MC28 to fill CONFIG_PX02 = CONFIG_MC28 + 0.5
+      idPos1 = find(strcmp(finalConfigName, 'CONFIG_MC28_') == 1, 1);
+      idPos2 = find(strcmp(finalConfigName, 'CONFIG_PX02_') == 1, 1);
+      if (~isempty(idPos1) && ~isempty(idPos2))
+         finalConfigValue(idPos2, :) = finalConfigValue(idPos1, :);
+         idNoNan = find(~isnan(finalConfigValue(idPos2, :)));
+         finalConfigValue(idPos2, idNoNan) = finalConfigValue(idPos2, idNoNan) + 0.5;
+      end
+      
+      if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
+         
+         % when ice mode is activated
+         
+         % if ice detection is used for at least one cycle, set ice float mandatory
+         % parameter (CONFIG_BitMaskMonthsIceDetectionActive_NUMBER) to 4095
+         idPos1 = find(strcmp(finalConfigName, 'CONFIG_IC00_') == 1, 1);
+         idPos2 = find(strcmp(finalConfigName, 'CONFIG_PX03_') == 1, 1);
+         if (~isempty(idPos1) && ~isempty(idPos2))
+            iceUsed = finalConfigValue(idPos1, :);
+            if (any(~isnan(iceUsed) | (iceUsed ~= 0)))
+               finalConfigValue(idPos2, :) = 4095;
+            end
+         end
+         
+         % when ice detection is used, replace TC19 by IC10
+         idPos1 = find(strcmp(finalConfigName, 'CONFIG_IC00_') == 1, 1);
+         idPos2 = find(strcmp(finalConfigName, 'CONFIG_TC19_') == 1, 1);
+         idPos3 = find(strcmp(finalConfigName, 'CONFIG_IC10_') == 1, 1);
+         if (~isempty(idPos1) && ~isempty(idPos2))
+            iceUsed = finalConfigValue(idPos1, :);
+            idF = find(iceUsed ~= 0);
+            finalConfigValue(idPos2, idF) = finalConfigValue(idPos3, idF);
+            finalConfigValue(idPos3, :) = nan;
+         end
+      else
+         
+         % when ice mode is not activated
+         
+         % remove ice configuration parameters from final configuration
+         idDel = [];
+         for id = 0:15
+            name = sprintf('CONFIG_IC%02d_', id);
+            idPos = find(strcmp(finalConfigName, name) == 1, 1);
+            if (~isempty(idPos))
+               idDel = [idDel; idPos];
+            end
+         end
+         finalConfigName(idDel) = [];
+         finalConfigValue(idDel, :) = [];
+      end
+
    case {219, 220}
       
       % nothing for Arvor-C floats
@@ -274,7 +327,7 @@ finalConfigValue(idDel, :) = [];
 staticConfigName = g_decArgo_floatConfig.STATIC.NAMES;
 staticConfigValue = g_decArgo_floatConfig.STATIC.VALUES;
 
-if (ismember(a_decoderId, [222, 223, 224, 225, 226]))
+if (ismember(a_decoderId, [222, 223, 224, 225, 226, 227, 232]))
 
    % CONFIG_MC08_ has been temporarily stored in static configuration (and not
    % removed if at least one deep cycle has not been performed)

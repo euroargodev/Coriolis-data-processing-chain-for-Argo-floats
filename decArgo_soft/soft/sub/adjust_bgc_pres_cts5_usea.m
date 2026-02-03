@@ -9,7 +9,7 @@
 % timely closest associated CTD PRES values.
 %
 % Concerning SUNA measurement pressures:
-% The PRES value transmitted by thz float is the one of the PTS CTD measurement
+% The PRES value transmitted by the float is the one of the PTS CTD measurement
 % sent to the SUNA to compute a NITRATE value, thus it is sampled before the
 % SUNA measurement.
 % We will update this PRES value (in PRES_ADJUSTED) with the timely closest 
@@ -33,7 +33,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/01/2022 - RNU - creation
@@ -272,7 +272,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/18/2022 - RNU - creation
@@ -385,7 +385,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/18/2022 - RNU - creation

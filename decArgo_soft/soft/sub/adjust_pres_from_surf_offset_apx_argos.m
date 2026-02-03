@@ -35,7 +35,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/02/2015 - RNU - creation
@@ -96,7 +96,7 @@ if (~isempty(idCycleStruct))
    else
       idF = find(ismember(a_cycleNum:-1:a_cycleNum-5, [o_presOffsetData.cycleNum]));
       if ((length(idF) == 6) && ~any(abs(o_presOffsetData.cyclePresOffset(idF)) <= 20))
-         fprintf('WARNING: Float #%d should be put on the grey list because of pressure error\n', ...
+         fprintf('WARNING: Float #%d should be put on the exclusion list because of pressure error\n', ...
             g_decArgo_floatNum);
       end
    end
@@ -198,7 +198,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/02/2015 - RNU - creation

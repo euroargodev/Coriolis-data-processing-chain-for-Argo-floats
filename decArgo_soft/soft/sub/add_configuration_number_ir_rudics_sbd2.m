@@ -22,7 +22,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/16/2013 - RNU - creation
@@ -184,7 +184,7 @@ if (~isempty(idF))
             idFCyProf2 = find((cyNum == finalCyNum) & ...
                (profNum == finalProfNum));
             if (~isempty(idFCyProf1) && ~isempty(idFCyProf2))
-               inputUsedCyOut(idFCyProf1) = idFCyProf2;
+               inputUsedCyOut(idFCyProf1) = finalCyNum(idFCyProf2);
             end
          end
          

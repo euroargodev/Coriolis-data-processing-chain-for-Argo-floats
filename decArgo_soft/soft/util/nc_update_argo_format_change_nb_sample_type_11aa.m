@@ -2,7 +2,7 @@
 % Update the Argo format of NetCDF files.
 %
 % SYNTAX :
-%   nc_update_argo_format_change_nb_sample_type_11aa or 
+%   nc_update_argo_format_change_nb_sample_type_11aa or
 %   nc_update_argo_format_change_nb_sample_type_11aa(6900189, 7900118)
 %
 % INPUT PARAMETERS :
@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/17/2022 - RNU - V 11aa: change NB_SAMPLE_CTD and NB_SAMPLE_SFET variables
@@ -65,22 +65,22 @@ currentTime = datestr(now, 'yyyymmddTHHMMSSZ');
 ticStartTime = tic;
 
 try
-   
+
    % init the XML report
    init_xml_report(currentTime);
-   
+
    % input parameters management
    floatList = [];
    if (nargin == 0)
       if (~isempty(FLOAT_LIST_FILE_NAME))
          floatListFileName = FLOAT_LIST_FILE_NAME;
-         
+
          % floats to process come from floatListFileName
          if ~(exist(floatListFileName, 'file') == 2)
             fprintf('ERROR: File not found: %s\n', floatListFileName);
             return
          end
-         
+
          fprintf('Floats from list: %s\n', floatListFileName);
          floatList = load(floatListFileName);
       end
@@ -88,61 +88,61 @@ try
       % floats to process come from input parameters
       floatList = cell2mat(varargin);
    end
-   
-   
+
+
    % create a temporary directory for this run
    tmpDir = [DIR_TMP '/' 'nc_update_argo_format_change_nb_sample_type_11aa_' currentTime];
    status = mkdir(tmpDir);
    if (status ~= 1)
       fprintf('ERROR: cannot create temporary directory (%s)\n', tmpDir);
    end
-   
+
    % create and start log file recording
    logFile = [DIR_LOG_FILE '/' 'nc_update_argo_format_change_nb_sample_type_11aa_' currentTime '.log'];
    diary(logFile);
-   
+
    dacDir = dir(DIR_INPUT_OUTPUT_NC_FILES);
    for idDir = 1:length(dacDir)
-      
+
       dacDirName = dacDir(idDir).name;
       dacDirPathName = [DIR_INPUT_OUTPUT_NC_FILES '/' dacDirName];
       if ((exist(dacDirPathName, 'dir') == 7) && ~strcmp(dacDirName, '.') && ~strcmp(dacDirName, '..'))
-         
+
          fprintf('\nProcessing directory: %s\n', dacDirName);
-         
+
          floatNum = 1;
          floatDir = dir(dacDirPathName);
          for idDir2 = 1:length(floatDir)
-            
+
             floatDirName = floatDir(idDir2).name;
             floatDirPathName = [dacDirPathName '/' floatDirName];
             if ((exist(floatDirPathName, 'dir') == 7) && ~strcmp(floatDirName, '.') && ~strcmp(floatDirName, '..'))
-               
+
                [floatWmo, status] = str2num(floatDirName);
                if (status == 1)
-                  
+
                   if ((isempty(floatList)) || (~isempty(floatList) && ismember(floatWmo, floatList)))
-                     
+
                      g_couf_floatNum = floatWmo;
                      fprintf('%03d/%03d %d\n', floatNum, length(floatDir)-2, floatWmo);
-                     
+
                      % multi-profile files
                      floatFiles = dir([floatDirPathName '/' sprintf('%d_*prof.nc', floatWmo)]);
                      for idFile = 1:length(floatFiles)
-                        
+
                         floatFileName = floatFiles(idFile).name;
                         floatFilePathName = [floatDirPathName '/' floatFileName];
                         if (exist(floatFilePathName, 'file') == 2)
                            process_nc_file(floatFilePathName, tmpDir, DO_IT, 2);
                         end
                      end
-                     
+
                      % mono-profile files
                      floatDirPathName = [floatDirPathName '/profiles'];
                      if (exist(floatDirPathName, 'dir') == 7)
                         floatFiles = dir([floatDirPathName '/' sprintf('*%d_*.nc', floatWmo)]);
                         for idFile = 1:length(floatFiles)
-                           
+
                            floatFileName = floatFiles(idFile).name;
                            floatFilePathName = [floatDirPathName '/' floatFileName];
                            if (exist(floatFilePathName, 'file') == 2)
@@ -150,7 +150,7 @@ try
                            end
                         end
                      end
-                     
+
                      floatNum = floatNum + 1;
                   end
                end
@@ -158,25 +158,25 @@ try
          end
       end
    end
-   
+
    % remove the temporary directory of this run
    [status, message, messageid] = rmdir(tmpDir,'s');
    if (status ~= 1)
       fprintf('ERROR: cannot remove temporary directory (%s)\n', tmpDir);
    end
-   
+
    diary off;
-   
+
    % finalize XML report
    [status] = finalize_xml_report(ticStartTime, logFile, []);
-   
+
 catch
-   
+
    diary off;
-   
+
    % finalize XML report
    [status] = finalize_xml_report(ticStartTime, logFile, lasterror);
-   
+
 end
 
 % create the XML report path file name
@@ -207,7 +207,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/17/2022 - RNU - creation
@@ -220,14 +220,14 @@ global g_couf_reportData;
 
 
 if (exist(a_ncPathFileName, 'file') == 2)
-   
+
    % get information to see if the file should be updated
    updateNeeded = 0;
    wantedVars = [ ...
       {'FORMAT_VERSION'} ...
       ];
    ncData = get_var_from_nc_file(a_ncPathFileName, wantedVars);
-      
+
    formatVersion = strtrim(get_data_from_name('FORMAT_VERSION', ncData)');
    if (strcmp(formatVersion, '3.1'))
 
@@ -264,19 +264,19 @@ if (exist(a_ncPathFileName, 'file') == 2)
       fileToUpdate = [a_tmpDir '/' fileName fileExt];
       status = copyfile(a_ncPathFileName, fileToUpdate);
       if (status == 1)
-         
+
          % update the file
          ok = update_file(fileToUpdate, a_fileType);
-         
+
          if (ok == 1)
-            
+
             % move the updated file
             status = movefile(fileToUpdate, a_ncPathFileName);
             if (status ~= 1)
                fprintf('ERROR: cannot move file to update (%s) to replace input file (%s)\n', fileToUpdate, a_ncPathFileName);
                return
             end
-            
+
             % store the information for the XML report
             if (a_fileType == 1)
                g_couf_reportData.profFile = [g_couf_reportData.profFile {a_ncPathFileName}];
@@ -284,7 +284,7 @@ if (exist(a_ncPathFileName, 'file') == 2)
                g_couf_reportData.mProfFile = [g_couf_reportData.mProfFile {a_ncPathFileName}];
             end
             g_couf_reportData.float = [g_couf_reportData.float g_couf_floatNum];
-            
+
          end
       else
          fprintf('ERROR: cannot copy file to update (%s) to temporary directory (%s)\n', a_ncPathFileName, a_tmpDir);
@@ -310,7 +310,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/15/2015 - RNU - creation
@@ -367,48 +367,55 @@ if (exist(a_ncPathFileName, 'file') == 2)
          return
       end
 
-      % add history information that concerns the current program
-      historyInstitution = 'IF';
-      historySoftware = 'COUF';
-      historySoftwareRelease = g_couf_ncUpdateArgoFormatVersion;
-      historyDate = datestr(now_utc, 'yyyymmddHHMMSS');
+      try
+
+         % add history information that concerns the current program
+         historyInstitution = 'IF';
+         historySoftware = 'COUF';
+         historySoftwareRelease = g_couf_ncUpdateArgoFormatVersion;
+         historyDate = datestr(now_utc, 'yyyymmddHHMMSS');
 
 
-      % retrieve the creation date of the updated file
-      dateCreation = deblank(netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_CREATION'))');
+         % retrieve the creation date of the updated file
+         dateCreation = deblank(netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_CREATION'))');
 
-      % set the 'history' global attribute
-      globalVarId = netcdf.getConstant('NC_GLOBAL');
-      globalHistoryText = [datestr(datenum(dateCreation, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; '];
-      globalHistoryText = [globalHistoryText ...
-         datestr(datenum(historyDate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COUF software (V ' g_couf_ncUpdateArgoFormatVersion '))'];
-      netcdf.reDef(fCdf);
-      netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
-      netcdf.endDef(fCdf);
+         % set the 'history' global attribute
+         globalVarId = netcdf.getConstant('NC_GLOBAL');
+         globalHistoryText = [datestr(datenum(dateCreation, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; '];
+         globalHistoryText = [globalHistoryText ...
+            datestr(datenum(historyDate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COUF software (V ' g_couf_ncUpdateArgoFormatVersion '))'];
+         netcdf.reDef(fCdf);
+         netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
+         netcdf.endDef(fCdf);
 
-      % update the update date
-      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), historyDate);
+         % update the update date
+         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), historyDate);
 
-      % update HISTORY information
-      [~, nHistory] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, 'N_HISTORY'));
-      for idP = 1:length(profList)
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
-            fliplr([nHistory profList(idP)-1 0]), ...
-            fliplr([1 1 length(historyInstitution)]), historyInstitution');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
-            fliplr([nHistory profList(idP)-1 0]), ...
-            fliplr([1 1 length(historySoftware)]), historySoftware');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
-            fliplr([nHistory profList(idP)-1 0]), ...
-            fliplr([1 1 length(historySoftwareRelease)]), historySoftwareRelease');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
-            fliplr([nHistory profList(idP)-1 0]), ...
-            fliplr([1 1 length(historyDate)]), historyDate');
+         % update HISTORY information
+         [~, nHistory] = netcdf.inqDim(fCdf, netcdf.inqDimID(fCdf, 'N_HISTORY'));
+         for idP = 1:length(profList)
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
+               fliplr([nHistory profList(idP)-1 0]), ...
+               fliplr([1 1 length(historyInstitution)]), historyInstitution');
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
+               fliplr([nHistory profList(idP)-1 0]), ...
+               fliplr([1 1 length(historySoftware)]), historySoftware');
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
+               fliplr([nHistory profList(idP)-1 0]), ...
+               fliplr([1 1 length(historySoftwareRelease)]), historySoftwareRelease');
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
+               fliplr([nHistory profList(idP)-1 0]), ...
+               fliplr([1 1 length(historyDate)]), historyDate');
+         end
+
+         netcdf.close(fCdf);
+
+      catch MException
+         netcdf.close(fCdf);
+         rethrow(MException)
       end
-
-      netcdf.close(fCdf);
    end
-   
+
    % move the updated file to the original directory
    status = movefile(tmpFileName, a_ncPathFileName);
    if (status ~= 1)
@@ -436,7 +443,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/17/2022 - RNU - creation
@@ -497,7 +504,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/15/2015 - RNU - creation
@@ -509,29 +516,36 @@ o_ncVarList = [];
 
 
 if (exist(a_ncPathFileName, 'file') == 2)
-   
+
    % open NetCDF file
    fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
    if (isempty(fCdf))
       fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
       return
    end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         varInfo = ncinfo(a_ncPathFileName, varName);
-         o_ncVarList = [o_ncVarList {varName} {varValue} {varInfo}];
-      else
-         o_ncVarList = [o_ncVarList {varName} {[]} {[]}];
+
+   try
+
+      % retrieve variables from NetCDF file
+      for idVar = 1:length(a_wantedVars)
+         varName = a_wantedVars{idVar};
+
+         if (var_is_present_dec_argo(fCdf, varName))
+            varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
+            varInfo = ncinfo(a_ncPathFileName, varName);
+            o_ncVarList = [o_ncVarList {varName} {varValue} {varInfo}];
+         else
+            o_ncVarList = [o_ncVarList {varName} {[]} {[]}];
+         end
+
       end
-      
+
+      netcdf.close(fCdf);
+
+   catch MException
+      netcdf.close(fCdf);
+      rethrow(MException)
    end
-   
-   netcdf.close(fCdf);
 end
 
 return
@@ -554,7 +568,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/09/2014 - RNU - creation
@@ -570,7 +584,7 @@ idDim = find(strcmp(a_dimName, {a_inputSchema.Dimensions.Name}) == 1, 1);
 
 if (~isempty(idDim))
    a_inputSchema.Dimensions(idDim).Length = a_dimVal;
-   
+
    % update the dimensions of the variables
    for idVar = 1:length(a_inputSchema.Variables)
       var = a_inputSchema.Variables(idVar);
@@ -583,39 +597,6 @@ if (~isempty(idDim))
 end
 
 o_outputSchema = a_inputSchema;
-
-return
-
-% ------------------------------------------------------------------------------
-% Get data from name in a {name}/{data} list.
-%
-% SYNTAX :
-%  [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
-%
-% INPUT PARAMETERS :
-%   a_dataName : name of the data to retrieve
-%   a_dataList : {name}/{data} list
-%
-% OUTPUT PARAMETERS :
-%   o_dataValues : concerned data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/21/2015 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
-
-% output parameters initialization
-o_dataValues = [];
-
-idVal = find(strcmp(a_dataName, a_dataList) == 1, 1);
-if (~isempty(idVal))
-   o_dataValues = a_dataList{idVal+1};
-end
 
 return
 
@@ -633,7 +614,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/15/2015 - RNU - creation
@@ -688,7 +669,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/15/2015 - RNU - creation
@@ -744,7 +725,7 @@ docRootNode.appendChild(newChild);
 [infoMsg, warningMsg, errorMsg] = parse_log_file(a_logFileName);
 
 if (~isempty(infoMsg))
-   
+
    for idMsg = 1:length(infoMsg)
       newChild = docNode.createElement('info');
       textNode = infoMsg{idMsg};
@@ -754,7 +735,7 @@ if (~isempty(infoMsg))
 end
 
 if (~isempty(warningMsg))
-   
+
    for idMsg = 1:length(warningMsg)
       newChild = docNode.createElement('warning');
       textNode = warningMsg{idMsg};
@@ -764,7 +745,7 @@ if (~isempty(warningMsg))
 end
 
 if (~isempty(errorMsg))
-   
+
    for idMsg = 1:length(errorMsg)
       newChild = docNode.createElement('error');
       textNode = errorMsg{idMsg};
@@ -777,14 +758,14 @@ end
 % add matlab error
 if (~isempty(a_error))
    o_status = 'nok';
-   
+
    newChild = docNode.createElement('matlab_error');
-   
+
    newChildBis = docNode.createElement('error_message');
    textNode = regexprep(a_error.message, char(10), ': ');
    newChildBis.appendChild(docNode.createTextNode(textNode));
    newChild.appendChild(newChildBis);
-   
+
    for idS = 1:size(a_error.stack, 1)
       newChildBis = docNode.createElement('stack_line');
       textNode = sprintf('Line: %3d File: %s (func: %s)', ...
@@ -794,7 +775,7 @@ if (~isempty(a_error))
       newChildBis.appendChild(docNode.createTextNode(textNode));
       newChild.appendChild(newChildBis);
    end
-   
+
    docRootNode.appendChild(newChild);
 end
 
@@ -833,7 +814,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/12/2013 - RNU - creation
@@ -863,7 +844,7 @@ if (~isempty(a_logFileName))
    end
    fileContents = textscan(fId, '%s', 'delimiter', '\n');
    fclose(fId);
-   
+
    if (~isempty(fileContents))
       % retrieve wanted messages
       fileContents = fileContents{:};
@@ -914,7 +895,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/02/2010 - RNU - creation

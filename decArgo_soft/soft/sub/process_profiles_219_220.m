@@ -23,7 +23,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/17/2019 - RNU - creation
@@ -36,7 +36,7 @@ function [o_tabProfiles] = process_profiles_219_220( ...
 % output parameters initialization
 o_tabProfiles = [];
 
-% array ro store statistics on received packets
+% array to store statistics on received packets
 global g_decArgo_nbAscentPacketsReceived;
 
 % current cycle number
@@ -89,7 +89,7 @@ if (~isempty(a_tabTech))
 end
 
 % add profile date and location information
-[profStruct] = add_profile_date_and_location_201_to_226_2001_to_2003( ...
+[profStruct] = add_profile_date_and_location_201_to_230_40x_2001_to_2003( ...
    profStruct, a_gpsData, a_iridiumMailData, ...
    '', a_ascentEndDate, a_transStartDate);
 

@@ -25,7 +25,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/13/2018 - RNU - creation
@@ -213,7 +213,7 @@ gzFiles = dir([a_outputDirName '*.gz']);
 for iFile = 1:length(gzFiles)
    gzFilePathName = [a_outputDirName gzFiles(iFile).name];
    if (gzFiles(iFile).bytes == 0)
-      fprintf('ERROR: Empty file: %s - ignored\n', ...
+      fprintf('WARNING: Empty file: %s - ignored\n', ...
          gzFilePathName);
       delete(gzFilePathName);
       continue
@@ -221,7 +221,7 @@ for iFile = 1:length(gzFiles)
    try
       gunzip(gzFilePathName);
    catch infos
-      fprintf('ERROR: Failed while uncompressing file: %s (%s) - ignored\n', ...
+      fprintf('WARNING: Failed while uncompressing file: %s (%s) - ignored\n', ...
          gzFilePathName, ...
          infos.message);
    end

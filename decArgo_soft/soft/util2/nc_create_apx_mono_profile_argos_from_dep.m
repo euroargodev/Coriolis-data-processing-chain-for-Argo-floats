@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/26/2019 - RNU - creation
@@ -163,7 +163,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/26/2019 - RNU - creation
@@ -334,7 +334,7 @@ if (~exist(depFilePathName, 'dir') && exist(depFilePathName, 'file'))
                else
                   idF = find(ismember(cyNum:-1:cyNum-5, cycleNumTab));
                   if ((length(idF) == 6) && ~any(abs(presOffsetTab(idF)) <= 20))
-                     fprintf('WARNING: Float #%d should be put on the grey list because of pressure error\n', ...
+                     fprintf('WARNING: Float #%d should be put on the exclusion list because of pressure error\n', ...
                         a_floatNum);
                   end
                end
@@ -400,7 +400,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/26/2019 - RNU - creation
@@ -481,7 +481,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/26/2019 - RNU - creation
@@ -598,7 +598,7 @@ for idParam = 1:length(paramlist)
    paramName = paramlist{idParam};
    
    % retrieve the information on the parameter
-   paramStruct = get_netcdf_param_attributes_3_1(paramName);
+   paramStruct = get_netcdf_param_attributes(paramName);
    if (isempty(paramStruct))
       o_comment = sprintf('ERROR: Parameter ''%s'' not managed yet by this program\n', paramName);
       return
@@ -900,12 +900,16 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/26/2019 - RNU - creation
 % ------------------------------------------------------------------------------
 function apply_rtqc(a_floatNum, a_filePathName, a_metaDataFilePathName)
+
+% mode processing flags
+global g_decArgo_realtimeFlag;
+g_decArgo_realtimeFlag = 0; % needed for add_rtqc_to_profile_file
 
 % create the list of tests to perform
 testToPerformList = [ ...
@@ -922,7 +926,7 @@ testToPerformList = [ ...
    {'TEST012_DIGIT_ROLLOVER'} {1} ...
    {'TEST013_STUCK_VALUE'} {1} ...
    {'TEST014_DENSITY_INVERSION'} {1} ...
-   {'TEST015_GREY_LIST'} {1} ...
+   {'TEST015_EXCLUSION_LIST'} {1} ...
    {'TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT'} {0} ...
    {'TEST018_FROZEN_PRESSURE'} {0} ...
    {'TEST019_DEEPEST_PRESSURE'} {1} ...
@@ -943,9 +947,9 @@ testToPerformList = [ ...
 % meta-data associated to each test
 testMetaData = [ ...
    {'TEST000_FLOAT_DECODER_ID'} {''} ...
-   {'TEST004_GEBCO_FILE'} {'C:\Users\jprannou\_RNU\_ressources\GEBCO_2021\GEBCO_2021.nc'} ...
+   {'TEST004_GEBCO_FILE'} {'C:\Users\jprannou\_RNU\_ressources\GEBCO_2024\GEBCO_2024.nc'} ...
    {'TEST013_METADA_DATA_FILE'} {a_metaDataFilePathName} ...
-   {'TEST015_GREY_LIST_FILE'} {'C:\Users\jprannou\_RNU\DecArgo_soft\work\ar_greylist.txt'} ...
+   {'TEST015_EXCLUSION_LIST_FILE'} {'C:\Users\jprannou\_RNU\DecArgo_soft\work\ar_exclusionlist.txt'} ...
    {'TEST019_METADA_DATA_FILE'} {a_metaDataFilePathName} ...
    ];
 
@@ -973,7 +977,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/26/2019 - RNU - creation
@@ -1075,7 +1079,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/09/2014 - RNU - creation
@@ -1108,62 +1112,6 @@ o_outputSchema = a_inputSchema;
 return
 
 % ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         fprintf('WARNING: Variable %s not present in file : %s\n', ...
-            varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {''}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
-end
-
-return
-
-% ------------------------------------------------------------------------------
 % Retrieve information from json meta-data file.
 %
 % SYNTAX :
@@ -1179,7 +1127,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/09/2013 - RNU - creation

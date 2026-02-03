@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -89,7 +89,7 @@ for idP = 1:length(a_ocrData)
                g_decArgo_floatNum, ...
                treat);
       end
-   elseif (a_decoderId == 133)
+   elseif (ismember(a_decoderId, [133, 138, 139, 140]))
       switch (treat)
          case {'(RW)', '(AM)', '(DW)'}
             fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; %s; %s; %s; %s; -; Float time; Adj. float time; PRES (dbar); RAW_DOWNWELLING_IRRADIANCE380 (count); RAW_DOWNWELLING_IRRADIANCE443 (count); RAW_DOWNWELLING_IRRADIANCE490 (count); RAW_DOWNWELLING_IRRADIANCE555 (count)\n', ...
@@ -126,10 +126,10 @@ for idP = 1:length(a_ocrData)
                g_decArgo_floatNum, ...
                treat);
       end
-   else
+   elseif (a_decoderId == 134)
       switch (treat)
          case {'(RW)', '(AM)', '(DW)'}
-            fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; %s; %s; %s; %s; -; Float time; Adj. float time; PRES (dbar); RAW_DOWNWELLING_IRRADIANCE380 (count); RAW_DOWNWELLING_IRRADIANCE412 (count); RAW_DOWNWELLING_IRRADIANCE490 (count); RAW_DOWNWELLING_PAR (count)\n', ...
+            fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; %s; %s; %s; %s; -; Float time; Adj. float time; PRES (dbar); RAW_DOWNWELLING_IRRADIANCE443 (count); RAW_DOWNWELLING_IRRADIANCE490 (count); RAW_DOWNWELLING_IRRADIANCE555 (count); RAW_DOWNWELLING_PAR (count)\n', ...
                g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                fileTypeStr, phase, sensorNum, sensorName);
             outputFmt = '%s; %s;%.1f;%d;%d;%d;%d';
@@ -141,19 +141,56 @@ for idP = 1:length(a_ocrData)
                measType = 'decimated raw';
             end
          case '(AM)(SD)'
-            fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; %s; %s; %s; %s; -; Float time; Adj. float time; PRES (dbar); RAW_DOWNWELLING_IRRADIANCE380 (count); RAW_DOWNWELLING_IRRADIANCE412 (count); RAW_DOWNWELLING_IRRADIANCE490 (count); RAW_DOWNWELLING_PAR (count); RAW_DOWNWELLING_IRRADIANCE380_STD (count); RAW_DOWNWELLING_IRRADIANCE412_STD (count); RAW_DOWNWELLING_IRRADIANCE490_STD (count); RAW_DOWNWELLING_PAR_STD (count)\n', ...
+            fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; %s; %s; %s; %s; -; Float time; Adj. float time; PRES (dbar); RAW_DOWNWELLING_IRRADIANCE443 (count); RAW_DOWNWELLING_IRRADIANCE490 (count); RAW_DOWNWELLING_IRRADIANCE555 (count); RAW_DOWNWELLING_PAR (count); RAW_DOWNWELLING_IRRADIANCE443_STD (count); RAW_DOWNWELLING_IRRADIANCE490_STD (count); RAW_DOWNWELLING_IRRADIANCE555_STD (count); RAW_DOWNWELLING_PAR_STD (count)\n', ...
                g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                fileTypeStr, phase, sensorNum, sensorName);
             outputFmt = '%s; %s;%.1f;%d;%d;%d;%d;%d;%d;%d;%d';
             measType = 'mean + stdev';
          case '(AM)(MD)'
-            fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; %s; %s; %s; %s; -; Float time; Adj. float time; PRES (dbar); RAW_DOWNWELLING_IRRADIANCE380 (count); RAW_DOWNWELLING_IRRADIANCE412 (count); RAW_DOWNWELLING_IRRADIANCE490 (count); RAW_DOWNWELLING_PAR (count); PRES_MED (dbar); RAW_DOWNWELLING_IRRADIANCE380_MED  (count); RAW_DOWNWELLING_IRRADIANCE412_MED  (count); RAW_DOWNWELLING_IRRADIANCE490_MED  (count); RAW_DOWNWELLING_PAR_MED  (count)\n', ...
+            fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; %s; %s; %s; %s; -; Float time; Adj. float time; PRES (dbar); RAW_DOWNWELLING_IRRADIANCE443 (count); RAW_DOWNWELLING_IRRADIANCE490 (count); RAW_DOWNWELLING_IRRADIANCE555 (count); RAW_DOWNWELLING_PAR (count); PRES_MED (dbar); RAW_DOWNWELLING_IRRADIANCE443_MED  (count); RAW_DOWNWELLING_IRRADIANCE490_MED  (count); RAW_DOWNWELLING_IRRADIANCE555_MED  (count); RAW_DOWNWELLING_PAR_MED  (count)\n', ...
                g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                fileTypeStr, phase, sensorNum, sensorName);
             outputFmt = '%s; %s;%.1f;%d;%d;%d;%d%.1f;%d;%d;%d;%d';
             measType = 'mean + median';
          case '(AM)(SD)(MD)'
-            fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; %s; %s; %s; %s; -; Float time; Adj. float time; PRES (dbar); RAW_DOWNWELLING_IRRADIANCE380 (count); RAW_DOWNWELLING_IRRADIANCE412 (count); RAW_DOWNWELLING_IRRADIANCE490 (count); RAW_DOWNWELLING_PAR (count); RAW_DOWNWELLING_IRRADIANCE380_STD (count); RAW_DOWNWELLING_IRRADIANCE412_STD (count); RAW_DOWNWELLING_IRRADIANCE490_STD (count); RAW_DOWNWELLING_PAR_STD (count); PRES_MED (dbar); RAW_DOWNWELLING_IRRADIANCE380_MED  (count); RAW_DOWNWELLING_IRRADIANCE412_MED  (count); RAW_DOWNWELLING_IRRADIANCE490_MED  (count); RAW_DOWNWELLING_PAR_MED  (count)\n', ...
+            fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; %s; %s; %s; %s; -; Float time; Adj. float time; PRES (dbar); RAW_DOWNWELLING_IRRADIANCE443 (count); RAW_DOWNWELLING_IRRADIANCE490 (count); RAW_DOWNWELLING_IRRADIANCE555 (count); RAW_DOWNWELLING_PAR (count); RAW_DOWNWELLING_IRRADIANCE443_STD (count); RAW_DOWNWELLING_IRRADIANCE490_STD (count); RAW_DOWNWELLING_IRRADIANCE555_STD (count); RAW_DOWNWELLING_PAR_STD (count); PRES_MED (dbar); RAW_DOWNWELLING_IRRADIANCE443_MED  (count); RAW_DOWNWELLING_IRRADIANCE490_MED  (count); RAW_DOWNWELLING_IRRADIANCE555_MED  (count); RAW_DOWNWELLING_PAR_MED  (count)\n', ...
+               g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
+               fileTypeStr, phase, sensorNum, sensorName);
+            outputFmt = '%s; %s;%.1f;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d';
+            measType = 'mean + stdev + median';
+         otherwise
+            fprintf('ERROR: Float #%d: OCR treatment type not managed: %s\n', ...
+               g_decArgo_floatNum, ...
+               treat);
+      end
+   else
+      switch (treat)
+         case {'(RW)', '(AM)', '(DW)'}
+            fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; %s; %s; %s; %s; -; Float time; Adj. float time; PRES (dbar); RAW_DOWNWELLING_IRRADIANCE443 (count); RAW_DOWNWELLING_IRRADIANCE490 (count); RAW_DOWNWELLING_IRRADIANCE555 (count); RAW_DOWNWELLING_PAR (count)\n', ...
+               g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
+               fileTypeStr, phase, sensorNum, sensorName);
+            outputFmt = '%s; %s;%.1f;%d;%d;%d;%d';
+            if (strcmp(treat, '(RW)'))
+               measType = 'raw';
+            elseif (strcmp(treat, '(AM)'))
+               measType = 'mean';
+            elseif (strcmp(treat, '(DW)'))
+               measType = 'decimated raw';
+            end
+         case '(AM)(SD)'
+            fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; %s; %s; %s; %s; -; Float time; Adj. float time; PRES (dbar); RAW_DOWNWELLING_IRRADIANCE443 (count); RAW_DOWNWELLING_IRRADIANCE490 (count); RAW_DOWNWELLING_IRRADIANCE555 (count); RAW_DOWNWELLING_PAR (count); RAW_DOWNWELLING_IRRADIANCE443_STD (count); RAW_DOWNWELLING_IRRADIANCE490_STD (count); RAW_DOWNWELLING_IRRADIANCE555_STD (count); RAW_DOWNWELLING_PAR_STD (count)\n', ...
+               g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
+               fileTypeStr, phase, sensorNum, sensorName);
+            outputFmt = '%s; %s;%.1f;%d;%d;%d;%d;%d;%d;%d;%d';
+            measType = 'mean + stdev';
+         case '(AM)(MD)'
+            fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; %s; %s; %s; %s; -; Float time; Adj. float time; PRES (dbar); RAW_DOWNWELLING_IRRADIANCE443 (count); RAW_DOWNWELLING_IRRADIANCE490 (count); RAW_DOWNWELLING_IRRADIANCE555 (count); RAW_DOWNWELLING_PAR (count); PRES_MED (dbar); RAW_DOWNWELLING_IRRADIANCE443_MED  (count); RAW_DOWNWELLING_IRRADIANCE490_MED  (count); RAW_DOWNWELLING_IRRADIANCE555_MED  (count); RAW_DOWNWELLING_PAR_MED  (count)\n', ...
+               g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
+               fileTypeStr, phase, sensorNum, sensorName);
+            outputFmt = '%s; %s;%.1f;%d;%d;%d;%d%.1f;%d;%d;%d;%d';
+            measType = 'mean + median';
+         case '(AM)(SD)(MD)'
+            fprintf(g_decArgo_outputCsvFileId, '%d; %s; %s; %s; %s; %s; %s; -; Float time; Adj. float time; PRES (dbar); RAW_DOWNWELLING_IRRADIANCE443 (count); RAW_DOWNWELLING_IRRADIANCE490 (count); RAW_DOWNWELLING_IRRADIANCE555 (count); RAW_DOWNWELLING_PAR (count); RAW_DOWNWELLING_IRRADIANCE443_STD (count); RAW_DOWNWELLING_IRRADIANCE490_STD (count); RAW_DOWNWELLING_IRRADIANCE555_STD (count); RAW_DOWNWELLING_PAR_STD (count); PRES_MED (dbar); RAW_DOWNWELLING_IRRADIANCE443_MED  (count); RAW_DOWNWELLING_IRRADIANCE490_MED  (count); RAW_DOWNWELLING_IRRADIANCE555_MED  (count); RAW_DOWNWELLING_PAR_MED  (count)\n', ...
                g_decArgo_floatNum, g_decArgo_cycleNumFloatStr, g_decArgo_patternNumFloatStr, ...
                fileTypeStr, phase, sensorNum, sensorName);
             outputFmt = '%s; %s;%.1f;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d';

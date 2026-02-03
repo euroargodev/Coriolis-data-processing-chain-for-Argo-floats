@@ -4,13 +4,14 @@
 %
 % SYNTAX :
 %  [o_cycleList, o_excludedCycleList] = get_float_cycle_list( ...
-%    a_floatNum, a_floatArgosIridiumId, a_floatLaunchDate, )
+%    a_floatNum, a_floatArgosIridiumId, a_floatLaunchDate, a_floatEndDate, a_decoderId)
 %
 % INPUT PARAMETERS :
 %   a_floatNum            : float WMO number
 %   a_floatArgosIridiumId : float PTT number
 %   a_floatLaunchDate     : float launch date
 %   a_decoderId           : float decoder Id
+%   a_floatEndDate        : float end decoding date
 %
 % OUTPUT PARAMETERS :
 %   o_cycleList         : existing cycle Argos/Iridium data files
@@ -19,13 +20,13 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/13/2011 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_cycleList, o_excludedCycleList] = get_float_cycle_list( ...
-   a_floatNum, a_floatArgosIridiumId, a_floatLaunchDate, a_decoderId)
+   a_floatNum, a_floatArgosIridiumId, a_floatLaunchDate, a_floatEndDate, a_decoderId)
 
 % output parameters initialization
 o_cycleList = [];
@@ -68,7 +69,7 @@ elseif (g_decArgo_floatTransType == 2)
          [o_cycleList, ~] = get_float_cycle_list_iridium_rudics_apx_apf9_navis(a_floatNum, str2num(char(a_floatArgosIridiumId)));
       else
          % Apex APF11 floats
-         [o_cycleList] = get_float_cycle_list_iridium_rudics_apx_apf11(a_floatNum, char(a_floatArgosIridiumId), a_floatLaunchDate);
+         [o_cycleList] = get_float_cycle_list_iridium_rudics_apx_apf11(a_floatNum, char(a_floatArgosIridiumId), a_floatLaunchDate, a_floatEndDate);
       end
       
    elseif ((a_decoderId > 3000) && (a_decoderId < 4000))

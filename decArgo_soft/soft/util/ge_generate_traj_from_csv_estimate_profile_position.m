@@ -3,7 +3,7 @@
 % final (and intermediate) trajectories of estimated profile locations.
 %
 % SYNTAX :
-%   ge_generate_traj_from_csv_estimate_profile_position(6902899)
+%   ge_generate_traj_from_csv_estimate_profile_position('csv_file_path_name')
 %
 % INPUT PARAMETERS :
 %   varargin : CSV file path name
@@ -13,10 +13,11 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/27/2022 - RNU - creation
+%   08/21/2024 - RNU - for V1.2 version of estimate_profile_locations
 % ------------------------------------------------------------------------------
 function ge_generate_traj_from_csv_estimate_profile_position(varargin)
 
@@ -27,7 +28,7 @@ function ge_generate_traj_from_csv_estimate_profile_position(varargin)
 DIR_OUTPUT_KML_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 % GEBCO bathymetric file
-GEBCO_FILE = 'C:\Users\jprannou\_RNU\_ressources\GEBCO_2022\GEBCO_2022.nc';
+GEBCO_FILE = 'C:\Users\jprannou\_RNU\_ressources\GEBCO_2024\GEBCO_2024.nc';
 
 % flag to generate local isobath lines
 GENERATE_ISOBATH = 1;
@@ -360,7 +361,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/27/2022 - RNU - creation
@@ -384,12 +385,12 @@ fileContents = textscan(fId, '%s', 'delimiter', ';');
 fileContents = fileContents{:};
 fclose(fId);
 
-if (rem(size(fileContents, 1), 35) ~= 0)
+if (rem(size(fileContents, 1), 37) ~= 0)
    fprintf('ERROR: Unable to parse file: %s\n', a_filePathName);
    return
 end
 
-trajData = reshape(fileContents, 35, size(fileContents, 1)/35)';
+trajData = reshape(fileContents, 37, size(fileContents, 1)/37)';
 clear fileContents
 
 if (size(trajData, 1) == 1)
@@ -443,6 +444,8 @@ for idCol = 1:35
          o_trajData.forwGebcoDepth = str2double(trajData(2:end, idCol)');
       case 'ForwDiffDepth'
          o_trajData.forwDiffDepth = str2double(trajData(2:end, idCol)');
+      case 'SpeedForw'
+         o_trajData.speedForw = str2double(trajData(2:end, idCol)');
       case 'BackwLat'
          o_trajData.backwLat = str2double(trajData(2:end, idCol)');
       case 'BackwLon'
@@ -451,12 +454,14 @@ for idCol = 1:35
          o_trajData.backwGebcoDepth = str2double(trajData(2:end, idCol)');
       case 'BackDiffDepth'
          o_trajData.backDiffDepth = str2double(trajData(2:end, idCol)');
+      case 'SpeedBack'
+         o_trajData.speedBack = str2double(trajData(2:end, idCol)');
       case 'TrajLat'
          o_trajData.trajLat = str2double(trajData(2:end, idCol)');
       case 'TrajLon'
          o_trajData.trajLon = str2double(trajData(2:end, idCol)');
-      case 'SpeedEst'
-         o_trajData.speedEst = str2double(trajData(2:end, idCol)');
+      case 'SpeedTraj'
+         o_trajData.speedTraj = str2double(trajData(2:end, idCol)');
       case {'DIFF_DEPTH_TO_START', 'FLOAT_VS_BATHY_TOLERANCE', ...
             'FLOAT_VS_BATHY_TOLERANCE_FOR_GRD', 'FIRST_RANGE', ...
             'LAST_RANGE', 'RANGE_PERIOD', 'TOOL_VERSION'}
@@ -485,7 +490,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/27/2022 - RNU - creation
@@ -554,7 +559,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/27/2022 - RNU - creation
@@ -630,7 +635,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/27/2022 - RNU - creation
@@ -714,7 +719,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/27/2022 - RNU - creation
@@ -795,7 +800,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/27/2022 - RNU - creation
@@ -885,7 +890,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/27/2022 - RNU - creation
@@ -961,7 +966,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/27/2022 - RNU - creation
@@ -1038,7 +1043,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/27/2022 - RNU - creation
@@ -1115,7 +1120,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/27/2022 - RNU - creation

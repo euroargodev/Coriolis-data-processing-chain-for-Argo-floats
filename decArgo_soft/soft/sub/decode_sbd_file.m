@@ -17,7 +17,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/17/2018 - RNU - creation
@@ -80,7 +80,7 @@ for idMsg = 1:size(sbdDataTab, 1)
             a_sbdFileName, a_sbdFileDate, a_launchDate, a_decoderId);
          o_decodedData = [o_decodedData decodedData];
          
-         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case {214, 217}
          % Provor-ARN-DO-Ice Iridium 5.75
          % Arvor-ARN-DO-Ice Iridium 5.46
@@ -122,7 +122,7 @@ for idMsg = 1:size(sbdDataTab, 1)
             a_sbdFileName, a_sbdFileDate);
          o_decodedData = [o_decodedData decodedData];
 
-         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       case {222, 223, 225}
          % Arvor-ARN-Ice Iridium 5.47
          % Arvor-ARN-DO-Ice Iridium 5.48
@@ -133,13 +133,56 @@ for idMsg = 1:size(sbdDataTab, 1)
             a_sbdFileName, a_sbdFileDate, a_launchDate, a_decoderId);
          o_decodedData = [o_decodedData decodedData];
 
-         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      case {224, 226}
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {224, 226, 227}
          % Arvor-ARN-Ice RBR Iridium 5.49
          % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
+         % Arvor-ARN-Ice RBR 1 Hz + auto corrected PSAL Iridium 5.52
 
          % decode the collected data
-         decodedData = decode_prv_data_ir_sbd_224_226(sbdDataTab(idMsg, :), ...
+         decodedData = decode_prv_data_ir_sbd_224_226_227(sbdDataTab(idMsg, :), ...
+            a_sbdFileName, a_sbdFileDate, a_launchDate, a_decoderId);
+         o_decodedData = [o_decodedData decodedData];
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {228} % Arvor-Deep-Ice Iridium 5.68 (3T prototype)
+         
+         % decode the collected data
+         decodedData = decode_prv_data_ir_sbd_228(sbdDataTab(idMsg, :), ...
+            a_sbdFileName, a_sbdFileDate, a_launchDate);
+         o_decodedData = [o_decodedData decodedData];
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {229} % Arvor-Deep-Ice Iridium 5.69 (2T prototype)
+         
+         % decode the collected data
+         decodedData = decode_prv_data_ir_sbd_229(sbdDataTab(idMsg, :), ...
+            a_sbdFileName, a_sbdFileDate, a_launchDate);
+         o_decodedData = [o_decodedData decodedData];
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {230} % Arvor-Deep-Ice Iridium 5.77 (2DO)
+
+         % decode the collected data
+         decodedData = decode_prv_data_ir_sbd_230(sbdDataTab(idMsg, :), ...
+            a_sbdFileName, a_sbdFileDate, a_launchDate);
+         o_decodedData = [o_decodedData decodedData];
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {231}
+         % Arvor-ARN-Ice SBE Iridium 5.53
+
+         % decode the collected data
+         decodedData = decode_prv_data_ir_sbd_231(sbdDataTab(idMsg, :), ...
+            a_sbdFileName, a_sbdFileDate, a_launchDate, a_decoderId);
+         o_decodedData = [o_decodedData decodedData];
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      case {232}
+         % Arvor-ARN-Ice Iridium 5.54
+
+         % decode the collected data
+         decodedData = decode_prv_data_ir_sbd_232(sbdDataTab(idMsg, :), ...
             a_sbdFileName, a_sbdFileDate, a_launchDate, a_decoderId);
          o_decodedData = [o_decodedData decodedData];
 

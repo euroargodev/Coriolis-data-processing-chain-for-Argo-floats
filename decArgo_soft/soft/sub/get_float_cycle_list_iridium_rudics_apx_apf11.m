@@ -3,12 +3,13 @@
 %
 % SYNTAX :
 %  [o_cycleList] = get_float_cycle_list_iridium_rudics_apx_apf11( ...
-%    a_floatNum, a_floatRudicsId, a_floatLaunchDate)
+%    a_floatNum, a_floatRudicsId, a_floatLaunchDate, a_floatEndDate)
 %
 % INPUT PARAMETERS :
 %   a_floatNum        : float WMO number
 %   a_floatRudicsId   : float Rudics Id
 %   a_floatLaunchDate : float launch date
+%   a_floatEndDate    : float end decoding date
 %
 % OUTPUT PARAMETERS :
 %   o_cycleList  : existing cycles list
@@ -16,13 +17,13 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/29/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_cycleList] = get_float_cycle_list_iridium_rudics_apx_apf11( ...
-   a_floatNum, a_floatRudicsId, a_floatLaunchDate)
+   a_floatNum, a_floatRudicsId, a_floatLaunchDate, a_floatEndDate)
 
 % output parameters initialization
 o_cycleList = [];
@@ -34,8 +35,8 @@ global g_decArgo_iridiumDataDirectory;
 % default values
 global g_decArgo_janFirst1950InMatlab;
 
-% output CSV file Id
-global g_decArgo_outputCsvFileId;
+% default values
+global g_decArgo_dateDef;
 
 
 % search for existing Iridium cycles
@@ -54,19 +55,24 @@ for idFile = 1:length(fileNames)
    cyNum = fileName(length(a_floatRudicsId)+idF1(1)+1:length(a_floatRudicsId)+idF1(2)-1);
    [cyNum, status] = str2num(cyNum);
    if (status)
-      if (isempty(g_decArgo_outputCsvFileId))
-         if (~isempty(a_floatLaunchDate))
-            fileDateStr = fileName(length(a_floatRudicsId)+idF1(2)+1:length(a_floatRudicsId)+idF1(3)-1);
-            fileDate = datenum(fileDateStr, 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
-            if (strcmp(fileDateStr, '00000000T000000') && ~isempty(prevDate)) % 6904113 #68
-               fileDate = prevDate;
-            end
-            if (fileDate < a_floatLaunchDate)
-               continue
-            end
-            prevDate = fileDate;
+      fileDateStr = fileName(length(a_floatRudicsId)+idF1(2)+1:length(a_floatRudicsId)+idF1(3)-1);
+      fileDate = datenum(fileDateStr, 'yyyymmddTHHMMSS') - g_decArgo_janFirst1950InMatlab;
+      if (strcmp(fileDateStr, '00000000T000000') && ~isempty(prevDate)) % 6904113 #68
+         fileDate = prevDate;
+      end
+
+      if (~isempty(a_floatLaunchDate))
+         if (fileDate < a_floatLaunchDate)
+            continue
          end
       end
+      if (a_floatEndDate ~= g_decArgo_dateDef)
+         if (fileDate > a_floatEndDate)
+            continue
+         end
+      end
+      prevDate = fileDate;
+
       existingCycles = [existingCycles cyNum];
    end
 end
@@ -99,7 +105,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation

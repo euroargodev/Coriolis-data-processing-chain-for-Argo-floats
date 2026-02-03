@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/01/2014 - RNU - creation
@@ -332,7 +332,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/16/2014 - RNU - creation
@@ -363,7 +363,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_112_121_to_133( ...
+      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_112_121_to_133_135_to_141( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -404,7 +404,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_112_121_to_132( ...
+      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_112_121_to_132_135_to_137_141( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -445,7 +445,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_112_121_to_133( ...
+      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_112_121_to_133_135_to_141( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -486,7 +486,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downPar = compute_DOWNWELLING_PAR_105_to_112_121_to_129_132( ...
+      downPar = compute_DOWNWELLING_PAR_1xx_5_to_12_21_to_29_32_35_to_37_41( ...
          a_profOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -537,7 +537,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/06/2018 - RNU - creation
@@ -569,7 +569,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      chla = compute_CHLA_105_to_112_121_to_133_1121_to_28_1322_1323( ...
+      chla = compute_CHLA_1xx_and_1121_to_1132_1322_1323( ...
          a_profEco2.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -760,7 +760,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/08/2014 - RNU - creation
@@ -792,7 +792,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      chla = compute_CHLA_105_to_112_121_to_133_1121_to_28_1322_1323( ...
+      chla = compute_CHLA_1xx_and_1121_to_1132_1322_1323( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -973,7 +973,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      cdom = compute_CDOM_105_to_107_110_112_121_to_133_1121_to_28_1322_1323( ...
+      cdom = compute_CDOM( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -1035,7 +1035,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/08/2014 - RNU - creation
@@ -1073,7 +1073,7 @@ if (~isempty(ctdDataNoDef))
       idNoDef = find((ctdIntData(:, 2) ~= paramTemp.fillValue) & (ctdIntData(:, 3) ~= paramPsal.fillValue));
       
       if (a_lambda == 700)
-         o_BBP(idNoDef) = compute_BBP700_105_to_112_121_to_133_1121_to_28_1322_1323( ...
+         o_BBP(idNoDef) = compute_BBP700_others_dec_id( ...
             a_BETA_BACKSCATTERING(idNoDef), ...
             a_BETA_BACKSCATTERING_fillValue, ...
             a_BBP_fillValue, ...
@@ -1145,7 +1145,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/01/2014 - RNU - creation
@@ -1176,7 +1176,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      chla = compute_CHLA_105_to_112_121_to_133_1121_to_28_1322_1323( ...
+      chla = compute_CHLA_1xx_and_1121_to_1132_1322_1323( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -1205,7 +1205,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      bbp700 = compute_BBP700_105_to_112_121_to_133_1121_to_28_1322_1323_V1( ...
+      bbp700 = compute_BBP700_others_dec_id_V1( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -1263,7 +1263,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      cdom = compute_CDOM_105_to_107_110_112_121_to_133_1121_to_28_1322_1323( ...
+      cdom = compute_CDOM( ...
          a_profEco3.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -1302,7 +1302,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/01/2014 - RNU - creation
@@ -1345,7 +1345,7 @@ end
 % if the fitlm Matlab function is available, compute NITRATE data from
 % transmitted spectrum and add them in the profile structure
 if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
-   if (~ismember(a_decoderId, [110, 113, 127]))
+   if (~ismember(a_decoderId, [110, 113, 127, 134]))
       
       % compute NITRATE
       paramToDeriveList = [ ...
@@ -1365,7 +1365,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idP, 2});
             derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
             
-            [nitrate, rmsError] = compute_prof_NITRATE_1xx_5_to_9_11_12_14_15_21_to_26_28_to_33( ...
+            [nitrate, rmsError] = compute_profile_NITRATE( ...
                a_profSuna.data(:, idF1:idF1+a_profSuna.paramNumberOfSubLevels-1), ...
                a_profSuna.data(:, idF2), ...
                paramToDerive1.fillValue, ...
@@ -1411,7 +1411,7 @@ if (~FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
             derivedParam1 = get_netcdf_param_attributes(derivedParamList{idP, 1});
             derivedParam2 = get_netcdf_param_attributes(derivedParamList{idP, 2});
             
-            [nitrate, bisulfide, rmsError] = compute_profile_NITRATE_BISULFIDE_from_spectrum_110_113_127( ...
+            [nitrate, bisulfide, rmsError] = compute_profile_NITRATE_BISULFIDE_110_113_127_134_136_137_141( ...
                a_profSuna.data(:, idF1:idF1+a_profSuna.paramNumberOfSubLevels-1), ...
                a_profSuna.data(:, idF2), ...
                paramToDerive1.fillValue, ...
@@ -1541,7 +1541,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/24/2014 - RNU - creation
@@ -1799,7 +1799,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/24/2014 - RNU - creation
@@ -1837,10 +1837,10 @@ if (~isempty(ctdDataNoDef))
       
       switch (a_decoderId)
                      
-         case {121, 122, 124, 126, 127}
+         case {121, 122, 124, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
             
             % compute DOXY values using the Stern-Volmer equation
-            o_DOXY(idNoDef) = compute_DOXY_1xx_7_9_to_11_13_to_16_21_22_24_26_to_33( ...
+            o_DOXY(idNoDef) = compute_DOXY_1xx_7_9_to_11_13_to_16_21_22_24_26_to_41( ...
                a_C1PHASE_DOXY(idNoDef), ...
                a_C2PHASE_DOXY(idNoDef), ...
                a_TEMP_DOXY(idNoDef), ...
@@ -1949,7 +1949,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/24/2014 - RNU - creation
@@ -2023,7 +2023,7 @@ if (~isempty(ctdDataNoDef))
          case {107, 109, 110, 111, 113, 114, 115, 116}
             
             % compute DOXY values using the Stern-Volmer equation
-            o_DOXY(idNoDef) = compute_DOXY_1xx_7_9_to_11_13_to_16_21_22_24_26_to_33( ...
+            o_DOXY(idNoDef) = compute_DOXY_1xx_7_9_to_11_13_to_16_21_22_24_26_to_41( ...
                a_C1PHASE_DOXY(idNoDef), ...
                a_C2PHASE_DOXY(idNoDef), ...
                a_TEMP_DOXY(idNoDef), ...
@@ -2040,7 +2040,7 @@ if (~isempty(ctdDataNoDef))
                a_profOptode);
             
             % compute PPOX_DOXY values using the Stern-Volmer equation
-            o_PPOX_DOXY(idNoDef) = compute_PPOX_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_33( ...
+            o_PPOX_DOXY(idNoDef) = compute_PPOX_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_35( ...
                a_C1PHASE_DOXY(idNoDef), ...
                a_C2PHASE_DOXY(idNoDef), ...
                a_TEMP_DOXY(idNoDef), ...
@@ -2144,7 +2144,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/23/2018 - RNU - creation
@@ -2314,7 +2314,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/23/2018 - RNU - creation
@@ -2352,7 +2352,7 @@ if (~isempty(ctdDataNoDef))
       idNoDef = find((ctdIntData(:, 2) ~= paramTemp.fillValue) & (ctdIntData(:, 3) ~= paramPsal.fillValue));
       
       % compute PH_IN_SITU_FREE and PH_IN_SITU_TOTAL values
-      [o_PH_IN_SITU_FREE(idNoDef), o_PH_IN_SITU_TOTAL(idNoDef)] = compute_PH_111_113_to_116_123( ...
+      [o_PH_IN_SITU_FREE(idNoDef), o_PH_IN_SITU_TOTAL(idNoDef)] = compute_PH_provor_arvor( ...
          a_VRS_PH(idNoDef), ...
          a_VRS_PH_fillValue, ...
          ctdIntData(idNoDef, 1), ...

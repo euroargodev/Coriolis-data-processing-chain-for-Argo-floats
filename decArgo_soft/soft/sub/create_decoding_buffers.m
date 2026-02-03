@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/06/2019 - RNU - creation
@@ -49,21 +49,42 @@ switch (a_decoderId)
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   case {222, 223, 225}
+   case {222, 223, 225, 232}
       % Arvor-ARN-Ice Iridium 5.47
       % Arvor-ARN-DO-Ice Iridium 5.48
       % Provor-ARN-DO-Ice Iridium 5.76
+      % Arvor-ARN-Ice Iridium 5.54
 
-      [o_decodedData] = create_decoding_buffers_222_223_225(a_decodedData, a_decoderId);
+      [o_decodedData] = create_decoding_buffers_222_223_225_232(a_decodedData, a_decoderId);
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   case {224, 226}
+   case {224, 226, 227, 231}
       % Arvor-ARN-Ice RBR Iridium 5.49
       % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
+      % Arvor-ARN-Ice RBR 1 Hz + auto corrected PSAL Iridium 5.52
+      % Arvor-ARN-Ice SBE Iridium 5.53
 
-      [o_decodedData] = create_decoding_buffers_224_226(a_decodedData, a_decoderId);
+      [o_decodedData] = create_decoding_buffers_224_226_227_231(a_decodedData, a_decoderId);
 
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   case {228} % Arvor-Deep-Ice Iridium 5.68 (3T prototype)
+      
+      [o_decodedData] = create_decoding_buffers_228(a_decodedData, a_decoderId);
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   case {229} % Arvor-Deep-Ice Iridium 5.69 (2T prototype)
+
+      [o_decodedData] = create_decoding_buffers_229(a_decodedData, a_decoderId);
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   case {230} % Arvor-Deep-Ice Iridium 5.77 (2DO)
+
+      [o_decodedData] = create_decoding_buffers_230(a_decodedData, a_decoderId);
+      
    otherwise
       fprintf('WARNING: Float #%d: Nothing implemented yet to create decoding buffers for decoderId #%d\n', ...
          g_decArgo_floatNum, ...

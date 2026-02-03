@@ -18,10 +18,17 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   03/01/2022 - RNU - creation
+%   03/01/2022 - RNU - V 1.0: creation
+%   02/21/2022 - RNU - V 1.1: going backwards in case of dead end in the isobaths
+%   08/21/2024 - RNU - V 1.2: subsurface speed added in CSV output file for
+%                             forward and backward trajectories
+%   08/25/2024 - RNU - V 1.3: - output CSV grid of data
+%                             - in case of multiple min values choose the nearest one
+%                             - can add a "depth penalty" before finding the min
+%                             value of the segment
 % ------------------------------------------------------------------------------
 function estimate_profile_locations(varargin)
 
@@ -36,6 +43,7 @@ FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
 % top directory of the NetCDF files
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\DATA_UNDER_ICE\IN\';
 % DIR_INPUT_NC_FILES = 'D:\202202-ArgoData\coriolis\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
 % directory of output files
 DIR_OUTPUT_FILES = 'C:\Users\jprannou\_DATA\DATA_UNDER_ICE\OUT\';
@@ -44,7 +52,7 @@ DIR_OUTPUT_FILES = 'C:\Users\jprannou\_DATA\DATA_UNDER_ICE\OUT\';
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % GEBCO bathymetric file
-GEBCO_FILE = 'C:\Users\jprannou\_RNU\_ressources\GEBCO_2022\GEBCO_2022.nc';
+GEBCO_FILE = 'C:\Users\jprannou\_RNU\_ressources\GEBCO_2024\GEBCO_2024.nc';
 
 % max difference (in meters) between sea bottom and float parking drift to start
 DIFF_DEPTH_TO_START = 100000;
@@ -70,6 +78,12 @@ RANGE_PERIOD = 10;
 PLOT_PNG = 1;
 PLOT_PDF = 1;
 
+% generate CSV grid of data
+GENERATE_GRID = 1;
+
+% depth penalty (in meters) to apply to data before min value selection
+DEPTH_PENALTY = 0.1;
+
 % CONFIGURATION - END
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -87,8 +101,10 @@ global g_estProfLoc_lastRange;
 global g_estProfLoc_rangePeriod;
 global g_estProfLoc_plotPng;
 global g_estProfLoc_plotPdf;
+global g_estProfLoc_generateGrid;
+global g_estProfLoc_depthPenalty;
 
-g_estProfLoc_version = '1.1';
+g_estProfLoc_version = '1.3';
 g_estProfLoc_diffDepthToStart = DIFF_DEPTH_TO_START;
 g_estProfLoc_floatVsbathyTolerance = FLOAT_VS_BATHY_TOLERANCE;
 g_estProfLoc_floatVsbathyToleranceForGrd = FLOAT_VS_BATHY_TOLERANCE_FOR_GRD;
@@ -97,6 +113,8 @@ g_estProfLoc_lastRange = LAST_RANGE;
 g_estProfLoc_rangePeriod = RANGE_PERIOD;
 g_estProfLoc_plotPng = PLOT_PNG;
 g_estProfLoc_plotPdf = PLOT_PDF;
+g_estProfLoc_generateGrid = GENERATE_GRID;
+g_estProfLoc_depthPenalty = DEPTH_PENALTY;
 
 
 % check inputs
@@ -190,7 +208,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/01/2022 - RNU - creation
@@ -363,7 +381,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/01/2022 - RNU - creation
@@ -382,6 +400,8 @@ global g_estProfLoc_lastRange;
 global g_estProfLoc_rangePeriod;
 global g_estProfLoc_plotPng;
 global g_estProfLoc_plotPdf;
+global g_estProfLoc_generateGrid;
+global g_estProfLoc_depthPenalty;
 
 
 % consider only data of the set
@@ -451,7 +471,7 @@ resultF(1, 2) = latitude(1);
 resultB(1, 1) = longitude(end);
 resultB(1, 2) = latitude(end);
 
-% 2 loops: one for foreward, one for backward
+% 2 loops: one for forward, one for backward
 for idLoop = 1:2
 
    if (idLoop == 2)
@@ -473,7 +493,9 @@ for idLoop = 1:2
       nbCol = length(longitude);
       nbLig = (nbCol-1)*2*range+1;
       depthTabVal = nan(nbLig, nbCol);
+      constTabVal = nan(nbLig, nbCol);
       diffTabVal = nan(nbLig, nbCol);
+      diffTabVal2 = nan(nbLig, nbCol);
       devTabFlag = ones(nbLig, nbCol);
       lonTabAll = nan(nbLig, nbCol);
       latTabAll = nan(nbLig, nbCol);
@@ -505,6 +527,7 @@ for idLoop = 1:2
          depthFlag(idOk) = 0;
 
          depthTabVal((nbCol-(idC+1))*range+(1:length(depthVal)), idC+1) = depthVal;
+         constTabVal((nbCol-(idC+1))*range+(1:length(depthVal)), idC+1) = depthConstraint(idC+1);
          diffTabVal((nbCol-(idC+1))*range+(1:length(depthVal)), idC+1) = diffVal;
          devTabFlag((nbCol-(idC+1))*range+(1:length(depthVal)), idC+1) = depthFlag;
          lonTabAll((nbCol-(idC+1))*range+(1:length(depthVal)), idC+1) = lonTab;
@@ -521,7 +544,20 @@ for idLoop = 1:2
          idToCheck = find(devTabFlag(searchId, idC+1) == 0);
          if (~isempty(idToCheck))
             idToCheck = searchId(idToCheck);
-            [~, minId] = min(abs(diffTabVal(idToCheck, idC+1)));
+            % initialize comparison data array
+            diffTabVal2(idToCheck, idC+1) = abs(diffTabVal(idToCheck, idC+1));
+            % apply a depth penalty proportional to distance of current location
+            for id = idToCheck
+               diffTabVal2(id, idC+1) = diffTabVal2(id, idC+1) + abs(id-curId)*g_estProfLoc_depthPenalty;
+            end
+            [~, minId] = min(abs(diffTabVal2(idToCheck, idC+1)));
+            % look for multiple min values
+            minList = find(abs(diffTabVal2(idToCheck, idC+1)) == abs(diffTabVal2(idToCheck(minId), idC+1)));
+            if (length(minList) > 1)
+               % in case of multiple min values choose the nearest one
+               [~, minLoc] = min(abs(idToCheck(minList) - curId));
+               minId = minList(minLoc);
+            end
             curId = idToCheck(minId);
             devTabFlag((devTabFlag(:, idC+1) == 2), idC+1) = 3;
             devTabFlag(curId, idC+1) = 2;
@@ -538,8 +574,8 @@ for idLoop = 1:2
       end
 
       if (idLoop == 1)
-         dir = 'Foreward';
-         dir2 = '1_foreward';
+         dir = 'Forward';
+         dir2 = '1_forward';
       else
          dir = 'Backward';
          dir2 = '2_backward';
@@ -662,6 +698,11 @@ for idLoop = 1:2
          end
       end
 
+      % print grid information
+      if (g_estProfLoc_generateGrid)
+         print_csv_grid(a_outputDir, plotFileName, cycleNumber, devTabFlag, depthTabVal, constTabVal, diffTabVal, diffTabVal2);
+      end
+
       %       fprintf('Press any key ...');
       %       pause
       %       fprintf('\n');
@@ -713,9 +754,9 @@ if (done)
    for idC = 1:length(longitude)-1
       plotHdl = m_plot(resultF(idC+1, 1), resultF(idC+1, 2), 'o', 'Markersize', 3, 'MarkerFaceColor', 'r', 'MarkerEdgeColor', 'r');
       if (~isempty(plotHdl))
-         if (~any(strcmp(legendLabels, 'foreward locations')))
+         if (~any(strcmp(legendLabels, 'forward locations')))
             legendPlots = [legendPlots plotHdl];
-            legendLabels = [legendLabels {'foreward locations'}];
+            legendLabels = [legendLabels {'forward locations'}];
          end
       end
 
@@ -765,9 +806,9 @@ end
 
 if (done)
 
-   speed = nan(size(juld));
+   speedTraj = nan(size(juld));
    for idC = 2:length(juld)
-      speed(idC) = ...
+      speedTraj(idC) = ...
          100*distance_lpo([trajLat(idC-1) trajLat(idC)], [trajLon(idC-1) trajLon(idC)]) / ...
          ((juld(idC)-juld(idC-1))*86400);
    end
@@ -791,15 +832,31 @@ if (done)
       trajLon(id) = trajLon(id) - 360;
    end
 
+   speedForward = nan(size(juld));
+   for idC = 2:length(juld)
+      speedForward(idC) = ...
+         100*distance_lpo([forwardLat(idC-1) forwardLat(idC)], [forwardLon(idC-1) forwardLon(idC)]) / ...
+         ((juld(idC)-juld(idC-1))*86400);
+   end
+
+   speedBackward = nan(size(juld));
+   for idC = 2:length(juld)
+      speedBackward(idC) = ...
+         100*distance_lpo([backwardLat(idC-1) backwardLat(idC)], [backwardLon(idC-1) backwardLon(idC)]) / ...
+         ((juld(idC)-juld(idC-1))*86400);
+   end
+
    o_floatData.forwardLat(a_idStart:a_idStop) = forwardLat;
    o_floatData.forwardLon(a_idStart:a_idStop) = forwardLon;
    o_floatData.forwardGebcoDepth(a_idStart:a_idStop) = get_gebco_depth(forwardLon, forwardLat, a_gebcoFilePathName);
+   o_floatData.speedForward(a_idStart:a_idStop) = speedForward;
    o_floatData.backwardLat(a_idStart:a_idStop) = backwardLat;
    o_floatData.backwardLon(a_idStart:a_idStop) = backwardLon;
    o_floatData.backwardGebcoDepth(a_idStart:a_idStop) = get_gebco_depth(backwardLon, backwardLat, a_gebcoFilePathName);
+   o_floatData.speedBackward(a_idStart:a_idStop) = speedBackward;
    o_floatData.trajLat(a_idStart:a_idStop) = trajLat;
    o_floatData.trajLon(a_idStart:a_idStop) = trajLon;
-   o_floatData.speedEst(a_idStart:a_idStop) = speed;
+   o_floatData.speedTraj(a_idStart:a_idStop) = speedTraj;
 end
 
 return
@@ -820,7 +877,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/01/2022 - RNU - creation
@@ -1124,12 +1181,14 @@ floatData.depthConstraint = nan(size(floatData.cycleNumber));
 floatData.forwardLat = nan(size(floatData.cycleNumber));
 floatData.forwardLon = nan(size(floatData.cycleNumber));
 floatData.forwardGebcoDepth = nan(size(floatData.cycleNumber));
+floatData.speedForward = nan(size(floatData.cycleNumber));
 floatData.backwardLat = nan(size(floatData.cycleNumber));
 floatData.backwardLon = nan(size(floatData.cycleNumber));
 floatData.backwardGebcoDepth = nan(size(floatData.cycleNumber));
+floatData.speedBackward = nan(size(floatData.cycleNumber));
 floatData.trajLat = nan(size(floatData.cycleNumber));
 floatData.trajLon = nan(size(floatData.cycleNumber));
-floatData.speedEst = nan(size(floatData.cycleNumber));
+floatData.speedTraj = nan(size(floatData.cycleNumber));
 
 if (strcmp(formatVersion, '3.2') && any(grounded == 'Y'))
    for idP = 1:size(trajParam, 2)
@@ -1226,12 +1285,14 @@ floatData.depthConstraint = floatData.depthConstraint(idSort);
 floatData.forwardLat = floatData.forwardLat(idSort);
 floatData.forwardLon = floatData.forwardLon(idSort);
 floatData.forwardGebcoDepth = floatData.forwardGebcoDepth(idSort);
+floatData.speedForward = floatData.speedForward(idSort);
 floatData.backwardLat = floatData.backwardLat(idSort);
 floatData.backwardLon = floatData.backwardLon(idSort);
 floatData.backwardGebcoDepth = floatData.backwardGebcoDepth(idSort);
+floatData.speedBackward = floatData.speedBackward(idSort);
 floatData.trajLat = floatData.trajLat(idSort);
 floatData.trajLon = floatData.trajLon(idSort);
-floatData.speedEst = floatData.speedEst(idSort);
+floatData.speedTraj = floatData.speedTraj(idSort);
 
 % output data
 o_floatData = floatData;
@@ -1254,7 +1315,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/01/2022 - RNU - creation
@@ -1282,14 +1343,15 @@ end
 % print file header
 header = ['WMO;CyNum;Dir;Juld;JuldQC;JuldLoc;Lat;Lon;PosQC;Speed;ProfPresMax;' ...
    'Rpp;Grd;GrdPres;GebcoDepth;SetNum;DepthConstraint;' ...
-   'ForwLat;ForwLon;ForwGebcoDepth;ForwDiffDepth;' ...
-   'BackwLat;BackwLon;BackwGebcoDepth;BackDiffDepth;TrajLat;TrajLon;SpeedEst;' ...
+   'ForwLat;ForwLon;ForwGebcoDepth;ForwDiffDepth;SpeedForw;' ...
+   'BackwLat;BackwLon;BackwGebcoDepth;BackDiffDepth;SpeedBack;' ...
+   'TrajLat;TrajLon;SpeedTraj;' ...
    'DIFF_DEPTH_TO_START;FLOAT_VS_BATHY_TOLERANCE;FLOAT_VS_BATHY_TOLERANCE_FOR_GRD;FIRST_RANGE;LAST_RANGE;RANGE_PERIOD;TOOL_VERSION'];
 fprintf(fidOut, '%s\n', header);
 
 for idC = 1:length(a_floatData.cycleNumber)
    fprintf(fidOut, ...
-      '%d;%d;%d;%s;%d;%s;%.3f;%.3f;%d;%.3f;%.1f;%.1f;%d;%.1f;%.1f;%d;%.1f;%.3f;%.3f;%.1f;%.1f;%.3f;%.3f;%.1f;%.1f;%.3f;%.3f;%.3f;%d;%d;%d;%d;%d;%d;%s\n', ...
+      '%d;%d;%d;%s;%d;%s;%.3f;%.3f;%d;%.3f;%.1f;%.1f;%d;%.1f;%.1f;%d;%.1f;%.3f;%.3f;%.1f;%.1f;%.3f;%.3f;%.3f;%.1f;%.1f;%.3f;%.3f;%.3f;%.3f;%d;%d;%d;%d;%d;%d;%s\n', ...
       a_floatNum, ...
       a_floatData.cycleNumber(idC), ...
       a_floatData.direction(idC), ...
@@ -1311,13 +1373,15 @@ for idC = 1:length(a_floatData.cycleNumber)
       a_floatData.forwardLon(idC), ...
       a_floatData.forwardGebcoDepth(idC), ...
       a_floatData.forwardGebcoDepth(idC)-a_floatData.depthConstraint(idC), ...
+      a_floatData.speedForward(idC), ...
       a_floatData.backwardLat(idC), ...
       a_floatData.backwardLon(idC), ...
       a_floatData.backwardGebcoDepth(idC), ...
       a_floatData.backwardGebcoDepth(idC)-a_floatData.depthConstraint(idC), ...
+      a_floatData.speedBackward(idC), ...
       a_floatData.trajLat(idC), ...
       a_floatData.trajLon(idC), ...
-      a_floatData.speedEst(idC), ...
+      a_floatData.speedTraj(idC), ...
       g_estProfLoc_diffDepthToStart, ...
       g_estProfLoc_floatVsbathyTolerance, ...
       g_estProfLoc_floatVsbathyToleranceForGrd, ...
@@ -1333,35 +1397,87 @@ fclose(fidOut);
 return
 
 % ------------------------------------------------------------------------------
-% Get data from name in a {var_name}/{var_data} list.
+% Print segment data information in a CSV file.
 %
 % SYNTAX :
-%  [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
+% print_csv_grid(a_outputDir, a_fileName, a_cycleNumber, a_devTabFlag, ...
+%   a_depthTabVal, a_constTabVal, a_diffTabVal, a_diffTabVal2)
 %
 % INPUT PARAMETERS :
-%   a_dataName : name of the data to retrieve
-%   a_dataList : {var_name}/{var_data} list
+%   a_outputDir   : CSV output directory
+%   a_fileName    : CSV file name
+%   a_cycleNumber : cycle number list
+%   a_devTabFlag  : flag data (0: to be checked, 1: not eligible, 2: on the path,
+%                   3: unsuccessfully checked)
+%   a_depthTabVal : GEBCO depth
+%   a_constTabVal : depth constraint
+%   a_diffTabVal  : (GEBCO depth) - (depth constraint)
+%   a_diffTabVal2 : data used to sort the candidates
 %
 % OUTPUT PARAMETERS :
-%   o_dataValues : concerned data
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   06/12/2018 - RNU - creation
+%   08/25/2024 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
+function print_csv_grid(a_outputDir, a_fileName, a_cycleNumber, a_devTabFlag, ...
+   a_depthTabVal, a_constTabVal, a_diffTabVal, a_diffTabVal2)
 
-% output parameters initialization
-o_dataValues = [];
+% retrieve range and compute Id of the starting point
+[nLin, nCol] = size(a_devTabFlag);
+range = (nLin-1)/((nCol-1)*2);
+centerId = (nLin-1)/2 + 1;
 
-idVal = find(strcmp(a_dataName, a_dataList(1:2:end)) == 1, 1);
-if (~isempty(idVal))
-   o_dataValues = a_dataList{2*idVal};
+infoTab = cell(nLin, nCol);
+for idCy = 2:length(a_cycleNumber)
+   firstId = centerId - range*(idCy-1);
+   lastId = centerId + range*(idCy-1);
+   for Id = firstId:lastId
+      infoStr = [num2str(a_devTabFlag(Id, idCy)) newline ...
+         'depth:' num2str(a_depthTabVal(Id, idCy)) newline ...
+         'const:' num2str(a_constTabVal(Id, idCy)) newline ...
+         'diff:' num2str(a_diffTabVal(Id, idCy)) newline ...
+         'diff2:' num2str(a_diffTabVal2(Id, idCy))];
+      infoTab{Id, idCy} = ['"' infoStr '"'];
+   end
 end
+
+% CSV file creation
+outputFileName = [a_outputDir '/' a_fileName '.csv'];
+fidOut = fopen(outputFileName, 'wt');
+if (fidOut == -1)
+   fprintf('ERROR: Unable to create CSV output file: %s\n', outputFileName);
+   return
+end
+
+% print file header
+header = 'Cycle #';
+fprintf(fidOut, ['%s;' repmat('%d;', 1, nLin) '\n'], header, 1:nLin);
+
+for idCy = 1:length(a_cycleNumber)
+   fprintf(fidOut, ...
+      '%d;', ...
+      a_cycleNumber(idCy));
+
+   firstId = centerId - range*(idCy-1);
+   lastId = centerId + range*(idCy-1);
+   if (idCy > 1)
+      fprintf(fidOut, ...
+         [repmat(';', 1, firstId-1) repmat('%s;', 1, lastId-firstId+1) '\n'], ...
+         infoTab{firstId:lastId, idCy});
+   else
+      fprintf(fidOut, ...
+         [repmat(';', 1, firstId-1), '%s;\n'], ...
+         'start');
+   end
+
+end
+
+fclose(fidOut);
 
 return
 
@@ -1385,7 +1501,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/25/2013 - RNU - creation
@@ -1413,12 +1529,14 @@ o_dataStruct = struct( ...
    'forwardLat', [], ...
    'forwardLon', [], ...
    'forwardGebcoDepth', [], ...
+   'speedForward', [], ...
    'backwardLat', [], ...
    'backwardLon', [], ...
    'backwardGebcoDepth', [], ...
+   'speedBackward', [], ...
    'trajLat', [], ...
    'trajLon', [], ...
-   'speedEst', [] ...
+   'speedTraj', [] ...
    );
 
 return
@@ -1440,7 +1558,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/01/2022 - RNU - creation
@@ -1480,7 +1598,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/29/2020 - RNU - creation
@@ -1525,112 +1643,119 @@ if (isempty(fCdf))
    return
 end
 
-lonVarId = netcdf.inqVarID(fCdf, 'lon');
-latVarId = netcdf.inqVarID(fCdf, 'lat');
-elevVarId = netcdf.inqVarID(fCdf, 'elevation');
+try
 
-lon = netcdf.getVar(fCdf, lonVarId);
-lat = netcdf.getVar(fCdf, latVarId);
-minLon = min(lon);
-maxLon = max(lon);
+   lonVarId = netcdf.inqVarID(fCdf, 'lon');
+   latVarId = netcdf.inqVarID(fCdf, 'lat');
+   elevVarId = netcdf.inqVarID(fCdf, 'elevation');
 
-for idP = 1:length(a_lat)
+   lon = netcdf.getVar(fCdf, lonVarId);
+   lat = netcdf.getVar(fCdf, latVarId);
+   minLon = min(lon);
+   maxLon = max(lon);
 
-   if (isnan(a_lat(idP)) || isnan(a_lon(idP)))
-      continue
-   end
+   for idP = 1:length(a_lat)
 
-   idLigStart = find(lat <= a_lat(idP), 1, 'last');
-   if (isempty(idLigStart))
-      idLigStart = 1;
-   end
-   idLigEnd = find(lat >= a_lat(idP), 1, 'first');
-   if (isempty(idLigEnd))
-      idLigEnd = length(lat);
-   end
-   %    latVal = lat(fliplr(idLigStart:idLigEnd));
-
-   % a_lon(idP) is in the [-180, 180[ interval
-   % it can be in 3 zones:
-   % case 1: [-180, minLon[
-   % case 2: [minLon, maxLon]
-   % case 3: ]maxLon, -180[
-   if ((a_lon(idP) >= minLon) && (a_lon(idP) <= maxLon))
-      % case 2
-      idColStart = find(lon <= a_lon(idP), 1, 'last');
-      idColEnd = find(lon >= a_lon(idP), 1, 'first');
-
-      elev = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
-      for idL = idLigStart:idLigEnd
-         elev(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
+      if (isnan(a_lat(idP)) || isnan(a_lon(idP)))
+         continue
       end
 
-      %       lonVal = lon(idColStart:idColEnd);
-   elseif (a_lon(idP) < minLon)
-      % case 1
-      elev1 = nan(length(idLigStart:idLigEnd), 1);
-      for idL = idLigStart:idLigEnd
-         elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
+      idLigStart = find(lat <= a_lat(idP), 1, 'last');
+      if (isempty(idLigStart))
+         idLigStart = 1;
       end
-
-      %       lonVal1 = lon(end);
-
-      elev2 = nan(length(idLigStart:idLigEnd), 1);
-      for idL = idLigStart:idLigEnd
-         elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
+      idLigEnd = find(lat >= a_lat(idP), 1, 'first');
+      if (isempty(idLigEnd))
+         idLigEnd = length(lat);
       end
+      %    latVal = lat(fliplr(idLigStart:idLigEnd));
 
-      %       lonVal2 = lon(1) + 360;
+      % a_lon(idP) is in the [-180, 180[ interval
+      % it can be in 3 zones:
+      % case 1: [-180, minLon[
+      % case 2: [minLon, maxLon]
+      % case 3: ]maxLon, -180[
+      if ((a_lon(idP) >= minLon) && (a_lon(idP) <= maxLon))
+         % case 2
+         idColStart = find(lon <= a_lon(idP), 1, 'last');
+         idColEnd = find(lon >= a_lon(idP), 1, 'first');
 
-      elev = cat(2, elev1, elev2);
-      %       lonVal = cat(1, lonVal1, lonVal2);
-      clear elev1 elev2
-   elseif (a_lon(idP) > maxLon)
-      % case 3
-      elev1 = nan(length(idLigStart:idLigEnd), 1);
-      for idL = idLigStart:idLigEnd
-         elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
-      end
-
-      %       lonVal1 = lon(end);
-
-      elev2 = nan(length(idLigStart:idLigEnd), 1);
-      for idL = idLigStart:idLigEnd
-         elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
-      end
-
-      %       lonVal2 = lon(1) + 360;
-
-      elev = cat(2, elev1, elev2);
-      %       lonVal = cat(1, lonVal1, lonVal2);
-      clear elev1 elev2
-   end
-
-   if (~isempty(elev))
-      if (size(elev, 1) == 2)
-         if (size(elev, 2) == 2)
-            o_elev(idP, 1) = elev(2, 1);
-            o_elev(idP, 2) = elev(1, 1);
-            o_elev(idP, 3) = elev(2, 2);
-            o_elev(idP, 4) = elev(1, 2);
-         else
-            o_elev(idP, 1) = elev(2);
-            o_elev(idP, 2) = elev(1);
+         elev = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
+         for idL = idLigStart:idLigEnd
+            elev(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
          end
-      else
-         if (size(elev, 2) == 2)
-            o_elev(idP, 1) = elev(1, 1);
-            o_elev(idP, 3) = elev(1, 2);
+
+         %       lonVal = lon(idColStart:idColEnd);
+      elseif (a_lon(idP) < minLon)
+         % case 1
+         elev1 = nan(length(idLigStart:idLigEnd), 1);
+         for idL = idLigStart:idLigEnd
+            elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
+         end
+
+         %       lonVal1 = lon(end);
+
+         elev2 = nan(length(idLigStart:idLigEnd), 1);
+         for idL = idLigStart:idLigEnd
+            elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
+         end
+
+         %       lonVal2 = lon(1) + 360;
+
+         elev = cat(2, elev1, elev2);
+         %       lonVal = cat(1, lonVal1, lonVal2);
+         clear elev1 elev2
+      elseif (a_lon(idP) > maxLon)
+         % case 3
+         elev1 = nan(length(idLigStart:idLigEnd), 1);
+         for idL = idLigStart:idLigEnd
+            elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
+         end
+
+         %       lonVal1 = lon(end);
+
+         elev2 = nan(length(idLigStart:idLigEnd), 1);
+         for idL = idLigStart:idLigEnd
+            elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
+         end
+
+         %       lonVal2 = lon(1) + 360;
+
+         elev = cat(2, elev1, elev2);
+         %       lonVal = cat(1, lonVal1, lonVal2);
+         clear elev1 elev2
+      end
+
+      if (~isempty(elev))
+         if (size(elev, 1) == 2)
+            if (size(elev, 2) == 2)
+               o_elev(idP, 1) = elev(2, 1);
+               o_elev(idP, 2) = elev(1, 1);
+               o_elev(idP, 3) = elev(2, 2);
+               o_elev(idP, 4) = elev(1, 2);
+            else
+               o_elev(idP, 1) = elev(2);
+               o_elev(idP, 2) = elev(1);
+            end
          else
-            o_elev(idP, 1) = elev;
+            if (size(elev, 2) == 2)
+               o_elev(idP, 1) = elev(1, 1);
+               o_elev(idP, 3) = elev(1, 2);
+            else
+               o_elev(idP, 1) = elev;
+            end
          end
       end
+
+      clear elev
    end
 
-   clear elev
+   netcdf.close(fCdf);
+
+catch MException
+   netcdf.close(fCdf);
+   rethrow(MException)
 end
-
-netcdf.close(fCdf);
 
 clear lon lat
 
@@ -1653,7 +1778,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/01/2022 - RNU - creation
@@ -1690,7 +1815,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/01/2022 - RNU - creation
@@ -1733,7 +1858,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/02/2010 - RNU - creation
@@ -1809,7 +1934,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/25/2013 - RNU - creation
@@ -1896,7 +2021,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/15/2014 - RNU - creation
@@ -1916,59 +2041,103 @@ if (exist(a_ncPathFileName, 'file') == 2)
       return
    end
 
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
+   try
 
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         %          fprintf('WARNING: Variable %s not present in file : %s\n', ...
-         %             varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {' '}];
+      % retrieve the list of variables that are present in the file
+      varFlagList = vars_are_present_dec_argo(fCdf, a_wantedVars);
+
+      % retrieve variables from NetCDF file
+      for idVar = 1:length(a_wantedVars)
+         if (varFlagList(idVar) == 1)
+            varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, a_wantedVars{idVar}));
+            o_ncData = [o_ncData {a_wantedVars{idVar}} {varValue}];
+         else
+            %          fprintf('WARNING: Variable %s not present in file : %s\n', ...
+            %             varName, a_ncPathFileName);
+            o_ncData = [o_ncData {a_wantedVars{idVar}} {' '}];
+         end
+
       end
 
+      netcdf.close(fCdf);
+
+   catch MException
+      netcdf.close(fCdf);
+      rethrow(MException)
    end
 
-   netcdf.close(fCdf);
 end
 
 return
 
 % ------------------------------------------------------------------------------
-% Check if a given variable is present in a NetCDF file.
+% Get data from name in a {name}/{data} list.
 %
 % SYNTAX :
-%  [o_present] = var_is_present_dec_argo(a_ncId, a_varName)
+%  [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
 %
 % INPUT PARAMETERS :
-%   a_ncId    : NetCDF file Id
-%   a_varName : variable name
+%   a_dataName : name of the data to retrieve
+%   a_dataList : {name}/{data} list
 %
 % OUTPUT PARAMETERS :
-%   o_present : 1 if the variable is present (0 otherwise)
+%   o_dataValues : concerned data
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
-%   05/27/2014 - RNU - creation
+%   01/21/2015 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_present] = var_is_present_dec_argo(a_ncId, a_varName)
+function [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
 
-o_present = 0;
+% output parameters initialization
+o_dataValues = [];
 
-[nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(a_ncId);
+idVal = find(strcmp(a_dataName, a_dataList) == 1, 1);
+if (~isempty(idVal))
+   o_dataValues = a_dataList{idVal+1};
+end
 
-for idVar= 0:nbVars-1
-   [varName, varType, varDims, nbAtts] = netcdf.inqVar(a_ncId, idVar);
-   if (strcmp(varName, a_varName))
-      o_present = 1;
-      break
-   end
+return
+
+% ------------------------------------------------------------------------------
+% Check if a given list of variables are present in a NetCDF file.
+%
+% SYNTAX :
+%  [o_varFlagList] = vars_are_present_dec_argo(a_ncId, a_varNameList)
+%
+% INPUT PARAMETERS :
+%   a_ncId        : NetCDF file Id
+%   a_varNameList : list of variable names
+%
+% OUTPUT PARAMETERS :
+%   o_varFlagList : 1 if the variable is present (0 otherwise)
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   10/06/2025 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_varFlagList] = vars_are_present_dec_argo(a_ncId, a_varNameList)
+
+o_varFlagList = ones(size(a_varNameList));
+
+[~, nbVars, ~, ~] = netcdf.inq(a_ncId);
+
+valList = cell(nbVars, 1);
+for idVar = 0:nbVars-1
+   [valList{idVar+1}, ~, ~, ~] = netcdf.inqVar(a_ncId, idVar);
+end
+
+notPresentList = setdiff(a_varNameList, valList);
+for idVar = 1:length(notPresentList)
+   o_varFlagList(strcmp(notPresentList{idVar}, a_varNameList)) = 0;
 end
 
 return
@@ -1998,7 +2167,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/18/2017 - RNU - creation
@@ -2055,7 +2224,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/01/2014 - RNU - creation
@@ -2203,7 +2372,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/27/2020 - RNU - creation
@@ -2217,7 +2386,7 @@ o_lon = [];
 o_lat = [];
 
 if (isempty(a_gebcoFileName))
-   a_gebcoFileName = 'C:\Users\jprannou\_RNU\_ressources\GEBCO_2022\GEBCO_2022.nc';
+   a_gebcoFileName = 'C:\Users\jprannou\_RNU\_ressources\GEBCO_2024\GEBCO_2024.nc';
 end
 
 
@@ -2255,244 +2424,251 @@ if (isempty(fCdf))
    return
 end
 
-lonVarId = netcdf.inqVarID(fCdf, 'lon');
-latVarId = netcdf.inqVarID(fCdf, 'lat');
-elevVarId = netcdf.inqVarID(fCdf, 'elevation');
+try
 
-lon = netcdf.getVar(fCdf, lonVarId);
-lat = netcdf.getVar(fCdf, latVarId);
-minLon = min(lon);
-maxLon = max(lon);
+   lonVarId = netcdf.inqVarID(fCdf, 'lon');
+   latVarId = netcdf.inqVarID(fCdf, 'lat');
+   elevVarId = netcdf.inqVarID(fCdf, 'elevation');
 
-idLigStart = find(lat <= a_latMin, 1, 'last');
-idLigEnd = find(lat >= a_latMax, 1, 'first');
-latVal = lat(fliplr(idLigStart:idLigEnd));
+   lon = netcdf.getVar(fCdf, lonVarId);
+   lat = netcdf.getVar(fCdf, latVarId);
+   minLon = min(lon);
+   maxLon = max(lon);
 
-% a_lonMin is in the [-180, 180[ interval
-% a_lonMax can be in the [-180, 180[ interval (case A) or [0, 360[ interval (case B)
+   idLigStart = find(lat <= a_latMin, 1, 'last');
+   idLigEnd = find(lat >= a_latMax, 1, 'first');
+   latVal = lat(fliplr(idLigStart:idLigEnd));
 
-% if ((a_lonMax - a_lonMin) > (maxLon - minLon)) we return the whole set of longitudes
-% otherwise
-% in case A: we should manage 3 zones
-% [-180, minLon[, [minLon, maxLon] and ]maxLon, -180[, thus 5 cases
-% case A1: a_lonMin and a_lonMax in [-180, minLon[
-% case A2: a_lonMin in [-180, minLon[ and a_lonMax in [minLon, maxLon]
-% case A3: a_lonMin in [minLon, maxLon] and a_lonMax in [minLon, maxLon]
-% case A4: a_lonMin in [minLon, maxLon] and a_lonMax in ]maxLon, -180[
-% case A5: a_lonMin in ]maxLon, -180[ and a_lonMax in ]maxLon, -180[
-% in case B: we should manage 3 zones
-% [minLon, maxLon], ]maxLon, -180[, [180, minLon+360[ and [minLon+360, maxLon+360], thus 4 cases
-% case B1: a_lonMin in [minLon, maxLon] and a_lonMax in [180, minLon+360[
-% case B2: a_lonMin in [minLon, maxLon] and a_lonMax in [minLon+360, maxLon+360]
-% case B3: a_lonMin in ]maxLon, -180[ and a_lonMax in [180, minLon+360[
-% case B4: a_lonMin in ]maxLon, -180[ and a_lonMax in [minLon+360, maxLon+360]
+   % a_lonMin is in the [-180, 180[ interval
+   % a_lonMax can be in the [-180, 180[ interval (case A) or [0, 360[ interval (case B)
 
-if ((a_lonMax - a_lonMin) <= (maxLon - minLon))
-   if (a_lonMax < 180) % case A
-      if ((a_lonMin >= minLon) && (a_lonMin <= maxLon) && ...
-            (a_lonMax >= minLon) && (a_lonMax <= maxLon))
-         % case A3
-         idColStart = find(lon <= a_lonMin, 1, 'last');
-         idColEnd = find(lon >= a_lonMax, 1, 'first');
+   % if ((a_lonMax - a_lonMin) > (maxLon - minLon)) we return the whole set of longitudes
+   % otherwise
+   % in case A: we should manage 3 zones
+   % [-180, minLon[, [minLon, maxLon] and ]maxLon, -180[, thus 5 cases
+   % case A1: a_lonMin and a_lonMax in [-180, minLon[
+   % case A2: a_lonMin in [-180, minLon[ and a_lonMax in [minLon, maxLon]
+   % case A3: a_lonMin in [minLon, maxLon] and a_lonMax in [minLon, maxLon]
+   % case A4: a_lonMin in [minLon, maxLon] and a_lonMax in ]maxLon, -180[
+   % case A5: a_lonMin in ]maxLon, -180[ and a_lonMax in ]maxLon, -180[
+   % in case B: we should manage 3 zones
+   % [minLon, maxLon], ]maxLon, -180[, [180, minLon+360[ and [minLon+360, maxLon+360], thus 4 cases
+   % case B1: a_lonMin in [minLon, maxLon] and a_lonMax in [180, minLon+360[
+   % case B2: a_lonMin in [minLon, maxLon] and a_lonMax in [minLon+360, maxLon+360]
+   % case B3: a_lonMin in ]maxLon, -180[ and a_lonMax in [180, minLon+360[
+   % case B4: a_lonMin in ]maxLon, -180[ and a_lonMax in [minLon+360, maxLon+360]
 
-         elev = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
-         for idL = idLigStart:idLigEnd
-            elev(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
+   if ((a_lonMax - a_lonMin) <= (maxLon - minLon))
+      if (a_lonMax < 180) % case A
+         if ((a_lonMin >= minLon) && (a_lonMin <= maxLon) && ...
+               (a_lonMax >= minLon) && (a_lonMax <= maxLon))
+            % case A3
+            idColStart = find(lon <= a_lonMin, 1, 'last');
+            idColEnd = find(lon >= a_lonMax, 1, 'first');
+
+            elev = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
+            for idL = idLigStart:idLigEnd
+               elev(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
+            end
+
+            lonVal = lon(idColStart:idColEnd);
+         elseif ((a_lonMin < minLon) && ...
+               (a_lonMax >= minLon) && (a_lonMax <= maxLon))
+            % case A2
+            elev1 = nan(length(idLigStart:idLigEnd), 1);
+            for idL = idLigStart:idLigEnd
+               elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
+            end
+
+            lonVal1 = lon(end);
+
+            idColStart = 1;
+            idColEnd = find(lon >= a_lonMax, 1, 'first');
+
+            elev2 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
+            for idL = idLigStart:idLigEnd
+               elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
+            end
+
+            lonVal2 = lon(idColStart:idColEnd) + 360;
+
+            elev = cat(2, elev1, elev2);
+            lonVal = cat(1, lonVal1, lonVal2);
+            clear elev1 elev2 lonVal1 lonVal2
+         elseif ((a_lonMin >= minLon) && (a_lonMin <= maxLon) && ...
+               (a_lonMax > maxLon))
+            % case A4
+            idColStart = find(lon <= a_lonMin, 1, 'last');
+            idColEnd = length(lon);
+
+            elev1 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
+            for idL = idLigStart:idLigEnd
+               elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
+            end
+
+            lonVal1 = lon(idColStart:idColEnd);
+
+            elev2 = nan(length(idLigStart:idLigEnd), 1);
+            for idL = idLigStart:idLigEnd
+               elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
+            end
+
+            lonVal2 = lon(1) + 360;
+
+            elev = cat(2, elev1, elev2);
+            lonVal = cat(1, lonVal1, lonVal2);
+            clear elev1 elev2 lonVal1 lonVal2
+         elseif ((a_lonMin < minLon) && ...
+               (a_lonMax < minLon))
+            % case A1
+            elev1 = nan(length(idLigStart:idLigEnd), 1);
+            for idL = idLigStart:idLigEnd
+               elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
+            end
+
+            lonVal1 = lon(end);
+
+            elev2 = nan(length(idLigStart:idLigEnd), 1);
+            for idL = idLigStart:idLigEnd
+               elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
+            end
+
+            lonVal2 = lon(1) + 360;
+
+            elev = cat(2, elev1, elev2);
+            lonVal = cat(1, lonVal1, lonVal2);
+            clear elev1 elev2 lonVal1 lonVal2
+         elseif ((a_lonMin > maxLon) && ...
+               (a_lonMax > maxLon))
+            % case A5
+            elev1 = nan(length(idLigStart:idLigEnd), 1);
+            for idL = idLigStart:idLigEnd
+               elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
+            end
+
+            lonVal1 = lon(end);
+
+            elev2 = nan(length(idLigStart:idLigEnd), 1);
+            for idL = idLigStart:idLigEnd
+               elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
+            end
+
+            lonVal2 = lon(1) + 360;
+
+            elev = cat(2, elev1, elev2);
+            lonVal = cat(1, lonVal1, lonVal2);
+            clear elev1 elev2 lonVal1 lonVal2
+         end
+      else % case B
+         if (a_lonMin <= maxLon) && (a_lonMax >= minLon + 360)
+            % case B2
+            idColStart = find(lon <= a_lonMin, 1, 'last');
+            idColEnd = length(lon);
+
+            elev1 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
+            for idL = idLigStart:idLigEnd
+               elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
+            end
+
+            lonVal1 = lon(idColStart:idColEnd);
+
+            idColStart = 1;
+            idColEnd = find(lon >= a_lonMax - 360, 1, 'first');
+
+            elev2 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
+            for idL = idLigStart:idLigEnd
+               elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
+            end
+
+            lonVal2 = lon(idColStart:idColEnd) + 360;
+
+            elev = cat(2, elev1, elev2);
+            lonVal = cat(1, lonVal1, lonVal2);
+            clear elev1 elev2 lonVal1 lonVal2
+         elseif (a_lonMin <= maxLon) && (a_lonMax < minLon + 360)
+            % case B1
+            idColStart = find(lon <= a_lonMin, 1, 'last');
+            idColEnd = length(lon);
+
+            elev1 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
+            for idL = idLigStart:idLigEnd
+               elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
+            end
+
+            lonVal1 = lon(idColStart:idColEnd);
+
+            elev2 = nan(length(idLigStart:idLigEnd), 1);
+            for idL = idLigStart:idLigEnd
+               elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
+            end
+
+            lonVal2 = lon(1) + 360;
+
+            elev = cat(2, elev1, elev2);
+            lonVal = cat(1, lonVal1, lonVal2);
+            clear elev1 elev2 lonVal1 lonVal2
+         elseif (a_lonMin > maxLon) && (a_lonMax >= minLon + 360)
+            % case B4
+            elev1 = nan(length(idLigStart:idLigEnd), 1);
+            for idL = idLigStart:idLigEnd
+               elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
+            end
+
+            lonVal1 = lon(end);
+
+            idColStart = 1;
+            idColEnd = find(lon >= a_lonMax - 360, 1, 'first');
+
+            elev2 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
+            for idL = idLigStart:idLigEnd
+               elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
+            end
+
+            lonVal2 = lon(idColStart:idColEnd) + 360;
+
+            elev = cat(2, elev1, elev2);
+            lonVal = cat(1, lonVal1, lonVal2);
+            clear elev1 elev2 lonVal1 lonVal2
+         elseif (a_lonMin > maxLon) && (a_lonMax < minLon + 360)
+            % case B3
+            elev1 = nan(length(idLigStart:idLigEnd), 1);
+            for idL = idLigStart:idLigEnd
+               elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
+            end
+
+            lonVal1 = lon(end);
+
+            elev2 = nan(length(idLigStart:idLigEnd), 1);
+            for idL = idLigStart:idLigEnd
+               elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
+            end
+
+            lonVal2 = lon(1) + 360;
+
+            elev = cat(2, elev1, elev2);
+            lonVal = cat(1, lonVal1, lonVal2);
+            clear elev1 elev2 lonVal1 lonVal2
          end
 
-         lonVal = lon(idColStart:idColEnd);
-      elseif ((a_lonMin < minLon) && ...
-            (a_lonMax >= minLon) && (a_lonMax <= maxLon))
-         % case A2
-         elev1 = nan(length(idLigStart:idLigEnd), 1);
-         for idL = idLigStart:idLigEnd
-            elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
-         end
-
-         lonVal1 = lon(end);
-
-         idColStart = 1;
-         idColEnd = find(lon >= a_lonMax, 1, 'first');
-
-         elev2 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
-         for idL = idLigStart:idLigEnd
-            elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
-         end
-
-         lonVal2 = lon(idColStart:idColEnd) + 360;
-
-         elev = cat(2, elev1, elev2);
-         lonVal = cat(1, lonVal1, lonVal2);
-         clear elev1 elev2 lonVal1 lonVal2
-      elseif ((a_lonMin >= minLon) && (a_lonMin <= maxLon) && ...
-            (a_lonMax > maxLon))
-         % case A4
-         idColStart = find(lon <= a_lonMin, 1, 'last');
-         idColEnd = length(lon);
-
-         elev1 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
-         for idL = idLigStart:idLigEnd
-            elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
-         end
-
-         lonVal1 = lon(idColStart:idColEnd);
-
-         elev2 = nan(length(idLigStart:idLigEnd), 1);
-         for idL = idLigStart:idLigEnd
-            elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
-         end
-
-         lonVal2 = lon(1) + 360;
-
-         elev = cat(2, elev1, elev2);
-         lonVal = cat(1, lonVal1, lonVal2);
-         clear elev1 elev2 lonVal1 lonVal2
-      elseif ((a_lonMin < minLon) && ...
-            (a_lonMax < minLon))
-         % case A1
-         elev1 = nan(length(idLigStart:idLigEnd), 1);
-         for idL = idLigStart:idLigEnd
-            elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
-         end
-
-         lonVal1 = lon(end);
-
-         elev2 = nan(length(idLigStart:idLigEnd), 1);
-         for idL = idLigStart:idLigEnd
-            elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
-         end
-
-         lonVal2 = lon(1) + 360;
-
-         elev = cat(2, elev1, elev2);
-         lonVal = cat(1, lonVal1, lonVal2);
-         clear elev1 elev2 lonVal1 lonVal2
-      elseif ((a_lonMin > maxLon) && ...
-            (a_lonMax > maxLon))
-         % case A5
-         elev1 = nan(length(idLigStart:idLigEnd), 1);
-         for idL = idLigStart:idLigEnd
-            elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
-         end
-
-         lonVal1 = lon(end);
-
-         elev2 = nan(length(idLigStart:idLigEnd), 1);
-         for idL = idLigStart:idLigEnd
-            elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
-         end
-
-         lonVal2 = lon(1) + 360;
-
-         elev = cat(2, elev1, elev2);
-         lonVal = cat(1, lonVal1, lonVal2);
-         clear elev1 elev2 lonVal1 lonVal2
       end
-   else % case B
-      if (a_lonMin <= maxLon) && (a_lonMax >= minLon + 360)
-         % case B2
-         idColStart = find(lon <= a_lonMin, 1, 'last');
-         idColEnd = length(lon);
+   else % return the whole set of longitudes
+      idColStart = 1;
+      idColEnd = length(lon);
 
-         elev1 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
-         for idL = idLigStart:idLigEnd
-            elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
-         end
-
-         lonVal1 = lon(idColStart:idColEnd);
-
-         idColStart = 1;
-         idColEnd = find(lon >= a_lonMax - 360, 1, 'first');
-
-         elev2 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
-         for idL = idLigStart:idLigEnd
-            elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
-         end
-
-         lonVal2 = lon(idColStart:idColEnd) + 360;
-
-         elev = cat(2, elev1, elev2);
-         lonVal = cat(1, lonVal1, lonVal2);
-         clear elev1 elev2 lonVal1 lonVal2
-      elseif (a_lonMin <= maxLon) && (a_lonMax < minLon + 360)
-         % case B1
-         idColStart = find(lon <= a_lonMin, 1, 'last');
-         idColEnd = length(lon);
-
-         elev1 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
-         for idL = idLigStart:idLigEnd
-            elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
-         end
-
-         lonVal1 = lon(idColStart:idColEnd);
-
-         elev2 = nan(length(idLigStart:idLigEnd), 1);
-         for idL = idLigStart:idLigEnd
-            elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
-         end
-
-         lonVal2 = lon(1) + 360;
-
-         elev = cat(2, elev1, elev2);
-         lonVal = cat(1, lonVal1, lonVal2);
-         clear elev1 elev2 lonVal1 lonVal2
-      elseif (a_lonMin > maxLon) && (a_lonMax >= minLon + 360)
-         % case B4
-         elev1 = nan(length(idLigStart:idLigEnd), 1);
-         for idL = idLigStart:idLigEnd
-            elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
-         end
-
-         lonVal1 = lon(end);
-
-         idColStart = 1;
-         idColEnd = find(lon >= a_lonMax - 360, 1, 'first');
-
-         elev2 = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
-         for idL = idLigStart:idLigEnd
-            elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
-         end
-
-         lonVal2 = lon(idColStart:idColEnd) + 360;
-
-         elev = cat(2, elev1, elev2);
-         lonVal = cat(1, lonVal1, lonVal2);
-         clear elev1 elev2 lonVal1 lonVal2
-      elseif (a_lonMin > maxLon) && (a_lonMax < minLon + 360)
-         % case B3
-         elev1 = nan(length(idLigStart:idLigEnd), 1);
-         for idL = idLigStart:idLigEnd
-            elev1(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 length(lon)-1]), fliplr([1 1]))';
-         end
-
-         lonVal1 = lon(end);
-
-         elev2 = nan(length(idLigStart:idLigEnd), 1);
-         for idL = idLigStart:idLigEnd
-            elev2(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 0]), fliplr([1 1]))';
-         end
-
-         lonVal2 = lon(1) + 360;
-
-         elev = cat(2, elev1, elev2);
-         lonVal = cat(1, lonVal1, lonVal2);
-         clear elev1 elev2 lonVal1 lonVal2
+      elev = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
+      for idL = idLigStart:idLigEnd
+         elev(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
       end
 
-   end
-else % return the whole set of longitudes
-   idColStart = 1;
-   idColEnd = length(lon);
-
-   elev = nan(length(idLigStart:idLigEnd), length(idColStart:idColEnd));
-   for idL = idLigStart:idLigEnd
-      elev(end-(idL-idLigStart), :) = netcdf.getVar(fCdf, elevVarId, fliplr([idL-1 idColStart-1]), fliplr([1 length(idColStart:idColEnd)]))';
+      lonVal = lon(idColStart:idColEnd);
    end
 
-   lonVal = lon(idColStart:idColEnd);
+   netcdf.close(fCdf);
+
+catch MException
+   netcdf.close(fCdf);
+   rethrow(MException)
 end
-
-netcdf.close(fCdf);
 
 [longitudes, latitudes] = meshgrid(lonVal, latVal);
 
@@ -2514,13 +2690,13 @@ return
 %   a_julDay : julian 1950 date
 %
 % OUTPUT PARAMETERS :
-%   o_gregorianDate : gregorain date (in 'yyyy/mm/dd HH:MM' or 
+%   o_gregorianDate : gregorain date (in 'yyyy/mm/dd HH:MM' or
 %                     'yyyy/mm/dd HH:MM:SS' format)
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/02/2010 - RNU - creation
@@ -2565,20 +2741,20 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/02/2010 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_dayNum, o_day, o_month, o_year, o_hour, o_min, o_sec] = format_juld_dec_argo(a_juld)
- 
+
 % output parameters initialization
-o_dayNum = []; 
-o_day = []; 
-o_month = []; 
-o_year = [];   
-o_hour = [];   
+o_dayNum = [];
+o_day = [];
+o_month = [];
+o_year = [];
+o_hour = [];
 o_min = [];
 o_sec = [];
 
@@ -2591,10 +2767,10 @@ for id = 1:length(a_juld)
    juldStr = num2str(a_juld(id), 11);
    res = sscanf(juldStr, '%5d.%6d');
    o_day(id) = res(1);
-   
+
    if (o_day(id) ~= fix(g_decArgo_dateDef))
       o_dayNum(id) = fix(a_juld(id));
-      
+
       dateNum = o_day(id) + g_decArgo_janFirst1950InMatlab;
       ymd = datestr(dateNum, 'yyyy/mm/dd');
       res = sscanf(ymd, '%4d/%2d/%d');
@@ -2616,7 +2792,7 @@ for id = 1:length(a_juld)
       o_min(id) = 99;
       o_sec(id) = 99;
    end
-   
+
 end
 
 return

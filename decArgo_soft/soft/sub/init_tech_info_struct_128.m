@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/16/2021 - RNU - creation
@@ -40,7 +40,7 @@ global g_MC_DPST;
 global g_MC_MinPresInDriftAtProf;
 global g_MC_MaxPresInDriftAtProf;
 global g_MC_AST;
-global g_MC_IceAscentAbortNum;
+global g_MC_IceAscentAbort;
 global g_MC_AET;
 global g_MC_SpyAtSurface;
 global g_MC_Surface;
@@ -144,6 +144,15 @@ internalTemp.fmt{end+1} = '%g';
 internalTemp.tech{end+1} = get_cts5_tech_data_init_struct(206, 'Internal temperature (degC)');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+internalTemp2 = init_basic_struct;
+internalTemp2.pattern = 'Ti=%f degC';
+internalTemp2.count = 1;
+internalTemp2.id{end+1} = 1;
+internalTemp2.name{end+1} = 'internal temperature (degC)';
+internalTemp2.fmt{end+1} = '%g';
+internalTemp2.tech{end+1} = get_cts5_tech_data_init_struct(206, 'Internal temperature (degC)');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 o_techInfoStruct.SYSTEM = [];
 o_techInfoStruct.SYSTEM{end+1} = presOffset;
@@ -153,6 +162,7 @@ o_techInfoStruct.SYSTEM{end+1} = minBattVolt;
 o_techInfoStruct.SYSTEM{end+1} = externalTemp;
 o_techInfoStruct.SYSTEM{end+1} = externalPres;
 o_techInfoStruct.SYSTEM{end+1} = internalTemp;
+o_techInfoStruct.SYSTEM{end+1} = internalTemp2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -970,12 +980,12 @@ iceAbort.func1{end+1} = '@(x) adjust_time_cts5(x)';
 iceAbort.func2{end+1} = '@(x) julian_2_gregorian_dec_argo(x)';
 iceAbort.name{end+1} = 'ice abort date';
 iceAbort.fmt{end+1} = '%g';
-iceAbort.tech{end+1} = get_cts5_tech_data_init_struct(211, 'Resumed ascent start date');
+iceAbort.tech{end+1} = get_cts5_tech_data_init_struct(211, 'Ice abort date');
 iceAbort.tech{end}.func = '@(x) format_date_yyyymmddhhmiss_dec_argo(x)';
 iceAbort.tech{end}.func1 = '@(x) adjust_time_cts5(x)';
 iceAbort.time{end+1} = [];
 iceAbort.traj{end+1} = get_cts5_traj_data_init_struct(...
-   g_MC_IceAscentAbortNum, 'JULD', ...
+   g_MC_IceAscentAbort, 'JULD', ...
    'Ice abort date');
 iceAbort.traj{end}.group = g_decArgo_trajItemGroupNum;
 
@@ -998,7 +1008,7 @@ iceAbort.fmt{end+1} = '%d';
 iceAbort.tech{end+1} = get_cts5_tech_data_init_struct(213, 'Pressure of Ice abort');
 iceAbort.time{end+1} = [];
 iceAbort.traj{end+1} = get_cts5_traj_data_init_struct(...
-   g_MC_IceAscentAbortNum, 'PRES', ...
+   g_MC_IceAscentAbort, 'PRES', ...
    'Pressure of Ice abort');
 iceAbort.traj{end}.group = g_decArgo_trajItemGroupNum;
 g_decArgo_trajItemGroupNum = g_decArgo_trajItemGroupNum + 1;
@@ -2838,15 +2848,15 @@ sensorErrorBrokenHYDROC.tech{end+1} = get_cts5_tech_data_init_struct(230, 'BROKE
 sensorErrorBrokenHYDROC.tech{end}.shortSensorName = 'Hydroc';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TO BE IMPLEMENT WHEN THE ALARM WILL BE RAISED
-% sensorErrorSequenceHYDROC = init_basic_struct;
-% sensorErrorSequenceHYDROC.pattern = 'HYDROC sequence (%x)';
-% sensorErrorSequenceHYDROC.count = 1;
-% sensorErrorSequenceHYDROC.id{end+1} = 1;
-% sensorErrorSequenceHYDROC.name{end+1} = 'SEQUENCE ERROR alarm for HYDROC sensor (identification of failure when sending a command to HYDROC sensor)';
-% sensorErrorSequenceHYDROC.fmt{end+1} = '%d';
-% sensorErrorSequenceHYDROC.tech{end+1} = get_cts5_tech_data_init_struct(253, 'SEQUENCE ERROR alarm for HYDROC sensor (identification of failure when sending a command to HYDROC sensor)');
-% sensorErrorSequenceHYDROC.tech{end}.shortSensorName = 'Hydroc';
+sensorErrorSequenceHYDROC = init_basic_struct;
+sensorErrorSequenceHYDROC.pattern = 'HYDROC sequence (%x)';
+sensorErrorSequenceHYDROC.count = 1;
+sensorErrorSequenceHYDROC.id{end+1} = 1;
+sensorErrorSequenceHYDROC.func{end+1} = '@(x) sprintf(''0x%x'', x)';
+sensorErrorSequenceHYDROC.name{end+1} = 'SEQUENCE ERROR alarm for HYDROC sensor (identification of failure when sending a command to HYDROC sensor)';
+sensorErrorSequenceHYDROC.fmt{end+1} = '%s';
+sensorErrorSequenceHYDROC.tech{end+1} = get_cts5_tech_data_init_struct(253, 'SEQUENCE ERROR alarm for HYDROC sensor (identification of failure when sending a command to HYDROC sensor)');
+sensorErrorSequenceHYDROC.tech{end}.shortSensorName = 'Hydroc';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sensorErrorDataSizeSBE41 = init_basic_struct;
@@ -3064,7 +3074,7 @@ o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenRAMSES;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenOPUS;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenMPE;
 o_techInfoStruct.ALARM{end+1} = sensorErrorBrokenHYDROC;
-% o_techInfoStruct.ALARM{end+1} = sensorErrorSequenceHYDROC;
+o_techInfoStruct.ALARM{end+1} = sensorErrorSequenceHYDROC;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeSBE41;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeDO;
 o_techInfoStruct.ALARM{end+1} = sensorErrorDataSizeOCR;
@@ -3236,7 +3246,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -3278,7 +3288,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -3315,7 +3325,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -3351,7 +3361,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -3384,7 +3394,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation

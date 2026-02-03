@@ -2,28 +2,34 @@
 % Decode OPUS data transmitted by a CTS5-USEA float.
 %
 % SYNTAX :
-%  [o_opusLightData, o_opusBlackData] = decode_apmt_opus(a_fileNameInfo)
+% [o_opusLightData, o_opusLightV2Data, ...
+%   o_opusBlackData, o_opusBlackV2Data] = decode_apmt_opus(a_fileNameInfo)
 %
 % INPUT PARAMETERS :
 %   a_fileNameInfo : information on APMT OPUS file to decode
 %
 % OUTPUT PARAMETERS :
-%   o_opusLightData : OPUS-LIGHT decoded data
-%   o_opusBlackData : OPUS-BLACK decoded data
+%   o_opusLightData   : OPUS-LIGHT decoded data
+%   o_opusLightV2Data : OPUS-LIGHT V2 decoded data
+%   o_opusBlackData   : OPUS-BLACK decoded data
+%   o_opusBlackV2Data : OPUS-BLACK V2 decoded data
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/15/2021 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_opusLightData, o_opusBlackData] = decode_apmt_opus(a_fileNameInfo)
+function [o_opusLightData, o_opusLightV2Data, ...
+   o_opusBlackData, o_opusBlackV2Data] = decode_apmt_opus(a_fileNameInfo)
 
 % output parameters initialization
 o_opusLightData = [];
+o_opusLightV2Data = [];
 o_opusBlackData = [];
+o_opusBlackV2Data = [];
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -59,8 +65,12 @@ try
    switch (data(1))
       case {24}
          o_opusLightData = decode_apmt_opus_light(data, lastByteNum, inputFilePathName);
+      case {42}
+         o_opusLightV2Data = decode_apmt_opus_light_v2(data, lastByteNum, inputFilePathName);
       case {25}
          o_opusBlackData = decode_apmt_opus_black(data, lastByteNum, inputFilePathName);
+      case {43}
+         o_opusBlackV2Data = decode_apmt_opus_black_v2(data, lastByteNum, inputFilePathName);
       otherwise
          fprintf('ERROR: Unexpected file type byte (%d) in file: %s\n', data(1), inputFilePathName);
    end

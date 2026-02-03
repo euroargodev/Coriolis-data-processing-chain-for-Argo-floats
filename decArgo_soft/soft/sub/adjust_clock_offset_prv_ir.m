@@ -33,7 +33,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/06/2019 - RNU - creation
@@ -107,7 +107,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/09/2019 - RNU - creation
@@ -144,7 +144,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/09/2019 - RNU - creation
@@ -185,7 +185,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/09/2019 - RNU - creation
@@ -207,7 +207,9 @@ o_cycleTimeData.descentToProfStartDateAdj = adjust_time(o_cycleTimeData.descentT
 o_cycleTimeData.descentToProfEndDateAdj = adjust_time(o_cycleTimeData.descentToProfEndDate, cycleClockOffset);
 o_cycleTimeData.ascentStartDateAdj = adjust_time(o_cycleTimeData.ascentStartDate, cycleClockOffset);
 o_cycleTimeData.ascentEndDateAdj = adjust_time(o_cycleTimeData.ascentEndDate, cycleClockOffset);
+o_cycleTimeData.ascentEndDateBisAdj = adjust_time(o_cycleTimeData.ascentEndDateBis, cycleClockOffset);
 o_cycleTimeData.transStartDateAdj = adjust_time(o_cycleTimeData.transStartDate, cycleClockOffset);
+o_cycleTimeData.transStartDateBisAdj = adjust_time(o_cycleTimeData.transStartDateBis, cycleClockOffset);
 o_cycleTimeData.eolStartDateAdj = adjust_time(o_cycleTimeData.eolStartDate, cycleClockOffset);
 o_cycleTimeData.firstGroundingDateAdj = adjust_time(o_cycleTimeData.firstGroundingDate, cycleClockOffset);
 o_cycleTimeData.secondGroundingDateAdj = adjust_time(o_cycleTimeData.secondGroundingDate, cycleClockOffset);
@@ -231,7 +233,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/09/2019 - RNU - creation

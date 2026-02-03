@@ -6,15 +6,15 @@
 %  update_float_config_apx_apf11_ir(a_missionCfg, a_sampleCfg)
 %
 % INPUT PARAMETERS :
-%   a_missionCfg : input mission configuration data from system_log file
-%   a_sampleCfg  : input sample configuration data from system_log file
+%   a_missionCfg    : input mission configuration data from system_log file
+%   a_sampleCfg     : input sample configuration data from system_log file
 %
 % OUTPUT PARAMETERS :.
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/27/2018 - RNU - creation
@@ -31,20 +31,60 @@ global g_decArgo_cycleNum;
 global g_decArgo_floatConfig;
 
 
+% identify the configurations for the current cycle
+% a_missionCfg seems to be transmitted only during cycle > 0 and once before
+% the start of the dive
+% a_sampleCfg seems to be transmitted few times during cycle #0 and once before
+% the start of the dive and once after the dive for other cycles
+% this second transmission is perhaps due to the use of sequence
+curMissionCfg = [];
+curSampleCfg = [];
+
+if (g_decArgo_cycleNum == 0)
+
+   if (~isempty(a_missionCfg))
+      % select the last mission set
+      [~, idMis] = max([a_missionCfg{:, 1}]);
+      curMissionCfg = a_missionCfg{idMis, 2};
+   end
+
+   if (~isempty(a_sampleCfg))
+      % select the last sample set
+      [~, idMis] = max([a_sampleCfg{:, 1}]);
+      curSampleCfg = a_sampleCfg{idMis, 2};
+   end
+
+else
+
+   if (~isempty(a_missionCfg))
+      % select the first mission set
+      [~, idMis] = min([a_missionCfg{:, 1}]);
+      curMissionCfg = a_missionCfg{idMis, 2};
+   end
+
+   if (~isempty(a_sampleCfg))
+      % select the first sample set
+      [~, idMis] = min([a_sampleCfg{:, 1}]);
+      curSampleCfg = a_sampleCfg{idMis, 2};
+   end
+end
+
+% use current mission only
+missionCfg = curMissionCfg;
+sampleCfg = curSampleCfg;
+
 % create new config
 configNames = g_decArgo_floatConfig.NAMES;
 newConfigValues = g_decArgo_floatConfig.VALUES(:, end);
 
 % consider mission configuration parameters
-if (~isempty(a_missionCfg))
-   % select the last mission set
-   [~, idMis] = max([a_missionCfg{:, 1}]);
-   misStruct = a_missionCfg{idMis, 2};
-   confParam = fieldnames(misStruct);
+if (~isempty(missionCfg))
+
+   confParam = fieldnames(missionCfg);
    for id = 1:length(confParam)
       floatConfigLabel = confParam{id};
-      floatConfigValue = misStruct.(floatConfigLabel);
-      
+      floatConfigValue = missionCfg.(floatConfigLabel);
+
       % manage 'AscentStartTimes' specificities
       if (length(floatConfigValue) > 1)
          if (strcmp(floatConfigLabel, 'AscentStartTimes'))
@@ -72,7 +112,7 @@ if (~isempty(a_missionCfg))
                floatConfigLabel);
          end
       end
-      
+
       if (~strcmp(floatConfigLabel, 'TelemetryDays'))
          [configName, configValue] = get_config(floatConfigLabel, floatConfigValue);
          if (~isempty(configName))
@@ -116,17 +156,13 @@ if (~isempty(a_missionCfg))
 end
 
 % consider sampling configuration parameters
-if (~isempty(a_sampleCfg))
-   
+if (~isempty(sampleCfg))
+
    % if new sampling configuration parameters are encountered
    addConfigNames = [];
-   addConfigIds = [];
    addConfigValues = [];
 
-   % select the last sample set
-   [~, idMis] = max([a_sampleCfg{:, 1}]);
-   sampleConfData = a_sampleCfg{idMis, 2};
-   [configSampName, configSampVal] = create_sampling_configuration(sampleConfData);
+   [configSampName, configSampVal] = create_sampling_configuration(sampleCfg);
    % clear existing sampling configuration
    idF = find(cellfun(@(x) strcmp(x(1:14), 'CONFIG_SAMPLE_'), configNames));
    newConfigValues(idF) = nan;
@@ -146,17 +182,17 @@ if (~isempty(a_sampleCfg))
          addConfigValues(end+1) = configValue;
       end
    end
-   
+
    % update the number of configuration parameters
    if (~isempty(addConfigNames))
       configNames = g_decArgo_floatConfig.NAMES;
       configValues = g_decArgo_floatConfig.VALUES;
       configNames = [configNames; addConfigNames'];
       configValues = [configValues; nan(length(addConfigNames), size(configValues, 2))];
-      
+
       g_decArgo_floatConfig.NAMES = configNames;
       g_decArgo_floatConfig.VALUES = configValues;
-      
+
       newConfigValues = [newConfigValues; addConfigValues'];
    end
 end
@@ -210,18 +246,18 @@ end
 % if configNum == 0 the new configuration is identical to launch configuration,
 % we create a new one however so that the launch configuration should never be
 % referenced in the prof and traj data
-   
+
 if ((newConfigNum == -1) || (newConfigNum == 0))
-   
+
    if (g_decArgo_cycleNum > 0)
-      
+
       % we add the new configuration
       g_decArgo_floatConfig.NUMBER(end+1) = ...
          max(g_decArgo_floatConfig.NUMBER) + 1;
       g_decArgo_floatConfig.VALUES(:, end+1) = newConfigValues;
       newConfigNum = g_decArgo_floatConfig.NUMBER(end);
    else
-      
+
       % for cycle #0
       % if newConfigNum == -1 we replace the launch configuration by the new one
       % configNum == 0 nothing to do (prelude configuration identical to launch
@@ -230,20 +266,20 @@ if ((newConfigNum == -1) || (newConfigNum == 0))
          if (size(g_decArgo_floatConfig.VALUES, 2) == 1)
             g_decArgo_floatConfig.VALUES(:, 1) = newConfigValues;
          else
-            fprintf('ERROR: Float #%d Cycle #%d: Configuration issue (when trying to update launch configuration (inconsistent size of existing configuration)\n', ...
+            fprintf('ERROR: Float #%d Cycle #%d: Configuration issue when trying to update launch configuration (inconsistent size of existing configuration)\n', ...
                g_decArgo_floatNum, ...
                g_decArgo_cycleNum);
          end
       end
    end
 end
-   
+
 % assign the config to the cycle
 if (g_decArgo_cycleNum > 0)
    g_decArgo_floatConfig.USE.CYCLE(end+1) = g_decArgo_cycleNum;
    g_decArgo_floatConfig.USE.CONFIG(end+1) = newConfigNum;
 end
-     
+
 % create_csv_to_print_config_apx_apf11_ir('setConfig_', g_decArgo_floatConfig);
 
 return
@@ -266,7 +302,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/27/2018 - RNU - creation

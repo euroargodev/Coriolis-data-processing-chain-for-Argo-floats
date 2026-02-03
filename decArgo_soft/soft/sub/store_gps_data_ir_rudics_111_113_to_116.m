@@ -12,12 +12,15 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/19/2018 - RNU - creation
 % ------------------------------------------------------------------------------
 function store_gps_data_ir_rudics_111_113_to_116(a_tabTech)
+
+% current float WMO number
+global g_decArgo_floatNum;
 
 % global default values
 global g_decArgo_dateDef;
@@ -61,6 +64,23 @@ if (~isempty(a_tabTech))
          gpsLocInTrajFlag = [];
       end
       
+      % specific
+      if (g_decArgo_floatNum == 6903823)
+         % during a period of time the GPS locations of this float are located
+         % at sea and simultaneously at Beyrouth airport, or Amman airport
+         % these erroneous locations are not detected by RT jamstec process
+         % (even if they are when we process the entire trajectory, but too late
+         % to come back to profile processing) we should then ignore these
+         % locations
+         if ((a_tabTech(idPos, 1) > gregorian_2_julian_dec_argo('2024/03/09 00:00:00')) && ...
+               (a_tabTech(idPos, 1) < gregorian_2_julian_dec_argo('2024/10/06 00:00:00')))
+            posStr = sprintf('%.3f %.3f', a_tabTech(idPos, 88), a_tabTech(idPos, 89));
+            if (ismember(posStr, [{'35.491 33.818'} {'35.999 31.717'} {'33.491 34.497'}]))
+               return
+            end
+         end
+      end
+
       % GPS data (consider only 'valid' GPS locations)
       
       gpsLocCycleNum = [gpsLocCycleNum; a_tabTech(idPos, 4)];

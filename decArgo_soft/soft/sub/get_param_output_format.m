@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -29,7 +29,7 @@ o_fortranFormat = [];
 
 switch (a_decoderId)
    
-   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133}
+   case {121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
       % PROVOR CTS5
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}
@@ -38,7 +38,7 @@ switch (a_decoderId)
             o_fortranFormat = 'F8.2';
       end
       
-   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1314}
+   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1115, 1314}
       % Apex Iridium Rudics & Sbd
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}
@@ -47,7 +47,7 @@ switch (a_decoderId)
             o_fortranFormat = 'F8.2';
       end
       
-   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1321, 1322, 1323}
+   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132, 1321, 1322, 1323}
       % Apex APF11 Iridium
       switch (a_paramName)
          case {'PRES', 'PRES_ADJUSTED', 'PRES_ADJUSTED_ERROR'}

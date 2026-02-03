@@ -7,6 +7,9 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 105;TECH;Battery voltage under load (min.);VOLTAGE_BatteryPumpStartProfile_volts;Pump battery voltage (volts) at depth
 210;TECH_AUX;Pressure of battery voltage under load (min.);TECH_AUX_PRES_BatteryPumpStartProfile_dbar;"Pressure associated to ""VOLTAGE_BatteryPumpStartProfile_volts = Pump battery voltage (volts) at depth""."
 206;TECH;Internal temperature;TEMPERATURE_InternalVacuumAtSurface_degC;internal tube temperature at the surface
+300;META;APMT version;META_FIRMWARE_VERSION;Firmware version for the float.
+301;META_AUX;Payload version;META_AUX_SENSOR_BOARD_FIRMWARE_VERSION;Firmware version of the sensor board.
+302;META_AUX;SIM card ID;META_AUX_FLOAT_SIM_CARD_NUMBER;SIM card number of the float.
 303;META_AUX;nke ID;META_AUX_FLOAT_WC_NUMBER;WC number of the float.
 207;TECH;Pressure activation start;CLOCK_PressureActivationStart_YYYYMMDDHHMMSS;pressure activation scrutation start date
 208;TECH;Pressure activation stop;CLOCK_PressureActivationStop_YYYYMMDDHHMMSS;pressure activation scrutation end date
@@ -15,7 +18,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 108;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredDuringDescentToPark_cm^3;Oil volume transferred from the external bladder during the descent to park (between the second threshold of the buoyancy reduction phase and the end of the descent to park). This is the oil volume tranferred  during the NUMBER_ValveActionsDuringDescentToPark_COUNT valve actions.
 109;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringDescentToPark_COUNT;number of valve actions between the crossing  of the gap threshold and the end of descent at park pressure
 110;TECH_AUX;End date/time;TECH_AUX_CLOCK_EndGroundingTime_YYYYMMDDHHMMSS;Time when the float escaped from grounding.
-111;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3;Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded.
+111;TECH;Oil volume transferred;VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3;Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded. 
 112;TECH;Nb. solenoid valve actions;NUMBER_ValveActionsDuringPark_COUNT;number of valve actions during park phase
 113;TECH;Nb. pump actions;NUMBER_PumpActionsDuringPark_COUNT;number of pump actions while at park depth
 114;TECH;Nb. set point inputs;NUMBER_ParkDriftEntriesInParkMargin_COUNT;drift at park pressure: number of entries in margin around park pressure target - specifically, how many times the float enters the band of pressure surrounding the target park pressure (generally +/- 30db)
@@ -39,7 +42,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 126;TECH_AUX;Nb. pump actions;TECH_AUX_NUMBER_PumpActionsDuringResumedAscentToSurface_COUNT;Number of pump actions between resumed ascent start and end of ascent.
 211;TECH_AUX;Abort date/time;TECH_AUX_CLOCK_IceAdvoidance_YYYYMMDDHHMMSS;Time when the float advoids Ice.
 212;TECH_AUX;Oil volume transferred;TECH_AUX_VOLUME_OilVolumeTransferredWhenIceAvoidance_cm^3;Oil volume transferred to the external bladder when Ice avoidance occured.
-213;TECH;Abort pressure;PRES_IceAvoidance_dbar;Pressure when float avoids ice
+213;TECH_AUX;Abort pressure;TECH_AUX_PRES_IceAdvoidance_dbar;Pressure when float avoids ice
 214;TECH_AUX;Perigee date/time;TECH_AUX_CLOCK_IceAdvoidancePerigee_YYYYMMDDHHMMSS;Time at perigee when the float advoids Ice.
 215;TECH_AUX;Perigee pressure;TECH_AUX_PRES_IceAdvoidancePerigee_dbar;Pressure at perigee when float avoids ice.
 190;TECH_AUX;Start date/time;TECH_AUX_CLOCK_Hanging_YYYYMMDDHHMMSS;Hanging start time (time when the float is hanged during ascent).
@@ -78,6 +81,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 142;TECH_AUX;Processing/standby ratio;TECH_AUX_RATE_ProcessingVsStandByeRatio_percent;Ratio between float activity and stand bye during the cycle.
 143;TECH_AUX;Solenoid valve;TECH_AUX_TIME_TotalValveActivity_csec;Total duration of valve actions during the cycle.
 144;TECH_AUX;Pump;TECH_AUX_TIME_TotalPumpActivity_csec;Total duration of pump actions during the cycle.
+145;TECH_AUX;Cumulated SBE41 activations;TECH_AUX_TIME_TotalCtdActivity_minutes;Total duration of CTD activity during the cycle.
 146;TECH;Cumulated modem activations (Information on previous pattern/cycle);TIME_PreviousIridiumSession_minutes;duration of the previous iridium session
 147;TECH_AUX;Cumulated GPS activations;TECH_AUX_TIME_TotalGpsActivity_seconds;Total duration of GPS activity during the cycle.
 222;TECH_AUX; Cumulated sensor activations:  - Sensor name [SBE41, DO, OCR, ECO, ECOv2, CROVER, SBEPH, SUNA, UVP6, EXT-TRIG, RAMSES]  - Duration;TECH_AUX_TIME_Total<short_sensor_name>Activity_minutes;Total duration of <short_sensor_name> sensor activity during the cycle.
@@ -135,10 +139,18 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 177;TECH;Pression mesurée en surface;PRES_Now_dbar;test message data reporting pressure at the surface during drift - cycle 0
 178;TECH_AUX;Date de freinage;TECH_AUX_CLOCK_BrakingDuringDescentAlarm_YYYYMMDDHHMMSS;Alarm raised when the descent speed is too high and the float brakes.
 179;TECH_AUX;Immersion de freinage;TECH_AUX_PRES_BrakingDuringDescentAlarm_dbar;Alarm raised when the descent speed is too high and the float brakes.
-180;TECH_AUX;Detection de glace;TECH_AUX_CLOCK_IceDetectionByIsaAlgorithm_YYYYMMDDHHMMSS;Time of ice detection by the ISA algorithm.
-181;TECH_AUX;Date de detection de glace;TECH_AUX_CLOCK_IceDetection_YYYYMMDDHHMMSS;Time of ice detection.
-182;TECH_AUX;Immersion de detection de glace;TECH_AUX_PRES_IceDetection_dbar;Pressure of ice detection.
 183;TECH_AUX;End of life;TECH_AUX_CLOCK_EndOfLifeAlarm_YYYYMMDDHHMMSS;Alarm raised when the float switches to the End Of Life mode. When reported as a NUMBER, it provides the reason of the End Of Life (see float manual for details).
 250;TECH_AUX;GPS time offset for BGC times;TECH_AUX_TIME_GpsTimeOffsetForBgcTimeAdj_seconds;GPS time offset used to adjust all BGC times of the cycle (it is the GPS time offset set before transmission of the previous cycle).
 251;TECH_AUX;Time offset for descending profile BGC times;TECH_AUX_TIME_DescProfTimeOffsetForBgcTimeAdj_seconds;Estimated time offset used to adjust descending profile BGC times.
 252;TECH_AUX;Time offset for ascending profile BGC times;TECH_AUX_TIME_AscProfTimeOffsetForBgcTimeAdj_seconds;Estimated time offset used to adjust ascending profile BGC times.
+261;TECH_AUX;;TECH_AUX_FLAG_IceAlgorithmActivated_LOGICAL;Was the Ice Algorithm  activated or not for this particular cycle? 0 = no, 1 = yes
+262;TECH_AUX;Hanging detection by ICE algorithm;TECH_AUX_CLOCK_IceHangingDetectionAlarm_YYYYMMDDHHMMSS;Alarm raised when Ice has been detected with a collision (float hanging).
+263;TECH_AUX;ISA detection by ICE algorithm;TECH_AUX_CLOCK_IceIsaDetectionAlarm_YYYYMMDDHHMMSS;Alarm raised when Ice has been detected with ISA algorithm.
+264;TECH_AUX;Ascent aborted by ICE algorithm because in breakup period;TECH_AUX_CLOCK_IceNoSurfacePeriod_YYYYMMDDHHMMSS;Alarm raised when the float is still not surfacing (even without Ice detection) due to Ice advoidance algorithm.
+265;TECH_AUX;Sat_mask detection by ICE algorithm;TECH_AUX_CLOCK_IceSatMaskDetectionAlarm_YYYYMMDDHHMMSS;Alarm raised when Ice has been detected with the satellite mask.
+266;TECH_AUX;Forced ascent;TECH_AUX_FLAG_IceForcedAscentAlarm_LOGICAL;Alarm raised when irrespective of other tests (e.g. ISA), the ice algorithm forced ascent to the surface.
+267;TECH_AUX;Forced ascent;TECH_AUX_CLOCK_IceForcedAscentAlarm_YYYYMMDDHHMMSS;Alarm raised when irrespective of other tests (e.g. ISA), the ice algorithm forced ascent to the surface.
+270;TECH_AUX;;TECH_AUX_CLOCK_IceProfileAbortAlarm_YYYYMMDDHHMMSS;Alarm raised when the profile has been aborted by Ice detection.
+268;TECH;Abort pressure;PRES_IceAvoidance_dbar;Pressure when float avoids ice
+249;TECH;Last 8 profiles aborted flags;FLAG_IceDetected_bit;aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit.
+269;TECH_AUX;Digest of ICE information;TECH_AUX_FLAG_IceAlgorithmStatus_bit;ICE information digest: 11 bits information with, from LSB to MSB: bit#1: Transmission flag (the float succeeded to reach the GPS or Iridium satellites), #2: ICE algorithm activated flag (the ICE algorithm is enabled and switched on), #3: ICE surface avoidance flag (the ICE algorithm is able to act on float behavior), #4: Aborted profile flag (the ICE algorithm aborted the ascending profile), #5: ISA flag (the result of ISA check), #6: Breakup period flag (the ascending profile occured during the breakup period), #7: Hanging flag (the ICE algorithm detected a float hanging), #8: Satellite mask flag (the ICE algorithm detected that the float tried but failed to reach the GPS or Iridium satellites constellations), #9: Forced ascent flag (the ascending profile was forced to try to reach the surface), #10: AC1 activated flag (the AC1 (PROVOR_IV float) feature is activated), #11: ICE cycle performed flag (the (Apex APF11) float used at least one ICE cycle after the ascending profile).

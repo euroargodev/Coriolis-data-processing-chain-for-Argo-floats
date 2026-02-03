@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/11/2013 - RNU - creation
@@ -23,6 +23,7 @@ function init_measurement_codes(varargin)
 global g_MC_FillValue;
 global g_MC_Launch;
 global g_MC_CycleStart;
+global g_MC_CycleStartBis;
 global g_MC_DST;
 global g_MC_PressureOffset
 global g_MC_MinPresInDriftAtParkSupportMeas;
@@ -61,9 +62,7 @@ global g_MC_SpyInAscProf;
 global g_MC_AscProf;
 global g_MC_MedianValueInAscProf;
 global g_MC_LastAscPumpedCtd;
-global g_MC_IceThermalDetectionTrue;
-global g_MC_IceBreakupDetectionFlag;
-global g_MC_IceAscentAbortNum;
+global g_MC_IceAscentAbort;
 global g_MC_ContinuousProfileStartOrStop;
 global g_MC_AET;
 global g_MC_AET_Float;
@@ -107,6 +106,7 @@ global g_RPP_STATUS_7;
 g_MC_FillValue = 99999;
 g_MC_Launch = 0;
 g_MC_CycleStart = 89;
+g_MC_CycleStartBis = 99; % for PFV2 floats Cycle Start Time is provided and differ from buoyancy adjustments performed before DST => we cannot use 100 - 11 = 89 for Cycle Start Time => we use 100 - 1 = 99
 g_MC_DST = 100;
 g_MC_PressureOffset = 101;
 g_MC_FST = 150;
@@ -144,11 +144,9 @@ g_MC_AscProfDeepestBin = 503;
 g_MC_SpyInAscProf = 589;
 g_MC_AscProf = 590;
 g_MC_MedianValueInAscProf = 595;
+g_MC_IceAscentAbort = 593; % ICE ascent aborted time (with pressure if available, with shallowest PRES measurement if not)
 g_MC_LastAscPumpedCtd = 599;
 g_MC_ContinuousProfileStartOrStop = 599; % for TRAJ_AUX of Apex APF11 iridium floats
-g_MC_IceThermalDetectionTrue = 599; % for TRAJ_AUX of Apex APF11 iridium floats
-g_MC_IceBreakupDetectionFlag = 599; % for TECH_AUX of Apex APF11 iridium floats
-g_MC_IceAscentAbortNum = 599; % for TECH_AUX of Apex APF11 iridium float
 g_MC_AET = 600;
 g_MC_AET_Float = 602;
 g_MC_SpyAtSurface = 689;

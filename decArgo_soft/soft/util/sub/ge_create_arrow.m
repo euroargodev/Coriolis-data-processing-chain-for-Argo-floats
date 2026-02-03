@@ -1,28 +1,28 @@
 % ------------------------------------------------------------------------------
-% Génération du code kml permettant de créer une flêche représentative d'un
-% déplacement.
+% GÃ©nÃ©ration du code kml permettant de crÃ©er une flÃªche reprÃ©sentative d'un
+% dÃ©placement.
 %
 % SYNTAX :
 %   [o_kmlStr] = ge_create_arrow(a_lonArrow, a_latArrow, a_description, ...
 %                a_curStyle, a_oldStyle, a_timeSpanStart, a_timeSpanEnd)
 %
 % INPUT PARAMETERS :
-%   a_lonArrow, a_latArrow : extrémités du déplacement
+%   a_lonArrow, a_latArrow : extrÃ©mitÃ©s du dÃ©placement
 %   a_description          : contenu du champ 'description'
-%   a_curStyle             : style (prédéfini) utilisé pour le déplacement
+%   a_curStyle             : style (prÃ©dÃ©fini) utilisÃ© pour le dÃ©placement
 %                            courant
-%   a_oldStyle             : style (prédéfini) utilisé pour l'historique du
-%                            déplacement
-%   a_timeSpanStart        : date de début d'affichage du déplacement
-%   a_timeSpanEnd          : date de fin d'affichage du déplacement
+%   a_oldStyle             : style (prÃ©dÃ©fini) utilisÃ© pour l'historique du
+%                            dÃ©placement
+%   a_timeSpanStart        : date de dÃ©but d'affichage du dÃ©placement
+%   a_timeSpanEnd          : date de fin d'affichage du dÃ©placement
 %
 % OUTPUT PARAMETERS :
-%   o_kmlStr : code kml généré
+%   o_kmlStr : code kml gÃ©nÃ©rÃ©
 %
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   21/01/2009 - RNU - creation
@@ -32,7 +32,7 @@ function [o_kmlStr] = ge_create_arrow(a_lonArrow, a_latArrow, a_description, ...
 
 o_kmlStr = [];
 
-% demi angle au sommet et hauteur des flêches figurant les déplacements
+% demi angle au sommet et hauteur des flÃªches figurant les dÃ©placements
 ALPHA_ARROW = 20;
 ALPHA_HEIGHT = 0.2;
 

@@ -11,7 +11,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/02/2010 - RNU - creation
@@ -27,6 +27,9 @@ global g_decArgo_decoderIdListNkeIridiumRbr;
 global g_decArgo_decoderIdListNkeIridiumNotDeep;
 global g_decArgo_decoderIdListNkeIridiumDeep;
 global g_decArgo_decoderIdListNkeIridium;
+global g_decArgo_decoderIdListNkePfv2IridiumSbd;
+global g_decArgo_decoderIdListNkePfv2IridiumRudics;
+global g_decArgo_decoderIdListNkePfv2Iridium;
 global g_decArgo_decoderIdListNkeCts4NotIce;
 global g_decArgo_decoderIdListNkeCts4Ice;
 global g_decArgo_decoderIdListNkeCts4;
@@ -69,11 +72,30 @@ global g_decArgo_provorCts5UseaFileTypeList;
 global g_decArgo_provorCts5OseanFileTypeListAll;
 global g_decArgo_provorCts5UseaFileTypeListAll;
 
+% lists of Arvor PFV2 RUDICS files
+global g_decArgo_arvorPfv2FileTypeListCopy;
+global g_decArgo_arvorPfv2ExtensionListRsync;
+
 % list of parameters that have an extra dimension (N_VALUESx)
 global g_decArgo_paramWithExtraDimList;
 
 % list of parameters that have at least one RTQC test
 global g_decArgo_paramWithRtqcTest;
+
+% NetCDF file compression information
+
+% generate NetCDF-4 flag for TRAJ_AUX file
+global g_decArgo_netCDF4FlagForTrajAux;
+global g_decArgo_netCDF4FlagForProfAux;
+global g_decArgo_netCDF4FlagForTechAux;
+global g_decArgo_netCDF4FlagForMetaAux;
+
+% deflate level to use (0 to 9)
+% a deflate level of 1 is recomended in "EXPERIENCE WITH AN ENHANCED NETCDF DATA
+% MODEL AND INTERFACE FOR SCIENTIFIC DATA ACCESS" where we can read "In our
+% tests we notice that setting the deflate higher than one takes more time, but
+% has little benefit."
+global g_decArgo_netCDFDeflateLevel;
 
 % global default values
 global g_decArgo_dateDef;
@@ -105,6 +127,8 @@ global g_decArgo_tPhaseDoxyCountsDef;
 global g_decArgo_c1C2PhaseDoxyCountsDef;
 global g_decArgo_phaseDelayDoxyCountsDef;
 global g_decArgo_tempDoxyCountsDef;
+global g_decArgo_doxyCountsDef;
+global g_decArgo_ledFlashingDoxyCountsDef;
 
 global g_decArgo_presDef;
 global g_decArgo_tempDef;
@@ -220,6 +244,11 @@ global g_decArgo_qcStrUnused1;
 global g_decArgo_qcStrUnused2;
 global g_decArgo_qcStrInterpolated;
 global g_decArgo_qcStrMissing;
+
+% CHLA range min/max for RTQC test 6 (global range test)
+% values set here because used in more that one function
+global g_decArgo_rtqcTest6ChlaMin;
+global g_decArgo_rtqcTest6ChlaMax;
 
 % max number of CTD samples in one NOVA sensor data packet
 global g_decArgo_maxCTDSampleInNovaDataPacket;
@@ -487,6 +516,17 @@ global g_decArgo_doxy_102_207_206_b2;
 global g_decArgo_doxy_102_207_206_b3;
 global g_decArgo_doxy_102_207_206_c0;
 
+global g_decArgo_doxy_301_210_401_d0;
+global g_decArgo_doxy_301_210_401_d1;
+global g_decArgo_doxy_301_210_401_d2;
+global g_decArgo_doxy_301_210_401_d3;
+global g_decArgo_doxy_301_210_401_sPreset;
+global g_decArgo_doxy_301_210_401_b0;
+global g_decArgo_doxy_301_210_401_b1;
+global g_decArgo_doxy_301_210_401_b2;
+global g_decArgo_doxy_301_210_401_b3;
+global g_decArgo_doxy_301_210_401_c0;
+
 % NITRATE coefficients
 global g_decArgo_nitrate_a;
 global g_decArgo_nitrate_b;
@@ -499,7 +539,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release
-g_decArgo_decoderVersion = '061a';
+g_decArgo_decoderVersion = '082m';
 
 % list of managed decoders
 
@@ -508,19 +548,25 @@ g_decArgo_decoderVersion = '061a';
 
 % all managed decoders
 g_decArgo_decoderIdListNkeArgos = [1, 3, 4, 11, 12, 17, 19, 24, 25, 27:32];
-g_decArgo_decoderIdListNkeIridiumRbr = [224 226];
-g_decArgo_decoderIdListNkeIridiumDeep = [201, 202, 203, 215, 216, 218, 221];
-g_decArgo_decoderIdListNkeIridiumNotDeep = setdiff([201:226], g_decArgo_decoderIdListNkeIridiumDeep);
+g_decArgo_decoderIdListNkeIridiumRbr = [224, 226, 227, 228, 229];
+g_decArgo_decoderIdListNkeIridiumDeep = [201, 202, 203, 215, 216, 218, 221, 228, 229, 230, 501];
+g_decArgo_decoderIdListNkeIridiumNotDeep = setdiff(201:232, g_decArgo_decoderIdListNkeIridiumDeep);
+g_decArgo_decoderIdListNkePfv2IridiumSbd = [401:402];
+g_decArgo_decoderIdListNkePfv2IridiumRudics = [403];
+g_decArgo_decoderIdListNkePfv2Iridium = [ ...
+   g_decArgo_decoderIdListNkePfv2IridiumSbd ...
+   g_decArgo_decoderIdListNkePfv2IridiumRudics];
 g_decArgo_decoderIdListNkeIridium = [ ...
    g_decArgo_decoderIdListNkeIridiumNotDeep ...
-   g_decArgo_decoderIdListNkeIridiumDeep];
+   g_decArgo_decoderIdListNkeIridiumDeep ...
+   g_decArgo_decoderIdListNkePfv2Iridium];
 g_decArgo_decoderIdListNkeCts4NotIce = [105, 106, 107, 109, 110, 112];
-g_decArgo_decoderIdListNkeCts4Ice = [111 113 114 115 116];
+g_decArgo_decoderIdListNkeCts4Ice = [111, 113, 114, 115, 116];
 g_decArgo_decoderIdListNkeCts4 = [ ...
    g_decArgo_decoderIdListNkeCts4NotIce ...
    g_decArgo_decoderIdListNkeCts4Ice];
 g_decArgo_decoderIdListNkeCts5Osean = [121:125];
-g_decArgo_decoderIdListNkeCts5Usea = [126:133];
+g_decArgo_decoderIdListNkeCts5Usea = [126:141];
 g_decArgo_decoderIdListNkeCts5 = [ ...
    g_decArgo_decoderIdListNkeCts5Osean ...
    g_decArgo_decoderIdListNkeCts5Usea ...
@@ -535,13 +581,13 @@ g_decArgo_decoderIdListNke = [ ...
    g_decArgo_decoderIdListNkeMisc];
 
 g_decArgo_decoderIdListApexApf9Argos = [1001:1016];
-g_decArgo_decoderIdListApexApf9IridiumRudics = [1101:1114];
+g_decArgo_decoderIdListApexApf9IridiumRudics = [1101:1115];
 g_decArgo_decoderIdListApexApf9IridiumSbd = [1314];
 g_decArgo_decoderIdListApexApf9Iridium = [ ...
    g_decArgo_decoderIdListApexApf9IridiumRudics ...
    g_decArgo_decoderIdListApexApf9IridiumSbd];
 g_decArgo_decoderIdListApexApf11Argos = [1021, 1022];
-g_decArgo_decoderIdListApexApf11IridiumRudics = [1121:1130];
+g_decArgo_decoderIdListApexApf11IridiumRudics = [1121:1132];
 g_decArgo_decoderIdListApexApf11IridiumSbd = [1321:1323];
 g_decArgo_decoderIdListApexApf11Iridium = [ ...
    g_decArgo_decoderIdListApexApf11IridiumRudics ...
@@ -577,6 +623,7 @@ g_decArgo_decoderIdListBgcFloatNKE = [ ...
    g_decArgo_decoderIdListNkeCts4 ...
    g_decArgo_decoderIdListNkeCts5 ...
    g_decArgo_decoderIdListNkeMisc ...
+   g_decArgo_decoderIdListNkePfv2Iridium ...
    ];
 g_decArgo_decoderIdListBgcFloatApex = g_decArgo_decoderIdListApexApf11Iridium;
 g_decArgo_decoderIdListBgcFloatAll = [ ...
@@ -653,6 +700,7 @@ g_decArgo_provorCts5OseanFileTypeListAll = [ ...
    {6} {'*_sbe41*.hex'} {'_%u_%u_sbe41'} {17} {'_%03d_%02d_sbe41*.hex'}; ...
    {7} {'*_payload*.bin'} {'_%u_%u_payload'} {19} {'_%03d_%02d_payload*.bin'}; ...
    %    {8} {'_system_*.hex'} {'_system_%u.hex'} {''}; ...
+   {10} {'_payload_*_*.xml'} {''} {[]} {''}; ...
    ];
 
 % FOR USEA
@@ -686,6 +734,8 @@ g_decArgo_provorCts5UseaFileTypeListRsync = [ ...
    {'_hydroc_m'} {'.hex'}; ... % CTS5-USEA
    {'_imu'} {'.hex'}; ... % CTS5-USEA
    {'_wave'} {'.hex'}; ... % CTS5-USEA
+   {'_pal'} {'.hex'}; ... % CTS5-USEA
+   {'_tridente'} {'.hex'}; ... % CTS5-USEA
    ];
 
 g_decArgo_provorCts5UseaFileTypeListCopy = [ ...
@@ -717,6 +767,8 @@ g_decArgo_provorCts5UseaFileTypeListCopy = [ ...
    {'*_hydroc_m*.hex'} ... % CTS5-USEA
    {'*_imu*.hex'} ... % CTS5-USEA
    {'*_wave*.hex'} ... % CTS5-USEA
+   {'*_pal*.hex'} ... % CTS5-USEA
+   {'*_tridente*.hex'} ... % CTS5-USEA
    ];
 
 g_decArgo_provorCts5UseaFileTypeList = [ ...
@@ -745,6 +797,8 @@ g_decArgo_provorCts5UseaFileTypeList = [ ...
    {'*_hydroc_m*.hex'} ... % CTS5-USEA
    {'*_imu*.hex'} ... % CTS5-USEA
    {'*_wave*.hex'} ... % CTS5-USEA
+   {'*_pal*.hex'} ... % CTS5-USEA
+   {'*_tridente*.hex'} ... % CTS5-USEA
    ];
 
 g_decArgo_provorCts5UseaFileTypeListAll = [ ...
@@ -772,6 +826,28 @@ g_decArgo_provorCts5UseaFileTypeListAll = [ ...
    {22} {'*_ramses2*.hex'} {'_%u_%u_ramses2'} {19} {'_%03d_%02d_ramses2*.hex'}; ...
    {23} {'*_imu*.hex'} {'_%u_%u_imu'} {15} {'_%03d_%02d_imu*.hex'}; ...
    {24} {'*_wave*.hex'} {'_%u_%u_wave'} {16} {'_%03d_%02d_wave*.hex'}; ...
+   {25} {'*_pal*.hex'} {'_%u_%u_pal'} {15} {'_%03d_%02d_pal*.hex'}; ...
+   {26} {'*_tridente*.hex'} {'_%u_%u_tridente'} {20} {'_%03d_%02d_tridente*.hex'}; ...
+   ];
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% lists of Arvor PFV2 RUDICS files
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+g_decArgo_arvorPfv2FileTypeListCopy = [ ...
+   {'*_*_setting*.xml*'} ...
+   {'*_*_selftest*.hex*'} ...
+   {'*_M*C*TEC*.hex*'} ...
+   {'*_M*C*EOL*.hex*'} ...
+   {'*_M*C*S*F*.hex*'} ...
+   ];
+
+g_decArgo_arvorPfv2ExtensionListRsync = [ ...
+   {'.hex.gz'} ...
+   {'.xml.gz'} ...
+   {'.txt.gz'} ...
    ];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -779,14 +855,17 @@ g_decArgo_provorCts5UseaFileTypeListAll = [ ...
 % list of parameters that have an extra dimension (N_VALUESx)
 g_decArgo_paramWithExtraDimList = [ ...
    {'UV_INTENSITY_NITRATE'} ...
-   {'UV_INTENSITY_FULL_NITRATE'} ...
-   {'UV_INTENSITY_BINNED_NITRATE'} ...
+   {'UV_INTENSITY_NITRATE_2'} ...
    {'NB_SIZE_SPECTRA_PARTICLES'} ...
    {'NB_SIZE_SPECTRA_PARTICLES_PER_IMAGE'} ...
    {'GREY_SIZE_SPECTRA_PARTICLES'} ...
    {'BLACK_NB_SIZE_SPECTRA_PARTICLES'} ...
    {'RAW_DOWNWELLING_IRRADIANCE'} ...
+   {'DOWN_IRRADIANCE_SPECTRUM'} ...
+   {'DOWN_IRRADIANCE_SPECTRUM_WAVELENGTHS'} ...
    {'RAW_UPWELLING_RADIANCE'} ...
+   {'UP_RADIANCE_SPECTRUM'} ...
+   {'UP_RADIANCE_SPECTRUM_WAVELENGTHS'} ...
    {'INDEX_CATEGORY'} ...
    {'ECOTAXA_CATEGORY_ID'} ...
    {'NB_OBJECT_CATEGORY'} ...
@@ -803,20 +882,27 @@ g_decArgo_paramWithExtraDimList = [ ...
 g_decArgo_paramWithRtqcTest = [ ...
    {'PRES'} ...
    {'PRES2'} ...
+   {'PRES_2'} ...
    {'TEMP'} ...
    {'TEMP2'} ...
+   {'TEMP_2'} ...
    {'PSAL'} ...
    {'PSAL2'} ...
+   {'PSAL_2'} ...
    {'CNDC'} ...
    {'TEMP_CNDC'} ...
    {'DOXY'} ...
    {'DOXY2'} ...
+   {'DOXY_2'} ...
    {'TEMP_DOXY'} ...
    {'TEMP_DOXY2'} ...
+   {'TEMP_DOXY_2'} ...
    {'CHLA'} ...
    {'CHLA2'} ...
+   {'CHLA_2'} ...
    {'CHLA_FLUORESCENCE'} ...
    {'CHLA_FLUORESCENCE2'} ...
+   {'CHLA_FLUORESCENCE_2'} ...
    {'BBP700'} ...
    {'PH_IN_SITU_TOTAL'} ...
    {'NITRATE'} ...
@@ -827,6 +913,23 @@ g_decArgo_paramWithRtqcTest = [ ...
    {'DOWN_IRRADIANCE665'} ...
    {'DOWNWELLING_PAR'} ...
    ];
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% NetCDF file compression information
+
+% generate NetCDF-4 flag for AUX files
+g_decArgo_netCDF4FlagForTrajAux = 1;
+g_decArgo_netCDF4FlagForProfAux = 1;
+g_decArgo_netCDF4FlagForTechAux = 1;
+g_decArgo_netCDF4FlagForMetaAux = 1;
+
+% deflate level to use (0 to 9)
+% a deflate level of 1 is recomended in "EXPERIENCE WITH AN ENHANCED NETCDF DATA
+% MODEL AND INTERFACE FOR SCIENTIFIC DATA ACCESS" where we can read "In our
+% tests we notice that setting the deflate higher than one takes more time, but
+% has little benefit."
+g_decArgo_netCDFDeflateLevel = 1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -860,6 +963,8 @@ g_decArgo_tPhaseDoxyCountsDef = 99999;
 g_decArgo_c1C2PhaseDoxyCountsDef = 99999;
 g_decArgo_phaseDelayDoxyCountsDef = 99999;
 g_decArgo_tempDoxyCountsDef = 99999;
+g_decArgo_doxyCountsDef = 99999;
+g_decArgo_ledFlashingDoxyCountsDef = 9999999999;
 
 g_decArgo_presDef = 9999.9;
 g_decArgo_tempDef = 99.999;
@@ -998,6 +1103,11 @@ g_decArgo_qcStrUnused1 = '6';
 g_decArgo_qcStrUnused2 = '7';
 g_decArgo_qcStrInterpolated = '8';
 g_decArgo_qcStrMissing = '9';
+
+% CHLA range min/max for RTQC test 6 (global range test)
+% values set here because used in more that one function
+g_decArgo_rtqcTest6ChlaMin = -0.2;
+g_decArgo_rtqcTest6ChlaMax = 100;
 
 % max number of CTD samples in one NOVA sensor data packet (340 bytes max)
 g_decArgo_maxCTDSampleInNovaDataPacket = 55;
@@ -1267,6 +1377,17 @@ g_decArgo_doxy_102_207_206_b1 = -0.00737614;
 g_decArgo_doxy_102_207_206_b2 = -0.00103410;
 g_decArgo_doxy_102_207_206_b3 = -0.00817083;
 g_decArgo_doxy_102_207_206_c0 = -0.000000488682;
+
+g_decArgo_doxy_301_210_401_d0 = 24.4543;
+g_decArgo_doxy_301_210_401_d1 = -67.4509;
+g_decArgo_doxy_301_210_401_d2 = -4.8489;
+g_decArgo_doxy_301_210_401_d3 = -5.44e-4;
+g_decArgo_doxy_301_210_401_sPreset = 0;
+g_decArgo_doxy_301_210_401_b0 = -6.24523e-3;
+g_decArgo_doxy_301_210_401_b1 = -7.37614e-3;
+g_decArgo_doxy_301_210_401_b2 = -1.03410e-2;
+g_decArgo_doxy_301_210_401_b3 = -8.17083e-3;
+g_decArgo_doxy_301_210_401_c0 = -4.88682e-7;
 
 % NITRATE coefficients
 g_decArgo_nitrate_a = 1.27353e-07;

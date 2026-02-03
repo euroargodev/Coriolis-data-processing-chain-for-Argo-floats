@@ -5,27 +5,28 @@
 % SYNTAX :
 %  generate_json_float_meta_prv_cts5_ir_rudics_( ...
 %    a_floatMetaFileName, a_sensorListFileName, a_floatListFileName, ...
-%    a_calibFileName, a_configDirName, a_sunaConfigDirName, ...
+%    a_calibFileName, a_configDirName, a_sunaConfigDirName, a_ramsesConfigDirName, ...
 %    a_outputDirName, a_logDirName, a_rtVersionFlag)
 %
 % INPUT PARAMETERS :
-%   a_floatMetaFileName  : meta-data file exported from Coriolis data base
-%   a_sensorListFileName : list of sensors mounted on floats
-%   a_floatListFileName  : list of concerned floats
-%   a_calibFileName      : list of calibration coefficient (retrieved from
-%                          decoded data)
-%   a_configDirName      : directory of float configuration at launch files
-%   a_sunaConfigDirName  : directory of SUNA configuration files
-%   a_outputDirName      : directory of individual json float meta-data files
-%   a_logDirName         : directory of log file
-%   a_rtVersionFlag      : 1 if it is the RT version of the tool, 0 otherwise
+%   a_floatMetaFileName   : meta-data file exported from Coriolis data base
+%   a_sensorListFileName  : list of sensors mounted on floats
+%   a_floatListFileName   : list of concerned floats
+%   a_calibFileName       : list of calibration coefficient (retrieved from
+%                           decoded data)
+%   a_configDirName       : directory of float configuration at launch files
+%   a_sunaConfigDirName   : directory of SUNA configuration files
+%   a_ramsesConfigDirName : directory of RAMSES configuration files
+%   a_outputDirName       : directory of individual json float meta-data files
+%   a_logDirName          : directory of log file
+%   a_rtVersionFlag       : 1 if it is the RT version of the tool, 0 otherwise
 %
 % OUTPUT PARAMETERS :
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/21/2017 - RNU - creation
@@ -33,7 +34,7 @@
 % ------------------------------------------------------------------------------
 function generate_json_float_meta_prv_cts5_ir_rudics_( ...
    a_floatMetaFileName, a_sensorListFileName, a_floatListFileName, ...
-   a_calibFileName, a_configDirName, a_sunaConfigDirName, ...
+   a_calibFileName, a_configDirName, a_sunaConfigDirName, a_ramsesConfigDirName, ...
    a_outputDirName, a_logDirName, a_rtVersionFlag)
 
 % report information structure
@@ -47,44 +48,44 @@ global g_cogj_csvFileCoefPathName;
 
 % check inputs
 fprintf('Generating json meta-data files from input file: \n FLOAT_META_FILE_NAME = %s\n', a_floatMetaFileName);
-
 if ~(exist(a_floatMetaFileName, 'file') == 2)
    fprintf('ERROR: Meta-data file not found: %s\n', a_floatMetaFileName);
    return
 end
 
 fprintf('Using sensor list from file: \n SENSOR_LIST_FILE_NAME = %s\n', a_sensorListFileName);
-
 if ~(exist(a_sensorListFileName, 'file') == 2)
    fprintf('ERROR: Sensor list file not found: %s\n', a_sensorListFileName);
    return
 end
 
 fprintf('Generating json meta-data files for floats of the list: \n FLOAT_LIST_FILE_NAME = %s\n', a_floatListFileName);
-
 if ~(exist(a_floatListFileName, 'file') == 2)
    fprintf('ERROR: Float file list not found: %s\n', a_floatListFileName);
    return
 end
 
 fprintf('Calibration coefficient file: \n CALIB_FILE_NAME = %s\n', a_calibFileName);
-
 if ~(exist(a_calibFileName, 'file') == 2)
    fprintf('ERROR: Float file list not found: %s\n', a_calibFileName);
    return
 end
 
 fprintf('Directory of float launch configuration files used: \n CONFIG_DIR_NAME = %s\n', a_configDirName);
-
 if ~(exist(a_configDirName, 'dir') == 7)
    fprintf('ERROR: Directory not found: %s\n', a_configDirName);
    return
 end
 
 fprintf('Directory of SUNA calibration files used: \n SUNA_CALIB_DIR_NAME = %s\n', a_sunaConfigDirName);
-
 if ~(exist(a_sunaConfigDirName, 'dir') == 7)
    fprintf('ERROR: Directory not found: %s\n', a_sunaConfigDirName);
+   return
+end
+
+fprintf('Directory of RAMSES calibration files used: \n RAMSES_CALIB_DIR_NAME = %s\n', a_ramsesConfigDirName);
+if ~(exist(a_ramsesConfigDirName, 'dir') == 7)
+   fprintf('ERROR: Directory not found: %s\n', a_ramsesConfigDirName);
    return
 end
 
@@ -207,14 +208,14 @@ for idFloat = 1:length(floatList)
       end
       metaBddStructValue = metaBddStruct.(metaBddStructField);
       if (~isempty(metaBddStructValue))
-         idF = find(strcmp(metaData(idForWmo, 5), metaBddStructValue) == 1, 1);
+         idF = find(strcmp(metaData(idForWmo, 5), metaBddStructValue), 1);
          if (~isempty(idF))
             metaStruct.(metaBddStructField) = metaData{idForWmo(idF), 4};
          else
-            if (~isempty(find(strcmp(mandatoryList1, metaBddStructField) == 1, 1)))
+            if (~isempty(find(strcmp(mandatoryList1, metaBddStructField), 1)))
                metaStruct.(metaBddStructField) = 'n/a';
                %                fprintf('Empty mandatory meta-data ''%s'' set to ''n/a''\n', metaBddStructValue);
-            elseif (~isempty(find(strcmp(mandatoryList2, metaBddStructField) == 1, 1)))
+            elseif (~isempty(find(strcmp(mandatoryList2, metaBddStructField), 1)))
                metaStruct.(metaBddStructField) = 'UNKNOWN';
             end
             if (strcmp(metaBddStructField, 'FLOAT_SERIAL_NO'))
@@ -237,7 +238,9 @@ for idFloat = 1:length(floatList)
    % check if the float version is concerned by this tool
    if (~ismember(dacFormatId, [ ...
          {'7.01'} {'7.02'} {'7.03'} {'7.04'} {'7.05'} ...
-         {'7.11'} {'7.12'} {'7.13'} {'7.14'} {'7.15'} {'7.16'} {'7.17'} {'7.18'}]))
+         {'7.11'} {'7.12'} {'7.13'} {'7.14'} {'7.15'} {'7.16'} {'7.17'} ...
+         {'7.18'} {'7.19'} {'7.20'} {'7.21'} {'7.22'} {'7.23'} {'7.24'} ...
+         {'7.25'} {'7.26'}]))
       fprintf('INFO: Float %d is not managed by this tool (DAC_FORMAT_ID (from PR_VERSION) : ''%s'')\n', ...
          floatNum, dacFormatId);
       continue
@@ -264,6 +267,7 @@ for idFloat = 1:length(floatList)
       {'SENSOR_MAKER'} ...
       {'SENSOR_MODEL'} ...
       {'SENSOR_SERIAL_NO'} ...
+      {'SENSOR_FIRMWARE_VERSION'} ...
       ];
    [metaStruct] = add_multi_dim_data( ...
       itemList, ...
@@ -326,15 +330,6 @@ for idFloat = 1:length(floatList)
       continue
    end
    
-   % PTT / IMEI specific processing
-   if (~isempty(metaStruct.IMEI))
-      metaStruct.PTT = '';
-      imei = metaStruct.IMEI;
-      if (length(imei) > 6)
-         metaStruct.PTT = imei(end-6:end-1);
-      end
-   end
-   
    % add the list of the sensor mounted on the float (because SENSOR variable is
    % not correctly filled yet), this list is used by the decoder to check the
    % expected data
@@ -352,10 +347,13 @@ for idFloat = 1:length(floatList)
    end
    metaStruct.SENSOR_MOUNTED_ON_FLOAT = sensorList;
    
-   % add the calibration coefficients for ECO3 and OCR sensors (coming from the
-   % calibFileName)
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % add the calibration coefficients for ECO3, ECO2 and OCR sensors (coming
+   % from the a_calibFileName file)
       
-   idF = find(strcmp(calibData(:, 1), num2str(floatNum)) == 1);
+   idF = find(strcmp(calibData(:, 1), num2str(floatNum)));
    dataStruct = [];
    for id = 1:length(idF)
       fieldName1 = calibData{idF(id), 2};
@@ -364,11 +362,15 @@ for idFloat = 1:length(floatList)
       dataStruct.(fieldName1).(fieldName2) = calibData{idF(id), 4};
    end
    metaStruct.CALIBRATION_COEFFICIENT = dataStruct;
-         
-   % add the calibration coefficients for OPTODE sensor (coming from the
-   % data base)
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % add the calibration coefficients for OPTODE sensor (coming from the data
+   % base)
+
    switch (dacFormatId)
-      case {'7.01', '7.02', '7.04', '7.11', '7.12', '7.13', '7.14', '7.15', '7.16', '7.17', '7.18'}
+      case {'7.01', '7.02', '7.04', '7.11', '7.12', '7.13', '7.14', '7.15', ...
+            '7.16', '7.17', '7.18', '7.19', '7.20', '7.21', '7.22', '7.23', ...
+            '7.24', '7.25', '7.26'}
          idF = find((strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_COEF_C', length('AANDERAA_OPTODE_COEF_C')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_PHASE_COEF_', length('AANDERAA_OPTODE_PHASE_COEF_')) == 1) | ...
             (strncmp(metaData(idForWmo, 5), 'AANDERAA_OPTODE_TEMP_COEF_', length('AANDERAA_OPTODE_TEMP_COEF_')) == 1));
@@ -420,9 +422,12 @@ for idFloat = 1:length(floatList)
             metaStruct.CALIBRATION_COEFFICIENT.OPTODE = calibDataDb;
          end         
    end
-   
-   % add the calibration information for SUNA sensor
-   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'SUNA') == 1))
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % add the calibration information for SUNA sensor (coming from dedicated
+   % files stored in a_sunaConfigDirName directory)
+
+   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'SUNA')))
       
       % find the SUNA calibration file
       files = dir([a_sunaConfigDirName '/' num2str(floatNum) '_*.cal']);
@@ -434,9 +439,9 @@ for idFloat = 1:length(floatList)
          sunaCalibFileName = [a_sunaConfigDirName '/' files(1).name];
          [creationDate, TEMP_CAL_NITRATE, ...
             OPTICAL_WAVELENGTH_UV, E_NITRATE, E_SWA_NITRATE, E_BISULFIDE, ...
-            UV_INTENSITY_REF_NITRATE] = read_suna_calib_file(sunaCalibFileName, dacFormatId);
+            UV_INTENSITY_REF_NITRATE] = read_suna_calib_file(sunaCalibFileName, dacFormatId, floatNum);
 
-         if (~isempty(creationDate))
+         if (~isempty(TEMP_CAL_NITRATE))
             
             sunaCalibData = [];
             sunaCalibData.TEMP_CAL_NITRATE = TEMP_CAL_NITRATE;
@@ -460,17 +465,19 @@ for idFloat = 1:length(floatList)
 
          end
       elseif (isempty(files))
-         fprintf('WARNING: SUNA calibration file is missing for float %d\n', ...
+         fprintf('ERROR: SUNA calibration file is missing for float %d\n', ...
             floatNum);
       else
-         fprintf('WARNING: many SUNA calibration files for float %d - ignored\n', ...
+         fprintf('ERROR: many SUNA calibration files for float %d - ignored\n', ...
             floatNum);
       end
-      
    end
    
-   % add the calibration information for TRANSISTOR_PH sensor
-   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'TRANSISTOR_PH') == 1))
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % add the calibration information for TRANSISTOR_PH sensor (coming from the
+   % data base)
+
+   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'TRANSISTOR_PH')))
       
       idF = find((strncmp(metaData(idForWmo, 5), 'SBE_TRANSISTOR_PH_', length('SBE_TRANSISTOR_PH_')) == 1));
       phCalibData = [];
@@ -493,8 +500,12 @@ for idFloat = 1:length(floatList)
       end
    end
    
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % add the calibration information for CROVER sensor (coming from the
+   % data base)
+
    % add the calibration information for CROVER sensor
-   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'CROVER') == 1))
+   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'CROVER')))
 
       croverCalibData = [];
       idF = find(strcmp(metaData(idForWmo, 5), 'Pathlength_CP660'));
@@ -514,6 +525,98 @@ for idFloat = 1:length(floatList)
       end
    end
 
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % add the calibration information for RAMSES_ACC sensor (coming from
+   % dedicated files stored in a_ramsesConfigDirName directory)
+   
+   ramsesAccCalibData = [];
+   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'RAMSES')))
+
+      dirs = dir([a_ramsesConfigDirName '/' num2str(floatNum) '_ACC_*']);
+      if (length(dirs) == 1)
+         floatRamsesConfigDirName = [a_ramsesConfigDirName '/' dirs.name];
+
+         [darkPixel, cisCoef, wavelength, back1, back2, calAq] = ...
+            read_ramses_calib_files(floatRamsesConfigDirName, floatNum);
+
+         ramsesAccCalibData.c0s = cisCoef.c0s;
+         ramsesAccCalibData.c1s = cisCoef.c1s;
+         ramsesAccCalibData.c2s = cisCoef.c2s;
+         ramsesAccCalibData.c3s = cisCoef.c3s;
+         ramsesAccCalibData.c4s = cisCoef.c4s;
+         ramsesAccCalibData.darkPixelBegin = darkPixel.begin;
+         ramsesAccCalibData.darkPixelEnd = darkPixel.end;
+         for id = 1:length(wavelength)
+            ramsesAccCalibData.(['WAVELENGTH_' num2str(id)]) = wavelength{id};
+         end
+         for id = 1:length(back1)
+            ramsesAccCalibData.(['BACK1_' num2str(id)]) = back1{id};
+         end
+         for id = 1:length(back2)
+            ramsesAccCalibData.(['BACK2_' num2str(id)]) = back2{id};
+         end
+         for id = 1:length(calAq)
+            ramsesAccCalibData.(['CAL_AQ_' num2str(id)]) = calAq{id};
+         end
+
+         metaStruct.CALIBRATION_COEFFICIENT.RAMSES = ramsesAccCalibData;
+
+      elseif (isempty(dirs))
+         fprintf('ERROR: RAMSES_ACC calibration directory is missing for float %d\n', ...
+            floatNum);
+      else
+         fprintf('ERROR: many RAMSES_ACC calibration directories for float %d - ignored\n', ...
+            floatNum);
+      end
+   end
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % add the calibration information for RAMSES_ARC sensor (coming from
+   % dedicated files stored in a_ramsesConfigDirName directory)
+
+   ramsesArcCalibData = [];
+   if (any(strcmp(metaStruct.SENSOR_MOUNTED_ON_FLOAT, 'RAMSES_ARC')))
+
+      dirs = dir([a_ramsesConfigDirName '/' num2str(floatNum) '_ARC_*']);
+      if (length(dirs) == 1)
+         floatRamsesConfigDirName = [a_ramsesConfigDirName '/' dirs.name];
+
+         [darkPixel, cisCoef, wavelength, back1, back2, calAq] = ...
+            read_ramses_calib_files(floatRamsesConfigDirName, floatNum);
+
+         ramsesArcCalibData.c0s = cisCoef.c0s;
+         ramsesArcCalibData.c1s = cisCoef.c1s;
+         ramsesArcCalibData.c2s = cisCoef.c2s;
+         ramsesArcCalibData.c3s = cisCoef.c3s;
+         ramsesArcCalibData.c4s = cisCoef.c4s;
+         ramsesArcCalibData.darkPixelBegin = darkPixel.begin;
+         ramsesArcCalibData.darkPixelEnd = darkPixel.end;
+         for id = 1:length(wavelength)
+            ramsesArcCalibData.(['WAVELENGTH_' num2str(id)]) = wavelength{id};
+         end
+         for id = 1:length(back1)
+            ramsesArcCalibData.(['BACK1_' num2str(id)]) = back1{id};
+         end
+         for id = 1:length(back2)
+            ramsesArcCalibData.(['BACK2_' num2str(id)]) = back2{id};
+         end
+         for id = 1:length(calAq)
+            ramsesArcCalibData.(['CAL_AQ_' num2str(id)]) = calAq{id};
+         end
+
+         metaStruct.CALIBRATION_COEFFICIENT.RAMSES_ARC = ramsesArcCalibData;
+
+      elseif (isempty(dirs))
+         fprintf('ERROR: RAMSES_ARC calibration directory is missing for float %d\n', ...
+            floatNum);
+      else
+         fprintf('ERROR: many RAMSES_ARC calibration directories for float %d - ignored\n', ...
+            floatNum);
+      end
+   end
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
    % configuration parameters
    
    % retrieve configuration names and values at launch from configuration
@@ -528,6 +631,8 @@ for idFloat = 1:length(floatList)
    % add static configuration parameters stored in the data base
 
    dbConfigParamNameCode = [ ...
+      {'CONFIG_IceGuardType_NUMBER'}       {'CONFIG_PX_0_0_0_0_3'}; ...
+      {'CONFIG_IceGuardHeightOffset_cm'}   {'CONFIG_PX_0_0_0_0_4'}; ...
       {'OPTODE_VERTICAL_PRES_OFFSET'}      {'CONFIG_PX_1_1_0_0_0'}; ...
       {'OPTODE_IN_AIR_MEASUREMENT'}        {'CONFIG_PX_1_1_0_0_7'}; ...
       {'OPTODE_TIME_PRESSURE_OFFSET'}      {'CONFIG_PX_1_1_0_0_8'}; ...
@@ -559,6 +664,10 @@ for idFloat = 1:length(floatList)
       {'RAMSES_ACC_VERTICAL_PRES_OFFSET'}  {'CONFIG_PX_1_11_0_0_0'}; ...
       {'RAMSES_ARC_VERTICAL_PRES_OFFSET'}  {'CONFIG_PX_1_12_0_0_0'}; ...
       {'MPE_VERTICAL_PRES_OFFSET'}         {'CONFIG_PX_1_13_0_0_0'}; ...
+      {'RAMSES_ACC_DARK_PIXEL_BEGIN'}      {'CONFIG_PX_1_11_0_0_1'}; ...
+      {'RAMSES_ACC_DARK_PIXEL_END'}        {'CONFIG_PX_1_11_0_0_2'}; ...
+      {'RAMSES_ARC_DARK_PIXEL_BEGIN'}      {'CONFIG_PX_1_12_0_0_1'}; ...
+      {'RAMSES_ARC_DARK_PIXEL_END'}        {'CONFIG_PX_1_12_0_0_2'}; ...
       ];
    
    dbConfigParamName = dbConfigParamNameCode(:, 1);
@@ -570,6 +679,26 @@ for idFloat = 1:length(floatList)
       if (~isempty(dbConfigParamNames))
          configParamNames = [configParamNames dbConfigParamNames'];
          configParamValues = [configParamValues dbConfigParamValues'];
+      elseif (strcmp(dbConfigParamName{idConfParam}, 'RAMSES_ACC_DARK_PIXEL_BEGIN'))
+         if (isfield(ramsesAccCalibData, 'darkPixelBegin') && ~isempty(ramsesAccCalibData.darkPixelBegin))
+            configParamNames = [configParamNames configParamCode{idConfParam}];
+            configParamValues = [configParamValues ramsesAccCalibData.darkPixelBegin];
+         end
+      elseif (strcmp(dbConfigParamName{idConfParam}, 'RAMSES_ACC_DARK_PIXEL_END'))
+         if (isfield(ramsesAccCalibData, 'darkPixelEnd') && ~isempty(ramsesAccCalibData.darkPixelEnd))
+            configParamNames = [configParamNames configParamCode{idConfParam}];
+            configParamValues = [configParamValues ramsesAccCalibData.darkPixelEnd];
+         end
+      elseif (strcmp(dbConfigParamName{idConfParam}, 'RAMSES_ARC_DARK_PIXEL_BEGIN'))
+         if (isfield(ramsesArcCalibData, 'darkPixelBegin') && ~isempty(ramsesArcCalibData.darkPixelBegin))
+            configParamNames = [configParamNames configParamCode{idConfParam}];
+            configParamValues = [configParamValues ramsesArcCalibData.darkPixelBegin];
+         end
+      elseif (strcmp(dbConfigParamName{idConfParam}, 'RAMSES_ARC_DARK_PIXEL_END'))
+         if (isfield(ramsesArcCalibData, 'darkPixelEnd') && ~isempty(ramsesArcCalibData.darkPixelEnd))
+            configParamNames = [configParamNames configParamCode{idConfParam}];
+            configParamValues = [configParamValues ramsesArcCalibData.darkPixelEnd];
+         end
       end
    end
    
@@ -583,7 +712,9 @@ for idFloat = 1:length(floatList)
    metaStruct.CONFIG_MISSION_NUMBER = {'0'};
    
    % for CTS5-USEA only
-   if (ismember(dacFormatId, [{'7.11'} {'7.12'} {'7.13'} {'7.14'} {'7.15'} {'7.16'} {'7.17'} {'7.18'}]))
+   if (ismember(dacFormatId, [{'7.11'}, {'7.12'}, {'7.13'}, {'7.14'}, {'7.15'}, ...
+         {'7.16'}, {'7.17'}, {'7.18'}, {'7.19'}, {'7.20'}, {'7.21'}, {'7.22'}, ...
+         {'7.23'}, {'7.24'}, {'7.25'}, {'7.26'}]))
       
       % remove unused sensors from configuration
       
@@ -601,7 +732,7 @@ for idFloat = 1:length(floatList)
             case 'OCR'
                sensorListNum = [sensorListNum 3];
                sensorListName = [sensorListName {'CONFIG_APMT_OCR_'}];
-            case {'ECO3', 'ECO2'}
+            case {'ECO3', 'ECO2', 'ECO_FLNTU'}
                sensorListNum = [sensorListNum 4];
                sensorListName = [sensorListName {'CONFIG_APMT_ECO_'}];
             case 'TRANSISTOR_PH'
@@ -634,6 +765,15 @@ for idFloat = 1:length(floatList)
             case 'RAMSES_ARC'
                sensorListNum = [sensorListNum 21];
                sensorListName = [sensorListName {'CONFIG_APMT_RAMSES_ARC_'}];
+            case 'PAL'
+               sensorListNum = [sensorListNum 23];
+               sensorListName = [sensorListName {'CONFIG_APMT_PAL_'}];
+            case 'TRIDENTE'
+               sensorListNum = [sensorListNum 24];
+               sensorListName = [sensorListName {'CONFIG_APMT_TRIDENTE_'}];
+            case 'TRIDENTE2'
+               sensorListNum = [sensorListNum 24];
+               sensorListName = [sensorListName {'CONFIG_APMT_TRIDENTE_'}];
             otherwise
                fprintf('ERROR: unknown sensor name (%s) for float %d\n', ...
                   sensorName, floatNum);
@@ -792,7 +932,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/21/2017 - RNU - creation
@@ -805,7 +945,7 @@ function [a_configParamNames, a_configParamValues] = get_conf_param( ...
 a_configParamNames = [];
 a_configParamValues = [];
 
-idF = find(strcmp(a_metaData(a_idForWmo, 5), a_dbName) == 1);
+idF = find(strcmp(a_metaData(a_idForWmo, 5), a_dbName));
 if (~isempty(idF))
    
    pattern = '<I>';
@@ -843,7 +983,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/21/2017 - RNU - creation
@@ -881,6 +1021,7 @@ o_metaStruct = struct( ...
    'CONTROLLER_BOARD_SERIAL_NO_PRIMARY', 'CONTROLLER_BOARD_SERIAL_NO_PRIMA', ...
    'CONTROLLER_BOARD_SERIAL_NO_SECONDARY', 'CONTROLLER_BOARD_SERIAL_NO_SECON', ...
    'SPECIAL_FEATURES', 'SPECIAL_FEATURES', ...
+   'PROGRAM_NAME', 'PROGRAM_NAME', ...
    'FLOAT_OWNER', 'FLOAT_OWNER', ...
    'OPERATING_INSTITUTION', 'OPERATING_INSTITUTION', ...
    'CUSTOMISATION', 'CUSTOMISATION', ...

@@ -14,12 +14,15 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/15/2014 - RNU - creation
 % ------------------------------------------------------------------------------
 function copy_iridium_mail_files(varargin)
+
+% directory to store the log file
+DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
 
 % mode processing flags
 global g_decArgo_realtimeFlag;
@@ -28,6 +31,10 @@ global g_decArgo_delayedModeFlag;
 % default values initialization
 init_default_values;
 
+
+logFile = [DIR_LOG_FILE '/' 'copy_iridium_mail_files_' datestr(now, 'yyyymmddTHHMMSSZ') '.log'];
+diary(logFile);
+tic;
 
 % configuration parameters
 configVar = [];
@@ -115,6 +122,15 @@ for idFloat = 1:nbFloats
          fprintf('%s => copy\n', mailFileName);
       end
    end
+   if (isempty(mailFile))
+      fprintf('ERROR: No mail for float %s (%s)\n', floatNumStr, imei);
+      beep
+   end
 end
+
+ellapsedTime = toc;
+fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
+
+diary off;
 
 return

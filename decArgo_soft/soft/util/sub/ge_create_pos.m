@@ -1,25 +1,25 @@
 % ------------------------------------------------------------------------------
-% Génération du code kml permettant de créer une position.
+% GÃ©nÃ©ration du code kml permettant de crÃ©er une position.
 %
 % SYNTAX :
 %   [o_kmlStr] = ge_create_pos(a_lon, a_lat, a_description, a_name, a_style,
 %                              a_timeSpanStart, a_timeSpanEnd)
 %
 % INPUT PARAMETERS :
-%   a_lon, a_lat    : coordonnées de la position
+%   a_lon, a_lat    : coordonnÃ©es de la position
 %   a_description   : contenu du champ 'description'
 %   a_name          : contenu du champ 'name'
-%   a_style         : style (prédéfini) utilisé pour la position
-%   a_timeSpanStart : date de début d'affichage de la position
+%   a_style         : style (prÃ©dÃ©fini) utilisÃ© pour la position
+%   a_timeSpanStart : date de dÃ©but d'affichage de la position
 %   a_timeSpanEnd   : date de fin d'affichage de la position
 %
 % OUTPUT PARAMETERS :
-%   o_kmlStr : code kml généré
+%   o_kmlStr : code kml gÃ©nÃ©rÃ©
 %
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/01/2009 - RNU - creation

@@ -34,7 +34,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/11/2016 - RNU - creation
@@ -635,7 +635,7 @@ for idL = 1:size(a_sensorData, 1)
       dataStruct.rawFormat = '%d';
       dataStruct.value = sensor_2_value_for_apex_apf9_temperature(decData(5), g_decArgo_tempDef);
       dataStruct.format = '%.3f';
-      dataStruct.unit = '캜';
+      dataStruct.unit = '째C';
       o_miscInfo{end+1} = dataStruct;
       
       dataStruct = get_apx_traj_data_init_struct(msgRed);
@@ -667,7 +667,7 @@ for idL = 1:size(a_sensorData, 1)
       dataStruct.rawFormat = '%d';
       dataStruct.value = sensor_2_value_for_apex_apf9_temperature(decData(8), g_decArgo_tempDef);
       dataStruct.format = '%.3f';
-      dataStruct.unit = '캜';
+      dataStruct.unit = '째C';
       o_miscInfo{end+1} = dataStruct;
 
       dataStruct = get_apx_traj_data_init_struct(msgRed);
@@ -715,7 +715,7 @@ for idL = 1:size(a_sensorData, 1)
       dataStruct.rawFormat = '%d';
       dataStruct.value = sensor_2_value_for_apex_apf9_temperature(decData(10), g_decArgo_tempDef);
       dataStruct.format = '%.3f';
-      dataStruct.unit = '캜';
+      dataStruct.unit = '째C';
       o_miscInfo{end+1} = dataStruct;
 
       dataStruct = get_apx_traj_data_init_struct(msgRed);
@@ -765,7 +765,7 @@ for idL = 1:size(a_sensorData, 1)
       dataStruct.rawFormat = '%d';
       dataStruct.value = sensor_2_value_for_apex_apf9_temperature(decData(12), g_decArgo_tempDef);
       dataStruct.format = '%.3f';
-      dataStruct.unit = '캜';
+      dataStruct.unit = '째C';
       o_miscInfo{end+1} = dataStruct;
       
       dataStruct = get_apx_traj_data_init_struct(msgRed);

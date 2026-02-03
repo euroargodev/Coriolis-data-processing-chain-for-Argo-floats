@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/07/2013 - RNU - creation
@@ -48,6 +48,7 @@ o_trajOneMeasStruct = struct( ...
    'ptsForDoxy', [], ... % to store PTS data used to compute DOXY
    'presOffset', '', ...
    'cyclePhase', -1, ...
-   'sensorNumber', -1);
+   'sensorNumber', -1, ...
+   'paramIdList', ''); % for TECH_AUX_TIME data of PFV2 floats
 
 return

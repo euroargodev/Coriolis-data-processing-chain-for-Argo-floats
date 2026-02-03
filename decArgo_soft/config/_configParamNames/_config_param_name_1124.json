@@ -798,5 +798,21 @@
       "CONF_PARAM_DEFINITION" : "n/a",
       "CONF_PARAM_NAME" : "CONFIG_SfetVerticalPressureOffset_dbar",
       "CONF_PARAM_DESCRIPTION" : "vertical pressure offset due to the fact that the sensor is not exactly at the Ctd pressure"
+   },
+   "CONF_PARAM_101" :
+   {
+      "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_11_0_0_1",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "n/a",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesAccDarkPixelBegin_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "First pixel used to compute average of background calibration coefficients over dark pixels for RAMSES_ACC sensor."
+   },
+   "CONF_PARAM_102" :
+   {
+      "CONF_PARAM_DEC_ID" : "CONFIG_PX_1_11_0_0_2",
+      "CONF_PARAM_LABEL" : "n/a",
+      "CONF_PARAM_DEFINITION" : "n/a",
+      "CONF_PARAM_NAME" : "CONFIG_AUX_RamsesAccDarkPixelEnd_NUMBER",
+      "CONF_PARAM_DESCRIPTION" : "Last pixel used to compute average of background calibration coefficients over dark pixels for RAMSES_ACC sensor."
    }
 }

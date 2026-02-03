@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -36,6 +36,9 @@ global g_decArgo_cycleNum;
 
 
 configMissionNumber = get_config_mission_number_ir_sbd(a_cycleNum);
+if (isempty(configMissionNumber))
+   return
+end
 idConf = find(g_decArgo_floatConfig.NUMBER == configMissionNumber);
 if (isempty(idConf))
    fprintf('WARNING: Float #%d Cycle #%d: config #%d is missing\n', ...

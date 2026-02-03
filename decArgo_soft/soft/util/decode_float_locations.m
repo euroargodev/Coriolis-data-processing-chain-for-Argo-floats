@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/19/2021 - RNU - creation: floats CTS4 not Ice, APF11 IR RUDICS, CTS3 5.75
@@ -36,11 +36,13 @@
 %                                    CTS4 Ice
 %   03/24/2022 - RNU - 2 rsync directories are available for PROVOR CTS5 floats
 %   07/08/2023 - RNU - added Apex APF9 Iridium Rudics floats
+%   06/20/2025 - RNU - added floats: Arvor PFV2 8.01
+%                                    Arvor PFV2 8.02
 % ------------------------------------------------------------------------------
 function decode_float_locations(varargin)
 
 % to switch between Coriolis and JPR configurations
-CORIOLIS_CONFIGURATION_FLAG = 1;
+CORIOLIS_CONFIGURATION_FLAG = 0;
 
 if (CORIOLIS_CONFIGURATION_FLAG)
 
@@ -109,7 +111,7 @@ if (CORIOLIS_CONFIGURATION_FLAG)
    % REMOCEAN SBD CONFIGURATION - START
 
    % rsync directory
-   DIR_INPUT_RSYNC_DATA_REMOCEAN_SBD = '/home/coriolis_exp/spool/co01/co0101/co010111/rsync/';
+   DIR_INPUT_RSYNC_DATA_REMOCEAN_SBD = '/home/coriolis_exp/spool/co01/co0101/co010115/archive/cycle/';
 
    % spool directory
    DIR_INPUT_SPOOL_DATA_REMOCEAN_SBD = '';
@@ -140,7 +142,7 @@ if (CORIOLIS_CONFIGURATION_FLAG)
 
    % rsync directory
    DIR_INPUT_RSYNC_DATA_CTS5_1 = '/home/coriolis_exp/spool/co01/co0101/co010115/archive/cycle/';
-   DIR_INPUT_RSYNC_DATA_CTS5_2 = '/home/coriolis_exp/spool/co01/co0101/co010111/rsync/';
+   DIR_INPUT_RSYNC_DATA_CTS5_2 = '/home/coriolis_exp/spool/co01/co0101/co010115/archive/cycle/';
 
    % spool directory
    DIR_INPUT_SPOOL_DATA_CTS5 = '';
@@ -172,19 +174,20 @@ else
 
    % maximum age of input files to consider (in hours)
    MAX_FILE_AGE_IN_HOUR = 10*365*24;
-   % MAX_FILE_AGE_IN_HOUR = 30*24;
+   MAX_FILE_AGE_IN_HOUR = 30*24;
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % IRIDIUM SBD CONFIGURATION - START
 
    % rsync directory
    DIR_INPUT_RSYNC_DATA_IRIDIUM_SBD = 'C:\Users\jprannou\_DATA\IN\RSYNC\CTS3\rsync_data\';
+   DIR_INPUT_RSYNC_DATA_IRIDIUM_SBD = 'C:\Users\jprannou\_DATA\TEST_FLOAT_RECOVERY\TEST_RSYNC\';
 
    % spool directory
-   DIR_INPUT_SPOOL_DATA_IRIDIUM_SBD = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\FLOAT_RECOVERY\TEST_SPOOL\';
+   DIR_INPUT_SPOOL_DATA_IRIDIUM_SBD = 'C:\Users\jprannou\_DATA\TEST_FLOAT_RECOVERY\TEST_SPOOL\';
 
    % directory to store duplicated mail files
-   DIR_OUTPUT_DATA_IRIDIUM_SBD = 'C:\Users\jprannou\_DATA\TEST\OUTPUT\';
+   DIR_OUTPUT_DATA_IRIDIUM_SBD = 'C:\Users\jprannou\_DATA\TEST_FLOAT_RECOVERY\OUTPUT\';
 
    % IRIDIUM SBD CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -196,10 +199,10 @@ else
    DIR_INPUT_RSYNC_DATA_APF9_RUDICS = 'C:\Users\jprannou\_DATA\IN\RSYNC\APEX_IR_RUDICS\rsync_data\';
 
    % spool directory
-   DIR_INPUT_SPOOL_DATA_APF9_RUDICS = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\FLOAT_RECOVERY\TEST_SPOOL\';
+   DIR_INPUT_SPOOL_DATA_APF9_RUDICS = 'C:\Users\jprannou\_DATA\TEST_FLOAT_RECOVERY\TEST_SPOOL_APF9\';
 
    % directory to store duplicated mail files
-   DIR_OUTPUT_DATA_APF9_RUDICS = 'C:\Users\jprannou\_DATA\TEST\OUTPUT\';
+   DIR_OUTPUT_DATA_APF9_RUDICS = 'C:\Users\jprannou\_DATA\TEST_FLOAT_RECOVERY\OUTPUT\';
 
    % APF9 RUDICS CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -214,7 +217,7 @@ else
    DIR_INPUT_SPOOL_DATA_APF11_RUDICS = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\FLOAT_RECOVERY\TEST_SPOOL\';
 
    % directory to store duplicated mail files
-   DIR_OUTPUT_DATA_APF11_RUDICS = 'C:\Users\jprannou\_DATA\TEST\OUTPUT\';
+   DIR_OUTPUT_DATA_APF11_RUDICS = 'C:\Users\jprannou\_DATA\TEST_FLOAT_RECOVERY\OUTPUT\';
 
    % APF11 RUDICS CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -229,7 +232,7 @@ else
    DIR_INPUT_SPOOL_DATA_REMOCEAN_SBD = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\FLOAT_RECOVERY\TEST_SPOOL\';
 
    % directory to store duplicated mail files
-   DIR_OUTPUT_DATA_REMOCEAN_SBD = 'C:\Users\jprannou\_DATA\TEST\OUTPUT\';
+   DIR_OUTPUT_DATA_REMOCEAN_SBD = 'C:\Users\jprannou\_DATA\TEST_FLOAT_RECOVERY\OUTPUT\';
 
    % REMOCEAN SBD CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -244,7 +247,7 @@ else
    DIR_INPUT_SPOOL_DATA_ATLANTOS_SBD = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\FLOAT_RECOVERY\TEST_SPOOL\';
 
    % directory to store duplicated mail files
-   DIR_OUTPUT_DATA_ATLANTOS_SBD = 'C:\Users\jprannou\_DATA\TEST\OUTPUT\';
+   DIR_OUTPUT_DATA_ATLANTOS_SBD = 'C:\Users\jprannou\_DATA\TEST_FLOAT_RECOVERY\OUTPUT\';
 
    % ATLANTOS SBD CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -260,7 +263,7 @@ else
    DIR_INPUT_SPOOL_DATA_CTS5 = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\FLOAT_RECOVERY\TEST_SPOOL\';
 
    % directory to store duplicated mail files
-   DIR_OUTPUT_DATA_CTS5 = 'C:\Users\jprannou\_DATA\TEST\OUTPUT\';
+   DIR_OUTPUT_DATA_CTS5 = 'C:\Users\jprannou\_DATA\TEST_FLOAT_RECOVERY\OUTPUT\';
 
    % PROVOR CTS5 CONFIGURATION - END
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -307,6 +310,11 @@ decIdManagedList = [ ...
    214 ... % Provor-ARN-DO-Ice Iridium 5.75
    225 ... % Provor-ARN-DO-Ice Iridium 5.76
    226 ... % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
+   227 ... % Arvor-ARN-Ice RBR 1 Hz + auto corrected PSAL Iridium 5.52
+   231 ... % Arvor-ARN-Ice SBE Iridium 5.53
+   232 ... % Arvor-ARN-Ice Iridium 5.54
+   401 ... % Arvor PFV2 8.01
+   402 ... % Arvor PFV2 8.02
    g_decArgo_decoderIdListNkeCts4 ... % all versions of Provor CTS4
    g_decArgo_decoderIdListNkeCts5 ... % all versions of Provor CTS5
    g_decArgo_decoderIdListApexApf11IridiumRudics ... % all versions of Apex APF11 Iridium Rudics
@@ -466,9 +474,10 @@ elseif (ismember(floatDecId, g_decArgo_decoderIdListNkeCts5))
 else
    switch (floatDecId)
       case {219, ...
-            210, 211, 212, 217, 222, 223, 224, 226, ...
+            210, 211, 212, 217, 222, 223, 224, 226, 227, 231, 232, ...
             203, 215, 218, 221, ...
-            213, 214, 225}
+            213, 214, 225, 230, ...
+            401, 402}
          duplicate_iridium_mail_files_float_to_recover( ...
             floatWmo, ...
             floatPtt, ...
@@ -496,10 +505,12 @@ elseif (ismember(floatDecId, g_decArgo_decoderIdListNkeCts5))
 else
    switch (floatDecId)
       case {219, ...
-            210, 211, 212, 217, 222, 223, 224, 226, ...
+            210, 211, 212, 217, 222, 223, 224, 226, 227, 231, 232, ...
             203, 215, 218, 221, ...
-            213, 214, 225}
+            213, 214, 225, 230}
          [decodedDataTab] = decode_float_location_iridium_sbd(floatDecId, floatWmo, floatPtt, DIR_OUTPUT_DATA_IRIDIUM_SBD);
+      case {401, 402}
+         [decodedDataTab] = decode_float_location_pfv2_iridium_sbd(floatDecId, floatWmo, floatPtt, DIR_OUTPUT_DATA_IRIDIUM_SBD);
    end
 end
 
@@ -565,7 +576,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/09/2021 - RNU - creation
@@ -626,7 +637,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/20/2021 - RNU - creation
@@ -716,7 +727,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/20/2021 - RNU - creation
@@ -819,7 +830,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/18/2022 - RNU - creation
@@ -909,7 +920,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/18/2022 - RNU - creation
@@ -1026,7 +1037,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/07/2023 - RNU - creation
@@ -1090,7 +1101,9 @@ for idFile = 1:length(fileNames)
    % parse msg file information
    [gpsLocDate, gpsLocLon, gpsLocLat, ...
       gpsLocNbSat, gpsLocAcqTime, ...
-      gpsLocFailedAcqTime, gpsLocFailedIce] = parse_apx_ir_gps_fix(gpsFixDataStr);
+      gpsLocFailedAcqTime, ...
+      gpsLocFailedIceEvasion, gpsLocFailedIceCap, gpsLocFailedIceBreakup] = ...
+      parse_apx_ir_gps_fix(gpsFixDataStr);
 
    % store GPS fixes
    for idFix = 1:length(gpsLocDate)
@@ -1134,7 +1147,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/20/2021 - RNU - creation
@@ -1188,6 +1201,238 @@ end
 return
 
 % ------------------------------------------------------------------------------
+% Decode GPS location for Arvor PFV2 Iridium SBD floats.
+%
+% SYNTAX :
+% function [o_decodedDataTab] = decode_float_location_pfv2_iridium_sbd(a_decoderId, ...
+%    a_floatNum, a_floatImei, a_inputFileDir)
+%
+% INPUT PARAMETERS :
+%   a_decoderId    : float decoder Id
+%   a_floatNum     : float WMO number
+%   a_floatImei    : float IMEI
+%   a_inputFileDir : top directory of files to be decoded
+%
+% OUTPUT PARAMETERS :
+%   o_decodedDataTab : GPS data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   06/20/2025 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_decodedDataTab] = decode_float_location_pfv2_iridium_sbd(a_decoderId, ...
+   a_floatNum, a_floatImei, a_inputFileDir)
+
+% output parameters initialization
+o_decodedDataTab = [];
+
+% default values
+global g_decArgo_janFirst1950InMatlab;
+
+% array to store Iridium mail contents
+global g_decArgo_iridiumMailData;
+g_decArgo_iridiumMailData = [];
+
+% current float WMO number
+global g_decArgo_floatNum;
+g_decArgo_floatNum = a_floatNum;
+
+% debug mode (to avoid creating float files from SBD)
+global g_decArgo_pfv2DebugMode
+g_decArgo_pfv2DebugMode = 0;
+
+
+% set useful directories
+floatIriDirName = [a_inputFileDir '/' num2str(a_floatImei) '_' num2str(a_floatNum) '/'];
+archiveDirectory = [floatIriDirName 'archive/'];
+archiveSbdDirectory = [floatIriDirName 'archive/sbd/'];
+if (exist(archiveSbdDirectory, 'dir') == 7)
+   rmdir(archiveSbdDirectory, 's');
+end
+mkdir(archiveSbdDirectory);
+archiveDataGzDirectory = [floatIriDirName 'archive/data_gz/'];
+if (exist(archiveDataGzDirectory, 'dir') == 7)
+   rmdir(archiveDataGzDirectory, 's');
+end
+mkdir(archiveDataGzDirectory);
+archiveDataDirectory = [floatIriDirName 'archive/data/'];
+if (exist(archiveDataDirectory, 'dir') == 7)
+   rmdir(archiveDataDirectory, 's');
+end
+mkdir(archiveDataDirectory);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% read email file, store Iridium information and extract attachment (SBD file)
+
+fileList = dir([archiveDirectory '*.txt']);
+
+fprintf('\nDEC_INFO: processing %d mail files\n', length(fileList));
+
+mailContentsTab = repmat(get_iridium_mail_init_struct(''), 1, length(fileList));
+cptMailCont = 1;
+tabMailFileName = cell(length(fileList), 1);
+tabMailFileDate = nan(length(fileList), 1);
+cptSbd = 1;
+for idF = 1:length(fileList)
+   mailFileName = fileList(idF).name;
+   mailFileDate = datenum([mailFileName(4:11) mailFileName(13:18)], 'yyyymmddHHMMSS') - g_decArgo_janFirst1950InMatlab;
+
+   % extract the attachement
+   [mailContents, attachmentFound] = read_mail_and_extract_attachment( ...
+      mailFileName, archiveDirectory, archiveSbdDirectory);
+   if (~isempty(mailContents))
+      mailContentsTab(cptMailCont) = mailContents;
+      cptMailCont = cptMailCont + 1;
+   end
+   if (attachmentFound == 0)
+      continue
+   end
+
+   % store mail file names and dates
+   tabMailFileName{cptSbd} = mailFileName;
+   tabMailFileDate(cptSbd) = mailFileDate;
+   cptSbd = cptSbd + 1;
+end
+mailContentsTab(cptMailCont:end) = [];
+g_decArgo_iridiumMailData = [g_decArgo_iridiumMailData mailContentsTab];
+tabMailFileName(cptSbd:end) = [];
+tabMailFileDate(cptSbd:end) = [];
+
+fprintf('DEC_INFO: %d sbd files received\n', cptSbd);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% create float files from SBD
+
+fprintf('\nDEC_INFO: generating float files\n');
+
+fileInfo = create_data_files_pfv2(tabMailFileName, tabMailFileDate, ...
+   archiveSbdDirectory, ...
+   archiveDataDirectory, archiveDataGzDirectory);
+
+if (isempty(fileInfo))
+   fprintf('DEC_INFO: Float #%d: No data\n', ...
+      a_floatNum);
+   rmdir(archiveSbdDirectory, 's');
+   rmdir(archiveDataGzDirectory, 's');
+   rmdir(archiveDataDirectory, 's');
+   return
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% decode float files
+
+o_decodedDataTab = decode_pfv2_data_file_location(fileInfo, a_decoderId, a_floatNum, archiveDataDirectory);
+
+% remove temporary directories
+rmdir(archiveSbdDirectory, 's');
+rmdir(archiveDataGzDirectory, 's');
+rmdir(archiveDataDirectory, 's');
+
+return
+
+% ------------------------------------------------------------------------------
+% Decode GPS location for Arvor PFV2 Iridium SBD floats.
+%
+% SYNTAX :
+% [o_decodedDataTab] = decode_pfv2_data_file_location(a_fileInfo, ...
+%   a_decoderId, a_floatNum, a_outputDataDirName)
+%
+% INPUT PARAMETERS :
+%   a_fileInfo          : float data files input information
+%   a_decoderId         : float decoder Id
+%   a_floatNum          : float WMO number
+%   a_outputDataDirName : name of output data file directory
+%
+% OUTPUT PARAMETERS :
+%   o_decodedDataTab : GPS data
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHORS  : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   06/20/2025 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_decodedDataTab] = decode_pfv2_data_file_location(a_fileInfo, ...
+   a_decoderId, a_floatNum, a_outputDataDirName)
+
+% output parameters initialization
+o_decodedDataTab = [];
+
+% FOLLOWING GLOBAL VARIABLES SET FOR decode_pfv2_tech_file - START
+
+% SBD sub-directories
+global g_decArgo_archiveDataDirectory;
+g_decArgo_archiveDataDirectory = a_outputDataDirName;
+
+% mission, loop and cycle management
+global g_decArgo_missionLoopCycle;
+g_decArgo_missionLoopCycle = get_pfv2_mission_loop_cycle_init_struct;
+
+% output CSV file Id
+global g_decArgo_outputCsvFileId;
+g_decArgo_outputCsvFileId = '';
+
+% unique counter for techTime.groupId
+global g_decArgo_tecTimeGroupCpt;
+g_decArgo_tecTimeGroupCpt = 0;
+
+% management of meta-data transmitted in TECH files
+global g_decArgo_metaFromTech
+g_decArgo_metaFromTech = get_pfv2_meta_from_tech_init_struct;
+
+% FOLLOWING GLOBAL VARIABLES SET FOR decode_pfv2_tech_file - STOP
+
+if (isempty(a_fileInfo))
+   return
+end
+
+floatFileList = a_fileInfo(:, 2);
+for idFile = 1:length(floatFileList)
+
+   fileName = floatFileList{idFile};
+
+   if (any(strfind(fileName,'_selftest.hex')))
+      fileTypeStr = 'SelfTest';
+   elseif (any(strfind(fileName,'_setting.xml')))
+      fileTypeStr = 'Config';
+   elseif (any(strfind(fileName,'_SBD_cmd.txt')))
+      fileTypeStr = 'Command';
+   elseif (any(strfind(fileName,'TEC')))
+      fileTypeStr = 'Tech';
+   elseif (any(strfind(fileName,'EOL')))
+      fileTypeStr = 'Eol';
+   else
+      fileTypeStr = 'DataMeas';
+   end
+
+   switch (fileTypeStr)
+
+      case {'SelfTest', 'Tech', 'Eol'}
+
+         techData = decode_pfv2_tech_file(fileName, a_decoderId);
+         if (~isempty(techData))
+            tabTechTraj = techData{8}; % tabTechTraj
+
+            if (~isempty(tabTechTraj))
+               locList = find([tabTechTraj.techId] == 700000);
+               for idL = 1:length(locList)
+                  o_decodedDataTab = [o_decodedDataTab; ...
+                     [tabTechTraj(locList(idL)).julD tabTechTraj(locList(idL)).lon tabTechTraj(locList(idL)).lat]];
+               end
+            end
+         end
+   end
+end
+
+return
+
+% ------------------------------------------------------------------------------
 % Decode GPS location for Arvor and Provor Iridium SBD floats.
 %
 % SYNTAX :
@@ -1205,7 +1450,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/20/2021 - RNU - creation
@@ -1276,7 +1521,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/20/2021 - RNU - creation
@@ -1623,9 +1868,10 @@ for idMsg = 1:size(sbdDataTab, 1)
             o_decodedData = [o_decodedData; [floatTime gpsLocLon gpsLocLat]];
 
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-         case {222, 223}
+         case {222, 223, 232}
             % Arvor-ARN-Ice Iridium 5.47
             % Arvor-ARN-DO-Ice Iridium 5.48
+            % Arvor-ARN-Ice Iridium 5.54
 
             % first item bit number
             firstBit = 1;
@@ -1675,9 +1921,11 @@ for idMsg = 1:size(sbdDataTab, 1)
             o_decodedData = [o_decodedData; [floatTime gpsLocLon gpsLocLat]];
 
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-         case {224, 226}
+         case {224, 226, 227, 231}
             % Arvor-ARN-Ice RBR Iridium 5.49
             % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
+            % Arvor-ARN-Ice RBR 1 Hz + auto corrected PSAL Iridium 5.52
+            % Arvor-ARN-Ice SBE Iridium 5.53
 
             % first item bit number
             firstBit = 1;
@@ -1886,8 +2134,9 @@ for idMsg = 1:size(sbdDataTab, 1)
             o_decodedData = [o_decodedData; [floatTime gpsLocLon gpsLocLat]];
 
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-         case {221}
+         case {221, 230}
             % Arvor-Deep-Ice Iridium 5.67
+            % Arvor-Deep-Ice Iridium 5.77 (2DO)
 
             % first item bit number
             firstBit = 1;

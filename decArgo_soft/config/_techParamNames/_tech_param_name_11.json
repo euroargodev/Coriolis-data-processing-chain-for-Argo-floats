@@ -422,5 +422,13 @@
       "TECH_PARAM_MSG_LABEL" : "Argos data file time span",
       "TECH_PARAM_NAME" : "TECH_AUX_TIME_ArgosReceivedDataTimeSpan_HHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Time difference between first and last Argos float messages assigned to the cycle."
+   },
+   "TECH_PARAM_54" :
+   {
+      "TECH_PARAM_DEC_ID" : "1010",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Pressure sensor offset (not sampled at the surface)",
+      "TECH_PARAM_NAME" : "TECH_AUX_PRES_OffsetNotSampledAtSurface_dbar",
+      "TECH_PARAM_DESCRIPTION" : "Pressure offset not necessarily sampled at the surface but originally used to correct PRES data provided by the float (copy of PRES_SurfaceOffsetCorrectedNotResetNegative_1dbarResolution_dbar in case of erroneous resetoffset)."
    }
 }

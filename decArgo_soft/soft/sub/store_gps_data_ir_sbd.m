@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/14/2014 - RNU - creation
@@ -67,37 +67,19 @@ if (~isempty(a_tabTech))
       for idP = 1:length(idPos)
          switch (a_decoderId)
             
-            case {201, 202, 203, 215, 216, 218, 221}
-               % Arvor-deep 4000
-               % Arvor-deep 3500
-               % Arvor-deep 4000 with "Near Surface" & "In Air" measurements
-               % Arvor-Deep-Ice Iridium 5.65 (IFREMER version)
-               % Arvor-Deep-Ice Iridium 5.66 (NKE version)
-               % Arvor-Deep-Ice Iridium 5.67
+            case {201, 202, 203, 215, 216, 218, 221, 228, 229, 230}
                gpsValidFlagFromTech = a_tabTech(idPos(idP), 59);
                eolFlag = min(eolFlag, a_tabTech(idPos(idP), 64));
 
             case {205, 204, 206, 207, 208, 209}
-               % Arvor Iridium 5.41 & 5.42 & 5.4
-               % Provor-DO Iridium 5.71 & 5.7 & 5.72
-               % Arvor-2DO Iridium 5.73
                gpsValidFlagFromTech = a_tabTech(idPos(idP), 74);
                % no EOL FLAG for these firmware versions
 
-            case {210, 211, 212, 222, 224, 223, 213, 214, 217, 225, 226}
-               % Arvor-ARN Iridium
-               % Arvor-ARN-Ice Iridium
-               % Arvor-ARN-Ice RBR Iridium 5.49
-               % Provor-ARN-DO Iridium 5.45 & 5.47
-               % Provor-ARN-DO-Ice Iridium 5.75
-               % Arvor-ARN-DO-Ice Iridium 5.46
-               % Provor-ARN-DO-Ice Iridium 5.76
-               % Arvor-ARN-Ice RBR 1 Hz Iridium 5.51
+            case {210, 211, 212, 222, 224, 223, 213, 214, 217, 225, 226, 227, 231, 232}
                gpsValidFlagFromTech = a_tabTech(idPos(idP), 62);
                eolFlag = min(eolFlag, a_tabTech(idPos(idP), 67));
 
             case {219, 220}
-               % Arvor-C 5.3 & 5.301
                gpsValidFlagFromTech = a_tabTech(idPos(idP), end-5);
                % no EOL FLAG for these firmware versions
 

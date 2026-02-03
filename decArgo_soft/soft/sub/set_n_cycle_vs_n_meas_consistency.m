@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/30/2017 - RNU - creation
@@ -307,8 +307,9 @@ for idNCy = 1:length(o_tabTrajNCycle)
          end
       end
    end
-
+   
    % check consistency for GROUNDED
+   idFNMeas = find([o_tabTrajNMeas.outputCycleNumber] == cycleNum);
    grdFlag = 0;
    for idNMeas = 1:length(idFNMeas)
       trajNMeas = o_tabTrajNMeas(idFNMeas(idNMeas));

@@ -1,19 +1,19 @@
 % ------------------------------------------------------------------------------
-% GÈnÈration d'un fichier GE de trajectoire d'un flotteur ‡ partir des donnÈes
+% G√©n√©ration d'un fichier GE de trajectoire d'un flotteur √† partir des donn√©es
 % du fichier _traj.nc.
 %
 % SYNTAX :
 %   ge_generate_traj_from_nc ou ge_generate_traj_from_nc(6900189, 7900118)
 %
 % INPUT PARAMETERS :
-%   varargin : Èventuellement la liste des numÈros de flotteurs ‡ traiter
+%   varargin : √©ventuellement la liste des num√©ros de flotteurs √† traiter
 %
 % OUTPUT PARAMETERS :
 %
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/01/2009 - RNU - creation
@@ -27,36 +27,36 @@ global g_MC_Surface;
 % default values initialization
 init_default_values;
 
-% initialisation des valeurs par dÈfaut
+% initialisation des valeurs par d√©faut
 init_valdef;
 
 % initialisation des MC
 init_measurement_codes;
 
 
-% flag d'exclusion des localisations Argos du fichier GE gÈnÈrÈ
+% flag d'exclusion des localisations Argos du fichier GE g√©n√©r√©
 ARGOS_LOC = 1;
 
-% liste des flotteurs ‡ considÈrer
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_apex_apf11_iridium-rudics_2.13.1.txt';
-FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_cts5_jumbo.txt';
+% liste des flotteurs √† consid√©rer
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_cts57.24_OGS_tridente_pal.txt';
 
-% rÈpertoire des fichiers NetCDF
+% r√©pertoire des fichiers NetCDF
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
 
-% rÈpertoire de production des fichier KML
+% r√©pertoire de production des fichier KML
 DIR_OUTPUT_KML_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
-% rÈpertoire de stockage des rÈpertoires temporaires
+% r√©pertoire de stockage des r√©pertoires temporaires
 DIR_TMP_FILES = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\';
 
 
-% convertion des dates julienes 1950 en dates grÈgoriennes
+% convertion des dates julienes 1950 en dates gr√©goriennes
 referenceDateStr = '1950-01-01 00:00:00';
 referenceDate = datenum(referenceDateStr, 'yyyy-mm-dd HH:MM:SS');
 
 if (nargin == 0)
-   % les flotteurs pris en compte sont ceux d'une liste prÈdÈfinie
+   % les flotteurs pris en compte sont ceux d'une liste pr√©d√©finie
    if (~exist(FLOAT_LIST_FILE_NAME, 'file'))
       fprintf('Fichier introuvable: %s\n', FLOAT_LIST_FILE_NAME);
       return
@@ -65,17 +65,17 @@ if (nargin == 0)
    fprintf('Flotteurs de la liste: %s\n', FLOAT_LIST_FILE_NAME);
    floatList = textread(FLOAT_LIST_FILE_NAME, '%d');
 else
-   % les flotteurs pris en compte sont ceux fournis en paramËtre
+   % les flotteurs pris en compte sont ceux fournis en param√®tre
    floatList = cell2mat(varargin);
 end
 
-% crÈation du rÈpertoire temporaire de stockage du code kml
+% cr√©ation du r√©pertoire temporaire de stockage du code kml
 ident = datestr(now, 'yyyymmddTHHMMSS');
 tmpDirName = [DIR_TMP_FILES sprintf('tmp%s', ident)];
 if (~exist(tmpDirName, 'dir'))
    mkdir(tmpDirName);
 else
-   fprintf('RÈpertoire temporaire (%s) existe dÈj‡: STOP\n', tmpDirName);
+   fprintf('R√©pertoire temporaire (%s) existe d√©j√†: STOP\n', tmpDirName);
    return
 end
 
@@ -84,7 +84,7 @@ outputTempLaunchFileName = [tmpDirName '/' 'ge_generate_traj_from_nc_LAUNCH'];
 outputTempLocFileName = [tmpDirName '/' 'ge_generate_traj_from_nc_LOC'];
 outputTempTrajFileName = [tmpDirName '/' 'ge_generate_traj_from_nc_TRAJ'];
 
-% crÈation et ouverture du fichier de sortie
+% cr√©ation et ouverture du fichier de sortie
 if (nargin == 0)
    [pathstr, name, ext] = fileparts(FLOAT_LIST_FILE_NAME);
    name = ['_' name];
@@ -98,11 +98,11 @@ outputFileName = [DIR_OUTPUT_KML_FILES kmlFileName];
 
 fidOut = fopen(outputFileName, 'wt');
 if (fidOut == -1)
-   fprintf('Impossible de crÈer le fichier %s\n', outputFileName);
+   fprintf('Impossible de cr√©er le fichier %s\n', outputFileName);
    return
 end
 
-% Ècriture de l'entÍte du fichier kml
+% √©criture de l'ent√™te du fichier kml
 description = 'Trajectory generated with traj.nc files contents';
 ge_put_header1(fidOut, description, kmlFileName);
 
@@ -119,7 +119,7 @@ for idFloat = 1:nbFloats
    fprintf('\n%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   % lecture du contenu du fichier de meta donnÈes
+   % lecture du contenu du fichier de meta donn√©es
    metaFileName = [DIR_INPUT_NC_FILES '/' floatNumStr '/' floatNumStr '_meta.nc'];
    
    if ~(exist(metaFileName, 'file') == 2)
@@ -149,10 +149,10 @@ for idFloat = 1:nbFloats
    idVal = find(strcmp('FORMAT_VERSION', metaData(1:2:end)) == 1, 1);
    metaFileFormatVersion = strtrim(metaData{2*idVal}');
    
-   % contrÙle de la version
+   % contr√¥le de la version
    if (~strcmp(metaFileFormatVersion, '3.1'))
       fprintf('\n');
-      fprintf('ERROR: Fichier de meta-donnÈes (%s) attendu en version 3.1 (mais FORMAT_VERSION = %s)\n', ...
+      fprintf('ERROR: Fichier de meta-donn√©es (%s) attendu en version 3.1 (mais FORMAT_VERSION = %s)\n', ...
          metaFileName, metaFileFormatVersion);
       return
    end   
@@ -202,7 +202,7 @@ for idFloat = 1:nbFloats
    idVal = find(strcmp('FORMAT_VERSION', trajData(1:2:end)) == 1, 1);
    formatVersion = strtrim(trajData{2*idVal}');
    
-   % contrÙle de la version
+   % contr√¥le de la version
    if (~ismember(formatVersion, [{'3.1'} {'3.2'}]))
       fprintf('\n');
       fprintf('ERROR: Fichier de trajectoire (%s) attendu en version 3.1 (mais FORMAT_VERSION = %s)\n', ...
@@ -239,7 +239,7 @@ for idFloat = 1:nbFloats
    juld(idF) = juldAdj(idF);
    juld(find(juld == 999999)) = g_dateDef;
 
-   % date de l‚cher
+   % date de l√¢cher
    launchDateJuld = g_dateDef;
    idF = find(measCode == g_MC_Launch);
    if (~isempty(idF))
@@ -261,8 +261,8 @@ for idFloat = 1:nbFloats
       positionQC = positionQC(idF);
    end
 
-   % sÈlection des cycles
-   % sÈlection des positions Argos de qualitÈ
+   % s√©lection des cycles
+   % s√©lection des positions Argos de qualit√©
 %    idGoodPos = find( ...
 %       (positionAccuracy == '1') | ...
 %       (positionAccuracy == '2') | ...
@@ -276,7 +276,7 @@ for idFloat = 1:nbFloats
 %    latitude = latitude(idGoodPos);
 %    positionAccuracy = positionAccuracy(idGoodPos);
 
-   % position de l‚cher du flotteur
+   % position de l√¢cher du flotteur
    if (launchDateJuld ~= g_dateDef)
       prevDate = launchDateJuld;
    else
@@ -407,10 +407,10 @@ for idFloat = 1:nbFloats
       9, '</Folder>', 10, ...
       ];
    
-   % sauvegarde temporaire du code kml gÈnÈrÈ
+   % sauvegarde temporaire du code kml g√©n√©r√©
    fidOutTmp = fopen([outputTempLaunchFileName floatNumStr '.tmp'], 'wt');
    if (fidOutTmp == -1)
-      fprintf('Impossible de crÈer le fichier %s\n', outputTempLaunchFileName);
+      fprintf('Impossible de cr√©er le fichier %s\n', outputTempLaunchFileName);
       return
    end
    fprintf(fidOutTmp, '%s', kmlStrLaunch);
@@ -419,7 +419,7 @@ for idFloat = 1:nbFloats
    if (ARGOS_LOC == 1)
       fidOutTmp = fopen([outputTempLocFileName floatNumStr '.tmp'], 'wt');
       if (fidOutTmp == -1)
-         fprintf('Impossible de crÈer le fichier %s\n', outputTempLocFileName);
+         fprintf('Impossible de cr√©er le fichier %s\n', outputTempLocFileName);
          return
       end
       fprintf(fidOutTmp, '%s', kmlStrLoc);
@@ -428,14 +428,14 @@ for idFloat = 1:nbFloats
 
    fidOutTmp = fopen([outputTempTrajFileName floatNumStr '.tmp'], 'wt');
    if (fidOutTmp == -1)
-      fprintf('Impossible de crÈer le fichier %s\n', outputTempTrajFileName);
+      fprintf('Impossible de cr√©er le fichier %s\n', outputTempTrajFileName);
       return
    end
    fprintf(fidOutTmp, '%s', kmlStrTraj);
    fclose(fidOutTmp);
 end
 
-% sauvegarde du code kml gÈnÈrÈ
+% sauvegarde du code kml g√©n√©r√©
 kmlStr = [ ...
    9, '<Folder>', 10, ...
    9, 9, '<name>floats launch postions</name>', 10, ...
@@ -446,7 +446,7 @@ for idFloat = 1:nbFloats
    outputTempFileName = [outputTempLaunchFileName floatNumStr '.tmp'];
    fidOutTmp = fopen(outputTempFileName, 'r');
    if (fidOutTmp == -1)
-      fprintf('Impossible de crÈer le fichier %s\n', outputTempFileName);
+      fprintf('Impossible de cr√©er le fichier %s\n', outputTempFileName);
       return
    end
    while 1
@@ -474,7 +474,7 @@ if (ARGOS_LOC == 1)
       outputTempFileName = [outputTempLocFileName floatNumStr '.tmp'];
       fidOutTmp = fopen(outputTempFileName, 'r');
       if (fidOutTmp == -1)
-         fprintf('Impossible de crÈer le fichier %s\n', outputTempFileName);
+         fprintf('Impossible de cr√©er le fichier %s\n', outputTempFileName);
          return
       end
       while 1
@@ -502,7 +502,7 @@ for idFloat = 1:nbFloats
    outputTempFileName = [outputTempTrajFileName floatNumStr '.tmp'];
    fidOutTmp = fopen(outputTempFileName, 'r');
    if (fidOutTmp == -1)
-      fprintf('Impossible de crÈer le fichier %s\n', outputTempFileName);
+      fprintf('Impossible de cr√©er le fichier %s\n', outputTempFileName);
       return
    end
    while 1
@@ -527,10 +527,10 @@ footer = [ ...
 fprintf(fidOut,'%s',footer);
 fclose(fidOut);
 
-% suppression du rÈpertoire temporaire
+% suppression du r√©pertoire temporaire
 rmdir(tmpDirName,'s');
 
-% crÈation du fichier kmz
+% cr√©ation du fichier kmz
 zip([DIR_OUTPUT_KML_FILES kmzFileName], [DIR_OUTPUT_KML_FILES kmlFileName]);
 delete([DIR_OUTPUT_KML_FILES kmlFileName]);
 move_file([DIR_OUTPUT_KML_FILES kmzFileName '.zip '], [DIR_OUTPUT_KML_FILES kmzFileName]);

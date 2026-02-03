@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/02/2020 - RNU - creation
@@ -34,14 +34,7 @@ end
 
 % finalize meta-data
 if (length(o_metaData) > length(a_metaData))
-   
-   idF1 = find(strcmp({o_metaData.metaConfigLabel}, 'CTD_MODEL'));
-   idF2 = find(strcmp({o_metaData.metaConfigLabel}, 'CTD_VERSION'));
-   if (~isempty(idF1) && ~isempty(idF2))
-      o_metaData(idF1).techParamValue = [ ...
-         o_metaData(idF1).techParamValue '_V' o_metaData(idF2).techParamValue];
-   end
-   
+      
    idF1 = find(strcmp({o_metaData.metaConfigLabel}, 'CTD_SERIAL_NUMBER'));
    if (~isempty(idF1))
       metaData = o_metaData(idF1);
@@ -184,7 +177,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/05/2018 - RNU - creation
@@ -273,8 +266,8 @@ if (~isempty(idF))
          if (isempty(idF3))
             metaData = get_apx_meta_data_init_struct(1);
             metaData.metaConfigLabel = 'CTD_VERSION';
-            metaData.techParamCode = 'SENSOR_VERSION';
-            metaData.techParamId = -1;
+            metaData.techParamCode = 'SENSOR_FIRMWARE_VERSION';
+            metaData.techParamId = 2608;
             metaData.techParamValue = value;
             o_metaData = [o_metaData metaData];
          else

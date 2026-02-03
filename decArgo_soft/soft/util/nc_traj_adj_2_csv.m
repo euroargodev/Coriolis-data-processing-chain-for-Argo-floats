@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/02/2015 - RNU - creation
@@ -22,10 +22,8 @@ function nc_traj_adj_2_csv(varargin)
 
 % top directory of the NetCDF files to convert
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo2\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo_rtqc\';
-% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\Conversion_en_3.1_20210913\IN\';
-
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\TRAJ_DM_2024\TRAJ_DM_2024_OUT\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\TRAJ_DM_2024\';
 
 % default list of floats to convert
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
@@ -136,7 +134,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/02/2015 - RNU - creation
@@ -163,9 +161,16 @@ if (~a_auxfileFlag)
       return
    end
 
-   formatVersion = str2double(netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'FORMAT_VERSION'))');
+   try
 
-   netcdf.close(fCdf);
+      formatVersion = str2double(netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'FORMAT_VERSION'))');
+
+      netcdf.close(fCdf);
+
+   catch MException
+      netcdf.close(fCdf);
+      rethrow(MException)
+   end
 
    if (formatVersion == 3.1)
 
@@ -215,7 +220,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/02/2015 - RNU - creation
@@ -294,11 +299,11 @@ for idParam = 1:length(nMeasData.paramNameList)
    else
       for id = 1:paramDataNbDim
          paramNames = [paramNames sprintf('; %s#%d', paramName, id)];
-         paramQcNames = [paramQcNames sprintf('; %s#%d', paramQcName, id)];
 
          paramFormat = nMeasData.paramDataFormat{idParam};
          paramFormats = [paramFormats '; ' paramFormat];
       end
+      paramQcNames = [paramQcNames sprintf('; %s', paramQcName)];
       paramQcFormats = [paramQcFormats '; %c'];
    end
 end
@@ -323,12 +328,12 @@ for idParam = 1:length(nMeasData.adjParamNameList)
    else
       for id = 1:adjParamDataNbDim
          adjParamNames = [adjParamNames sprintf('; %s#%d', adjParamName, id)];
-         adjParamQcNames = [adjParamQcNames sprintf('; %s#%d', adjParamQcName, id)];
 
          adjParamFormat = nMeasData.adjParamDataFormat{idParam};
          adjParamFormats = [adjParamFormats '; ' adjParamFormat];
-         adjParamQcFormats = [adjParamQcFormats '; %c'];
       end
+      adjParamQcNames = [adjParamQcNames sprintf('; %s', adjParamQcName)];
+      adjParamQcFormats = [adjParamQcFormats '; %c'];
    end
 end
 % end
@@ -729,7 +734,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/23/2021 - RNU - creation
@@ -1260,7 +1265,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/28/2021 - RNU - creation
@@ -1798,7 +1803,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/28/2021 - RNU - creation

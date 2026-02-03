@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/09/2019 - RNU - creation
@@ -62,8 +62,10 @@ if (a_cycleTimeData.cycleNum ~= 0)
             clockOffset2 = a_clockOffsetData.clockOffset(idF2);
             juldFloat2 = a_clockOffsetData.juldUtc(idF2) + clockOffset2/86400;
 
-            clockOffset = interp1q([juldFloat1; juldFloat2], [clockOffset1; clockOffset2], refTime);            
-            o_clockOffset = round(clockOffset); % clock offset rounded to 1 second
+            clockOffset = interp1q([juldFloat1; juldFloat2], [clockOffset1; clockOffset2], refTime);
+            if (~isnan(clockOffset))
+               o_clockOffset = round(clockOffset); % clock offset rounded to 1 second
+            end
          else
             fprintf('WARNING: Float #%d cycle #%d: cannot find a cycle timing to estimate clock offset\n', ...
                g_decArgo_floatNum, g_decArgo_cycleNum);

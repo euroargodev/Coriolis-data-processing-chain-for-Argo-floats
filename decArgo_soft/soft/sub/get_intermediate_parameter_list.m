@@ -2,7 +2,7 @@
 % Retrieve the list of intermediate parameters associated to a C or B parameter.
 %
 % SYNTAX :
- % [o_paramNameList] = get_intermediate_parameter_list(a_paramName)
+% [o_paramNameList] = get_intermediate_parameter_list(a_paramName)
 %
 % INPUT PARAMETERS :
 %   a_paramName : C or B parameter name
@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/15/2024 - RNU - creation
@@ -25,7 +25,7 @@ o_paramNameList = [];
 switch (a_paramName)
    case 'PRES'
       o_paramNameList = [{'MTIME'} {'PRES_MED'} {'NB_SAMPLE_CTD'}];
-   case 'PRES2'
+   case {'PRES2', 'PRES_2'}
       o_paramNameList = [{'MTIME'}];
    case 'TEMP'
       o_paramNameList = [{'TEMP_MED'} {'TEMP_STD'}];
@@ -37,11 +37,11 @@ switch (a_paramName)
       o_paramNameList = [{'BETA_BACKSCATTERING700'} {'BETA_BACKSCATTERING700_STD'} {'BETA_BACKSCATTERING700_MED'}];
    case 'CDOM'
       o_paramNameList = [{'FLUORESCENCE_CDOM'} {'FLUORESCENCE_CDOM_STD'} {'FLUORESCENCE_CDOM_MED'}];
-   case {'CHLA', 'CHLA2'}
+   case {'CHLA', 'CHLA2', 'CHLA_2'}
       o_paramNameList = [{'FLUORESCENCE_CHLA'} {'FLUORESCENCE_CHLA_STD'} {'FLUORESCENCE_CHLA_MED'} ...
          {'FLUORESCENCE_VOLTAGE_CHLA'} {'FLUORESCENCE_VOLTAGE_CHLA_STD'} {'FLUORESCENCE_VOLTAGE_CHLA_MED'} ...
          {'TEMP_CPU_CHLA'}];
-   case {'CHLA_FLUORESCENCE', 'CHLA_FLUORESCENCE2'}
+   case {'CHLA_FLUORESCENCE', 'CHLA_FLUORESCENCE2', 'CHLA_FLUORESCENCE_2'}
       o_paramNameList = [{'FLUORESCENCE_CHLA'}];
    case 'CHLA435'
       o_paramNameList = [{'FLUORESCENCE_CHLA435'} {'FLUORESCENCE_CHLA435_STD'} {'FLUORESCENCE_CHLA435_MED'} ];
@@ -71,19 +71,18 @@ switch (a_paramName)
    case 'DOWNWELLING_PAR'
       o_paramNameList = [{'RAW_DOWNWELLING_PAR'} {'RAW_DOWNWELLING_PAR_STD'} {'RAW_DOWNWELLING_PAR_MED'} ...
          {'VOLTAGE_DOWNWELLING_PAR'} {'TEMP_DOWNWELLING_PAR'}];
-   case {'DOXY', 'DOXY2'}
+   case {'DOXY', 'DOXY_2'}
       o_paramNameList = [ ...
          {'C1PHASE_DOXY'} {'C1PHASE_DOXY_STD'} {'C1PHASE_DOXY_MED'} ...
          {'C2PHASE_DOXY'} {'C2PHASE_DOXY_STD'} {'C2PHASE_DOXY_MED'} ...
-         {'TEMP_DOXY'} {'TEMP_DOXY2'} {'TEMP_DOXY_MED'} {'TEMP_DOXY_STD'} {'MOLAR_DOXY'} ...
+         {'TEMP_DOXY'} {'TEMP_DOXY2'} {'TEMP_DOXY_2'} {'TEMP_DOXY_MED'} {'TEMP_DOXY_STD'} {'MOLAR_DOXY'} ...
          {'TPHASE_DOXY'} {'RPHASE_DOXY'} {'DPHASE_DOXY'} {'DPHASE_DOXY_MED'} {'DPHASE_DOXY_STD'} ...
          {'BPHASE_DOXY'} {'PPOX_DOXY'} {'PHASE_DELAY_DOXY'} {'FREQUENCY_DOXY'}];
    case {'NITRATE', 'BISULFIDE'}
       o_paramNameList = [{'MOLAR_NITRATE'} {'UV_INTENSITY_NITRATE'} ...
          {'UV_INTENSITY_DARK_NITRATE'} {'UV_INTENSITY_DARK_NITRATE_STD'} {'FIT_ERROR_NITRATE'} ...
          {'TEMP_NITRATE'} {'TEMP_SPECTROPHOTOMETER_NITRATE'} {'HUMIDITY_NITRATE'} {'SPECTRUM_TYPE_NITRATE'} ...
-         {'AVERAGING_NITRATE'} {'BLACK_AVERAGING_NITRATE'} {'FLASH_COUNT_NITRATE'} {'BLACK_FLASH_COUNT_NITRATE'} ...
-         {'BLACK_TEMP_NITRATE'} {'UV_INTENSITY_FULL_NITRATE'} {'UV_INTENSITY_BINNED_NITRATE'} ...
+         {'AVERAGING_NITRATE'} {'FLASH_COUNT_NITRATE'} ...
          {'UV_INTENSITY_DARK_NITRATE_AVG'} {'UV_INTENSITY_DARK_NITRATE_SD'}];
    case 'PH_IN_SITU_TOTAL'
       o_paramNameList = [{'PH_IN_SITU_FREE'} {'VRS_PH'} {'VRS_PH_STD'} {'VRS_PH_MED'} ...

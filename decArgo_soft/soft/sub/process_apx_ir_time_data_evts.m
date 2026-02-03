@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -29,6 +29,12 @@ global g_decArgo_floatNum;
 
 % current cycle number
 global g_decArgo_cycleNum;
+
+% store Iridium connection information for ICE purposes
+global g_decArgo_irConnectForIce;
+
+% default values
+global g_decArgo_dateDef;
 
 
 errorHeader = '';
@@ -305,6 +311,85 @@ if (any(strcmp({a_events.cmd}, 'logout()')))
          if (isempty([idF{:}]))
             fprintf('DEC_INFO: %sNot managed information for ''%s'' cmd (from evts) ''%s'' - ignored\n', errorHeader, 'logout()', dataStr);
             continue
+         end
+      end
+   end
+end
+
+% manage Iridium connection for ICE purposes
+if (any(strcmp({a_events.cmd}, 'TelemetryInit()')) || any(strcmp({a_events.cmd}, 'TelemetryTerminate()')) || any(strcmp({a_events.cmd}, 'TelemetryTerminate(')))
+   
+   idEvts = find(strcmp({a_events.cmd}, 'TelemetryInit()'));
+   events = a_events(idEvts);
+   
+   PATTERN = 'Profile';
+
+   for idEv = 1:length(events)
+      dataStr = events(idEv).info;
+      if (isempty(strtrim(dataStr)))
+         continue
+      end
+      %    fprintf('''%s''\n', dataStr);
+      
+      if (any(strfind(dataStr, PATTERN)))
+         [val, count, errmsg, nextIndex] = sscanf(dataStr, 'Profile %d. (Apf9i FwRev: %d)');
+         if (~isempty(errmsg) || (count ~= 2))
+            fprintf('DEC_INFO: %sAnomaly detected while parsing TelemetryInit information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
+            continue
+         end
+
+         connectInfo = [];
+         connectInfo.initTime = events(idEv).time;
+         connectInfo.profileNum = val(1);
+         connectInfo.endTime = g_decArgo_dateDef;
+         connectInfo.endStatus = -1;
+         g_decArgo_irConnectForIce = [g_decArgo_irConnectForIce connectInfo];
+      end
+   end
+
+   idEvts = find(strcmp({a_events.cmd}, 'TelemetryTerminate()'));
+   if (isempty(idEvts))
+      idEvts = find(strcmp({a_events.cmd}, 'TelemetryTerminate('));
+   end
+   events = a_events(idEvts);
+   
+   PATTERN1 = 'Parsing new mission configuration.';
+   PATTERN2 = 'By-passing mission configuration.';
+
+   for idEv = 1:length(events)
+      dataStr = events(idEv).info;
+      if (isempty(strtrim(dataStr)))
+         continue
+      end
+      %    fprintf('''%s''\n', dataStr);
+      
+      if (any(strfind(dataStr, PATTERN1)))
+         if (~isempty(g_decArgo_irConnectForIce))
+
+            connectInfo = g_decArgo_irConnectForIce(end);
+            if (connectInfo.endTime == g_decArgo_dateDef)
+               connectInfo.endTime = events(idEv).time;
+               connectInfo.endStatus = 1;
+               g_decArgo_irConnectForIce(end) = connectInfo;
+            else
+               fprintf('DEC_ERROR: %sAnomaly detected while parsing TelemetryTerminate information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
+            end
+         else
+            fprintf('DEC_ERROR: %sAnomaly detected while parsing TelemetryTerminate information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
+         end
+      elseif (any(strfind(dataStr, PATTERN2)))
+         if (~isempty(g_decArgo_irConnectForIce))
+
+            connectInfo = g_decArgo_irConnectForIce(end);
+            if (connectInfo.endTime == g_decArgo_dateDef)
+               connectInfo.endTime = events(idEv).time;
+               connectInfo.endStatus = 0;
+               g_decArgo_irConnectForIce(end) = connectInfo;
+            else
+               fprintf('DEC_ERROR: %sAnomaly detected while parsing TelemetryTerminate information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
+            end
+         else
+            fprintf('DEC_ERROR: %sAnomaly detected while parsing TelemetryTerminate information (from evts) ''%s'' - ignored\n', errorHeader, dataStr);
          end
       end
    end

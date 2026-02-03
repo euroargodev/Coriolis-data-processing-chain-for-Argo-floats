@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/10/2015 - RNU - creation
@@ -22,9 +22,11 @@ function generate_json_float_meta_arvor_cm
 
 % meta-data file exported from Coriolis data base
 FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DB_export_ArvorCM_20220916.txt';
+FLOAT_META_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB\new_iridium_meta.txt';
 
 % list of sensors mounted on floats
 SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
+SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB\float_sensor_list.txt';
 
 % list of concerned floats
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_cm.txt';
@@ -34,6 +36,7 @@ CALIB_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS5\CTS5_float_con
 
 % directory of individual configuration commands report files
 CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_CTS4\meta_remocean_www\ConfigAtLaunch\ArvorCM\';
+CONFIG_DIR_NAME = 'C:\Users\jprannou\Desktop\SOS_VB\';
 
 % directory of individual json float meta-data files
 OUTPUT_DIR_NAME = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];
@@ -52,13 +55,15 @@ diary(logFileName);
 fprintf('Log file: %s\n', logFileName);
 
 % generate JSON meta-data files
+rtVersionFlag = 0;
 generate_json_float_meta_arvor_cm_(...
    FLOAT_META_FILE_NAME, ...
    SENSOR_LIST_FILE_NAME, ...
    FLOAT_LIST_FILE_NAME, ...
    CALIB_FILE_NAME, ...
    CONFIG_DIR_NAME, ...
-   OUTPUT_DIR_NAME);
+   OUTPUT_DIR_NAME, ...
+   rtVersionFlag);
 
 diary off;
 

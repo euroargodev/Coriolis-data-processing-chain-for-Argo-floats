@@ -27,7 +27,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -487,7 +487,7 @@ for idP = 1:length(payloadProfiles)
                case {g_decArgo_treatRaw, g_decArgo_treatAverage}
                   if (FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
                      payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
-                        {'PRES2'} {'TEMP2'} {'PSAL2'} ...
+                        {'PRES_2'} {'TEMP_2'} {'PSAL_2'} ...
                         {'TEMP_NITRATE'} {'TEMP_SPECTROPHOTOMETER_NITRATE'} {'HUMIDITY_NITRATE'} ...
                         {'UV_INTENSITY_DARK_NITRATE'} {'UV_INTENSITY_DARK_NITRATE_STD'} ...
                         {'MOLAR_NITRATE'} ...
@@ -498,7 +498,7 @@ for idP = 1:length(payloadProfiles)
                         size(payloadProfile.data, 2) - length(payloadProfile.paramNameDecArgo) + 1;
                   else
                      payloadProfile.paramNameDecArgo = {{'JULD'} {'PRES'} ...
-                        {'PRES2'} {'TEMP2'} {'PSAL2'} ...
+                        {'PRES_2'} {'TEMP_2'} {'PSAL_2'} ...
                         {'TEMP_NITRATE'} {'TEMP_SPECTROPHOTOMETER_NITRATE'} {'HUMIDITY_NITRATE'} ...
                         {'UV_INTENSITY_DARK_NITRATE'} {'UV_INTENSITY_DARK_NITRATE_STD'} ...
                         {'FIT_ERROR_NITRATE'} {'UV_INTENSITY_NITRATE'}};
@@ -523,7 +523,7 @@ for idP = 1:length(payloadProfiles)
          else
             if (FITLM_MATLAB_FUNCTION_NOT_AVAILABLE)
                payloadProfile.paramNameDecArgo = {{'JULD'} ...
-                  {'PRES2'} {'TEMP2'} {'PSAL2'} ...
+                  {'PRES_2'} {'TEMP_2'} {'PSAL_2'} ...
                   {'TEMP_NITRATE'} {'TEMP_SPECTROPHOTOMETER_NITRATE'} {'HUMIDITY_NITRATE'} ...
                   {'UV_INTENSITY_DARK_NITRATE'} {'UV_INTENSITY_DARK_NITRATE_STD'} ...
                   {'MOLAR_NITRATE'} ...
@@ -534,7 +534,7 @@ for idP = 1:length(payloadProfiles)
                   size(payloadProfile.data, 2) - length(payloadProfile.paramNameDecArgo) + 1;
             else
                payloadProfile.paramNameDecArgo = {{'JULD'} ...
-                  {'PRES2'} {'TEMP2'} {'PSAL2'} ...
+                  {'PRES_2'} {'TEMP_2'} {'PSAL_2'} ...
                   {'TEMP_NITRATE'} {'TEMP_SPECTROPHOTOMETER_NITRATE'} {'HUMIDITY_NITRATE'} ...
                   {'UV_INTENSITY_DARK_NITRATE'} {'UV_INTENSITY_DARK_NITRATE_STD'} ...
                   {'FIT_ERROR_NITRATE'} {'UV_INTENSITY_NITRATE'}};
@@ -920,7 +920,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -1007,7 +1007,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -1090,7 +1090,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/09/2017 - RNU - creation
@@ -1103,18 +1103,18 @@ o_tabProfiles = a_tabProfiles;
 
 % process SUNA profiles only
 if (a_tabProfiles.sensorNumber == 6)
-   idFPres2 = find(strcmp('PRES2', {a_tabProfiles.paramList.name}));
-   idFTemp2 = find(strcmp('TEMP2', {a_tabProfiles.paramList.name}));
-   idFPsal2 = find(strcmp('PSAL2', {a_tabProfiles.paramList.name}));
+   idFPres2 = find(strcmp('PRES_2', {a_tabProfiles.paramList.name}));
+   idFTemp2 = find(strcmp('TEMP_2', {a_tabProfiles.paramList.name}));
+   idFPsal2 = find(strcmp('PSAL_2', {a_tabProfiles.paramList.name}));
    if (~isempty(idFPres2) && ~isempty(idFTemp2) && ~isempty(idFPsal2))
       
-      % a profile with SUNA data excluding PRES2, TEMP2 and PSAL2
+      % a profile with SUNA data excluding PRES_2, TEMP_2 and PSAL_2
       profile1 = a_tabProfiles;
       profile1.paramList([idFPres2 idFTemp2 idFPsal2]) = [];
       profile1.paramNumberWithSubLevels = profile1.paramNumberWithSubLevels - 3;
       profile1.data(:, [idFPres2 idFTemp2 idFPsal2]) = [];
       
-      % a profile with only PRES2, TEMP2 and PSAL2
+      % a profile with only PRES_2, TEMP_2 and PSAL_2
       profile2 = a_tabProfiles;
       profile2.paramList = a_tabProfiles.paramList([idFPres2 idFTemp2 idFPsal2]);
       profile2.paramList(1).name = 'PRES';
@@ -1151,7 +1151,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -1228,7 +1228,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation

@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/16/2015 - RNU - creation
@@ -124,7 +124,7 @@ paramCbi = paramCbi(idSort);
 
 unusedParamList = [];
 for idP = 1:length(paramName)
-   paramStruct = get_netcdf_param_attributes_3_1(paramName{idP});
+   paramStruct = get_netcdf_param_attributes(paramName{idP});
    if (~isempty(paramStruct))
       if (~strcmp(paramLongName{idP}, paramStruct.longName) || ...
             ~strcmp(paramStandardName{idP}, paramStruct.standardName) || ...

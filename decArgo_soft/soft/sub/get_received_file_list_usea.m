@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -73,8 +73,10 @@ else
    % '_%03d_%02d_hydro_m*.hex'
    % '_%03d_%02d_imu*.hex'
    % '_%03d_%02d_wave*.hex'
+   % '_%03d_%02d_pal*.hex'
+   % '_%03d_%02d_tridente*.hex'
 
-   for idType = [1 4 6:24]
+   for idType = [1 4 6:26]
       idFL = find([g_decArgo_fileTypeListCts5{:, 1}] == idType);
       pattern = g_decArgo_fileTypeListCts5{idFL, 5};
       inputFiles = dir([g_decArgo_archiveDirectory '/' a_filePrefix sprintf(pattern, a_cyNum, a_ptnNum)]);

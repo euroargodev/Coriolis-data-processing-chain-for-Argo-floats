@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/11/2023 - RNU - creation
@@ -105,7 +105,7 @@ tic;
 % process the floats
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
-     
+
    floatNum = floatList(idFloat);
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
@@ -113,7 +113,7 @@ for idFloat = 1:nbFloats
    floatDir = [DIR_INPUT_NC_FILES '/' floatNumStr '/'];
 
    if (exist(floatDir, 'dir') == 7)
-      
+
       % META data file
       metaFileName = [floatDir '/' floatNumStr '_meta.nc'];
 
@@ -228,7 +228,7 @@ for idP = 1:length(g_resultAll.PARAM_LIST)
    fprintf('INFO: %s : %d/%d/%d - %.1f%%/%.1f%%\n', ...
       paramName, nbMeasLink, nbMeasLink0, nbProfMeas, (nbMeasLink*100)/nbProfMeas, (nbMeasLink0*100)/nbProfMeas);
 end
-   
+
 ellapsedTime = toc;
 fprintf('done (Elapsed time is %.1f seconds)\n', ellapsedTime);
 
@@ -265,7 +265,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/11/2023 - RNU - creation
@@ -300,7 +300,7 @@ for idParam = 1:length(paramList)
    % end
 
    paramInfo = get_netcdf_param_attributes(paramName);
-   
+
    sData = sProfData.(paramName);
    sPres = sProfData.PRES;
    sDPres = sProfData.([paramName '_dPRES']);
@@ -316,7 +316,7 @@ for idParam = 1:length(paramList)
       % offset should not be used, use a vertical offset of 0
       % this should not happen in a BGC float where DOXY2 is provided on its own
       % N_PROF
-      if (strcmp(paramName, 'DOXY2') && (size(profData, 2) == 2))
+      if (strcmp(paramName, 'DOXY_2') && (size(profData, 2) == 2))
          profPresOffset = zeros(size(profPresOffset));
       end
    else
@@ -327,10 +327,6 @@ for idParam = 1:length(paramList)
 
    idNoDefS = find(sData ~= paramInfo.fillValue);
    for idL1 = idNoDefS'
-
-      % if (idL1 == 1372)
-      %    a=1
-      % end
 
       sDataVal = sData(idL1);
       sPresVal = round(double(sPres(idL1))*1000)/1000;
@@ -362,9 +358,6 @@ for idParam = 1:length(paramList)
 
          idNoDef = find(profIdData ~= paramInfo.fillValue);
          for idL2 = idNoDef'
-            % if (idL2 == 226)
-            %    a=1
-            % end
             if (sDPresVal == 0)
                if ((profIdData(idL2) == sDataVal) && (profIdPres(idL2) == sPresValComp))
                   link(idL1, 3) = idProf;
@@ -440,7 +433,7 @@ return
 % the concerned profile number.
 %
 % SYNTAX :
- % [o_bProfData] = get_vertical_offset(a_metaFileName, a_bProfData)
+% [o_bProfData] = get_vertical_offset(a_metaFileName, a_bProfData)
 %
 % INPUT PARAMETERS :
 %   a_metaFileName : meta-data file path name
@@ -452,7 +445,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/11/2023 - RNU - creation
@@ -600,7 +593,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/11/2023 - RNU - creation
@@ -678,94 +671,6 @@ o_profData.PARAM_LIST = unique(parameterList2, 'stable');
 o_profData.PARAM_LIST = parameterList;
 for idP = 1:2:length(profData2)
    o_profData.(profData2{idP}) = profData2{idP+1};
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   06/15/2018 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         %          fprintf('WARNING: Variable %s not present in file : %s\n', ...
-         %             varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {' '}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Get data from name in a {var_name}/{var_data} list.
-%
-% SYNTAX :
-%  [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
-%
-% INPUT PARAMETERS :
-%   a_dataName : name of the data to retrieve
-%   a_dataList : {var_name}/{var_data} list
-%
-% OUTPUT PARAMETERS :
-%   o_dataValues : concerned data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   06/15/2018 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
-
-% output parameters initialization
-o_dataValues = [];
-
-idVal = find(strcmp(a_dataName, a_dataList(1:2:end)) == 1, 1);
-if (~isempty(idVal))
-   o_dataValues = a_dataList{2*idVal};
 end
 
 return

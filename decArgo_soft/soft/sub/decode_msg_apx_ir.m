@@ -6,7 +6,7 @@
 %    o_pMarkData, o_driftData, o_parkData, o_parkDataEng, ...
 %    o_profLrData, o_profHrData, o_profEndDate, ...
 %    o_nearSurfData, o_surfDataBladderDeflated, o_surfDataBladderInflated, o_surfData, ...
-%    o_gpsData, o_gpsInfo, ...
+%    o_gpsData, o_gpsInfo, o_iceDetection, ...
 %    o_presOffsetData] = ...
 %    decode_msg_apx_ir(a_msgFileList, a_presOffsetData, a_decoderId)
 %
@@ -33,12 +33,13 @@
 %   o_surfData                : surface data from engineering data
 %   o_gpsData                 : GPS data
 %   o_gpsInfo                 : GPS information
+%   o_iceDetection            : ice detection data
 %   o_presOffsetData          : updated pressure offset information
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -47,7 +48,7 @@ function [o_miscInfo, o_configInfo, o_techInfo, o_techData, ...
    o_pMarkData, o_driftData, o_parkData, o_parkDataEng, ...
    o_profLrData, o_profHrData, o_profEndDate, ...
    o_nearSurfData, o_surfDataBladderDeflated, o_surfDataBladderInflated, o_surfData, ...
-   o_gpsData, o_gpsInfo, ...
+   o_gpsData, o_gpsInfo, o_iceDetection, ...
    o_presOffsetData] = ...
    decode_msg_apx_ir(a_msgFileList, a_presOffsetData, a_decoderId)
 
@@ -69,6 +70,7 @@ o_surfDataBladderInflated = [];
 o_surfData = [];
 o_gpsData = [];
 o_gpsInfo = [];
+o_iceDetection = [];
 o_presOffsetData = a_presOffsetData;
 
 % current float WMO number
@@ -239,14 +241,34 @@ for idFile = 1:length(a_msgFileList)
             o_miscInfo{end+1} = dataStruct;
          end
       end
-      if (~isempty(o_gpsInfo.FailedIce))
-         info = o_gpsInfo.FailedIce;
+      if (~isempty(o_gpsInfo.FailedIceEvasion))
+         info = o_gpsInfo.FailedIceEvasion;
          for id = 1:length(info)
-            dataStruct = get_apx_misc_data_init_struct('Gps', [], [], []);
+            dataStruct = get_apx_misc_data_init_struct('Ice(msg)', [], [], []);
             dataStruct.label = 'Ice evasion initiated at';
             dataStruct.value = info{id};
             dataStruct.format = '%f';
             dataStruct.unit = 'dbar';
+            o_miscInfo{end+1} = dataStruct;
+         end
+      end
+      if (~isempty(o_gpsInfo.FailedIceCap))
+         info = o_gpsInfo.FailedIceCap;
+         for id = 1:length(info)
+            dataStruct = get_apx_misc_data_init_struct('Ice(msg)', [], [], []);
+            dataStruct.label = 'Ice cap evasion initiated';
+            dataStruct.value = 1;
+            dataStruct.format = '%d';
+            o_miscInfo{end+1} = dataStruct;
+         end
+      end
+      if (~isempty(o_gpsInfo.FailedIceBreakup))
+         info = o_gpsInfo.FailedIceBreakup;
+         for id = 1:length(info)
+            dataStruct = get_apx_misc_data_init_struct('Ice(msg)', [], [], []);
+            dataStruct.label = 'Leads or break-up of surface ice detected';
+            dataStruct.value = 1;
+            dataStruct.format = '%d';
             o_miscInfo{end+1} = dataStruct;
          end
       end
@@ -281,5 +303,41 @@ for idFile = 1:length(a_msgFileList)
       end
    end
 end
+
+if (~isempty(o_techData))
+
+   iceDetection = get_ice_detection_apx_ir_init_struct;
+
+   techDataAll = [o_techData{:}];
+   idF = find([techDataAll.techId] == 1041); % if present means that it has not been previously removed thus ICE information not in .log file
+   if (~isempty(idF))
+      % IceMLMedianT
+      if (str2double(o_techData{idF(1)}.value) < realmax("single"))
+         iceDetection.evasionMlt = str2double(o_techData{idF(1)}.value);
+         iceDetection.notEmptyFlag = 1;
+      end
+   end
+   idF = find([techDataAll.techId] == 1046);
+   if (~isempty(idF))
+      % Ice evasion initiated at P
+      iceDetection.evasionPerigeePres = str2double(o_techData{idF(1)}.value);
+      iceDetection.notEmptyFlag = 1;
+   end
+
+   % add ICE information present only in .msg file
+   if (any([techDataAll.techId] == 1047))
+      % sat_mask detected
+      iceDetection.satmaskFlag = 1;
+      iceDetection.notEmptyFlag = 1;
+   end
+   if (any([techDataAll.techId] == 1048))
+      % sat_mask detected
+      iceDetection.breakupFlag = 1;
+      iceDetection.notEmptyFlag = 1;
+   end
+
+   o_iceDetection = iceDetection;
+end
+
 
 return

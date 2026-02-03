@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/16/2013 - RNU - creation
@@ -31,8 +31,11 @@ for idFile = 1:length(a_fileNameleList)
       [id, count, errmsg, nextIndex] = sscanf(fileName, '%d_%d_%10c_%d.b64');
    else
       [id, count, errmsg, nextIndex] = sscanf(fileName, '%d_%d_%10c_%d.bin');
+      if (~isempty(errmsg))
+         [id, count, errmsg, nextIndex] = sscanf(fileName, '%d_%d_%9c_%d.bin');
+      end
    end
-   if (isempty(errmsg))
+   if (isempty(errmsg) && (count == 4))
       o_cyNumList(end+1) = id(end);
    end
 end

@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/26/2019 - RNU - creation
@@ -186,7 +186,7 @@ diary off;
 return
 
 % ------------------------------------------------------------------------------
-% Initialisation des valeurs des flags utilisés dans le format DEP.
+% Initialisation des valeurs des flags utilisÃ©s dans le format DEP.
 %
 % SYNTAX :
 %   init_valflag
@@ -198,7 +198,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   13/05/2007 - RNU - creation
@@ -374,7 +374,7 @@ g_dateFlagModifProg = 6;
 g_dateFlagAddNeedClockDriftCor = 10;
 g_dateFlagAddClockDriftLaunchCor = 20;
 g_dateFlagAddClockDriftCor = 40;
-g_dateFlagAddDoubtfulDate = 80; %uniquement utilisée dans les DEP2
+g_dateFlagAddDoubtfulDate = 80; %uniquement utilisÃ©e dans les DEP2
 
 g_posDef = 99;
 g_posLacher = 0;
@@ -420,7 +420,7 @@ g_rppQcMinMax = 5;
 g_rppQcMetaNoCy = 6;
 g_rppQcMetaNoMeas = 7;
 
-% date utilisée pour effectuer la limitation temporelle du jeu de données
+% date utilisÃ©e pour effectuer la limitation temporelle du jeu de donnÃ©es
 g_dataSetEndDate = '2013/04/15 00:00:00'; % pour ANDRO 2013
 % g_dataSetEndDate = '2013/11/15 00:00:00'; % pour misc andro 2013 (APEX IR)
 % g_dataSetEndDate = '2009/01/01 00:00:00';
@@ -434,7 +434,7 @@ g_bounceProfMaxLength = 100;
 return
 
 % ------------------------------------------------------------------------------
-% Initialisation des valeurs par défaut des variables courantes.
+% Initialisation des valeurs par dÃ©faut des variables courantes.
 %
 % SYNTAX :
 %   init_valdef
@@ -446,7 +446,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   29/08/2007 - RNU - creation
@@ -516,16 +516,16 @@ g_satNameDef = '9';
 g_dateGregStr = '9999/99/99 99:99:99';
 g_profNumDef = -1;
 
-% valeurs par défaut du format DEP2
+% valeurs par dÃ©faut du format DEP2
 g_clockDriftFlagDef = 9;
 g_clockOffsetDef = -9999999999;
 g_interpClockOffsetDef = -1;
 
-% valeurs par défaut du format TRAJ
+% valeurs par dÃ©faut du format TRAJ
 g_cycleNumTrajDef = 99999;
 g_clockOffsetTrajDef = 999999.0;
 
-% valeurs par défaut du format YoMaHa
+% valeurs par dÃ©faut du format YoMaHa
 g_yoLonDef = -999.9999;
 g_yoLatDef = -99.9999;
 g_yoPresDef = -999.9;
@@ -536,7 +536,7 @@ g_yoUVDef = -999.99;
 g_yoDeepUVErrDef = -999.99;
 g_yoProfNumDef = -99;
 
-% valeurs par défaut des fichiers Argos bruts au format Aoml
+% valeurs par dÃ©faut des fichiers Argos bruts au format Aoml
 g_argosLonDef = 999.999;
 g_argosLatDef = 99.999;
 
@@ -557,12 +557,12 @@ return
 %   a_depFileName : nom du fichier DEP
 %
 % OUTPUT PARAMETERS :
-%   données de chaque colonne
+%   donnÃ©es de chaque colonne
 %
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/03/2012 - RNU - creation
@@ -606,7 +606,7 @@ if (fId == -1)
    return;
 end
 
-% lecture et stockage des données du fichier DEP
+% lecture et stockage des donnÃ©es du fichier DEP
 dataDep = textscan(fId, '%u %d %u %f %u %s %s %u %f %f %u %c %c %f %u %f %u %f %u %u %u %s %d');
 
 o_depNumWmo = dataDep{1}(:);

@@ -69,7 +69,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/04/2016 - RNU - creation
@@ -842,8 +842,8 @@ if (a_deepCycle == 1)
    if (~isempty(tabTech2))
       
       % last pumped CTD measurement
-      pres = sensor_2_value_for_pressure_202_210_to_214_217_222_to_226(tabTech2(15+ID_OFFSET));
-      temp = sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(tabTech2(16+ID_OFFSET));
+      pres = sensor_2_value_for_pressure_2xx_2_10_to_14_17_22_to_27_31_32(tabTech2(15+ID_OFFSET));
+      temp = sensor_2_value_for_temp_2xx_4_to_14_17_19_20_22_to_27_31_32(tabTech2(16+ID_OFFSET));
       psal = tabTech2(17+ID_OFFSET)/1000;
       if (any([pres temp psal] ~= 0))
          measStruct = get_traj_one_meas_init_struct();

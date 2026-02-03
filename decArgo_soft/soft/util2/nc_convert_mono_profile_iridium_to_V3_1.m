@@ -16,7 +16,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/16/2015 - RNU - creation (in V 2.7 to be compliant with nc_update_dm_mono_profile_to_V3_1)
@@ -268,7 +268,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/02/2015 - RNU - creation
@@ -347,7 +347,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/02/2015 - RNU - creation
@@ -570,11 +570,11 @@ if (doxyAdded == 1)
    idVal = find(strcmp('MOLAR_DOXY', inputMeasData(1:2:end)) == 1, 1);
    molarDoxyValue = inputMeasData{2*idVal};
    
-   presParam = get_netcdf_param_attributes_3_1('PRES');
-   tempParam = get_netcdf_param_attributes_3_1('TEMP');
-   psalParam = get_netcdf_param_attributes_3_1('PSAL');
-   molarDoxyParam = get_netcdf_param_attributes_3_1('MOLAR_DOXY');
-   doxyParam = get_netcdf_param_attributes_3_1('DOXY');
+   presParam = get_netcdf_param_attributes('PRES');
+   tempParam = get_netcdf_param_attributes('TEMP');
+   psalParam = get_netcdf_param_attributes('PSAL');
+   molarDoxyParam = get_netcdf_param_attributes('MOLAR_DOXY');
+   doxyParam = get_netcdf_param_attributes('DOXY');
    
    doxyValue = ones(size(presValue))*doxyParam.fillValue;
    doxyQcValue = repmat(g_decArgo_qcStrDef, size(presValue, 1), 1);
@@ -748,7 +748,7 @@ if (~isempty(idVal))
    end
 end
 
-% if DATA_MODE = 'D': if PARAM_ADJUSTED_QC = ‘4’, both PARAM_ADJUSTED and
+% if DATA_MODE = 'D': if PARAM_ADJUSTED_QC = â€˜4â€™, both PARAM_ADJUSTED and
 % PARAM_ADJUSTED_ERROR should be set to FillValue.
 idVal = find(strcmp('DATA_MODE', inputData(1:2:end)) == 1, 1);
 dataMode = inputData{2*idVal};
@@ -764,7 +764,7 @@ for idP = 1:length(dataMode)
          paramAdjQc = inputMeasData{2*idVal};
          
          if (any(paramAdjQc(:, idP) == g_decArgo_qcStrBad))
-            paramStruct = get_netcdf_param_attributes_3_1(paramName);
+            paramStruct = get_netcdf_param_attributes(paramName);
             idFQc4 = find(paramAdjQc(:, idP) == g_decArgo_qcStrBad);
             
             paramNameAdj = [paramName '_ADJUSTED'];
@@ -801,7 +801,7 @@ if (~isempty(idVal))
    idVal = find(strcmp('CNDC_ADJUSTED_ERROR', inputMeasData(1:2:end)) == 1, 1);
    cndcAdjErrorValue = inputMeasData{2*idVal};
    idCndcAdjErrorVal = idVal;
-   paramStruct = get_netcdf_param_attributes_3_1('CNDC');
+   paramStruct = get_netcdf_param_attributes('CNDC');
    cndcAdjErrorDefaultValue = 0.01;
    
    corDone = 0;
@@ -834,7 +834,7 @@ if (~isempty(idVal))
    cndcQc = inputMeasData{2*idVal};
    idVal = find(strcmp('CNDC_ADJUSTED', inputMeasData(1:2:end)) == 1, 1);
    cndcAdjValue = inputMeasData{2*idVal};
-   paramStruct = get_netcdf_param_attributes_3_1('CNDC');
+   paramStruct = get_netcdf_param_attributes('CNDC');
    
    corDone = 0;
    for idP = 1:length(dataMode)
@@ -865,7 +865,7 @@ if (~isempty(idVal))
    idVal = find(strcmp('CNDC_ADJUSTED_QC', inputMeasData(1:2:end)) == 1, 1);
    cndcAdjQc = inputMeasData{2*idVal};
    idValCndcAdjQc = idVal;
-   paramStruct = get_netcdf_param_attributes_3_1('CNDC');
+   paramStruct = get_netcdf_param_attributes('CNDC');
    
    corDone = 0;
    for idP = 1:length(dataMode)
@@ -895,7 +895,7 @@ for idP = 1:length(dataMode)
    nbLev = 0;
    for idParam = 1:length(paramlist)
       paramName = paramlist{idParam};
-      paramStruct = get_netcdf_param_attributes_3_1(paramName);
+      paramStruct = get_netcdf_param_attributes(paramName);
       idVal = find(strcmp(paramName, inputMeasData(1:2:end)) == 1, 1);
       paramValue = inputMeasData{2*idVal};
       nbLev = max(nbLev, max(find(paramValue(:, idP) ~= paramStruct.fillValue)));
@@ -907,7 +907,7 @@ for idParam = 1:length(paramlist)
    paramName = paramlist{idParam};
    paramQcName = [paramName '_QC'];
    paramAdjQcName = [paramName '_ADJUSTED_QC'];
-   paramStruct = get_netcdf_param_attributes_3_1(paramName);
+   paramStruct = get_netcdf_param_attributes(paramName);
    
    idVal = find(strcmp(paramName, inputMeasData(1:2:end)) == 1, 1);
    paramValue = inputMeasData{2*idVal};
@@ -1044,7 +1044,7 @@ creationDate = datenum(creationDateStr', 'yyyymmddHHMMSS') - g_decArgo_janFirst1
 idValCreationDate = idVal;
 idVal = find(strcmp('JULD', inputData(1:2:end)) == 1, 1);
 juld = inputData{2*idVal};
-paramStruct = get_netcdf_param_attributes_3_1('JULD');
+paramStruct = get_netcdf_param_attributes('JULD');
 
 juld = juld(find(juld ~= paramStruct.fillValue));
 if (any(juld > creationDate))
@@ -1069,7 +1069,7 @@ end
 nParamDimCOutput = 0;
 nParamDimBOutput = 1;
 for idParam = 1:length(paramlist)
-   paramStruct = get_netcdf_param_attributes_3_1(paramlist{idParam});
+   paramStruct = get_netcdf_param_attributes(paramlist{idParam});
    if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
       nParamDimCOutput = nParamDimCOutput + 1;
    else
@@ -1176,7 +1176,7 @@ for idOutFile = 1:nbOutPutFile
    for idParam = 1:length(paramlist)
       
       paramName = paramlist{idParam};
-      paramStruct = get_netcdf_param_attributes_3_1(paramName);
+      paramStruct = get_netcdf_param_attributes(paramName);
       
       if (idOutFile == 1)
          if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
@@ -1202,7 +1202,7 @@ for idOutFile = 1:nbOutPutFile
    for idParam = 1:length(paramlist)
       
       paramName = paramlist{idParam};
-      paramStruct = get_netcdf_param_attributes_3_1(paramName);
+      paramStruct = get_netcdf_param_attributes(paramName);
       
       if (idOutFile == 1)
          if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
@@ -1462,7 +1462,7 @@ for idOutFile = 1:nbOutPutFile
                for idParam = 1:inputNParam
                   data = varValue(:, idParam, 1)';
                   paramName = strtrim(data);
-                  paramStruct = get_netcdf_param_attributes_3_1(paramName);
+                  paramStruct = get_netcdf_param_attributes(paramName);
                   if (idOutFile == 1)
                      if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                         continue
@@ -1494,7 +1494,7 @@ for idOutFile = 1:nbOutPutFile
                      if (isempty(paramName))
                         continue
                      end
-                     paramStruct = get_netcdf_param_attributes_3_1(paramName);
+                     paramStruct = get_netcdf_param_attributes(paramName);
                      if (idOutFile == 1)
                         if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                            continue
@@ -1604,7 +1604,7 @@ for idOutFile = 1:nbOutPutFile
       
       if (strncmp(varNameIn, 'PROFILE_', length('PROFILE_')))
          paramName = varNameIn(length('PROFILE_')+1:end-length('_QC'));
-         paramStruct = get_netcdf_param_attributes_3_1(paramName);
+         paramStruct = get_netcdf_param_attributes(paramName);
          if (idOutFile == 1)
             if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                continue
@@ -1631,25 +1631,25 @@ for idOutFile = 1:nbOutPutFile
       elseif (~isempty(strfind(varNameIn, '_QC')) || ~isempty(strfind(varNameIn, '_ADJUSTED')))
          if (~isempty(strfind(varNameIn, '_ADJUSTED_ERROR')))
             paramName = varNameIn(1:end-length('_ADJUSTED_ERROR'));
-            paramStruct = get_netcdf_param_attributes_3_1(paramName);
+            paramStruct = get_netcdf_param_attributes(paramName);
             if ((idOutFile == 2) && (strcmp(paramName, 'PRES')))
                continue
             end
          elseif (~isempty(strfind(varNameIn, '_ADJUSTED_QC')))
             paramName = varNameIn(1:end-length('_ADJUSTED_QC'));
-            paramStruct = get_netcdf_param_attributes_3_1(paramName);
+            paramStruct = get_netcdf_param_attributes(paramName);
             if ((idOutFile == 2) && (strcmp(paramName, 'PRES')))
                continue
             end
          elseif (~isempty(strfind(varNameIn, '_ADJUSTED')))
             paramName = varNameIn(1:end-length('_ADJUSTED'));
-            paramStruct = get_netcdf_param_attributes_3_1(paramName);
+            paramStruct = get_netcdf_param_attributes(paramName);
             if ((idOutFile == 2) && (strcmp(paramName, 'PRES')))
                continue
             end
          elseif (~isempty(strfind(varNameIn, '_QC')))
             paramName = varNameIn(1:end-length('_QC'));
-            paramStruct = get_netcdf_param_attributes_3_1(paramName);
+            paramStruct = get_netcdf_param_attributes(paramName);
             if ((idOutFile == 2) && (strcmp(paramName, 'PRES')))
                continue
             end
@@ -1666,7 +1666,7 @@ for idOutFile = 1:nbOutPutFile
          end
       else
          paramName = varNameIn;
-         paramStruct = get_netcdf_param_attributes_3_1(paramName);
+         paramStruct = get_netcdf_param_attributes(paramName);
          if (idOutFile == 1)
             if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                continue
@@ -1870,7 +1870,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/02/2015 - RNU - creation
@@ -2015,11 +2015,11 @@ if (doxyAdded == 1)
    idVal = find(strcmp('MOLAR_DOXY', inputMeasData(1:2:end)) == 1, 1);
    molarDoxyValue = inputMeasData{2*idVal};
    
-   presParam = get_netcdf_param_attributes_3_1('PRES');
-   tempParam = get_netcdf_param_attributes_3_1('TEMP');
-   psalParam = get_netcdf_param_attributes_3_1('PSAL');
-   molarDoxyParam = get_netcdf_param_attributes_3_1('MOLAR_DOXY');
-   doxyParam = get_netcdf_param_attributes_3_1('DOXY');
+   presParam = get_netcdf_param_attributes('PRES');
+   tempParam = get_netcdf_param_attributes('TEMP');
+   psalParam = get_netcdf_param_attributes('PSAL');
+   molarDoxyParam = get_netcdf_param_attributes('MOLAR_DOXY');
+   doxyParam = get_netcdf_param_attributes('DOXY');
    
    doxyValue = ones(size(presValue))*doxyParam.fillValue;
    doxyQcValue = repmat(g_decArgo_qcStrDef, size(presValue, 1), 1);
@@ -2193,7 +2193,7 @@ if (~isempty(idVal))
    end
 end
 
-% if DATA_MODE = 'D': if PARAM_ADJUSTED_QC = ‘4’, both PARAM_ADJUSTED and
+% if DATA_MODE = 'D': if PARAM_ADJUSTED_QC = â€˜4â€™, both PARAM_ADJUSTED and
 % PARAM_ADJUSTED_ERROR should be set to FillValue.
 idVal = find(strcmp('DATA_MODE', inputData(1:2:end)) == 1, 1);
 dataMode = inputData{2*idVal};
@@ -2209,7 +2209,7 @@ for idP = 1:length(dataMode)
          paramAdjQc = inputMeasData{2*idVal};
          
          if (any(paramAdjQc(:, idP) == g_decArgo_qcStrBad))
-            paramStruct = get_netcdf_param_attributes_3_1(paramName);
+            paramStruct = get_netcdf_param_attributes(paramName);
             idFQc4 = find(paramAdjQc(:, idP) == g_decArgo_qcStrBad);
             
             paramNameAdj = [paramName '_ADJUSTED'];
@@ -2246,7 +2246,7 @@ if (~isempty(idVal))
    idVal = find(strcmp('CNDC_ADJUSTED_ERROR', inputMeasData(1:2:end)) == 1, 1);
    cndcAdjErrorValue = inputMeasData{2*idVal};
    idCndcAdjErrorVal = idVal;
-   paramStruct = get_netcdf_param_attributes_3_1('CNDC');
+   paramStruct = get_netcdf_param_attributes('CNDC');
    cndcAdjErrorDefaultValue = 0.01;
    
    corDone = 0;
@@ -2279,7 +2279,7 @@ if (~isempty(idVal))
    cndcQc = inputMeasData{2*idVal};
    idVal = find(strcmp('CNDC_ADJUSTED', inputMeasData(1:2:end)) == 1, 1);
    cndcAdjValue = inputMeasData{2*idVal};
-   paramStruct = get_netcdf_param_attributes_3_1('CNDC');
+   paramStruct = get_netcdf_param_attributes('CNDC');
    
    corDone = 0;
    for idP = 1:length(dataMode)
@@ -2310,7 +2310,7 @@ if (~isempty(idVal))
    idVal = find(strcmp('CNDC_ADJUSTED_QC', inputMeasData(1:2:end)) == 1, 1);
    cndcAdjQc = inputMeasData{2*idVal};
    idValCndcAdjQc = idVal;
-   paramStruct = get_netcdf_param_attributes_3_1('CNDC');
+   paramStruct = get_netcdf_param_attributes('CNDC');
    
    corDone = 0;
    for idP = 1:length(dataMode)
@@ -2340,7 +2340,7 @@ for idP = 1:length(dataMode)
    nbLev = 0;
    for idParam = 1:length(paramlist)
       paramName = paramlist{idParam};
-      paramStruct = get_netcdf_param_attributes_3_1(paramName);
+      paramStruct = get_netcdf_param_attributes(paramName);
       idVal = find(strcmp(paramName, inputMeasData(1:2:end)) == 1, 1);
       paramValue = inputMeasData{2*idVal};
       nbLev = max(nbLev, max(find(paramValue(:, idP) ~= paramStruct.fillValue)));
@@ -2352,7 +2352,7 @@ for idParam = 1:length(paramlist)
    paramName = paramlist{idParam};
    paramQcName = [paramName '_QC'];
    paramAdjQcName = [paramName '_ADJUSTED_QC'];
-   paramStruct = get_netcdf_param_attributes_3_1(paramName);
+   paramStruct = get_netcdf_param_attributes(paramName);
    
    idVal = find(strcmp(paramName, inputMeasData(1:2:end)) == 1, 1);
    paramValue = inputMeasData{2*idVal};
@@ -2634,7 +2634,7 @@ creationDate = datenum(creationDateStr', 'yyyymmddHHMMSS') - g_decArgo_janFirst1
 idValCreationDate = idVal;
 idVal = find(strcmp('JULD', inputData(1:2:end)) == 1, 1);
 juld = inputData{2*idVal};
-paramStruct = get_netcdf_param_attributes_3_1('JULD');
+paramStruct = get_netcdf_param_attributes('JULD');
 
 juld = juld(find(juld ~= paramStruct.fillValue));
 if (any(juld > creationDate))
@@ -2710,7 +2710,7 @@ inputHistoInstitution = inputData{2*idVal};
 nParamDimCOutput = 0;
 nParamDimBOutput = 1;
 for idParam = 1:length(paramlist)
-   paramStruct = get_netcdf_param_attributes_3_1(paramlist{idParam});
+   paramStruct = get_netcdf_param_attributes(paramlist{idParam});
    if ((paramStruct.paramType == 'c') || (paramStruct.paramType == 'j'))
       nParamDimCOutput = nParamDimCOutput + 1;
    else
@@ -2817,7 +2817,7 @@ for idOutFile = 1:nbOutPutFile
    for idParam = 1:length(paramlist)
       
       paramName = paramlist{idParam};
-      paramStruct = get_netcdf_param_attributes_3_1(paramName);
+      paramStruct = get_netcdf_param_attributes(paramName);
       
       if (idOutFile == 1)
          if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
@@ -2843,7 +2843,7 @@ for idOutFile = 1:nbOutPutFile
    for idParam = 1:length(paramlist)
       
       paramName = paramlist{idParam};
-      paramStruct = get_netcdf_param_attributes_3_1(paramName);
+      paramStruct = get_netcdf_param_attributes(paramName);
       
       if (idOutFile == 1)
          if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
@@ -3193,7 +3193,7 @@ for idOutFile = 1:nbOutPutFile
                   for idParam = 1:inputNParam
                      data = varValue(:, idParam, 1)';
                      paramName = strtrim(data);
-                     paramStruct = get_netcdf_param_attributes_3_1(paramName);
+                     paramStruct = get_netcdf_param_attributes(paramName);
                      if (idOutFile == 1)
                         if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                            continue
@@ -3225,7 +3225,7 @@ for idOutFile = 1:nbOutPutFile
                         if (isempty(paramName))
                            continue
                         end
-                        paramStruct = get_netcdf_param_attributes_3_1(paramName);
+                        paramStruct = get_netcdf_param_attributes(paramName);
                         if (idOutFile == 1)
                            if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                               continue
@@ -3325,7 +3325,7 @@ for idOutFile = 1:nbOutPutFile
                   for idParam = 1:inputNParam
                      data = varValue(:, idParam, 1)';
                      paramName = strtrim(data);
-                     paramStruct = get_netcdf_param_attributes_3_1(paramName);
+                     paramStruct = get_netcdf_param_attributes(paramName);
                      if (idOutFile == 1)
                         if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                            continue
@@ -3357,7 +3357,7 @@ for idOutFile = 1:nbOutPutFile
                         if (isempty(paramName))
                            continue
                         end
-                        paramStruct = get_netcdf_param_attributes_3_1(paramName);
+                        paramStruct = get_netcdf_param_attributes(paramName);
                         if (idOutFile == 1)
                            if ((paramStruct.paramType ~= 'c') && (paramStruct.paramType ~= 'j'))
                               continue
@@ -3437,7 +3437,7 @@ for idOutFile = 1:nbOutPutFile
          varNameIn = [paramNamePrefix sufixList{idS}];
          varNameOut = varNameIn;
          
-         paramStruct = get_netcdf_param_attributes_3_1(paramNamePrefix);
+         paramStruct = get_netcdf_param_attributes(paramNamePrefix);
          if (~isempty(paramStruct) && (paramStruct.adjAllowed == 0) && (idS > 2))
             idVal = find(strcmp(varNameIn, inputMeasData(1:2:end)) == 1, 1);
             varValue = inputMeasData{2*idVal};
@@ -3703,7 +3703,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/02/2015 - RNU - creation
@@ -3825,7 +3825,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/02/2015 - RNU - creation
@@ -3910,7 +3910,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/02/2015 - RNU - creation
@@ -3955,7 +3955,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/02/2015 - RNU - creation
@@ -4024,7 +4024,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/09/2013 - RNU - creation
@@ -4077,7 +4077,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/02/2015 - RNU - creation
@@ -4291,7 +4291,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/22/2014 - RNU - creation
@@ -4327,7 +4327,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/09/2014 - RNU - creation
@@ -4375,7 +4375,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/09/2014 - RNU - creation
@@ -4390,62 +4390,6 @@ o_varSize = [];
 for idDim = 1:length(varDims)
    [dimName, dimLen] = netcdf.inqDim(a_ncId, varDims(idDim));
    o_varSize = [o_varSize dimLen];
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         %          fprintf('WARNING: Variable %s not present in file : %s\n', ...
-         %             varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {''}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
 end
 
 return
@@ -4466,7 +4410,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/02/2015 - RNU - creation
@@ -4509,7 +4453,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   29/07/2014 - RNU - creation

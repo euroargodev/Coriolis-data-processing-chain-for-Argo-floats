@@ -31,7 +31,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/29/2018 - RNU - creation
@@ -55,7 +55,7 @@ o_tabTechAuxNMeas = [];
 o_structConfig = [];
 
 switch (a_decoderId)
-   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, ...
+   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1115, ...
          1201}
       % APEX APF9 & NAVIS
       
@@ -67,7 +67,14 @@ switch (a_decoderId)
          a_decoderId, str2num(a_floatRudicsId), ...
          a_floatLaunchDate, a_floatEndDate);
 
-   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % check consistency between ICE algorithm and float behaviour
+      [o_tabTrajNMeas, o_tabTrajNCycle, ...
+         o_tabNcTechIndex, o_tabNcTechVal] = check_ice_algorithm_apex_ir( ...
+         o_tabTrajNMeas, o_tabTrajNCycle, ...
+         o_tabNcTechIndex, o_tabNcTechVal);
+
+   case {1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132}
       % APEX APF11 RUDICS
       
       [o_tabProfiles, ...
@@ -77,7 +84,12 @@ switch (a_decoderId)
          a_floatNum, a_cycleList, ...
          a_decoderId, a_floatRudicsId, ...
          a_floatLaunchDate, a_floatEndDate);
-      
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % check consistency between ICE algorithm and float behaviour
+      [o_tabNcTechIndex, o_tabNcTechVal] = check_ice_algorithm_apf11_rudics( ...
+         o_tabNcTechIndex, o_tabNcTechVal);
+
    otherwise
       fprintf('ERROR: decode_apex_iridium_rudics_data not defined yet for decId #%d - exit\n', a_decoderId);
       return

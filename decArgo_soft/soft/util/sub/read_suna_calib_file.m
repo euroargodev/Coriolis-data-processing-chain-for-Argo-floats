@@ -4,11 +4,12 @@
 % SYNTAX :
 %  [o_creationDate, o_tempCalNitrate, o_opticalWavelengthUv, ...
 %    o_eNitrate, o_eSwaNitrate, o_eBisulfide, o_uvIntensityRefNitrate] = ...
-%    read_suna_calib_file(a_sunaCalibFileName, a_dacFormatId)
+%    read_suna_calib_file(a_sunaCalibFileName, a_dacFormatId, a_floatNum)
 %
 % INPUT PARAMETERS :
 %   a_sunaCalibFileName : SUNA calibration data file
 %   a_dacFormatId       : DAC version of the float
+%   a_floatNum          : float WMO number
 %
 % OUTPUT PARAMETERS :
 %   o_creationDate          : "File creation time" information
@@ -22,14 +23,14 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/08/2015 - RNU - creation
 % ------------------------------------------------------------------------------
 function [o_creationDate, o_tempCalNitrate, o_opticalWavelengthUv, ...
    o_eNitrate, o_eSwaNitrate, o_eBisulfide, o_uvIntensityRefNitrate] = ...
-   read_suna_calib_file(a_sunaCalibFileName, a_dacFormatId)
+   read_suna_calib_file(a_sunaCalibFileName, a_dacFormatId, a_floatNum)
       
 % output parameters initialization
 o_creationDate = [];
@@ -43,12 +44,12 @@ o_uvIntensityRefNitrate = [];
 
 % read the calibration file
 if ~(exist(a_sunaCalibFileName, 'file') == 2)
-   fprintf('ERROR: Input file not found: %s\n', a_sunaCalibFileName);
+   fprintf('ERROR: Float #%d: Input file not found: %s\n', a_floatNum, a_sunaCalibFileName);
 else
    
    fId = fopen(a_sunaCalibFileName, 'r');
    if (fId == -1)
-      fprintf('ERROR: Error while opening file: %s\n', a_sunaCalibFileName);
+      fprintf('ERROR: Float #%d: Error while opening file: %s\n', a_floatNum, a_sunaCalibFileName);
       return
    end
    
@@ -94,7 +95,7 @@ else
       switch (a_dacFormatId)
          case {'5.9', '5.91', '5.92', '5.94', '6.01', '6.11', '6.13', ...
                '7.01', '7.02', '7.03', '7.04', '7.05', ...
-               '7.11', '7.14', '7.15', '7.16', '7.17', '7.18'}
+               '7.11', '7.14', '7.15', '7.16', '7.17', '7.18', '7.19', '7.20', '7.23', '7.24', '7.25'}
             if (mod(length(data), 6) == 0)
                o_opticalWavelengthUv = data(2:6:end);
                o_eNitrate = data(3:6:end);
@@ -102,9 +103,9 @@ else
                o_uvIntensityRefNitrate = data(6:6:end);
             else
                o_creationDate = [];
-               fprintf('ERROR: Calibration information is missing in file: %s\n', a_sunaCalibFileName);
+               fprintf('ERROR: Float #%d: Calibration information is missing in file: %s\n', a_floatNum, a_sunaCalibFileName);
             end
-         case {'5.93', '6.12', '6.15'}
+         case {'5.93', '6.12', '6.15', '7.21', '7.22', '7.26'}
             if (mod(length(data), 6) == 0)
                o_opticalWavelengthUv = data(2:6:end);
                o_eSwaNitrate = data(3:6:end);
@@ -113,7 +114,7 @@ else
                o_uvIntensityRefNitrate = data(6:6:end);
             else
                o_creationDate = [];
-               fprintf('ERROR: Calibration information is missing in file: %s\n', a_sunaCalibFileName);
+               fprintf('ERROR: Float #%d: Calibration information is missing in file: %s\n', a_floatNum, a_sunaCalibFileName);
             end
          case {'7.12', '7.13'}
             if ((mod(length(data), 7) == 0) && (length(dataInfo) == 6) && ...
@@ -137,11 +138,11 @@ else
                o_uvIntensityRefNitrate = data(6:6:end);
             else
                o_creationDate = [];
-               fprintf('ERROR: Calibration information is missing in file: %s\n', a_sunaCalibFileName);
+               fprintf('ERROR: Float #%d: Calibration information is missing in file: %s\n', a_floatNum, a_sunaCalibFileName);
             end
          otherwise
-            fprintf('WARNING: Don''t know how to parse SUNA calibration file for float DAC version ''%s''\n', ...
-               a_dacFormatId);
+            fprintf('ERROR: Float #%d: Don''t know how to parse SUNA calibration file for float DAC version ''%s''\n', ...
+               a_floatNum, a_dacFormatId);
       end
    end   
 end

@@ -13,8 +13,8 @@
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/25/2021 - RNU - creation
@@ -95,8 +95,8 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/26/2021 - RNU - creation
@@ -117,7 +117,7 @@ global g_decArgo_minNonTransDurForNewCycle;
 idErr = find(([a_errData.fixDate] > min([a_cycleFmt [o_tabMeas.juld] a_cycleLmt]) - g_decArgo_minNonTransDurForNewCycle/24) & ...
    ([a_errData.fixDate] <= max([a_cycleFmt [o_tabMeas.juld] a_cycleLmt]) + g_decArgo_minNonTransDurForNewCycle/24));
 if (~isempty(idErr))
-   
+
    epochDateList = julian_2_epoch70([o_tabMeas.juld]);
    for idP = 1:length(idErr)
       idF = find((epochDateList == a_errData(idErr(idP)).fixDateEpoch) & ...
@@ -130,12 +130,12 @@ if (~isempty(idErr))
             if ~((abs(o_tabMeas(idF).latitude - a_errData(idErr(idP)).fixLat) > 1e-2) || ...
                   (abs(o_tabMeas(idF).longitude - a_errData(idErr(idP)).fixLon) > 1e-2) || ...
                   (o_tabMeas(idF).posAccuracy ~= a_errData(idErr(idP)).fixClass))
-               
+
                % update the Argos fix
                o_tabMeas(idF).posAxErrEllMajor = a_errData(idErr(idP)).fixEllMajorAxis;
                o_tabMeas(idF).posAxErrEllMinor = a_errData(idErr(idP)).fixEllMinorAxis;
                o_tabMeas(idF).posAxErrEllAngle = a_errData(idErr(idP)).fixEllAngle;
-               
+
                %                fprintf('INFO: Float #%d: Cycle #%d: Argos fix updated with error ellipse data\n', ...
                %                   g_decArgo_floatNum, a_cycleNumber);
             else
@@ -172,8 +172,8 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/25/2021 - RNU - creation
@@ -252,8 +252,8 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/25/2021 - RNU - creation
@@ -271,10 +271,10 @@ global g_decArgo_janFirst1970InJulD;
 % store data in dedicated structure
 dataAll = [];
 for idL = 1:size(a_rawDataMail, 1)
-   
+
    data = a_rawDataMail(idL, :);
    dataStruct = get_error_ellipse_init_struct;
-   
+
    dataStruct.satName = data{3};
    dataStruct.fixDate = datenum(data{4}, 'yyyy/mm/dd HH:MM:SS') - g_decArgo_janFirst1950InMatlab;
    dataStruct.fixLat = str2double(data{6});
@@ -291,10 +291,10 @@ for idL = 1:size(a_rawDataMail, 1)
    dataAll = [dataAll dataStruct];
 end
 for idL = 1:size(a_rawDataWs, 1)
-   
+
    data = a_rawDataWs(idL, :);
    dataStruct = get_error_ellipse_init_struct;
-   
+
    dataStruct.satName = data{3};
    dataStruct.fixDate = datenum(data{4}, 'yyyy-mm-ddTHH:MM:SS') - g_decArgo_janFirst1950InMatlab;
    dataStruct.fixLat = str2double(data{6});
@@ -349,7 +349,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/25/2021 - RNU - creation
@@ -395,8 +395,8 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/25/2021 - RNU - creation
@@ -438,8 +438,8 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/25/2021 - RNU - creation
@@ -478,11 +478,11 @@ while 1
       break
    end
    lineNum = lineNum + 1;
-   
+
    if (isempty(line))
       continue
    end
-   
+
    if (any(strfind(line, CSV_HEADER(1:14))))
       if (any(strfind(line, CSV_HEADER)))
          startRecording = 1;
@@ -491,7 +491,7 @@ while 1
          fprintf('ERROR: Not managed header in line #%d: %s\n', lineNum, line);
       end
    end
-   
+
    if (startRecording)
       data = textscan(line, '%s', 'delimiter', ';');
       data = data{:};
@@ -525,8 +525,8 @@ return
 %
 % EXAMPLES :
 %
-% SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/25/2021 - RNU - creation
@@ -569,7 +569,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/25/2021 - RNU - creation

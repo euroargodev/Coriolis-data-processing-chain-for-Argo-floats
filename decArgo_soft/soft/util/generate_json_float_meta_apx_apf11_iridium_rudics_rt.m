@@ -6,22 +6,23 @@
 %  generate_json_float_meta_apx_apf11_iridium_rudics_rt()
 %
 % INPUT PARAMETERS :
-%   'floatMetaFileName'  : meta-data file exported from Coriolis data base
-%   'sensorListFileName' : list of sensors mounted on floats
-%   'floatListFileName'  : list of concerned floats
-%   'calibFileName'      : list of calibration coefficient
-%   'configDirName'      : directory of float configuration at launch files
-%   'outputJsonDirName'  : directory of individual json float meta-data files
-%   'outputCsvDirName'   : directory to store the CSV file (when DB update is needed)
-%   'outputLogDirName'   : directory of log files
-%   'xmlReportDirName'   : directory of xml files
+%   'floatMetaFileName'   : meta-data file exported from Coriolis data base
+%   'sensorListFileName'  : list of sensors mounted on floats
+%   'floatListFileName'   : list of concerned floats
+%   'calibFileName'       : list of calibration coefficient
+%   'configDirName'       : directory of float configuration at launch files
+%   'ramsesConfigDirName' : directory of RAMSES configuration files
+%   'outputJsonDirName'   : directory of individual json float meta-data files
+%   'outputCsvDirName'    : directory to store the CSV file (when DB update is needed)
+%   'outputLogDirName'    : directory of log files
+%   'xmlReportDirName'    : directory of xml files
 %
 % OUTPUT PARAMETERS :
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/06/2018 - RNU - creation
@@ -34,6 +35,7 @@ global g_cogj_sensorListFileName;
 global g_cogj_floatListFileName;
 global g_cogj_calibFileName;
 global g_cogj_configDirName;
+global g_cogj_ramsesConfigDirName;
 global g_cogj_outputJsonDirName;
 global g_cogj_outputCsvDirName;
 global g_cogj_outputLogDirName;
@@ -88,6 +90,7 @@ try
          g_cogj_floatListFileName, ...
          g_cogj_calibFileName, ...
          g_cogj_configDirName, ...
+         g_cogj_ramsesConfigDirName, ...
          g_cogj_outputJsonDirName, ...
          g_cogj_outputCsvDirName, ...
          rudicsFlag, ...
@@ -137,7 +140,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/01/2017 - RNU - creation
@@ -183,7 +186,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/01/2017 - RNU - creation
@@ -199,6 +202,7 @@ global g_cogj_sensorListFileName;
 global g_cogj_floatListFileName;
 global g_cogj_calibFileName;
 global g_cogj_configDirName;
+global g_cogj_ramsesConfigDirName;
 global g_cogj_outputJsonDirName;
 global g_cogj_outputCsvDirName;
 global g_cogj_outputLogDirName;
@@ -209,6 +213,7 @@ g_cogj_sensorListFileName = [];
 g_cogj_floatListFileName = [];
 g_cogj_calibFileName = [];
 g_cogj_configDirName = [];
+g_cogj_ramsesConfigDirName = [];
 g_cogj_outputJsonDirName = [];
 g_cogj_outputCsvDirName = [];
 g_cogj_outputLogDirName = [];
@@ -242,6 +247,8 @@ if (~isempty(a_varargin))
             g_cogj_calibFileName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'configDirName'))
             g_cogj_configDirName = a_varargin{id+1};
+         elseif (strcmpi(a_varargin{id}, 'ramsesConfigDirName'))
+            g_cogj_ramsesConfigDirName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'outputJsonDirName'))
             g_cogj_outputJsonDirName = a_varargin{id+1};
          elseif (strcmpi(a_varargin{id}, 'outputCsvDirName'))
@@ -283,6 +290,11 @@ if (isempty(g_cogj_configDirName))
    o_inputError = 1;
    return
 end
+if (isempty(g_cogj_ramsesConfigDirName))
+   o_logLines{end+1} = sprintf('ERROR: ''ramsesConfigDirName'' input parameter is mandatory\n');
+   o_inputError = 1;
+   return
+end
 if (isempty(g_cogj_outputJsonDirName))
    o_logLines{end+1} = sprintf('ERROR: ''outputJsonDirName'' input parameter is mandatory\n');
    o_inputError = 1;
@@ -305,15 +317,16 @@ if (isempty(g_cogj_xmlReportDirName))
 end
 
 o_logLines{end+1} = sprintf('INPUT PARAMETERS\n');
-o_logLines{end+1} = sprintf('floatMetaFileName: %s\n', g_cogj_floatMetaFileName);
-o_logLines{end+1} = sprintf('sensorListFileName: %s\n', g_cogj_sensorListFileName);
-o_logLines{end+1} = sprintf('floatListFileName: %s\n', g_cogj_floatListFileName);
-o_logLines{end+1} = sprintf('calibFileName    : %s\n', g_cogj_calibFileName);
-o_logLines{end+1} = sprintf('configDirName    : %s\n', g_cogj_configDirName);
-o_logLines{end+1} = sprintf('outputJsonDirName: %s\n', g_cogj_outputJsonDirName);
-o_logLines{end+1} = sprintf('outputCsvDirName : %s\n', g_cogj_outputCsvDirName);
-o_logLines{end+1} = sprintf('outputLogDirName : %s\n', g_cogj_outputLogDirName);
-o_logLines{end+1} = sprintf('xmlReportDirName : %s\n', g_cogj_xmlReportDirName);
+o_logLines{end+1} = sprintf('floatMetaFileName  : %s\n', g_cogj_floatMetaFileName);
+o_logLines{end+1} = sprintf('sensorListFileName : %s\n', g_cogj_sensorListFileName);
+o_logLines{end+1} = sprintf('floatListFileName  : %s\n', g_cogj_floatListFileName);
+o_logLines{end+1} = sprintf('calibFileName      : %s\n', g_cogj_calibFileName);
+o_logLines{end+1} = sprintf('configDirName      : %s\n', g_cogj_configDirName);
+o_logLines{end+1} = sprintf('ramsesConfigDirName: %s\n', g_cogj_ramsesConfigDirName);
+o_logLines{end+1} = sprintf('outputJsonDirName  : %s\n', g_cogj_outputJsonDirName);
+o_logLines{end+1} = sprintf('outputCsvDirName   : %s\n', g_cogj_outputCsvDirName);
+o_logLines{end+1} = sprintf('outputLogDirName   : %s\n', g_cogj_outputLogDirName);
+o_logLines{end+1} = sprintf('xmlReportDirName   : %s\n', g_cogj_xmlReportDirName);
 o_logLines{end+1} = sprintf('\n');
 
 return
@@ -335,7 +348,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/01/2017 - RNU - creation
@@ -448,7 +461,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/01/2017 - RNU - creation
@@ -509,7 +522,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/01/2017 - RNU - creation

@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/15/2014 - RNU - creation
@@ -40,6 +40,9 @@ if (CORIOLIS_CONFIGURATION_FLAG)
    % directory of RBR CTD metadata files
    RBR_META_DATA_DIR_NAME = '/home/coriolis_dev/gestion/exploitation/argo/flotteurs-coriolis/RBR_metadata';
 
+   % directory of NKE JSON metadata files
+   NKE_META_DATA_DIR_NAME = 'TBD';
+
    % directory of individual json float meta-data files
    OUTPUT_DIR_NAME = ['/home/idmtmp7/vincent/matlab/generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];
 
@@ -55,21 +58,25 @@ else
    % JPR CONFIGURATION - START
 
    % meta-data file exported from Coriolis data base
-   % FLOAT_META_FILE_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB\new_iridium_meta.txt';
-   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_5.67_5906993.txt';
-   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\db_export_5.67_4903712.txt';
+   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB\DBexport_4903886_5.54.txt';
+   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\DBexport_Deep_2DO_Rinko.txt';
+   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\_configParamNames\DB_Export\dbExport_BSH_META_NKE.txt';
+   FLOAT_META_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB\dbexport_6904078_7902194_program_name.txt';
 
    % list of sensors mounted on floats
-   SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB\float_sensor_list.txt';
+   SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB\float_sensor_list.txt';
    SENSOR_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_info\_float_sensor_list\float_sensor_list.txt';
 
    % list of concerned floats
-   % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB\new_iridium.txt';
+   FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB\tmp.txt';
+   % FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\arvor_232_ukraine.txt';
    FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
 
    % directory of RBR CTD metadata files
-   % RBR_META_DATA_DIR_NAME = 'C:\Users\jprannou\OneDrive - Capgemini\Desktop\SOS_VB\';
    RBR_META_DATA_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\PROVOR_WITH_RBR\RBR_META_DATA_FILES\';
+
+   % directory of NKE JSON metadata files
+   NKE_META_DATA_DIR_NAME = 'C:\Users\jprannou\_RNU\DecPrv_info\NKE_META_JSON_FILES\';
 
    % directory of individual json float meta-data files
    OUTPUT_DIR_NAME = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];
@@ -92,12 +99,15 @@ diary(logFileName);
 fprintf('Log file: %s\n', logFileName);
 
 % generate JSON meta-data files
+rtVersionFlag = 0;
 generate_json_float_meta_prv_ir_sbd_(...
    FLOAT_META_FILE_NAME, ...
    SENSOR_LIST_FILE_NAME, ...
    FLOAT_LIST_FILE_NAME, ...
    RBR_META_DATA_DIR_NAME, ...
-   OUTPUT_DIR_NAME);
+   NKE_META_DATA_DIR_NAME, ...
+   OUTPUT_DIR_NAME, ...
+   rtVersionFlag);
 
 diary off;
 

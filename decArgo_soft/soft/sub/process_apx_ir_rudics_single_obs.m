@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -306,7 +306,7 @@ switch (a_decoderId)
       end
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   case {1110, 1111, 1112, 1114} % 092813 & 073014 & 102815 & 073014_2
+   case {1110, 1111, 1112, 1114, 1115} % 092813 & 073014 & 102815 & 073014_2 & 073014_3
 
       if (length(a_engData) ~= 5)
          fprintf('WARNING: Float #%d Cycle #%d: Not consistent single data\n', ...
@@ -519,8 +519,8 @@ switch (a_decoderId)
       paramTPhaseDoxy = get_netcdf_param_attributes('TPHASE_DOXY');
       paramTempDoxy = get_netcdf_param_attributes('TEMP_DOXY');
       paramRPhaseDoxy = get_netcdf_param_attributes('RPHASE_DOXY');
-      paramPhaseDelayDoxy = get_netcdf_param_attributes('PHASE_DELAY_DOXY2');
-      paramTempDoxy2 = get_netcdf_param_attributes('TEMP_DOXY2');
+      paramPhaseDelayDoxy = get_netcdf_param_attributes('PHASE_DELAY_DOXY_2');
+      paramTempDoxy2 = get_netcdf_param_attributes('TEMP_DOXY_2');
       
       % convert decoder default values to netCDF fill values
       measPres(find(measPres == g_decArgo_presDef)) = paramPres.fillValue;

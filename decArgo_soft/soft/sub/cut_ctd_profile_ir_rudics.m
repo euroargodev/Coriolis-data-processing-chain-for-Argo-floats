@@ -2,10 +2,11 @@
 % Cut the CTD profiles at the cut-off pressure of the CTD pump.
 %
 % SYNTAX :
-%  [o_cutProfiles] = cut_ctd_profile_ir_rudics(a_tabProfiles)
+%  [o_cutProfiles] = cut_ctd_profile_ir_rudics(a_tabProfiles, a_decoderId)
 %
 % INPUT PARAMETERS :
-%   a_tabProfiles   : input profile structures
+%   a_tabProfiles : input profile structures
+%   a_decoderId   : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_cutProfiles   : output profile structures
@@ -13,12 +14,12 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/29/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_cutProfiles] = cut_ctd_profile_ir_rudics(a_tabProfiles)
+function [o_cutProfiles] = cut_ctd_profile_ir_rudics(a_tabProfiles, a_decoderId)
 
 % output parameters initialization
 o_cutProfiles = [];
@@ -34,7 +35,7 @@ for idProf = 1:length(a_tabProfiles)
       % nominal case
       if (profile.primarySamplingProfileFlag == -1)
          if (profile.direction == 'A')
-            [cutProfiles] = cut_profile(profile);
+            [cutProfiles] = cut_profile(profile, a_decoderId);
             tabProfiles = [tabProfiles cutProfiles];
          else
             if (profile.sensorNumber == 0)
@@ -66,10 +67,11 @@ return
 % Cut a CTD profile at the cut-off pressure of the CTD pump.
 %
 % SYNTAX :
-%  [o_cutProfiles] = cut_profile(a_tabProfiles)
+%  [o_cutProfiles] = cut_profile(a_tabProfiles, a_decoderId)
 %
 % INPUT PARAMETERS :
-%   a_tabProfiles   : input profile structures
+%   a_tabProfiles : input profile structures
+%   a_decoderId   : float decoder Id
 %
 % OUTPUT PARAMETERS :
 %   o_cutProfiles   : output profile structures
@@ -77,12 +79,12 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/29/2014 - RNU - creation
 % ------------------------------------------------------------------------------
-function [o_cutProfiles] = cut_profile(a_tabProfile)
+function [o_cutProfiles] = cut_profile(a_tabProfile, a_decoderId)
 
 % output parameters initialization
 o_cutProfiles = [];
@@ -94,23 +96,20 @@ global g_decArgo_presDef;
 if (a_tabProfile.presCutOffProf ~= g_decArgo_presDef)
    
    presCutOffProf = a_tabProfile.presCutOffProf;
-   if (a_tabProfile.subSurfMeasReceived == 0)
-      % the subsurface measurement has not been received
-      % retrieve the treatment type at presCutOffProf dbar
-      [treatType] = config_get_treatment_type_ir_rudics( ...
-         a_tabProfile.cycleNumber, a_tabProfile.profileNumber, presCutOffProf);
-      if (treatType == 0)
-         % if 'raw' data measurements, add 0 dbar to theoretical switch off
-         % pressure of the CTD pump (in this case the SBE is working alone, we
-         % then assume that there is no delay when the CTD switch off its pump)
-         presCutOffProf = presCutOffProf + 0;
-      end
-   end
    
    idPres  = find(strcmp({a_tabProfile.paramList.name}, 'PRES') == 1, 1);
    presMeas = a_tabProfile.data(:, idPres);
    paramPres = get_netcdf_param_attributes('PRES');
-   idLevPrimary = find((presMeas ~= paramPres.fillValue) & (presMeas > presCutOffProf));
+   if (a_tabProfile.presCutOffProfConfig == 0)
+      if (ismember(a_decoderId, [105:107, 109:116, 121:135 141]))
+         idLevPrimary = find((presMeas ~= paramPres.fillValue) & (presMeas > presCutOffProf)); % not compliant with Argo profile cookbook but historical implementation
+      else
+         idLevPrimary = find((presMeas ~= paramPres.fillValue) & (presMeas >= presCutOffProf));
+      end
+   else
+      idLevPrimary = find((presMeas ~= paramPres.fillValue) & (presMeas > presCutOffProf));
+   end
+
    % be careful, if acquisition mode is 'raw', the pressure measurements are not
    % necessarily monotonic! (ex: 6901516 #247)
    idStop = find(diff(idLevPrimary) ~= 1);

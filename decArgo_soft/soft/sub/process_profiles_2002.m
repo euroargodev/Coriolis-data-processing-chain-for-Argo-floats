@@ -41,7 +41,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/28/2016 - RNU - creation
@@ -216,7 +216,7 @@ for idProf = 1:2
       end
       
       % add profile date and location information
-      [profStruct] = add_profile_date_and_location_201_to_226_2001_to_2003( ...
+      [profStruct] = add_profile_date_and_location_201_to_230_40x_2001_to_2003( ...
          profStruct, a_gpsData, a_iridiumMailData, ...
          a_descentToParkStartDate, a_ascentEndDate, a_transStartDate);
       

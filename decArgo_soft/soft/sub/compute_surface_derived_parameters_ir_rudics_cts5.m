@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -24,6 +24,9 @@ function [o_tabSurf] = compute_surface_derived_parameters_ir_rudics_cts5(a_tabSu
 
 % output parameters initialization
 o_tabSurf = [];
+
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
 
 
 % collect information on surface measurement profiles
@@ -63,6 +66,17 @@ if (~isempty(surfInfo))
       a_tabSurf(surfInfo(idSensor5(idP), 1)) = compute_surface_derived_parameters_for_CROVER(a_tabSurf(surfInfo(idSensor5(idP), 1)));
    end
 
+   if (ismember('ECO_FLNTU', g_decArgo_sensorMountedOnFloat))
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % compute ECO_FLNTU derived parameters
+     idSensor3 = find((surfInfo(:, 2) == 3) & (surfInfo(:, 3) == 0));
+      for idP = 1:length(idSensor3)
+         a_tabSurf(surfInfo(idSensor3(idP), 1)) = ...
+            compute_surface_derived_parameters_for_ECO_FLNTU(a_tabSurf(surfInfo(idSensor3(idP), 1)));
+      end
+   end
+
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % compute UVP derived parameters
    idSensor107 = find((surfInfo(:, 2) == 107) & (surfInfo(:, 3) == 0));
@@ -75,6 +89,20 @@ if (~isempty(surfInfo))
    idSensor110 = find((surfInfo(:, 2) == 110) & (surfInfo(:, 3) == 0));
    for idP = 1:length(idSensor110)
       a_tabSurf(surfInfo(idSensor110(idP), 1)) = compute_surface_derived_parameters_for_MPE(a_tabSurf(surfInfo(idSensor110(idP), 1)));
+   end
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % compute RAMSES_ACC derived parameters
+   idSensor109 = find((surfInfo(:, 2) == 109) & (surfInfo(:, 3) == 0));
+   for idP = 1:length(idSensor109)
+      a_tabSurf(surfInfo(idSensor109(idP), 1)) = compute_surface_derived_parameters_for_RAMSES_ACC(a_tabSurf(surfInfo(idSensor109(idP), 1)));
+   end
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % compute RAMSES_ARC derived parameters
+   idSensor112 = find((surfInfo(:, 2) == 112) & (surfInfo(:, 3) == 0));
+   for idP = 1:length(idSensor112)
+      a_tabSurf(surfInfo(idSensor112(idP), 1)) = compute_surface_derived_parameters_for_RAMSES_ARC(a_tabSurf(surfInfo(idSensor112(idP), 1)));
    end
 end
 
@@ -100,7 +128,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -160,6 +188,9 @@ for idS = 1:size(paramToDeriveList, 1)
       a_surfOptode.dataQc(:, end+1) = ppoxDoxyQc;
       
       a_surfOptode.paramList = [a_surfOptode.paramList derivedParam];
+      if (~isempty(a_surfOptode.paramDataMode))
+         a_surfOptode.paramDataMode = [a_surfOptode.paramDataMode ' '];
+      end
    end
 end
 
@@ -200,7 +231,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -222,10 +253,10 @@ global g_decArgo_floatNum;
 
 switch (a_decoderId)
    
-   case {121, 122, 124, 126, 127, 128, 129, 130, 131, 132, 133}
+   case {121, 122, 124, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
       
       % compute PPOX_DOXY values using the Stern-Volmer equation
-      o_PPOX_DOXY = compute_PPOX_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_33( ...
+      o_PPOX_DOXY = compute_PPOX_DOXY_1xx_7_9_to_11_13_to_15_21_22_24_26_to_41( ...
          a_C1PHASE_DOXY, ...
          a_C2PHASE_DOXY, ...
          a_TEMP_DOXY, ...
@@ -279,7 +310,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/16/2014 - RNU - creation
@@ -310,7 +341,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_112_121_to_133( ...
+      downIrr380 = compute_DOWN_IRRADIANCE380_105_to_112_121_to_133_135_to_141( ...
          a_surfOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -323,6 +354,9 @@ for idP = 1:length(paramToDeriveList)
       a_surfOcr.dataQc(:, end+1) = downIrr380Qc;
       
       a_surfOcr.paramList = [a_surfOcr.paramList derivedParam];
+      if (~isempty(a_surfOcr.paramDataMode))
+         a_surfOcr.paramDataMode = [a_surfOcr.paramDataMode ' '];
+      end
    end
 end
 
@@ -339,7 +373,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_112_121_to_132( ...
+      downIrr412 = compute_DOWN_IRRADIANCE412_105_to_112_121_to_132_135_to_137_141( ...
          a_surfOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -352,6 +386,9 @@ for idP = 1:length(paramToDeriveList)
       a_surfOcr.dataQc(:, end+1) = downIrr412Qc;
       
       a_surfOcr.paramList = [a_surfOcr.paramList derivedParam];
+      if (~isempty(a_surfOcr.paramDataMode))
+         a_surfOcr.paramDataMode = [a_surfOcr.paramDataMode ' '];
+      end
    end
 end
 
@@ -368,7 +405,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr443 = compute_DOWN_IRRADIANCE443_130_133( ...
+      downIrr443 = compute_DOWN_IRRADIANCE443_130_133_138_to_140( ...
          a_surfOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -381,6 +418,9 @@ for idP = 1:length(paramToDeriveList)
       a_surfOcr.dataQc(:, end+1) = downIrr443Qc;
       
       a_surfOcr.paramList = [a_surfOcr.paramList derivedParam];
+      if (~isempty(a_surfOcr.paramDataMode))
+         a_surfOcr.paramDataMode = [a_surfOcr.paramDataMode ' '];
+      end
    end
 end
 
@@ -397,7 +437,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_112_121_to_133( ...
+      downIrr490 = compute_DOWN_IRRADIANCE490_105_to_112_121_to_133_135_to_141( ...
          a_surfOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -410,6 +450,9 @@ for idP = 1:length(paramToDeriveList)
       a_surfOcr.dataQc(:, end+1) = downIrr490Qc;
       
       a_surfOcr.paramList = [a_surfOcr.paramList derivedParam];
+      if (~isempty(a_surfOcr.paramDataMode))
+         a_surfOcr.paramDataMode = [a_surfOcr.paramDataMode ' '];
+      end
    end
 end
 
@@ -426,7 +469,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downIrr555 = compute_DOWN_IRRADIANCE555_133( ...
+      downIrr555 = compute_DOWN_IRRADIANCE555_133_138_to_140( ...
          a_surfOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -439,6 +482,9 @@ for idP = 1:length(paramToDeriveList)
       a_surfOcr.dataQc(:, end+1) = downIrr555Qc;
       
       a_surfOcr.paramList = [a_surfOcr.paramList derivedParam];
+      if (~isempty(a_surfOcr.paramDataMode))
+         a_surfOcr.paramDataMode = [a_surfOcr.paramDataMode ' '];
+      end
    end
 end
 
@@ -468,6 +514,9 @@ for idP = 1:length(paramToDeriveList)
       a_surfOcr.dataQc(:, end+1) = downIrr665Qc;
       
       a_surfOcr.paramList = [a_surfOcr.paramList derivedParam];
+      if (~isempty(a_surfOcr.paramDataMode))
+         a_surfOcr.paramDataMode = [a_surfOcr.paramDataMode ' '];
+      end
    end
 end
 
@@ -484,7 +533,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downPar = compute_DOWNWELLING_PAR_105_to_112_121_to_129_132( ...
+      downPar = compute_DOWNWELLING_PAR_1xx_5_to_12_21_to_29_32_35_to_37_41( ...
          a_surfOcr.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -497,6 +546,9 @@ for idP = 1:length(paramToDeriveList)
       a_surfOcr.dataQc(:, end+1) = downParQc;
       
       a_surfOcr.paramList = [a_surfOcr.paramList derivedParam];
+      if (~isempty(a_surfOcr.paramDataMode))
+         a_surfOcr.paramDataMode = [a_surfOcr.paramDataMode ' '];
+      end
    end
 end
 
@@ -521,7 +573,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/07/2023 - RNU - creation
@@ -568,6 +620,9 @@ for idP = 1:length(paramToDeriveList)
             a_surfCrover.dataQc(:, end+1) = ones(size(a_surfCrover.data, 1), 1)*g_decArgo_qcDef;
          end
          a_surfCrover.paramList = [a_surfCrover.paramList derivedParam];
+         if (~isempty(a_surfCrover.paramDataMode))
+            a_surfCrover.paramDataMode = [a_surfCrover.paramDataMode ' '];
+         end
          derivedParamId = size(a_surfCrover.data, 2);
       else
          derivedParamId = idFDerivedParam;
@@ -587,6 +642,153 @@ o_surfCrover = a_surfCrover;
 return
 
 % ------------------------------------------------------------------------------
+% Compute derived parameters for the ECO_FLNTU sensor.
+%
+% SYNTAX :
+%  [o_surfEcoFlntu] = compute_surface_derived_parameters_for_ECO_FLNTU(a_surfEcoFlntu)
+%
+% INPUT PARAMETERS :
+%   a_surfEcoFlntu : input ECO_FLNTU profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_surfEcoFlntu : output ECO_FLNTU profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   12/12/2025 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_surfEcoFlntu] = compute_surface_derived_parameters_for_ECO_FLNTU(a_surfEcoFlntu)
+
+% output parameters initialization
+o_surfEcoFlntu = [];
+
+% global default values
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+
+% list of parameters of the profile
+paramNameList = {a_surfEcoFlntu.paramList.name};
+
+% compute CHLA data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'FLUORESCENCE_CHLA'} ...
+   ];
+derivedParamList = [ ...
+   {'CHLA'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+
+      chla = compute_CHLA_1xx_and_1121_to_1132_1322_1323( ...
+         a_surfEcoFlntu.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+
+      a_surfEcoFlntu.data(:, end+1) = chla;
+      if (isempty(a_surfEcoFlntu.dataQc))
+         a_surfEcoFlntu.dataQc = ones(size(a_surfEcoFlntu.data, 1), length(a_surfEcoFlntu.paramList))*g_decArgo_qcDef;
+      end
+      chlaQc = ones(size(a_surfEcoFlntu.data, 1), 1)*g_decArgo_qcDef;
+      chlaQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_surfEcoFlntu.dataQc(:, end+1) = chlaQc;
+
+      if (~isempty(a_surfEcoFlntu.dataAdj))
+         a_surfEcoFlntu.dataAdj(:, end+1) = ones(size(a_surfEcoFlntu.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_surfEcoFlntu.dataAdjQc))
+            a_surfEcoFlntu.dataAdjQc = ones(size(a_surfEcoFlntu.data, 1), length(a_surfEcoFlntu.paramList))*g_decArgo_qcDef;
+         end
+         a_surfEcoFlntu.dataAdjQc(:, end+1) = ones(size(a_surfEcoFlntu.data, 1), 1)*g_decArgo_qcDef;
+      end
+
+      a_surfEcoFlntu.paramList = [a_surfEcoFlntu.paramList derivedParam];
+      if (~isempty(a_surfEcoFlntu.paramDataMode))
+         a_surfEcoFlntu.paramDataMode = [a_surfEcoFlntu.paramDataMode ' '];
+      end
+
+      % duplicate CHLA profile as CHLA_FLUORESCENCE one
+      a_surfEcoFlntu.data(:, end+1) = chla;
+      if (isempty(a_surfEcoFlntu.dataQc))
+         a_surfEcoFlntu.dataQc = ones(size(a_surfEcoFlntu.data, 1), length(a_surfEcoFlntu.paramList))*g_decArgo_qcDef;
+      end
+      chlaFluoQc = ones(size(a_surfEcoFlntu.data, 1), 1)*g_decArgo_qcDef;
+      chlaFluoQc(find(chla ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_surfEcoFlntu.dataQc(:, end+1) = chlaFluoQc;
+
+      chlaFluoParam = get_netcdf_param_attributes('CHLA_FLUORESCENCE');
+
+      if (~isempty(a_surfEcoFlntu.dataAdj))
+         a_surfEcoFlntu.dataAdj(:, end+1) = ones(size(a_surfEcoFlntu.data, 1), 1)*chlaFluoParam.fillValue;
+         if (isempty(a_surfEcoFlntu.dataAdjQc))
+            a_surfEcoFlntu.dataAdjQc = ones(size(a_surfEcoFlntu.data, 1), length(a_surfEcoFlntu.paramList))*g_decArgo_qcDef;
+         end
+         a_surfEcoFlntu.dataAdjQc(:, end+1) = ones(size(a_surfEcoFlntu.data, 1), 1)*g_decArgo_qcDef;
+      end
+
+      a_surfEcoFlntu.paramList = [a_surfEcoFlntu.paramList chlaFluoParam];
+      if (~isempty(a_surfEcoFlntu.paramDataMode))
+         a_surfEcoFlntu.paramDataMode = [a_surfEcoFlntu.paramDataMode ' '];
+      end
+   end
+end
+
+% compute TURBIDITY data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'SIDE_SCATTERING_TURBIDITY'} ...
+   ];
+derivedParamList = [ ...
+   {'TURBIDITY'} ...
+   ];
+for idP = 1:length(paramToDeriveList)
+   idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
+   if (~isempty(idF))
+      paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
+      derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
+      
+      turbi = compute_TURBIDITY_cts5_usea_and_302_303_1014( ...
+         a_surfEcoFlntu.data(:, idF), ...
+         paramToDerive.fillValue, derivedParam.fillValue);
+      
+      % for CTS5 floats the derived parameter could be already in the list of
+      % parameters => we should first look for it
+      
+      idFDerivedParam = find(strcmp({a_surfEcoFlntu.paramList.name}, derivedParamList{idP}), 1);
+      if (isempty(idFDerivedParam))
+         a_surfEcoFlntu.data(:, end+1) = ones(size(a_surfEcoFlntu.data, 1), 1)*derivedParam.fillValue;
+         if (isempty(a_surfEcoFlntu.dataQc))
+            a_surfEcoFlntu.dataQc = ones(size(a_surfEcoFlntu.data, 1), length(a_surfEcoFlntu.paramList))*g_decArgo_qcDef;
+         else
+            a_surfEcoFlntu.dataQc(:, end+1) = ones(size(a_surfEcoFlntu.data, 1), 1)*g_decArgo_qcDef;
+         end
+         a_surfEcoFlntu.paramList = [a_surfEcoFlntu.paramList derivedParam];
+         if (~isempty(a_surfEcoFlntu.paramDataMode))
+            a_surfEcoFlntu.paramDataMode = [a_surfEcoFlntu.paramDataMode ' '];
+         end
+         derivedParamId = size(a_surfEcoFlntu.data, 2);
+      else
+         derivedParamId = idFDerivedParam;
+      end
+      
+      a_surfEcoFlntu.data(:, derivedParamId) = turbi;
+      turbiQc = ones(size(a_surfEcoFlntu.data, 1), 1)*g_decArgo_qcDef;
+      turbiQc(find(turbi ~= derivedParam.fillValue)) = g_decArgo_qcNoQc;
+      a_surfEcoFlntu.dataQc(:, derivedParamId) = turbiQc;
+   end
+end
+
+% update output parameters
+a_surfEcoFlntu.derived = 1;
+o_surfEcoFlntu = a_surfEcoFlntu;
+
+return
+
+% ------------------------------------------------------------------------------
 % Compute derived parameters for the UVP sensor.
 %
 % SYNTAX :
@@ -601,7 +803,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   12/14/2023 - RNU - creation
@@ -665,6 +867,9 @@ if (any(strcmp('NB_IMAGE_PARTICLES', paramNameList)) && ...
    dataConcLpm(isnan(dataConcLpm)) = paramConcLpm.fillValue;
 
    a_surfUvp.paramList = [a_surfUvp.paramList paramConcLpm];
+   if (~isempty(a_surfUvp.paramDataMode))
+      a_surfUvp.paramDataMode = [a_surfUvp.paramDataMode ' '];
+   end
    a_surfUvp.paramNumberWithSubLevels = [a_surfUvp.paramNumberWithSubLevels length(a_surfUvp.paramList)];
    a_surfUvp.paramNumberOfSubLevels = [a_surfUvp.paramNumberOfSubLevels size(dataConcLpm, 2)];
 
@@ -708,6 +913,9 @@ if (any(strcmp('NB_SIZE_SPECTRA_PARTICLES_PER_IMAGE', paramNameList)))
    dataConcLpm(isnan(dataConcLpm)) = paramConcLpm.fillValue;
 
    a_surfUvp.paramList = [a_surfUvp.paramList paramConcLpm];
+   if (~isempty(a_surfUvp.paramDataMode))
+      a_surfUvp.paramDataMode = [a_surfUvp.paramDataMode ' '];
+   end
    a_surfUvp.paramNumberWithSubLevels = [a_surfUvp.paramNumberWithSubLevels length(a_surfUvp.paramList)];
    a_surfUvp.paramNumberOfSubLevels = [a_surfUvp.paramNumberOfSubLevels size(dataConcLpm, 2)];
 
@@ -763,15 +971,21 @@ if (any(strcmp('NB_IMAGE_CATEGORY', paramNameList)) && ...
    dataConcCat(isnan(dataConcCat)) = paramConcCat.fillValue;
 
    a_surfUvp.paramList = [a_surfUvp.paramList paramConcCat];
+   if (~isempty(a_surfUvp.paramDataMode))
+      a_surfUvp.paramDataMode = [a_surfUvp.paramDataMode ' '];
+   end
    a_surfUvp.paramNumberWithSubLevels = [a_surfUvp.paramNumberWithSubLevels length(a_surfUvp.paramList)];
    a_surfUvp.paramNumberOfSubLevels = [a_surfUvp.paramNumberOfSubLevels size(dataConcCat, 2)];
 
    a_surfUvp.data(:, end+1:end+size(dataConcCat, 2)) = dataConcCat;
 
-   dataBioVolCat = dataConcCat.*(dataObjMeanVolCat*pixelSize*pixelSize*pixelSize*1000);
+   dataBioVolCat = dataConcCat.*(dataObjMeanVolCat*pixelSize*pixelSize*pixelSize)/1000;
    dataBioVolCat(isnan(dataBioVolCat)) = paramBioVolCat.fillValue;
 
    a_surfUvp.paramList = [a_surfUvp.paramList paramBioVolCat];
+   if (~isempty(a_surfUvp.paramDataMode))
+      a_surfUvp.paramDataMode = [a_surfUvp.paramDataMode ' '];
+   end
    a_surfUvp.paramNumberWithSubLevels = [a_surfUvp.paramNumberWithSubLevels length(a_surfUvp.paramList)];
    a_surfUvp.paramNumberOfSubLevels = [a_surfUvp.paramNumberOfSubLevels size(dataBioVolCat, 2)];
 
@@ -797,6 +1011,9 @@ if (any(strcmp('PRES', paramNameList)) && ...
       a_surfUvp.cycleNumber, a_surfUvp.profileNumber);
 
    a_surfUvp.paramList = [a_surfUvp.paramList paramEcoCatId];
+   if (~isempty(a_surfUvp.paramDataMode))
+      a_surfUvp.paramDataMode = [a_surfUvp.paramDataMode ' '];
+   end
    a_surfUvp.paramNumberWithSubLevels = [a_surfUvp.paramNumberWithSubLevels length(a_surfUvp.paramList)];
    a_surfUvp.paramNumberOfSubLevels = [a_surfUvp.paramNumberOfSubLevels size(dataEcotaxaCatId, 2)];
 
@@ -832,7 +1049,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/03/2024 - RNU - creation
@@ -980,7 +1197,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/18/2021 - RNU - creation
@@ -1003,7 +1220,7 @@ paramToDeriveList = [ ...
    {'VOLTAGE_DOWNWELLING_PAR'} ...
    ];
 derivedParamList = [ ...
-   {'DOWNWELLING_PAR2'} ...
+   {'DOWNWELLING_PAR_2'} ...
    ];
 for idP = 1:length(paramToDeriveList)
    idF = find(strcmp(paramToDeriveList{idP}, paramNameList) == 1, 1);
@@ -1011,7 +1228,7 @@ for idP = 1:length(paramToDeriveList)
       paramToDerive = get_netcdf_param_attributes(paramToDeriveList{idP});
       derivedParam = get_netcdf_param_attributes(derivedParamList{idP});
       
-      downPar = compute_DOWNWELLING_PAR_mpe_128_to_133( ...
+      downPar = compute_DOWNWELLING_PAR_mpe_128_to_133_137( ...
          a_surfMpe.data(:, idF), ...
          paramToDerive.fillValue, derivedParam.fillValue);
       
@@ -1024,11 +1241,258 @@ for idP = 1:length(paramToDeriveList)
       a_surfMpe.dataQc(:, end+1) = downParQc;
       
       a_surfMpe.paramList = [a_surfMpe.paramList derivedParam];
+      if (~isempty(a_surfMpe.paramDataMode))
+         a_surfMpe.paramDataMode = [a_surfMpe.paramDataMode ' '];
+      end
    end
 end
 
 % update output parameters
 a_surfMpe.derived = 1;
 o_surfMpe = a_surfMpe;
+
+return
+
+% ------------------------------------------------------------------------------
+% Compute derived parameters for the RAMSES_ACC sensor.
+%
+% SYNTAX :
+%  [o_surfRamsesAcc] = compute_surface_derived_parameters_for_RAMSES_ACC(a_surfRamsesAcc)
+%
+% INPUT PARAMETERS :
+%   a_surfRamsesAcc : input RAMSES_ACC surface profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_surfRamsesAcc : output RAMSES_ACC surface profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   02/19/2025 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_surfRamsesAcc] = compute_surface_derived_parameters_for_RAMSES_ACC(a_surfRamsesAcc)
+
+% output parameters initialization
+o_surfRamsesAcc = a_surfRamsesAcc;
+
+% global default values
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+
+% list of parameters of the surface profile
+paramNameList = {o_surfRamsesAcc.paramList.name};
+
+% compute DOWN_IRRADIANCE_SPECTRUM and DOWN_IRRADIANCE_SPECTRUM_WAVELENGTHS
+% data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'RADIOMETER_DOWN_IRR_INTEGRATION_TIME'} ...
+   {'RADIOMETER_DOWN_IRR_DARK_AVERAGE'} ...
+   {'RAW_DOWNWELLING_IRRADIANCE'} ...
+   ];
+derivedParamList = [ ...
+   {'DOWN_IRRADIANCE_SPECTRUM'} ...
+   {'DOWN_IRRADIANCE_SPECTRUM_WAVELENGTHS'} ...
+   ];
+
+for idP = 1:size(paramToDeriveList, 1)
+   idF1 = find(strcmp(paramToDeriveList{idP, 1}, paramNameList) == 1, 1);
+   idF2 = find(strcmp(paramToDeriveList{idP, 2}, paramNameList) == 1, 1);
+   idF3 = find(strcmp(paramToDeriveList{idP, 3}, paramNameList) == 1, 1);
+   if (~isempty(idF1) && ~isempty(idF2) && ~isempty(idF3))
+      paramToDerive1 = get_netcdf_param_attributes(paramToDeriveList{idP, 1});
+      paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idP, 2});
+      paramToDerive3 = get_netcdf_param_attributes(paramToDeriveList{idP, 3});
+      derivedParam1 = get_netcdf_param_attributes(derivedParamList{idP, 1});
+      derivedParam2 = get_netcdf_param_attributes(derivedParamList{idP, 2});
+
+      [downIrrSpectrum, downIrrSpectrumWavelengths] = compute_DOWN_IRRADIANCE_SPECTRUM( ...
+         o_surfRamsesAcc.data(:, idF1), ...
+         o_surfRamsesAcc.data(:, idF2), ...
+         o_surfRamsesAcc.data(:, idF3:idF3+o_surfRamsesAcc.paramNumberOfSubLevels-1), ...
+         paramToDerive1.fillValue, ...
+         paramToDerive2.fillValue, ...
+         paramToDerive3.fillValue, ...
+         derivedParam1.fillValue, ...
+         derivedParam2.fillValue, ...
+         o_surfRamsesAcc);
+
+      % store DOWN_IRRADIANCE_SPECTRUM
+      o_surfRamsesAcc.data(:, end+1:end+size(downIrrSpectrum, 2)) = downIrrSpectrum;
+      if (isempty(o_surfRamsesAcc.dataQc))
+         o_surfRamsesAcc.dataQc = ones(size(o_surfRamsesAcc.data, 1), length(o_surfRamsesAcc.paramList))*g_decArgo_qcDef;
+      end
+      downIrrSpectrumQc = ones(size(o_surfRamsesAcc.data, 1), 1)*g_decArgo_qcDef;
+      idDef = [];
+      for idL = 1:size(downIrrSpectrum, 1)
+         data = downIrrSpectrum(idL, :);
+         if ((length(unique(data)) == 1) && (unique(data) == derivedParam1.fillValue))
+            idDef = [idDef; idL];
+         end
+      end
+      idNoDef = setdiff(1:size(o_surfRamsesAcc.data, 1), idDef);
+      downIrrSpectrumQc(idNoDef) = g_decArgo_qcNoQc;
+      o_surfRamsesAcc.dataQc(:, end+1) = downIrrSpectrumQc;
+
+      o_surfRamsesAcc.paramList = [o_surfRamsesAcc.paramList derivedParam1];
+      if (~isempty(o_surfRamsesAcc.paramDataMode))
+         o_surfRamsesAcc.paramDataMode = [o_surfRamsesAcc.paramDataMode ' '];
+      end
+      o_surfRamsesAcc.paramNumberWithSubLevels = [o_surfRamsesAcc.paramNumberWithSubLevels length(o_surfRamsesAcc.paramList)];
+      o_surfRamsesAcc.paramNumberOfSubLevels = [o_surfRamsesAcc.paramNumberOfSubLevels size(downIrrSpectrum, 2)];
+
+      % store DOWN_IRRADIANCE_SPECTRUM_WAVELENGTHS
+      o_surfRamsesAcc.data(:, end+1:end+size(downIrrSpectrumWavelengths, 2)) = downIrrSpectrumWavelengths;
+      if (isempty(o_surfRamsesAcc.dataQc))
+         o_surfRamsesAcc.dataQc = ones(size(o_surfRamsesAcc.data, 1), length(o_surfRamsesAcc.paramList))*g_decArgo_qcDef;
+      end
+      downIrrSpectrumWavelengthsQc = ones(size(o_surfRamsesAcc.data, 1), 1)*g_decArgo_qcDef;
+      idDef = [];
+      for idL = 1:size(downIrrSpectrumWavelengths, 1)
+         data = downIrrSpectrumWavelengths(idL, :);
+         if ((length(unique(data)) == 1) && (unique(data) == derivedParam2.fillValue))
+            idDef = [idDef; idL];
+         end
+      end
+      idNoDef = setdiff(1:size(o_surfRamsesAcc.data, 1), idDef);
+      downIrrSpectrumWavelengthsQc(idNoDef) = g_decArgo_qcNoQc;
+      o_surfRamsesAcc.dataQc(:, end+1) = downIrrSpectrumWavelengthsQc;
+
+      o_surfRamsesAcc.paramList = [o_surfRamsesAcc.paramList derivedParam2];
+      if (~isempty(o_surfRamsesAcc.paramDataMode))
+         o_surfRamsesAcc.paramDataMode = [o_surfRamsesAcc.paramDataMode ' '];
+      end
+      o_surfRamsesAcc.paramNumberWithSubLevels = [o_surfRamsesAcc.paramNumberWithSubLevels length(o_surfRamsesAcc.paramList)];
+      o_surfRamsesAcc.paramNumberOfSubLevels = [o_surfRamsesAcc.paramNumberOfSubLevels size(downIrrSpectrumWavelengths, 2)];
+   end
+end
+
+% update output parameters
+o_surfRamsesAcc.derived = 1;
+
+return
+
+% ------------------------------------------------------------------------------
+% Compute derived parameters for the RAMSES_ARC sensor.
+%
+% SYNTAX :
+%  [o_surfRamsesArc] = compute_surface_derived_parameters_for_RAMSES_ARC(a_surfRamsesArc)
+%
+% INPUT PARAMETERS :
+%   a_surfRamsesArc : input RAMSES_ARC profile structure
+%
+% OUTPUT PARAMETERS :
+%   o_surfRamsesArc : output RAMSES_ARC profile structure
+%
+% EXAMPLES :
+%
+% SEE ALSO :
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
+% ------------------------------------------------------------------------------
+% RELEASES :
+%   02/21/2025 - RNU - creation
+% ------------------------------------------------------------------------------
+function [o_surfRamsesArc] = compute_surface_derived_parameters_for_RAMSES_ARC(a_surfRamsesArc)
+
+% output parameters initialization
+o_surfRamsesArc = a_surfRamsesArc;
+
+% global default values
+global g_decArgo_qcDef;
+global g_decArgo_qcNoQc;
+
+
+% list of parameters of the profile
+paramNameList = {o_surfRamsesArc.paramList.name};
+
+% compute UP_RADIANCE_SPECTRUM and UP_RADIANCE_SPECTRUM_WAVELENGTHS
+% data and add them in the profile structure
+paramToDeriveList = [ ...
+   {'RADIOMETER_UP_RAD_INTEGRATION_TIME'} ...
+   {'RADIOMETER_UP_RAD_DARK_AVERAGE'} ...
+   {'RAW_UPWELLING_RADIANCE'} ...
+   ];
+derivedParamList = [ ...
+   {'UP_RADIANCE_SPECTRUM'} ...
+   {'UP_RADIANCE_SPECTRUM_WAVELENGTHS'} ...
+   ];
+
+for idP = 1:size(paramToDeriveList, 1)
+   idF1 = find(strcmp(paramToDeriveList{idP, 1}, paramNameList) == 1, 1);
+   idF2 = find(strcmp(paramToDeriveList{idP, 2}, paramNameList) == 1, 1);
+   idF3 = find(strcmp(paramToDeriveList{idP, 3}, paramNameList) == 1, 1);
+   if (~isempty(idF1) && ~isempty(idF2) && ~isempty(idF3))
+      paramToDerive1 = get_netcdf_param_attributes(paramToDeriveList{idP, 1});
+      paramToDerive2 = get_netcdf_param_attributes(paramToDeriveList{idP, 2});
+      paramToDerive3 = get_netcdf_param_attributes(paramToDeriveList{idP, 3});
+      derivedParam1 = get_netcdf_param_attributes(derivedParamList{idP, 1});
+      derivedParam2 = get_netcdf_param_attributes(derivedParamList{idP, 2});
+
+      [upRadSpectrum, upRadSpectrumWavelengths] = compute_UP_RADIANCE_SPECTRUM( ...
+         o_surfRamsesArc.data(:, idF1), ...
+         o_surfRamsesArc.data(:, idF2), ...
+         o_surfRamsesArc.data(:, idF3:idF3+o_surfRamsesArc.paramNumberOfSubLevels-1), ...
+         paramToDerive1.fillValue, ...
+         paramToDerive2.fillValue, ...
+         paramToDerive3.fillValue, ...
+         derivedParam1.fillValue, ...
+         derivedParam2.fillValue, ...
+         o_surfRamsesArc);
+
+      % store UP_RADIANCE_SPECTRUM
+      o_surfRamsesArc.data(:, end+1:end+size(upRadSpectrum, 2)) = upRadSpectrum;
+      if (isempty(o_surfRamsesArc.dataQc))
+         o_surfRamsesArc.dataQc = ones(size(o_surfRamsesArc.data, 1), length(o_surfRamsesArc.paramList))*g_decArgo_qcDef;
+      end
+      upRadSpectrumQc = ones(size(o_surfRamsesArc.data, 1), 1)*g_decArgo_qcDef;
+      idDef = [];
+      for idL = 1:size(upRadSpectrum, 1)
+         data = upRadSpectrum(idL, :);
+         if ((length(unique(data)) == 1) && (unique(data) == derivedParam1.fillValue))
+            idDef = [idDef; idL];
+         end
+      end
+      idNoDef = setdiff(1:size(o_surfRamsesArc.data, 1), idDef);
+      upRadSpectrumQc(idNoDef) = g_decArgo_qcNoQc;
+      o_surfRamsesArc.dataQc(:, end+1) = upRadSpectrumQc;
+
+      o_surfRamsesArc.paramList = [o_surfRamsesArc.paramList derivedParam1];
+      if (~isempty(o_surfRamsesArc.paramDataMode))
+         o_surfRamsesArc.paramDataMode = [o_surfRamsesArc.paramDataMode ' '];
+      end
+      o_surfRamsesArc.paramNumberWithSubLevels = [o_surfRamsesArc.paramNumberWithSubLevels length(o_surfRamsesArc.paramList)];
+      o_surfRamsesArc.paramNumberOfSubLevels = [o_surfRamsesArc.paramNumberOfSubLevels size(upRadSpectrum, 2)];
+
+      % store UP_RADIANCE_SPECTRUM_WAVELENGTHS
+      o_surfRamsesArc.data(:, end+1:end+size(upRadSpectrumWavelengths, 2)) = upRadSpectrumWavelengths;
+      if (isempty(o_surfRamsesArc.dataQc))
+         o_surfRamsesArc.dataQc = ones(size(o_surfRamsesArc.data, 1), length(o_surfRamsesArc.paramList))*g_decArgo_qcDef;
+      end
+      upRadSpectrumWavelengthsQc = ones(size(o_surfRamsesArc.data, 1), 1)*g_decArgo_qcDef;
+      idDef = [];
+      for idL = 1:size(upRadSpectrumWavelengths, 1)
+         data = upRadSpectrumWavelengths(idL, :);
+         if ((length(unique(data)) == 1) && (unique(data) == derivedParam2.fillValue))
+            idDef = [idDef; idL];
+         end
+      end
+      idNoDef = setdiff(1:size(o_surfRamsesArc.data, 1), idDef);
+      upRadSpectrumWavelengthsQc(idNoDef) = g_decArgo_qcNoQc;
+      o_surfRamsesArc.dataQc(:, end+1) = upRadSpectrumWavelengthsQc;
+
+      o_surfRamsesArc.paramList = [o_surfRamsesArc.paramList derivedParam2];
+      if (~isempty(o_surfRamsesArc.paramDataMode))
+         o_surfRamsesArc.paramDataMode = [o_surfRamsesArc.paramDataMode ' '];
+      end
+      o_surfRamsesArc.paramNumberWithSubLevels = [o_surfRamsesArc.paramNumberWithSubLevels length(o_surfRamsesArc.paramList)];
+      o_surfRamsesArc.paramNumberOfSubLevels = [o_surfRamsesArc.paramNumberOfSubLevels size(upRadSpectrumWavelengths, 2)];
+   end
+end
+
+% update output parameters
+o_surfRamsesArc.derived = 1;
 
 return

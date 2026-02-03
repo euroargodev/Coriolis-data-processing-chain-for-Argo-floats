@@ -2,24 +2,23 @@
 % Store technical message #2 data for output NetCDF file.
 %
 % SYNTAX :
-%  store_tech2_data_for_nc_218(a_tabTech, a_deepCycle, a_iceDetected)
+%  store_tech2_data_for_nc_218(a_tabTech, a_deepCycle)
 %
 % INPUT PARAMETERS :
-%   a_tabTech     : decoded technical data
-%   a_deepCycle   : deep cycle flag
-%   a_iceDetected : ice detected flag
+%   a_tabTech   : decoded technical data
+%   a_deepCycle : deep cycle flag
 %
 % OUTPUT PARAMETERS :
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/02/2019 - RNU - creation
 % ------------------------------------------------------------------------------
-function store_tech2_data_for_nc_218(a_tabTech, a_deepCycle, a_iceDetected)
+function store_tech2_data_for_nc_218(a_tabTech, a_deepCycle)
 
 % current float WMO number
 global g_decArgo_floatNum;
@@ -84,10 +83,10 @@ if (a_deepCycle == 1)
       g_decArgo_cycleNum 207];
    g_decArgo_outputNcParamValue{end+1} = tabTech2(10);
    
-   pres = sensor_2_value_for_pressure_201_203_215_216_218_221(tabTech2(11));
-   temp = sensor_2_value_for_temperature_201_to_203_215_216_218_221(tabTech2(12));
+   pres = sensor_2_value_for_pressure_201_203_215_216_218_221_228_229_230(tabTech2(11));
+   temp = sensor_2_value_for_temp_2xx_1_to_3_15_16_18_21_28_29_30(tabTech2(12));
    psal = tabTech2(13)/1000;
-   if (any([pres temp psal] ~= 0) && (a_iceDetected == 0))
+   if (any([pres temp psal] ~= 0))
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 221];
       g_decArgo_outputNcParamValue{end+1} = pres;
@@ -157,7 +156,7 @@ if (a_deepCycle == 1)
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 214];
-      g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_pressure_201_203_215_216_218_221(tabTech2(30));
+      g_decArgo_outputNcParamValue{end+1} = sensor_2_value_for_pressure_201_203_215_216_218_221_228_229_230(tabTech2(30));
       
       g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
          g_decArgo_cycleNum 215];
@@ -184,9 +183,9 @@ if (a_deepCycle == 1)
       [configNames, configValues] = get_float_config_ir_sbd(g_decArgo_cycleNum);
       iceUsed = get_config_value('CONFIG_PG00', configNames, configValues);
       if (~isempty(iceUsed) && (iceUsed ~= 0))
-         
+
          g_decArgo_outputNcParamIndex = [g_decArgo_outputNcParamIndex;
-            g_decArgo_cycleNum 1010];
+            g_decArgo_cycleNum 233];
          g_decArgo_outputNcParamValue{end+1} = tabTech2(43);
       end
    end

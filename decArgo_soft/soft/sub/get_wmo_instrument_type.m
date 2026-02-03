@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/16/2013 - RNU - creation
@@ -26,6 +26,9 @@ o_wmoInstType = [];
 % current float WMO number
 global g_decArgo_floatNum;
 
+% sensor list
+global g_decArgo_sensorMountedOnFloat;
+
 
 switch (a_decoderId)
    
@@ -33,14 +36,23 @@ switch (a_decoderId)
       % PROVOR SBE
       o_wmoInstType = '841';
       
-   case {3, 17, 30, 31, 32, 205, 204, 209, 210, 211, 212, 222, 217, 223}
+   case {3, 17, 30, 31, 32, 205, 204, 209, 210, 211, 212, 222, 217, 223, 231, 232}
       % ARVOR SBE
       o_wmoInstType = '844';
       
-   case {224, 226}
+   case {224, 226, 227}
       % ARVOR RBR
       o_wmoInstType = '878';
-      
+
+   case {401, 402}
+      if (~ismember('CTD_RBR', g_decArgo_sensorMountedOnFloat))
+         % ARVOR SBE
+         o_wmoInstType = '844';
+      else
+         % ARVOR RBR
+         o_wmoInstType = '878';
+      end
+
    case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 301}
       % PROVOR_III SBE
       o_wmoInstType = '836';
@@ -49,12 +61,12 @@ switch (a_decoderId)
       % PROVOR_IV SBE
       o_wmoInstType = '835';
       
-   case {126, 127, 128, 129, 130, 131, 132, 133}
+   case {126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
       % PROVOR_V SBE
       o_wmoInstType = '834';
       
-   case {201, 202, 203, 215, 216, 218, 221}
-      % ARVOR_D SBE
+   case {201, 202, 203, 215, 216, 218, 221, 228, 229, 230}
+      % ARVOR_D
       o_wmoInstType = '838';
       
    case {219, 220}
@@ -68,9 +80,9 @@ switch (a_decoderId)
    case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, ...
          1012, 1013, 1014, 1015, 1016, 1021, 1022, ...
          1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, ...
-         1112, 1113, 1114, ...
+         1112, 1113, 1114, 1115, ...
          1314, ...
-         1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, ...
+         1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132, ...
          1321, 1322, 1323}
       % APEX SBE
       o_wmoInstType = '846';

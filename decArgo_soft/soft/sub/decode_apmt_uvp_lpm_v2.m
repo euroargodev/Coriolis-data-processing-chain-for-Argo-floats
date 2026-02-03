@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   06/20/2022 - RNU - creation
@@ -37,6 +37,16 @@ global g_decArgo_cts5PhaseSurface;
 global g_decArgo_cts5Treat_RW;
 global g_decArgo_cts5Treat_AM;
 global g_decArgo_cts5Treat_DW;
+
+% current float WMO number
+global g_decArgo_floatNum;
+
+% current cycle number
+global g_decArgo_cycleNum;
+
+% current cycle and pattern number
+global g_decArgo_cycleNumFloat;
+global g_decArgo_patternNumFloat;
 
 
 % list of cycle phase headers that can be encountered
@@ -188,6 +198,18 @@ while (currentByte <= lastByteNum)
       data(3) = rawData(3);
       data(4) = rawData(4)/1000 - 5;
       data(5:end) = rawData(5:end);
+
+      % see anomaly in PARK measurements of float 1902685 cycle(37, 1)
+      if (any((data(5:22) > intmax('int32')) | (data(5:22) < intmin('int32'))))
+         dataTmp = data(5:22);
+         dataTmp((dataTmp > intmax('int32')) | (dataTmp < intmin('int32'))) = nan;
+         data(5:22) = dataTmp;
+         fprintf('WARNING: Float #%d Cycle #%d: (Cy,Ptn)=(%d,%d): Some UVP data (NB_SIZE_SPECTRA_PARTICLES) are out of range\n', ...
+            g_decArgo_floatNum, ...
+            g_decArgo_cycleNum, ...
+            g_decArgo_cycleNumFloat, ...
+            g_decArgo_patternNumFloat);
+      end
 
       currentDataStruct.data = [currentDataStruct.data; data];
       currentByte = currentByte + nbBytes;

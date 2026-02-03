@@ -1,5 +1,5 @@
 % ------------------------------------------------------------------------------
-% Selection (déplacement) des fichiers Argos associées à une liste de
+% Selection (dÃ©placement) des fichiers Argos associÃ©es Ã  une liste de
 % flotteurs.
 %
 % SYNTAX :
@@ -7,14 +7,14 @@
 %   select_argos_files_in_archive_cycle(6900189, 7900118)
 %
 % INPUT PARAMETERS :
-%   varargin : éventuellement la liste des numéros de flotteurs à traiter
+%   varargin : Ã©ventuellement la liste des numÃ©ros de flotteurs Ã  traiter
 %
 % OUTPUT PARAMETERS :
 %
 % EXAMPLES :
 %
 % SEE ALSO : get_config
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   18/01/2013 - RNU - creation
@@ -29,7 +29,7 @@ configVar{end+1} = 'WMO_ARGOS_LIST';
 [floatListFileName, argoDispDirectory, wmoToArgosFileName] = get_config(configVar);
 
 if (nargin == 0)
-   % les fichiers pris en compte sont ceux d'une liste de flotteurs prédéfinie
+   % les fichiers pris en compte sont ceux d'une liste de flotteurs prÃ©dÃ©finie
    if ~(exist(floatListFileName, 'file') == 2)
       fprintf('Fichier introuvable: %s\n', floatListFileName);
       return
@@ -38,23 +38,23 @@ if (nargin == 0)
    fprintf('Flotteurs de la liste: %s\n', floatListFileName);
    floatList = textread(floatListFileName, '%d');
 else
-   % les fichiers pris en compte sont ceux fournis en paramètre
+   % les fichiers pris en compte sont ceux fournis en paramÃ¨tre
    floatList = cell2mat(varargin);
 end
 
-% répertoire source
+% rÃ©pertoire source
 inputDirName = 'E:\archive_cycle_20130121/';
 
-% création du répertoire de destination
+% crÃ©ation du rÃ©pertoire de destination
 outputDirName = [inputDirName '../selected/'];
 if (exist(outputDirName, 'dir') == 7)
-   fprintf('Le répertoire %s existe déjà, arrêt du programme\n', outputDirName);
+   fprintf('Le rÃ©pertoire %s existe dÃ©jÃ , arrÃªt du programme\n', outputDirName);
    return
 else
    mkdir(outputDirName);
 end
 
-% lecture de la table de correspondance: numéro WMO <-> numéro de plate-forme
+% lecture de la table de correspondance: numÃ©ro WMO <-> numÃ©ro de plate-forme
 % Argos
 [numWmo numArgos] = get_wmo_num_vs_argos_num(wmoToArgosFileName);
 numWmo = str2num(char(numWmo));
@@ -63,7 +63,7 @@ if (isempty(numWmo))
    return
 end
 
-% déplacement des fichiers Argos des flotteurs de la liste
+% dÃ©placement des fichiers Argos des flotteurs de la liste
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
    
@@ -71,7 +71,7 @@ for idFloat = 1:nbFloats
    floatNumStr = num2str(floatNum);
    fprintf('%03d/%03d %s\n', idFloat, nbFloats, floatNumStr);
    
-   % recherche du numéro Argos de ce flotteur
+   % recherche du numÃ©ro Argos de ce flotteur
    [argosId] = find_argosId(floatNum, numWmo, numArgos);
    if (isempty(argosId))
       return
@@ -79,7 +79,7 @@ for idFloat = 1:nbFloats
    
    argosFile = dir([inputDirName '/' sprintf('*%d*%d*.txt', argosId, floatNum)]);
    if (isempty(argosFile))
-      fprintf('Pas de données\n');
+      fprintf('Pas de donnÃ©es\n');
    end
    for idFile = 1:length(argosFile)
       argosFileName = argosFile(idFile).name;
@@ -89,7 +89,7 @@ for idFloat = 1:nbFloats
          if (exist(argosFilePathName, 'file') == 2)
             move_file(argosFilePathName, outputDirName);
          else
-            fprintf(': répertoire absent: %s\n', argosFilePathName);
+            fprintf(': rÃ©pertoire absent: %s\n', argosFilePathName);
          end
       end
    end

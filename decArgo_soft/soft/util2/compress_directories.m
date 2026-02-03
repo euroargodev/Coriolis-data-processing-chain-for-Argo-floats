@@ -11,7 +11,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/18/2014 - RNU - creation
@@ -21,24 +21,24 @@ function compress_directories()
 % input directory
 % INPUT_DIR_NAME = 'C:\users\RNU\Argo\argos\coriolis\bascule_20140303\message_20140306_by_month_split_raw\';
 INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\historical_processing\';
-INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\fichiers_cycle_non_identifiés_119Apex\';
+INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\fichiers_cycle_non_identifiÃ©s_119Apex\';
 INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\split_raw_sans_doubles_FINAL_119Apex\';
 INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing\';
 INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing\zzz\zzzz\';
 INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\recup_mail_VB_20160830\final_processing\';
 INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing\';
-INPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\C-RAID\TEST\OUT_TEST\';
+INPUT_DIR_NAME = 'F:\DATA_ALL\CLS-AOML\ARGOS_FINAL\WITH_KALMAN\DS\';
 
 % output directory
 % OUTPUT_DIR_NAME = 'E:\HDD\message_20140306_by_month_split_raw_zip\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\historical_processing_zip1\';
-OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\fichiers_cycle_non_identifiés_119Apex_zip\';
+OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\fichiers_cycle_non_identifiÃ©s_119Apex_zip\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_20160823\split_raw_sans_doubles_FINAL_119Apex_zip\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing_zip\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing_zzzz_zip\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\recup_mail_VB_20160830\final_processing_zip\';
 OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\ArgosApex_processing_ALL\historical_processing_zip\';
-OUTPUT_DIR_NAME = 'C:\Users\jprannou\_DATA\C-RAID\TEST\OUT_TEST_zip\';
+OUTPUT_DIR_NAME = 'F:\DATA_ALL\CLS-AOML\ARGOS_FINAL\WITH_KALMAN\DS_TAR_GZ\';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -69,9 +69,13 @@ for idDir = 1:length(dirs)
    
    if (isdir(dirPathName))
       if ~(strcmp(dirName, '.') || strcmp(dirName, '..'))
-         %          zip([OUTPUT_DIR_NAME '/' dirName '.zip'], dirPathName);
-         cmd = ['matlab -nodesktop -nosplash -r "zip(''' [OUTPUT_DIR_NAME '/' dirName '.zip'] ''', ''' dirPathName ''');exit"'];
-         [status, result] = system(cmd);
+         % gzip(dirPathName, [OUTPUT_DIR_NAME '/' dirName '.zip']);
+         % gzip(dirPathName, OUTPUT_DIR_NAME);
+         tar([OUTPUT_DIR_NAME '/' dirName '.tar'], dirPathName);
+         gzip([OUTPUT_DIR_NAME '/' dirName '.tar']);
+         delete([OUTPUT_DIR_NAME '/' dirName '.tar']);
+         % cmd = ['matlab -nodesktop -nosplash -r "zip(''' [OUTPUT_DIR_NAME '/' dirName '.zip'] ''', ''' dirPathName ''');exit"'];
+         % [status, result] = system(cmd);
       end
    end
 end

@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/07/2020 - RNU - creation
@@ -20,19 +20,28 @@
 function select_float_list
 
 % float reference file list
-FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
-% FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\apex_float_info_20201006.txt';
-% FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\nova_float_info_20201006.txt';
-% FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\tmp16.txt';
+FLOAT_REFERENCE_LIST = 'F:\ICE_check\ICE_check_lists\_tmp_prv_info.txt';
+% FLOAT_REFERENCE_LIST = 'F:\ICE_check\ICE_check_lists\_tmp_apx_info.txt';
+FLOAT_REFERENCE_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_prv_info.txt';
 
 % float file list to select
-FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_arvor_ice_1.txt';
-FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_arvor_ice_2.txt';
-FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_arvor_ice_with_anomaly.txt';
-FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_arvor_deep_ice.txt';
-FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_arvor_deep_ice_with_anomaly.txt';
-FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_provor_ice.txt';
-
+FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp_in_andro.txt';
+FLOAT_LIST = 'F:\ICE_check\ICE_check_lists\arvor_ice_212.txt';
+FLOAT_LIST = 'F:\ICE_check\ICE_check_lists\arvor_ice_217.txt';
+FLOAT_LIST = 'F:\ICE_check\ICE_check_lists\arvor_ice_222.txt';
+FLOAT_LIST = 'F:\ICE_check\ICE_check_lists\arvor_ice_223.txt';
+FLOAT_LIST = 'F:\ICE_check\ICE_check_lists\arvor_ice_224.txt';
+FLOAT_LIST = 'F:\ICE_check\ICE_check_lists\arvor_ice_226.txt';
+FLOAT_LIST = 'F:\ICE_check\ICE_check_lists\arvor_ice_214.txt';
+FLOAT_LIST = 'F:\ICE_check\ICE_check_lists\arvor_ice_225.txt';
+FLOAT_LIST = 'F:\ICE_check\ICE_check_lists\arvor_ice_216.txt';
+FLOAT_LIST = 'F:\ICE_check\ICE_check_lists\arvor_ice_218.txt';
+FLOAT_LIST = 'F:\ICE_check\ICE_check_lists\arvor_ice_221.txt';
+FLOAT_LIST = 'F:\ICE_check\ICE_check_lists\config_prv.txt';
+FLOAT_LIST = 'F:\ICE_check\ICE_check_lists\config_apx.txt';
+FLOAT_LIST = 'F:\ICE_check\ICE_check_lists\nke_ice_all_ice_detected.txt';
+FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
+FLOAT_LIST = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_check_ice_floats_BK.txt';
 
 % directory to store the CSV file
 DIR_CSV_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\csv\';

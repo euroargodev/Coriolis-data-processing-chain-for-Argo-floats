@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/20/2021 - RNU - creation
@@ -22,13 +22,19 @@ function nc_check_file_format_detailed(varargin)
 % directory of the JAVA checker
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_exec_v2.7.03_2022-06-01_spec_v2.7.9_2022-11-25\';
 % DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_java_v2.8_2023-02-27_spec_v2.8_2023-02-27\';
-DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_java_v2.8.01_2023-04-11_spec_v2.8_2023-02-27\';
-DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_java_v2.8.01_2023-04-11_spec_v2.8.3_20230721\';
+% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_java_v2.8.01_2023-04-11_spec_v2.8_2023-02-27\';
+% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_java_v2.8.01_2023-04-11_spec_v2.8.3_20230721\';
+% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_v2.8.13\';
+% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_v2.8.14\';
+% DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_v2.8.15\';
+DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_v2.8.16\';
+DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_v2.9.1\';
+DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_v2.9.2\';
+DIR_JAVA_CHECKER = 'C:\Users\jprannou\_RNU\Argo\checker_US\javaChecker\file_checker_v2.9.3\';
 
 % top directory of the NetCDF files to check
 DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\OUT\nc_output_decArgo\';
-% DIR_INPUT_NC_FILES = 'E:\work_traj_32\nc_output_decArgo_traj_32\';
-% DIR_INPUT_NC_FILES = 'F:\work_traj_32\Traj_3.2_crashes\';
+% DIR_INPUT_NC_FILES = 'C:\Users\jprannou\_DATA\NAVIS_US_BGC\DATA\NAVIS_US_BGC_DATA\OUT\';
 
 % json meta-data file directory
 DIR_JSON_FLOAT_META = 'C:\Users\jprannou\_DATA\IN\decArgo_config_floats\json_float_meta\';
@@ -39,7 +45,8 @@ DIR_OUTPUT_REPORT_FILES = 'C:\Users\jprannou\_DATA\OUT\checker_reports\';
 
 % default list of floats to check
 FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_tmp.txt';
-% FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\lists_20230316\list_cts5_locean_all.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\_RNU\DecArgo_soft\lists\_cts57.24_OGS_tridente_pal.txt';
+FLOAT_LIST_FILE_NAME = 'C:\Users\jprannou\Desktop\SOS_VB_apx_olaf2\_apex_olaf2.txt';
 
 % directory to store the log file
 DIR_LOG_FILE = 'C:\Users\jprannou\_RNU\DecArgo_soft\work\log\';
@@ -55,10 +62,11 @@ CHECK_NC_MULTI_PROF = 0;
 CHECK_NC_MONO_PROF = 1;
 CHECK_NC_TECH = 1;
 CHECK_NC_META = 1;
+
 % CHECK_NC_TRAJ = 0;
 % CHECK_NC_MULTI_PROF = 0;
 % CHECK_NC_MONO_PROF = 0;
-% CHECK_NC_TECH = 0;
+% CHECK_NC_TECH = 1;
 % CHECK_NC_META = 1;
 
 
@@ -113,6 +121,7 @@ for idFloat = 1:nbFloats
 
    % floatDac = 'INCOIS';
    floatDac = 'CORIOLIS';
+   % floatDac = 'MEDS';
    % floatDac = 'BODC';
    % floatDac = 'AOML';
    if (exist(jsonInputFileName, 'file') == 2)
@@ -131,7 +140,8 @@ for idFloat = 1:nbFloats
    %    floatDac = 'csio';
    %    floatDac = 'bodc';
    %    floatDac = 'coriolis';
-
+   % floatDac = 'KORDI';
+   
    for idType = 1:5
 
       if ((idType == 1) && (CHECK_NC_TRAJ == 1))
@@ -174,14 +184,33 @@ for idFloat = 1:nbFloats
             end
 
             if (ispc)
+
                cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
                   'java -classpath ' DIR_JAVA_CHECKER ' ' ...
-                  '-jar ' DIR_JAVA_CHECKER '/ValidateSubmit.jar ' ...
+                  '-jar ' DIR_JAVA_CHECKER '/file_checker_exec-2.9.3.jar ' ...
                   lower(floatDac) ' ' ...
                   DIR_JAVA_CHECKER '/spec ' ...
                   DIR_OUTPUT_REPORT_FILES ' ' ...
                   ncFileDir ' ' ...
                   ncFileName];
+               
+               % cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
+               %    'java -classpath ' DIR_JAVA_CHECKER ' ' ...
+               %    '-jar ' DIR_JAVA_CHECKER '/file_checker_exec-2.9.3-SNAPSHOT-corr2.jar ' ...
+               %    lower(floatDac) ' ' ...
+               %    DIR_JAVA_CHECKER '/spec ' ...
+               %    DIR_OUTPUT_REPORT_FILES ' ' ...
+               %    ncFileDir ' ' ...
+               %    ncFileName];
+
+               % cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
+               %    'java -classpath ' DIR_JAVA_CHECKER ' ' ...
+               %    '-jar ' DIR_JAVA_CHECKER '/ValidateSubmit.jar ' ...
+               %    lower(floatDac) ' ' ...
+               %    DIR_JAVA_CHECKER '/spec ' ...
+               %    DIR_OUTPUT_REPORT_FILES ' ' ...
+               %    ncFileDir ' ' ...
+               %    ncFileName];
                % cmd = ['cd ' DIR_JAVA_CHECKER ' & ' ...
                %    'java -Xmx2g -Xms2g -classpath ' DIR_JAVA_CHECKER ' ' ...
                %    '-jar ' DIR_JAVA_CHECKER '/ValidateSubmit.jar ' ...

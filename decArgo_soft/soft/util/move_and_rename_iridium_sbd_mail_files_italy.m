@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/04/2017 - RNU - creation
@@ -84,7 +84,7 @@ for idF = 1:length(files)
                imei(idFile), momsn(idFile), mtmsn(idFile)) pidNum '.txt'];
             
             if (exist([outputDirName newfilename], 'file') == 2)
-               fprintf('WARNING: Fichier existe dÈj‡: %s - renommÈ\n', [outputDirName newfilename]);
+               fprintf('WARNING: Fichier existe d√©j√†: %s - renomm√©\n', [outputDirName newfilename]);
                cpt = 1;
                while (exist([outputDirName newfilename], 'file') == 2)
                   newfilename = [sprintf('co_%sZ_%d_%06d_%06d_', ...
@@ -277,7 +277,7 @@ if (fIdOut == -1)
    return
 end
 
-% concatÈnation dans le fichier
+% concat√©nation dans le fichier
 for idL = 1:length(lineStr)
    fprintf(fIdOut, '%s\n', lineStr{idL});
 end
@@ -344,7 +344,7 @@ if (fIdOut == -1)
    return
 end
 
-% concatÈnation dans le fichier
+% concat√©nation dans le fichier
 for idL = 1:length(lineStr)
    fprintf(fIdOut, '%s\n', lineStr{idL});
 end

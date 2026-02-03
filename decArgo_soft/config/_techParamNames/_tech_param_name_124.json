@@ -3,7 +3,7 @@
    {
       "TECH_PARAM_DEC_ID" : "100",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Numéro de pattern.",
+      "TECH_PARAM_MSG_LABEL" : "NumÃ©ro de pattern.",
       "TECH_PARAM_NAME" : "NUMBER_SubCycle_NUMBER",
       "TECH_PARAM_DESCRIPTION" : "NUMBER_SubCycle_NUMBER"
    },
@@ -11,7 +11,7 @@
    {
       "TECH_PARAM_DEC_ID" : "101",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Numéro de cycle (flotteur).",
+      "TECH_PARAM_MSG_LABEL" : "NumÃ©ro de cycle (flotteur).",
       "TECH_PARAM_NAME" : "NUMBER_InternalCycle_NUMBER",
       "TECH_PARAM_DESCRIPTION" : "NUMBER_InternalCycle_NUMBER"
    },
@@ -139,7 +139,7 @@
    {
       "TECH_PARAM_DEC_ID" : "110",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Date/heure de fin",
+      "TECH_PARAM_MSG_LABEL" : "End date/time",
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_EndGroundingTime_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Time when the float escaped from grounding."
    },
@@ -147,9 +147,9 @@
    {
       "TECH_PARAM_DEC_ID" : "111",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Volume huile transféré",
+      "TECH_PARAM_MSG_LABEL" : "Oil volume transferred",
       "TECH_PARAM_NAME" : "VOLUME_OilVolumeTransferredToAscentWhenGrounded_cm^3",
-      "TECH_PARAM_DESCRIPTION" : "Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded."
+      "TECH_PARAM_DESCRIPTION" : "Oil volume, transferred to the external bladder, needed to leave the sea bottom when grounded. "
    },
    "TECH_PARAM_20" :
    {
@@ -836,14 +836,14 @@
       "TECH_PARAM_DEC_ID" : "210",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
       "TECH_PARAM_MSG_LABEL" : "Ice:",
-      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IsaIceDetection_LOGICAL",
-      "TECH_PARAM_DESCRIPTION" : "Alarm raised when Ice is detected by ISA algorithm."
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceIsaDetectionAlarm_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when Ice has been detected with ISA algorithm."
    },
    "TECH_PARAM_106" :
    {
       "TECH_PARAM_DEC_ID" : "174",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Accrochage à la remontée",
+      "TECH_PARAM_MSG_LABEL" : "Accrochage Ã  la remontÃ©e",
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_HangingAlarm_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float is hanged during ascent."
    },
@@ -851,7 +851,7 @@
    {
       "TECH_PARAM_DEC_ID" : "175",
       "TECH_PARAM_MSG_ID" : "TECH_AUX",
-      "TECH_PARAM_MSG_LABEL" : "Accrochage à la remontée",
+      "TECH_PARAM_MSG_LABEL" : "Accrochage Ã  la remontÃ©e",
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_HangingEscapeAlarm_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float escaped from hanging during ascent."
    },
@@ -859,7 +859,7 @@
    {
       "TECH_PARAM_DEC_ID" : "176",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Remontée d'urgence",
+      "TECH_PARAM_MSG_LABEL" : "RemontÃ©e d'urgence",
       "TECH_PARAM_NAME" : "CLOCK_DateOfEmergencyAscent_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "date of emergency ascent"
    },
@@ -867,7 +867,7 @@
    {
       "TECH_PARAM_DEC_ID" : "177",
       "TECH_PARAM_MSG_ID" : "TECH",
-      "TECH_PARAM_MSG_LABEL" : "Pression mesurée en surface",
+      "TECH_PARAM_MSG_LABEL" : "Pression mesurÃ©e en surface",
       "TECH_PARAM_NAME" : "PRES_Now_dbar",
       "TECH_PARAM_DESCRIPTION" : "test message data reporting pressure at the surface during drift - cycle 0"
    },
@@ -918,5 +918,101 @@
       "TECH_PARAM_MSG_LABEL" : "End of life",
       "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_EndOfLifeAlarm_YYYYMMDDHHMMSS",
       "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float switches to the End Of Life mode. When reported as a NUMBER, it provides the reason of the End Of Life (see float manual for details)."
+   },
+   "TECH_PARAM_116" :
+   {
+      "TECH_PARAM_DEC_ID" : "211",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceAlgorithmActivated_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Was the Ice Algorithm (ISA or AC1) activated or not for this particular cycle? 0 = no, 1 = yes"
+   },
+   "TECH_PARAM_117" :
+   {
+      "TECH_PARAM_DEC_ID" : "212",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceIsaAlgorithmActivated_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Was the Ice ISA Algorithm  activated or not for this particular cycle? 0 = no, 1 = yes"
+   },
+   "TECH_PARAM_118" :
+   {
+      "TECH_PARAM_DEC_ID" : "213",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceAc1Activated_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Was the Ice AC1  activated or not for this particular cycle? 0 = no, 1 = yes"
+   },
+   "TECH_PARAM_119" :
+   {
+      "TECH_PARAM_DEC_ID" : "214",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceIsaDetectionAlarm_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when Ice has been detected with ISA algorithm."
+   },
+   "TECH_PARAM_120" :
+   {
+      "TECH_PARAM_DEC_ID" : "215",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "ICE_D_DATE in payload data",
+      "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_IceIsaDetectionAlarm_YYYYMMDDHHMMSS",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when Ice has been detected with ISA algorithm."
+   },
+   "TECH_PARAM_121" :
+   {
+      "TECH_PARAM_DEC_ID" : "216",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceNoSurfacePeriod_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when the float is still not surfacing (even without Ice detection) due to Ice advoidance algorithm."
+   },
+   "TECH_PARAM_122" :
+   {
+      "TECH_PARAM_DEC_ID" : "217",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceFeedbackCmdAccepted_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Was the float configured to accept profile abortion command for this particular cycle? 0 = no, 1 = yes"
+   },
+   "TECH_PARAM_123" :
+   {
+      "TECH_PARAM_DEC_ID" : "218",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceProfileAbortAlarm_LOGICAL",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when the profile has been aborted by Ice detection."
+   },
+   "TECH_PARAM_124" :
+   {
+      "TECH_PARAM_DEC_ID" : "221",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "",
+      "TECH_PARAM_NAME" : "TECH_AUX_CLOCK_IceProfileAbortAlarm_YYYYMMDDHHMMSS",
+      "TECH_PARAM_DESCRIPTION" : "Alarm raised when the profile has been aborted by Ice detection."
+   },
+   "TECH_PARAM_125" :
+   {
+      "TECH_PARAM_DEC_ID" : "222",
+      "TECH_PARAM_MSG_ID" : "TECH",
+      "TECH_PARAM_MSG_LABEL" : "Abort pressure",
+      "TECH_PARAM_NAME" : "PRES_IceAvoidance_dbar",
+      "TECH_PARAM_DESCRIPTION" : "Pressure when float avoids ice"
+   },
+   "TECH_PARAM_126" :
+   {
+      "TECH_PARAM_DEC_ID" : "219",
+      "TECH_PARAM_MSG_ID" : "TECH",
+      "TECH_PARAM_MSG_LABEL" : "Last 8 profiles aborted flags",
+      "TECH_PARAM_NAME" : "FLAG_IceDetected_bit",
+      "TECH_PARAM_DESCRIPTION" : "aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit."
+   },
+   "TECH_PARAM_127" :
+   {
+      "TECH_PARAM_DEC_ID" : "220",
+      "TECH_PARAM_MSG_ID" : "TECH_AUX",
+      "TECH_PARAM_MSG_LABEL" : "Digest of ICE information",
+      "TECH_PARAM_NAME" : "TECH_AUX_FLAG_IceAlgorithmStatus_bit",
+      "TECH_PARAM_DESCRIPTION" : "ICE information digest: 11 bits information with, from LSB to MSB: bit#1: Transmission flag (the float succeeded to reach the GPS or Iridium satellites), #2: ICE algorithm activated flag (the ICE algorithm is enabled and switched on), #3: ICE surface avoidance flag (the ICE algorithm is able to act on float behavior), #4: Aborted profile flag (the ICE algorithm aborted the ascending profile), #5: ISA flag (the result of ISA check), #6: Breakup period flag (the ascending profile occured during the breakup period), #7: Hanging flag (the ICE algorithm detected a float hanging), #8: Satellite mask flag (the ICE algorithm detected that the float tried but failed to reach the GPS or Iridium satellites constellations), #9: Forced ascent flag (the ascending profile was forced to try to reach the surface), #10: AC1 activated flag (the AC1 (PROVOR_IV float) feature is activated), #11: ICE cycle performed flag (the (Apex APF11) float used at least one ICE cycle after the ascending profile)."
    }
 }

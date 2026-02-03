@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/05/2016 - RNU - creation
@@ -54,12 +54,61 @@ nHistory = outputFileSchema.Dimensions(idF).Length;
 % create updated file
 ncwriteschema(trajFileName, outputFileSchema);
 
+% copy data in updated file - V1 - NOT EFFICIENT
+% for idVar = 1:length(outputFileSchema.Variables)
+%    varData = ncread(tmpTrajFileName, outputFileSchema.Variables(idVar).Name);
+%    if (~isempty(varData))
+%       ncwrite(trajFileName, outputFileSchema.Variables(idVar).Name, varData);
+%    end
+% end
+
 % copy data in updated file
-for idVar = 1:length(outputFileSchema.Variables)
-   varData = ncread(tmpTrajFileName, outputFileSchema.Variables(idVar).Name);
-   if (~isempty(varData))
-      ncwrite(trajFileName, outputFileSchema.Variables(idVar).Name, varData);
+fCdfIn = netcdf.open(tmpTrajFileName, 'NC_NOWRITE');
+if (isempty(fCdfIn))
+   fprintf('RTQC_ERROR: Unable to open NetCDF input file: %s\n', tmpTrajFileName);
+   return
+end
+
+try
+
+   fCdfOut = netcdf.open(trajFileName, 'NC_WRITE');
+   if (isempty(fCdfOut))
+      fprintf('RTQC_ERROR: Unable to open NetCDF input file: %s\n', trajFileName);
+      return
    end
+
+   try
+
+      for idVar = 1:length(outputFileSchema.Variables)
+         varName = outputFileSchema.Variables(idVar).Name;
+         varData = netcdf.getVar(fCdfIn, netcdf.inqVarID(fCdfIn, varName));
+         if (~isempty(varData))
+            dimList = {outputFileSchema.Variables(idVar).Dimensions.Name};
+            if (length(dimList) == 1)
+               netcdf.putVar(fCdfOut, netcdf.inqVarID(fCdfOut, varName), 0, length(varData), varData);
+            else
+               startList = zeros(1, length(dimList));
+               countList = size(varData);
+               if (length(countList) < length(dimList))
+                  countList = [countList ones(1, length(dimList)-length(countList))];
+               end
+               netcdf.putVar(fCdfOut, netcdf.inqVarID(fCdfOut, varName), startList, countList, varData);
+            end
+         end
+      end
+
+      netcdf.close(fCdfOut);
+
+   catch MException
+      netcdf.close(fCdfOut);
+      rethrow(MException)
+   end
+
+   netcdf.close(fCdfIn);
+
+catch MException
+   netcdf.close(fCdfIn);
+   rethrow(MException)
 end
 
 % update input file
@@ -90,7 +139,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/09/2014 - RNU - creation
@@ -106,7 +155,7 @@ idDim = find(strcmp(a_dimName, {a_inputSchema.Dimensions.Name}) == 1, 1);
 
 if (~isempty(idDim))
    a_inputSchema.Dimensions(idDim).Length = a_dimVal;
-   
+
    % update the dimensions of the variables
    for idVar = 1:length(a_inputSchema.Variables)
       var = a_inputSchema.Variables(idVar);

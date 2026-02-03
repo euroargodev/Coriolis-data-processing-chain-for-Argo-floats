@@ -20,7 +20,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/01/2022 - RNU - creation
@@ -145,7 +145,6 @@ for idF = 1:length(fieldNames)
       for idP = 1:length(techInfoStruct.(fieldNames{idF}))
          if (isempty(techInfoStruct.(fieldNames{idF}){idP}.patternStart))
             pattern = techInfoStruct.(fieldNames{idF}){idP}.pattern;
-            
             expCount = techInfoStruct.(fieldNames{idF}){idP}.count;
             [val, count, errmsg, nextindex] = sscanf(data, pattern);
             if (isempty(errmsg) && (count == expCount))
@@ -475,7 +474,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/14/2017 - RNU - creation
@@ -497,17 +496,23 @@ switch (a_decoderId)
    case {124, 125}
       [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_124_125;
 
-   case {126}
-      [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_126;
+   case {126, 136}
+      [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_126_136;
       
-   case {127}
-      [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_127;
+   case {127, 134}
+      [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_127_134;
 
    case {128}
       [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_128;
 
-   case {129, 130, 131, 132, 133}
-      [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_129_to_133;
+   case {129, 130, 131, 132, 133, 137, 141}
+      [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_129_to_133_137_141;
+
+   case {135, 138}
+      [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_135_138;
+
+   case {139, 140}
+      [o_techSectionList, o_techInfoStruct] = init_tech_info_struct_139_140;
 
    otherwise
       fprintf('ERROR: init_tech_info_struct: Don''t know how to parse APMT technical data for techId #%d\n', ...
@@ -533,7 +538,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/21/2017 - RNU - creation
@@ -566,7 +571,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/21/2017 - RNU - creation
@@ -598,7 +603,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/21/2017 - RNU - creation

@@ -17,7 +17,7 @@
 % EXAMPLES :
 % 
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   15/09/2013 - RNU - creation
@@ -48,12 +48,17 @@ for idField = 1:length(confDataFieldNames)
    switch (a_decoderId)
       case {1, 3, 4, 11, 12, 17, 19, 24, 25, 27, 28, 29, 30, 31, 32}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
+
       case {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, ...
-            121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133}
+            121, 122, 123, 124, 125, ...
+            126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141}
          o_ncParamIds(idField) = str2num(confItemData.CONF_PARAM_DEC_ID);
+
       case {201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 222, ...
-            213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225, 226}
+            213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225, 226, ...
+            227, 228, 229, 230, 231, 232, 401, 402}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
+
       case {301, 302, 303}
          o_ncParamIds(idField) = str2num(confItemData.CONF_PARAM_DEC_ID);
          
@@ -62,8 +67,8 @@ for idField = 1:length(confDataFieldNames)
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
          
       case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, ...
-            1109, 1110, 1111, 1112, 1113, 1114, ...
-            1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130 ...
+            1109, 1110, 1111, 1112, 1113, 1114, 1115, ...
+            1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132, ...
             1201, ...
             1314, 1321, 1322, 1323}
          o_ncParamIds{idField} = confItemData.CONF_PARAM_DEC_ID;
@@ -80,7 +85,7 @@ for idField = 1:length(confDataFieldNames)
    o_ncParamDescriptions{idField} = confItemData.CONF_PARAM_DESCRIPTION;
    
    % duplicate entries for <short_sensor_name> not in Argo (Ex: 'Uvp')
-   if (ismember(a_decoderId, [126, 127, 128]))
+   if (ismember(a_decoderId, [126, 127, 128, 134, 136]))
       % for <short_sensor_name> = 'Uvp', 'Opus', 'Ramses', 'Mpe', configuration
       % labels have been duplicated in the JSON config file but we also
       % need to generate all labels (for all depth zones) because META_AUX

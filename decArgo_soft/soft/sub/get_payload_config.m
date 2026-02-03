@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -55,7 +55,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   02/20/2017 - RNU - creation
@@ -437,7 +437,16 @@ if (~isempty(dataIsa))
       configName = [configNamePrefix 'P01_' sprintf('%d', isaData.PHASE_NUM)];
       configNames{end+1} = configName;
       configValues(end+1) = isaData.SPR_INHIB.last;
-      
+
+      % spring inhibition delay since last ISA detection
+      configName = [configNamePrefix 'P10_' sprintf('%d', isaData.PHASE_NUM)];
+      configNames{end+1} = configName;
+      if (isfield(isaData.SPR_INHIB, 'nb_occ'))
+         configValues(end+1) = isaData.SPR_INHIB.nb_occ;
+      else
+         configValues(end+1) = 1;
+      end
+
       % ISA algorithm storing data start pressure
       configName = [configNamePrefix 'P02_' sprintf('%d', isaData.PHASE_NUM)];
       configNames{end+1} = configName;

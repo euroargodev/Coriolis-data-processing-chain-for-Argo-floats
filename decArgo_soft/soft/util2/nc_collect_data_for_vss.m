@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/18/2014 - RNU - creation
@@ -54,7 +54,7 @@ if (nargin == 0)
       fprintf('File not found: %s\n', floatListFileName);
       return
    end
-   
+
    fprintf('Floats from list: %s\n', floatListFileName);
    floatList = load(floatListFileName);
 else
@@ -93,10 +93,10 @@ fprintf(fidOut, '%s\n', header);
 lineNum = 1;
 nbFloats = length(floatList);
 for idFloat = 1:nbFloats
-   
+
    floatNum = floatList(idFloat);
    fprintf('%03d/%03d %d\n', idFloat, nbFloats, floatNum);
-   
+
    % find current float Dec Id
    idF = find(listWmoNum == floatNum, 1);
    if (isempty(idF))
@@ -104,7 +104,7 @@ for idFloat = 1:nbFloats
       return
    end
    floatDecId = listDecId(idF);
-   
+
    % the number of thresholds depends on float version
    switch (floatDecId)
       case {1, 11, 12, 4, 19, 3}
@@ -115,10 +115,10 @@ for idFloat = 1:nbFloats
          fprintf('WARNING: Nothing done yet for decoderId #%d\n', floatDecId);
          continue
    end
-   
+
    % directory of files for this float
    dirFloat = [DIR_INPUT_NC_FILES '/' sprintf('%d', floatNum) '/profiles/'];
-   
+
    % nc files to process
    diffProfAll = [];
    presProf = [];
@@ -126,16 +126,16 @@ for idFloat = 1:nbFloats
    threshold = [];
    files = dir([dirFloat '*.nc']);
    for idFile = 1:length(files)
-      
+
       fileName = files(idFile).name;
       filePathName = [dirFloat '/' fileName];
-      
+
       [presMeas] = get_pres_in_mono_prof(filePathName);
-      
+
       presProf{end+1} = presMeas;
       diffProfAll = [diffProfAll; diff(presMeas)];
    end
-   
+
    if (~isempty(diffProfAll))
       [nbElement, valCenter] = hist(diffProfAll, [min(diffProfAll):max(diffProfAll)]);
       for id = 1:nbThreshold+1
@@ -149,12 +149,12 @@ for idFloat = 1:nbFloats
       end
       sliceThickness = sort(sliceThickness);
       fprintf('Thick : %d\n', sliceThickness);
-      
+
       if (HISTO == 1)
          hist(diffProfAll, [min(diffProfAll):max(diffProfAll)]);
          pause;
       end
-      
+
       for id = 1:nbThreshold
          thresholdALL = [];
          for idProf = 1:length(presProf)
@@ -191,17 +191,17 @@ for idFloat = 1:nbFloats
             [nbElement, valCenter] = hist(thresholdALL, [minVal:fact:maxVal]);
             [~, idMax] = max(nbElement);
             valMax = valCenter(idMax);
-%             while (valMax > 1800)
-%                nbElement(idMax) = [];
-%                valCenter(idMax) = [];
-%                if (isempty(nbElement))
-%                   break
-%                end
-%                [~, idMax] = max(nbElement);
-%                valMax = valCenter(idMax);
-%             end
+            %             while (valMax > 1800)
+            %                nbElement(idMax) = [];
+            %                valCenter(idMax) = [];
+            %                if (isempty(nbElement))
+            %                   break
+            %                end
+            %                [~, idMax] = max(nbElement);
+            %                valMax = valCenter(idMax);
+            %             end
             threshold = [threshold; valMax];
-            
+
             if (HISTO == 1)
                hist(thresholdALL, [minVal:fact:maxVal]);
                pause;
@@ -209,7 +209,7 @@ for idFloat = 1:nbFloats
          end
       end
       fprintf('Thresh : %d\n', threshold);
-      
+
       if (nbThreshold == 2)
          fprintf(fidOut, '%d; %d; %d; %d; %d; %d; %d; %d; %d\n', ...
             lineNum, floatNum, nbThreshold, ...
@@ -246,7 +246,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/18/2014 - RNU - creation
@@ -270,54 +270,61 @@ if (isempty(fCdf))
    return
 end
 
-% check the format version
-if (var_is_present_dec_argo(fCdf, 'FORMAT_VERSION'))
-   formatVersionStr = deblank(netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'FORMAT_VERSION'))');
-   if ((str2num(formatVersionStr) ~= 3.0) && (str2num(formatVersionStr) ~= 3.1))
-      fprintf('ERROR: This program only manage Argo format 3.0 olr 3.1 version (the version of this file is %s)\n', formatVersionStr);
+try
+
+   % check the format version
+   if (var_is_present_dec_argo(fCdf, 'FORMAT_VERSION'))
+      formatVersionStr = deblank(netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'FORMAT_VERSION'))');
+      if ((str2num(formatVersionStr) ~= 3.0) && (str2num(formatVersionStr) ~= 3.1))
+         fprintf('ERROR: This program only manage Argo format 3.0 olr 3.1 version (the version of this file is %s)\n', formatVersionStr);
+         netcdf.close(fCdf);
+         return
+      end
+   else
+      fprintf('ERROR: Cannot find ''FORMAT_VERSION'' variable in file: %s\n', a_ncProfPathFileName);
       netcdf.close(fCdf);
       return
    end
-else
-   fprintf('ERROR: Cannot find ''FORMAT_VERSION'' variable in file: %s\n', a_ncProfPathFileName);
-   netcdf.close(fCdf);
-   return
-end
 
-if (~var_is_present_dec_argo(fCdf, 'PRES'))
-   fprintf('INFO: Cannot find ''PRES'' variable in file: %s\n', a_ncProfPathFileName);
-   netcdf.close(fCdf);
-   return
-end
-
-% collect the station parameter list
-stationParameters = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'STATION_PARAMETERS'));
-[~, nParam, nProf] = size(stationParameters);
-paramForProf = [];
-for idProf = 1:nProf
-   params = deblank(stationParameters(:, 1, idProf)');
-   for idParam = 2:nParam
-      params = [params '@' deblank(stationParameters(:, idParam, idProf)')];
+   if (~var_is_present_dec_argo(fCdf, 'PRES'))
+      fprintf('INFO: Cannot find ''PRES'' variable in file: %s\n', a_ncProfPathFileName);
+      netcdf.close(fCdf);
+      return
    end
-   paramForProf{end+1} = params;
-end
 
-% collect the pressure measurements
-pres = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'PRES'));
-presFillVal = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, 'PRES'), '_FillValue');
-for idProf = 1:nProf
-   if (idProf == 1)
-      % pimary profile
-      o_presMeas = [pres(:, idProf)];
-   else
-      % the unpumped part of the primary profile has the same parameters
-      if (strcmp(paramForProf{idProf}, paramForProf{1}))
-         o_presMeas = [pres(:, idProf); o_presMeas];
+   % collect the station parameter list
+   stationParameters = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'STATION_PARAMETERS'));
+   [~, nParam, nProf] = size(stationParameters);
+   paramForProf = [];
+   for idProf = 1:nProf
+      params = deblank(stationParameters(:, 1, idProf)');
+      for idParam = 2:nParam
+         params = [params '@' deblank(stationParameters(:, idParam, idProf)')];
+      end
+      paramForProf{end+1} = params;
+   end
+
+   % collect the pressure measurements
+   pres = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, 'PRES'));
+   presFillVal = netcdf.getAtt(fCdf, netcdf.inqVarID(fCdf, 'PRES'), '_FillValue');
+   for idProf = 1:nProf
+      if (idProf == 1)
+         % pimary profile
+         o_presMeas = [pres(:, idProf)];
+      else
+         % the unpumped part of the primary profile has the same parameters
+         if (strcmp(paramForProf{idProf}, paramForProf{1}))
+            o_presMeas = [pres(:, idProf); o_presMeas];
+         end
       end
    end
-end
 
-netcdf.close(fCdf);
+   netcdf.close(fCdf);
+
+catch MException
+   netcdf.close(fCdf);
+   rethrow(MException)
+end
 
 o_presMeas(find(o_presMeas == presFillVal)) = [];
 

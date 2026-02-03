@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/20/2019 - RNU - creation
@@ -42,7 +42,7 @@ if (nargin == 0)
          fprintf('File not found: %s\n', FLOAT_LIST_FILE_NAME);
          return
       end
-      
+
       fprintf('Floats from list: %s\n', FLOAT_LIST_FILE_NAME);
       floatList = load(FLOAT_LIST_FILE_NAME);
    end
@@ -70,23 +70,23 @@ reportDataAll = [];
 floatNum = 1;
 floatDir = dir(DIR_INPUT_NC_FILES);
 for idDir = 1:length(floatDir)
-   
+
    floatDirName = floatDir(idDir).name;
    floatDirPathName = [DIR_INPUT_NC_FILES '/' floatDirName];
    if ((exist(floatDirPathName, 'dir') == 7) && ~strcmp(floatDirName, '.') && ~strcmp(floatDirName, '..'))
-      
+
       [floatWmo, status] = str2num(floatDirName);
       if (status == 1)
-         
+
          if ((isempty(floatList)) || (~isempty(floatList) && ismember(floatWmo, floatList)))
-            
+
             if (isempty(floatList))
                fprintf('%03d/%03d %d\n', floatNum, length(floatDir)-2, floatWmo);
             else
                fprintf('%03d/%03d %d\n', floatNum, length(floatList), floatWmo);
             end
             g_ngrft_floatNum = floatWmo;
-            
+
             % process mono-profile files
             profDirPathName = [floatDirPathName '/profiles'];
             if (exist(profDirPathName, 'dir') == 7)
@@ -96,7 +96,7 @@ for idDir = 1:length(floatDir)
                   ];
                reportDataFloat = [];
                for idFile = 1:length(floatFiles)
-                  
+
                   floatFileName = floatFiles(idFile).name;
                   floatFilePathName = [floatDirPathName '/profiles/' floatFileName];
                   if (exist(floatFilePathName, 'file') == 2)
@@ -106,7 +106,7 @@ for idDir = 1:length(floatDir)
                      end
                   end
                end
-               
+
                if (~isempty(reportDataFloat))
                   % retrieve nominal profile pressure from meta.nc
                   metaFilePathName = [floatDirPathName '/' sprintf('%d_meta.nc', floatWmo)];
@@ -139,7 +139,7 @@ if (~isempty(reportDataAll))
    for idL = 1:length(reportDataAll)
       [~, fileName, fileExt] = fileparts(reportDataAll(idL).profFile);
       presValStr = sprintf('%.1f;', reportDataAll(idL).presVal);
-      
+
       fprintf(fidOut, 'O;%d;%s;%d;%s;%d;%.1f;%d;%s\n', ...
          reportDataAll(idL).float, ...
          [fileName fileExt], ...
@@ -149,12 +149,12 @@ if (~isempty(reportDataAll))
          (reportDataAll(idL).profPresMeta)*1.1, ...
          length(reportDataAll(idL).presVal), ...
          presValStr(1:end-1));
-      
+
       newMaxProfilePressure = compute_max_pres_for_rtqc_test19(reportDataAll(idL).profPresMeta);
       presValList = reportDataAll(idL).presVal;
       newPresValList = presValList(find((presValList < 0) | (presValList > newMaxProfilePressure)));
       newPresValListStr = sprintf('%.1f;', newPresValList);
-      
+
       fprintf(fidOut, 'N;%d;%s;%d;%s;%d;%.1f;%d;%s\n', ...
          reportDataAll(idL).float, ...
          [fileName fileExt], ...
@@ -164,7 +164,7 @@ if (~isempty(reportDataAll))
          newMaxProfilePressure, ...
          length(newPresValList), ...
          newPresValListStr(1:end-1));
-      
+
    end
 end
 
@@ -192,7 +192,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/20/2019 - RNU - creation
@@ -207,18 +207,18 @@ global g_ngrft_floatNum;
 
 
 if (exist(a_ncProfPathFileName, 'file') == 2)
-   
+
    % get information from the file
    wantedInputVars = [ ...
       {'FORMAT_VERSION'} ...
       ];
    [inputData] = get_data_from_nc_file(a_ncProfPathFileName, wantedInputVars);
    if (~isempty(inputData))
-      
+
       idVal = find(strcmp('FORMAT_VERSION', inputData(1:2:end)) == 1, 1);
       formatVersion = strtrim(inputData{2*idVal}');
       if (strcmp(formatVersion, '3.1'))
-         
+
          % get information from the file
          wantedInputVars = [ ...
             {'PRES'} ...
@@ -234,7 +234,7 @@ if (exist(a_ncProfPathFileName, 'file') == 2)
             ];
          [inputData] = get_data_from_nc_file(a_ncProfPathFileName, wantedInputVars);
          if (~isempty(inputData))
-            
+
             idVal = find(strcmp('PRES', inputData(1:2:end)) == 1, 1);
             pres = inputData{2*idVal};
             idVal = find(strcmp('PRES_QC', inputData(1:2:end)) == 1, 1);
@@ -254,7 +254,7 @@ if (exist(a_ncProfPathFileName, 'file') == 2)
             historyAction = inputData{2*idVal};
             idVal = find(strcmp('HISTORY_QCTEST', inputData(1:2:end)) == 1, 1);
             historyQcTest = inputData{2*idVal};
-            
+
             for idProf = 1:inputNProf
                profHistoDate = [];
                profHistoQcTest = [];
@@ -267,7 +267,7 @@ if (exist(a_ncProfPathFileName, 'file') == 2)
                      histoSoft = deblank(historySoftware(:, idProf, idHisto)');
                      histoDate = historyDate(:, idProf, idHisto)';
                      histoQctest = historyQcTest(:, idProf, idHisto)';
-                     
+
                      if (strcmp(histoInst, 'IF') && strcmp(histoStep, 'ARGQ') && strcmp(histoSoft, 'COQC'))
                         profHistoDate = [profHistoDate; histoDate];
                         profHistoQcTest = [profHistoQcTest; histoQctest];
@@ -280,17 +280,17 @@ if (exist(a_ncProfPathFileName, 'file') == 2)
                      profHistoDate = profHistoDate(idMax);
                      profHistoQcTest = profHistoQcTest(idMax);
                   end
-                  
+
                   qcTestFlag = get_qctest_flag(profHistoQcTest);
                   deepestPresTestFlag = qcTestFlag(19);
                   if (deepestPresTestFlag == '1')
-                     
+
                      idBottomQcFalse = find(presQc(:, idProf) == '4');
                      idF = find(diff(idBottomQcFalse) ~= 1, 1, 'last');
                      if (~isempty(idF))
                         idBottomQcFalse = idBottomQcFalse(idF+1:end);
                      end
-                     
+
                      reportData = [];
                      reportData.float = g_ngrft_floatNum;
                      reportData.profFile = a_ncProfPathFileName;
@@ -326,7 +326,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/20/2019 - RNU - creation
@@ -347,7 +347,7 @@ if (~isempty(ncMetaData))
    idVal = find(strcmp('FORMAT_VERSION', ncMetaData(1:2:end)) == 1, 1);
    formatVersion = strtrim(ncMetaData{2*idVal}');
    if (strcmp(formatVersion, '3.1'))
-      
+
       % retrieve information from NetCDF meta file
       wantedVars = [ ...
          {'LAUNCH_CONFIG_PARAMETER_NAME'} ...
@@ -360,7 +360,7 @@ if (~isempty(ncMetaData))
          ];
       [ncMetaData] = get_data_from_nc_file(a_ncMetaPathFileName, wantedVars);
       if (~isempty(ncMetaData))
-         
+
          idVal = find(strcmp('LAUNCH_CONFIG_PARAMETER_NAME', ncMetaData(1:2:end)) == 1, 1);
          launchConfigParameterName = cellstr(ncMetaData{2*idVal}');
          idVal = find(strcmp('LAUNCH_CONFIG_PARAMETER_VALUE', ncMetaData(1:2:end)) == 1, 1);
@@ -371,7 +371,7 @@ if (~isempty(ncMetaData))
          configParameterValue = ncMetaData{2*idVal};
          idVal = find(strcmp('CONFIG_MISSION_NUMBER', ncMetaData(1:2:end)) == 1, 1);
          o_confNum = ncMetaData{2*idVal}';
-         
+
          o_profPresMeta = [];
          idFl = find(strcmp('CONFIG_ProfilePressure_dbar', configParameterName) == 1);
          if (~isempty(idFl))
@@ -385,62 +385,6 @@ if (~isempty(ncMetaData))
          end
       end
    end
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncProfPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncProfPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   03/20/2019 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncProfPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncProfPathFileName, 'file') == 2)
-   
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncProfPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('ERROR: Unable to open NetCDF input file: %s\n', a_ncProfPathFileName);
-      return
-   end
-   
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-      
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         fprintf('WARNING: Variable %s not present in file : %s\n', ...
-            varName, a_ncProfPathFileName);
-         o_ncData = [o_ncData {varName} {''}];
-      end
-      
-   end
-   
-   netcdf.close(fCdf);
 end
 
 return
@@ -460,7 +404,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/20/2019 - RNU - creation
@@ -477,43 +421,6 @@ end
 
 o_qcTestFlag = fliplr(o_qcTestFlag);
 o_qcTestFlag(1) = [];
-
-return
-
-% ------------------------------------------------------------------------------
-% Check if a given variable is present in a NetCDF file.
-%
-% SYNTAX :
-%  [o_present] = var_is_present_dec_argo(a_ncId, a_varName)
-%
-% INPUT PARAMETERS :
-%   a_ncId    : NetCDF file Id
-%   a_varName : variable name
-%
-% OUTPUT PARAMETERS :
-%   o_present : 1 if the variable is present (0 otherwise)
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   03/20/2019 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_present] = var_is_present_dec_argo(a_ncId, a_varName)
-
-o_present = 0;
-
-[nbDims, nbVars, nbGAtts, unlimId] = netcdf.inq(a_ncId);
-
-for idVar= 0:nbVars-1
-   [varName, varType, varDims, nbAtts] = netcdf.inqVar(a_ncId, idVar);
-   if (strcmp(varName, a_varName))
-      o_present = 1;
-      break
-   end
-end
 
 return
 
@@ -535,7 +442,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   05/17/2019 - RNU - creation

@@ -29,7 +29,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/21/2015 - RNU - V 1.0: creation
@@ -146,7 +146,7 @@
 %                             from BDD slope+offset information).
 %   07/15/2019 - RNU - V 4.3: In version 3.2 of the QC manual, for test #7, the
 %                             minimal range for TEMP in the Read Sea has been
-%                             set to 21�C (instead of 21.7�C).
+%                             set to 21°C (instead of 21.7°C).
 %   09/23/2019 - RNU - V 4.4: Added "Global range test" for DOWN_IRRADIANCE380,
 %                             DOWN_IRRADIANCE412, DOWN_IRRADIANCE443,
 %                             DOWN_IRRADIANCE490 and DOWNWELLING_PAR.
@@ -179,7 +179,7 @@
 %                             implemented in version '040a')
 %   04/29/2021 - RNU - V 5.3: Updated to cope with version 2.1 of Argo Quality
 %                             Control Manual for Dissolved Oxygen Concentration
-%                             Test #57: if PARAMETER_DATA_MODE = �A� then
+%                             Test #57: if PARAMETER_DATA_MODE = ‘A’ then
 %                             DOXY_ADJUSTED_QC should be defined from PSAL_QC,
 %                             TEMP_QC and PRES_QC
 %                             Tests #9 and #11: DOXY tests should ignore
@@ -191,7 +191,7 @@
 %                             moved)
 %                             - a measurement with QC = '3' is tested by other
 %                             quality control tests
-%   16/08/2021 - RNU - V 5.5: To follow Virginie Racap�'s recomendation,
+%   16/08/2021 - RNU - V 5.5: To follow Virginie Racapé's recomendation,
 %                             TEST 25: MEDD test is not performed on (PRES,
 %                             TEMP_DOXY) profiles
 %   10/28/2021 - RNU - V 5.6: Code improvement:
@@ -208,10 +208,10 @@
 %   06/24/2022 - RNU - V 5.9: TEST #26 added.
 %   12/02/2022 - RNU - V 6.0: Added "Global range test" for DOWN_IRRADIANCE665.
 %   04/26/2023 - RNU - V 6.1: Implementation of new version of:
-%                             test #62 (BBP specific test) 
-%                             test #63 (CHLA specific test) 
+%                             test #62 (BBP specific test)
+%                             test #63 (CHLA specific test)
 %   08/21/2023 - RNU - V 6.2: Error in computing the number of levels of each
-%                             profile. 
+%                             profile.
 %   10/13/2023 - RNU - V 6.3: In CHLA RTQC, new version of DARK estimation.
 %   11/16/2023 - RNU - V 6.4: Added test #56 (PH specific test).
 %   01/19/2024 - RNU - V 6.5: TEST #8: revised version of "Pressure increasing
@@ -221,6 +221,60 @@
 %                             and #15 are concerned).
 %                             TEST #13 and #19: updated since QC profiles with
 %                             only 0, 3 and 4 values may exist.
+%   02/02/2024 - RNU - V 6.6: Temporary exception for TEST #19 "Deepest pressure
+%                             test": as profiles with PRES_MED_QC=0,
+%                             TEMP_STD/MED_QC=0 and PSAL_STD/MED_QC=0 are
+%                             rejected by the GDAC checker we initialize these
+%                             profiles QC with QC=1
+%   02/12/2024 - RNU - V 6.7: - update of TEST #56 "PH specific test" to be
+%                             compliant with version 1.0 or Argo manual
+%                             "BGC-Argo quality control manual for pH".
+%                             - no difference between a PTSO float and a "true
+%                             BGC" float.
+%   04/08/2024 - RNU - V 6.8: Initialize BBP_QC before BBP specific test.
+%   05/15/2024 - RNU - V 6.9: Insert (PRES3, TEMP3, PSAL3) profile for Arvor
+%                             Deep 3T prototype (decId 228)
+%   07/11/2024 - RNU - V 7.0: TEST #63: CHLA adjustment is also performed on
+%                             descending profiles (but PRELIM_DARK_CHLA is
+%                             retrieved from ascending profiles only).
+%   10/15/2024 - RNU - V 7.1: TEST #26: For PFV2 floats we must check in
+%                             SENSOR_MAKER if they have RBR sensors.
+%   12/13/2024 - RNU - V 7.2: TEST #60 PAR specific test added:
+%                             Set DOWNWELLING_PAR_QC to '2'
+%                             TEST #61 IRRADIANCE specific test added:
+%                             Set DOWN_IRRADIANCExxx_QC to '2'
+%   03/03/2025 - RNU - V 7.3: Updated to cope with version 3.9 of Argo Quality
+%                             Control Manual for CTD and Trajectory Data
+%                             TEST #15: Greylist test renamed to Supplemental
+%                             sensor exclusion list test.
+%                             TEST #23:
+%                             - Deep Argo ‘R’ mode QC flags PRES_QC and TEMP_QC
+%                             changed from ‘2’ to ‘1’.
+%                             - Deep Argo ‘A’ mode QC flags PRES_ADJUSTED_QC,
+%                             TEMP_ADJUSTED_QC and PSAL_ADJUSTED_QC changed from
+%                             ‘2’ to ‘1’.
+%                             - Deep Argo recommended value for CPcor_new for
+%                             ‘A’ mode and ‘D’ mode adjustments changed to
+%                             -11.7e-8 dbar-1 for both the Deep SBE-41CP and
+%                             SBE-61.
+%   04/11/2025 - RNU - V 7.4: TEST #63: set CHLA_QC = '3' for not located profile
+%   04/16/2025 - RNU - V 7.5: From V 7.4 evolution, if the profile is not
+%                             located CHLA may be adjusted (in
+%                             compute_rt_adjusted_chla) while CHLA_FLUORESCENCE
+%                             is not. PARAMETER_DATA_MODE should be set
+%                             accordingly.
+%   11/12/2025 - RNU - V 7.6: In DAC decoder, new mecanism to generate nc files
+%                             in a temporary directory.
+%   11/14/2025 - RNU - V 7.7: Correction of a typo introduced in version 4.1.
+%                             Test #18: frozen profile mean threshold for deltaT
+%                             is 0.02 °C not 0.002 °C.
+%   11/14/2025 - RNU - V 7.8: Correction of a bug introduced in version 7.6.
+%   12/23/2025 - RNU - V 7.9: Update of test done/failed list in the
+%                             TEST #6: global range test performed in
+%                             TEST #63: CHLA specific test.
+%   01/28/2026 - RNU - V 7.10: HISTORY_INSTITUTION is set from DATA_CENTRE
+%                              information stored in the META.json file (needed
+%                              by the docker version).
 % ------------------------------------------------------------------------------
 function add_rtqc_to_profile_file(a_floatNum, ...
    a_ncMonoProfInputPathFileName, a_ncMonoProfOutputPathFileName, ...
@@ -240,6 +294,10 @@ global g_decArgo_qcStrBad;           % '4'
 global g_decArgo_qcStrInterpolated;  % '8'
 global g_decArgo_qcStrMissing;       % '9'
 
+% CHLA range min/max for RTQC test 6 (global range test)
+global g_decArgo_rtqcTest6ChlaMin;
+global g_decArgo_rtqcTest6ChlaMax;
+
 % global measurement codes
 global g_MC_DescProf;
 global g_MC_DescProfDeepestBin;
@@ -250,11 +308,11 @@ global g_MC_Surface;
 
 % lists of managed decoders
 global g_decArgo_decoderIdListNke;
+global g_decArgo_decoderIdListNkePfv2Iridium;
 global g_decArgo_decoderIdListNova;
 global g_decArgo_decoderIdListAll;
 global g_decArgo_decoderIdListNkeIridiumRbr;
 global g_decArgo_decoderIdListDeepFloat;
-global g_decArgo_decoderIdListBgcFloatAll;
 global g_decArgo_decoderIdListProfWithDatedLev;
 
 % list of pre-april 2021 RBR floats
@@ -263,12 +321,21 @@ global g_decArgo_rbrPreApril2021FloatList;
 % list of parameters that have an extra dimension (N_VALUESx)
 global g_decArgo_paramWithExtraDimList;
 
+% mode processing flags
+global g_decArgo_realtimeFlag;
+
+% list of NetCDF files to move at the end of the run
+global g_decArgo_filesToMove;
+
 % temporary trajectory data
 global g_rtqc_trajData;
 
+% configuration values
+global g_decArgo_dirOutputNetcdfFile;
+
 % program version
 global g_decArgo_addRtqcToProfileVersion;
-g_decArgo_addRtqcToProfileVersion = '6.5';
+g_decArgo_addRtqcToProfileVersion = '7.10';
 
 
 % Argo data start date
@@ -361,7 +428,7 @@ expectedTestList = [ ...
    {'TEST012_DIGIT_ROLLOVER'} ...
    {'TEST013_STUCK_VALUE'} ...
    {'TEST014_DENSITY_INVERSION'} ...
-   {'TEST015_GREY_LIST'} ...
+   {'TEST015_EXCLUSION_LIST'} ...
    {'TEST016_GROSS_SALINITY_OR_TEMPERATURE_SENSOR_DRIFT'} ...
    {'TEST018_FROZEN_PRESSURE'} ...
    {'TEST019_DEEPEST_PRESSURE'} ...
@@ -374,6 +441,8 @@ expectedTestList = [ ...
    {'TEST056_PH'} ...
    {'TEST057_DOXY'} ...
    {'TEST059_NITRATE'} ...
+   {'TEST060_PAR'} ...
+   {'TEST061_IRRADIANCE'} ...
    {'TEST062_BBP'} ...
    {'TEST063_CHLA'} ...
    ];
@@ -399,7 +468,6 @@ if (~isempty(floatDecoderIdId))
    floatDecoderId = a_testMetaData{floatDecoderIdId+1};
 end
 if (~isempty(floatDecoderIdId))
-
    % check that the current float decoder Id is in the lists
    if (~ismember(floatDecoderId, g_decArgo_decoderIdListAll))
       fprintf('ERROR: Float #%d: decoderId=%d is not present in the check list of the add_rtqc_to_profile_file function\n', ...
@@ -412,6 +480,7 @@ else
 end
 
 % retrieve test additional information
+rbrFloatFlag = 0;
 configFlagOk = 0;
 parameterFlagOk = 0;
 sensorFlagOk = 0;
@@ -424,9 +493,9 @@ parameterMeta = [];
 parameterSensorMeta = [];
 sensorMeta = [];
 sensorModelMeta = [];
+sensorMakerMeta = [];
 
 if (testFlagList(4) == 1)
-
    % for position on land test, we need the GEBCO file path name
    testMetaId = find(strcmp('TEST004_GEBCO_FILE', a_testMetaData) == 1);
    if (~isempty(testMetaId))
@@ -444,7 +513,6 @@ if (testFlagList(4) == 1)
 end
 
 if (testFlagList(5) == 1)
-
    % for impossible speed test, we need the trajectory data (in global variable)
    if (isempty(g_rtqc_trajData))
       fprintf('RTQC_WARNING: TEST005: Float #%d: Trajectory data needed to perform test #5 - test #5 not performed\n', ...
@@ -455,7 +523,6 @@ end
 
 if (testFlagList(13) == 1)
    if (~parameterFlagOk)
-
       % for stuck value test, we need the nc meta-data file path name
       testMetaId = find(strcmp('TEST013_METADA_DATA_FILE', a_testMetaData) == 1);
       if (~isempty(testMetaId))
@@ -512,25 +579,23 @@ if (testFlagList(13) == 1)
 end
 
 if (testFlagList(15) == 1)
-
-   % for grey list test, we need the greylist file path name
-   testGreyListId = find(strcmp('TEST015_GREY_LIST_FILE', a_testMetaData) == 1);
-   if (~isempty(testGreyListId))
-      greyListPathFileName = a_testMetaData{testGreyListId+1};
-      if ~(exist(greyListPathFileName, 'file') == 2)
-         fprintf('RTQC_WARNING: TEST015: Float #%d: Grey list file (%s) not found - test #15 not performed\n', ...
-            a_floatNum, greyListPathFileName);
+   % for supplemental sensor exclusion list test, we need the exclusion list file path name
+   testExclusionListId = find(strcmp('TEST015_EXCLUSION_LIST_FILE', a_testMetaData) == 1);
+   if (~isempty(testExclusionListId))
+      exclusionListPathFileName = a_testMetaData{testExclusionListId+1};
+      if ~(exist(exclusionListPathFileName, 'file') == 2)
+         fprintf('RTQC_WARNING: TEST015: Float #%d: Exclusion list file (%s) not found - test #15 not performed\n', ...
+            a_floatNum, exclusionListPathFileName);
          testFlagList(15) = 0;
       end
    else
-      fprintf('RTQC_WARNING: TEST015: Float #%d: Grey list file needed to perform test #15 - test #15 not performed\n', ...
+      fprintf('RTQC_WARNING: TEST015: Float #%d: Exclusion list file needed to perform test #15 - test #15 not performed\n', ...
          a_floatNum);
       testFlagList(15) = 0;
    end
 end
 
 if (testFlagList(16) == 1)
-
    % for gross salinity or temperature sensor drift test, we need the multi-profile file
    if (multiProfFileFlag == 0)
       fprintf('RTQC_WARNING: TEST016: Float #%d: Multi-profile file needed to perform test #16 - test #16 not performed\n', ...
@@ -540,7 +605,6 @@ if (testFlagList(16) == 1)
 end
 
 if (testFlagList(18) == 1)
-
    % for frozen profile test, we need the multi-profile file
    if (multiProfFileFlag == 0)
       fprintf('RTQC_WARNING: TEST018: Float #%d: Multi-profile file needed to perform test #18 - test #18 not performed\n', ...
@@ -662,19 +726,19 @@ if (testFlagList(19) == 1)
 end
 
 if (testFlagList(21) == 1)
-   if (~parameterFlagOk || ~sensorFlagOk)
+   % for near-surface unpumped CTD salinity test, we need the Apex flag value
+   % and the nc meta-data file path name
+   if (~isempty(floatDecoderId))
+      apexFloatFlag = ((floatDecoderId > 1000) && (floatDecoderId < 2000));
+   else
+      fprintf('RTQC_WARNING: TEST021: Float #%d: Apex float flag needed to perform test #21 - test #21 not performed\n', ...
+         a_floatNum);
+      testFlagList(21) = 0;
+   end
 
-      % for near-surface unpumped CTD salinity test, we need the Apex flag value
-      % and the nc meta-data file path name
-      if (~isempty(floatDecoderId))
-         apexFloatFlag = ((floatDecoderId > 1000) && (floatDecoderId < 2000));
-      else
-         fprintf('RTQC_WARNING: TEST021: Float #%d: Apex float flag needed to perform test #21 - test #21 not performed\n', ...
-            a_floatNum);
-         testFlagList(21) = 0;
-      end
+   if (testFlagList(21) == 1)
+      if (~parameterFlagOk || ~sensorFlagOk)
 
-      if (testFlagList(21) == 1)
          testMetaId = find(strcmp('TEST021_METADA_DATA_FILE', a_testMetaData) == 1);
          if (~isempty(testMetaId))
             ncMetaPathFileName = a_testMetaData{testMetaId+1};
@@ -700,6 +764,7 @@ if (testFlagList(21) == 1)
                {'PARAMETER_SENSOR'} ...
                {'SENSOR'} ...
                {'SENSOR_MODEL'} ...
+               {'SENSOR_MAKER'} ...
                ];
 
             % retrieve information from NetCDF meta file
@@ -752,13 +817,24 @@ if (testFlagList(21) == 1)
                   end
                end
             end
+
+            if (isempty(sensorMakerMeta))
+               sensorMakerMeta = [];
+               idVal = find(strcmp('SENSOR_MAKER', ncMetaData) == 1);
+               if (~isempty(idVal))
+                  sensorMakerMetaTmp = ncMetaData{idVal+1}';
+
+                  for id = 1:size(sensorMakerMetaTmp, 1)
+                     sensorMakerMeta{end+1} = deblank(sensorMakerMetaTmp(id, :));
+                  end
+               end
+            end
          end
       end
    end
 end
 
 if (testFlagList(22) == 1)
-
    % for near-surface mixed air/water test, we need the float decoder Id
    if (isempty(floatDecoderId))
       fprintf('RTQC_WARNING: TEST022: Float #%d: Float decoder Id needed to perform test #22 - test #22 not performed\n', ...
@@ -768,7 +844,6 @@ if (testFlagList(22) == 1)
 end
 
 if (testFlagList(23) == 1)
-
    % for deep float test, we need to identify deep floats
    if (~isempty(floatDecoderId) && ~isempty(g_decArgo_decoderIdListDeepFloat))
       if (ismember(floatDecoderId, g_decArgo_decoderIdListDeepFloat))
@@ -789,7 +864,6 @@ end
 
 if (testFlagList(24) == 1)
    if (~parameterFlagOk || ~sensorFlagOk)
-
       % for pre-april 2021 RBR floats, we need the nc meta-data file path name
       testMetaId = find(strcmp('TEST024_METADA_DATA_FILE', a_testMetaData) == 1);
       if (~isempty(testMetaId))
@@ -868,33 +942,24 @@ if (testFlagList(24) == 1)
                end
             end
          end
-      end
-   end
-end
 
-if (testFlagList(57) == 1)
+         if (isempty(sensorMakerMeta))
+            sensorMakerMeta = [];
+            idVal = find(strcmp('SENSOR_MAKER', ncMetaData) == 1);
+            if (~isempty(idVal))
+               sensorMakerMetaTmp = ncMetaData{idVal+1}';
 
-   % for DOXY specific test, we need to identify BGC floats
-   if (~isempty(floatDecoderId) && ~isempty(g_decArgo_decoderIdListBgcFloatAll))
-      if (ismember(floatDecoderId, g_decArgo_decoderIdListBgcFloatAll))
-         bgcFloatFlag = 1;
-      else
-         bgcFloatFlag = 0;
+               for id = 1:size(sensorMakerMetaTmp, 1)
+                  sensorMakerMeta{end+1} = deblank(sensorMakerMetaTmp(id, :));
+               end
+            end
+         end
       end
-   elseif (isempty(floatDecoderId))
-      fprintf('RTQC_WARNING: TEST057: Float #%d: Decoder Id needed to perform test #57 - test #57 not performed\n', ...
-         a_floatNum);
-      testFlagList(57) = 0;
-   elseif (isempty(g_decArgo_decoderIdListDeepFloat))
-      fprintf('RTQC_WARNING: TEST057: Float #%d: BGC float flag information needed to perform test #57 - test #57 not performed\n', ...
-         a_floatNum);
-      testFlagList(57) = 0;
    end
 end
 
 if (testFlagList(62) == 1)
    if (~configFlagOk)
-
       % for BBP specific test, we need the nc meta-data file path name
       if (~configFlagOk)
          testMetaId = find(strcmp('TEST062_METADA_DATA_FILE', a_testMetaData) == 1);
@@ -977,6 +1042,20 @@ if (testFlagList(62) == 1)
             end
          end
       end
+   end
+end
+
+% set rbrFloatFlag
+if (ismember(floatDecoderId, g_decArgo_decoderIdListNkeIridiumRbr))
+   rbrFloatFlag = 1;
+elseif (ismember(floatDecoderId, g_decArgo_decoderIdListNkePfv2Iridium))
+   if (~isempty(sensorMakerMeta))
+      if (any(strcmp(sensorMakerMeta, 'RBR')))
+         rbrFloatFlag = 1;
+      end
+   else
+      fprintf('RTQC_WARNING: TEST026: Float #%d: Nc meta-data file needed to check if the float has RBR sensors - test #26 not performed\n', ...
+         a_floatNum);
    end
 end
 
@@ -1067,8 +1146,8 @@ for idProf = 1:nProf
    end
 end
 paramDataMode(cpt:end, :) = [];
-ncParamNameList = unique(ncParamNameList, 'stable'); % we use 'stable' because the sort function switch PRES2 and PRES2_ADJUSTED
-ncParamAdjNameList = unique(ncParamAdjNameList, 'stable'); % we use 'stable' because the sort function switch PRES2 and PRES2_ADJUSTED
+ncParamNameList = unique(ncParamNameList, 'stable'); % we use 'stable' because the sort function switch PRES_2 and PRES_2_ADJUSTED
+ncParamAdjNameList = unique(ncParamAdjNameList, 'stable'); % we use 'stable' because the sort function switch PRES_2 and PRES_2_ADJUSTED
 
 % retrieve the data
 ncParamNameQcList = [];
@@ -1185,6 +1264,9 @@ if (monoBProfFileFlag == 1)
    ncBParamNameList = unique(ncBParamNameList);
    ncBParamNameList(find(strcmp(ncBParamNameList, 'PRES') == 1)) = [];
    ncBParamNameList(find(strcmp(ncBParamNameList, 'PRES2') == 1)) = [];
+   ncBParamNameList(find(strcmp(ncBParamNameList, 'PRES_2') == 1)) = [];
+   ncBParamNameList(find(strcmp(ncBParamNameList, 'PRES3') == 1)) = [];
+   ncBParamNameList(find(strcmp(ncBParamNameList, 'PRES_3') == 1)) = [];
    ncBParamAdjNameList = unique(ncBParamAdjNameList);
 
    % retrieve the data
@@ -1489,6 +1571,9 @@ if (multiProfFileFlag)
       ncBMParamNameList = unique(ncBMParamNameList);
       ncBMParamNameList(find(strcmp(ncBMParamNameList, 'PRES') == 1)) = [];
       ncBMParamNameList(find(strcmp(ncBMParamNameList, 'PRES2') == 1)) = [];
+      ncBMParamNameList(find(strcmp(ncBMParamNameList, 'PRES_2') == 1)) = [];
+      ncBMParamNameList(find(strcmp(ncBMParamNameList, 'PRES3') == 1)) = [];
+      ncBMParamNameList(find(strcmp(ncBMParamNameList, 'PRES_3') == 1)) = [];
       ncBMParamAdjNameList = unique(ncBMParamAdjNameList);
 
       % retrieve the data
@@ -1832,20 +1917,33 @@ end
 %
 %    {'PRES'} ...
 %    {'PRES2'} ...
+%    {'PRES_2'} ...
+%    {'PRES3'} ...
+%    {'PRES_3'} ...
 %    {'TEMP'} ...
 %    {'TEMP2'} ...
+%    {'TEMP_2'} ...
+%    {'TEMP3'} ...
+%    {'TEMP_3'} ...
 %    {'PSAL'} ...
 %    {'PSAL2'} ...
+%    {'PSAL_2'} ...
+%    {'PSAL3'} ...
+%    {'PSAL_3'} ...
 %    {'CNDC'} ...
 %    {'TEMP_CNDC'} ...
 %    {'DOXY'} ...
 %    {'DOXY2'} ...
+%    {'DOXY_2'} ...
 %    {'TEMP_DOXY'} ...
 %    {'TEMP_DOXY2'} ...
+%    {'TEMP_DOXY_2'} ...
 %    {'CHLA'} ...
 %    {'CHLA2'} ...
+%    {'CHLA_2'} ...
 %    {'CHLA_FLUORESCENCE'} ...
 %    {'CHLA_FLUORESCENCE2'} ...
+%    {'CHLA_FLUORESCENCE_2'} ...
 %    {'BBP700'} ...
 %    {'PH_IN_SITU_TOTAL'} ...
 %    {'NITRATE'} ...
@@ -1853,7 +1951,9 @@ end
 %    {'DOWN_IRRADIANCE412'} ...
 %    {'DOWN_IRRADIANCE443'} ...
 %    {'DOWN_IRRADIANCE490'} ...
+%    {'DOWN_IRRADIANCE555'} ...
 %    {'DOWN_IRRADIANCE665'} ...
+%    {'DOWN_IRRADIANCE670'} ...
 %    {'DOWNWELLING_PAR'} ...
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1862,8 +1962,11 @@ end
 % Specific profiles generated by the Coriolis decoder
 %
 % PRES2, TEMP2, PSAL2 (SUNA sensor of Provor CTS5)
-% PRES, TEMP, PSAL, TEMP_DOXY2, DOXY2 (Apex Ir (1201), Arvor 2-DO (209), Navis)
+% PRES2, TEMP2, PSAL2 (for Arvor Deep 2T proftotype, decId 229)
+% PRES, TEMP, PSAL, TEMP_DOXY2, DOXY2 (Apex Ir (1201) i.e. Navis, Arvor 2-DO (209, 230))
 % PRES, CHLA2, CHLA_FLUORESCENCE2 (CYCLOPS sensor of Arvor CM (303))
+% (PRES2, TEMP2, PSAL2) and (PRES3, TEMP3, PSAL3, TEMP_CNDC) (for Arvor Deep 3T proftotype, decId 228)
+% (PRES2, TEMP2, PSAL2) (for Arvor Deep 2T proftotype, decId 229)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1952,7 +2055,7 @@ if (testFlagList(4) == 1)
                positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrGood);
                testDoneList(4, idProf) = 1;
                % apply the test
-               if (mean(mean(elev(~isnan(elev)))) >= 0)
+               if (mean(elev(~isnan(elev))) >= 0)
                   if (positionQc(idProf) ~= g_decArgo_qcStrInterpolated)
                      positionQc(idProf) = set_qc(positionQc(idProf), g_decArgo_qcStrBad);
                   else
@@ -2013,7 +2116,7 @@ if (testFlagList(5) == 1)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TEST 15: grey list test
+% TEST 15: supplemental sensor exclusion list test
 %
 if (testFlagList(15) == 1)
 
@@ -2021,26 +2124,26 @@ if (testFlagList(15) == 1)
    for idProf = 1:length(juld)
       if (juld(idProf) ~= paramJuld.fillValue)
 
-         % read grey list file
-         fId = fopen(greyListPathFileName, 'r');
+         % read exclusion list file
+         fId = fopen(exclusionListPathFileName, 'r');
          if (fId == -1)
-            fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to open grey list file (%s) - test #15 not performed\n', ...
-               a_floatNum, cycleNumber(idProf), greyListPathFileName);
+            fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to open exclusion list file (%s) - test #15 not performed\n', ...
+               a_floatNum, cycleNumber(idProf), exclusionListPathFileName);
          else
             fileContents = textscan(fId, '%s', 'delimiter', ',');
             fclose(fId);
             fileContents = fileContents{:};
             if (rem(size(fileContents, 1), 7) ~= 0)
-               fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to parse grey list file (%s) - test #15 not performed\n', ...
-                  a_floatNum, cycleNumber(idProf), greyListPathFileName);
+               fprintf('RTQC_WARNING: TEST015: Float #%d Cycle #%d: Unable to parse exclusion list file (%s) - test #15 not performed\n', ...
+                  a_floatNum, cycleNumber(idProf), exclusionListPathFileName);
             else
 
-               greyListInfo = reshape(fileContents, 7, size(fileContents, 1)/7)';
+               exclusionListInfo = reshape(fileContents, 7, size(fileContents, 1)/7)';
 
                % retrieve information for the current float
-               idF = find(strcmp(num2str(a_floatNum), greyListInfo(:, 1)) == 1);
+               idF = find(strcmp(num2str(a_floatNum), exclusionListInfo(:, 1)) == 1);
 
-               % apply the grey list information
+               % apply the exclusion list information
                for id = 1:length(idF)
                   for idD = 1:2
                      if (idD == 1)
@@ -2052,8 +2155,8 @@ if (testFlagList(15) == 1)
                         ncParamXDataQcList = ncParamDataQcList;
                         ncParamXFillValueList = ncParamFillValueList;
 
-                        % retrieve grey listed parameter name
-                        param = greyListInfo{idF(id), 2};
+                        % retrieve exclusion listed parameter name
+                        paramName = exclusionListInfo{idF(id), 2};
                      else
                         % adjusted data processing
 
@@ -2063,13 +2166,13 @@ if (testFlagList(15) == 1)
                         ncParamXDataQcList = ncParamAdjDataQcList;
                         ncParamXFillValueList = ncParamAdjFillValueList;
 
-                        % retrieve grey listed parameter adjusted name
-                        param = [greyListInfo{idF(id), 2} '_ADJUSTED'];
+                        % retrieve exclusion listed parameter adjusted name
+                        paramName = [exclusionListInfo{idF(id), 2} '_ADJUSTED'];
                      end
 
-                     startDate = greyListInfo{idF(id), 3};
-                     endDate = greyListInfo{idF(id), 4};
-                     qcVal = greyListInfo{idF(id), 5};
+                     startDate = exclusionListInfo{idF(id), 3};
+                     endDate = exclusionListInfo{idF(id), 4};
+                     qcVal = exclusionListInfo{idF(id), 5};
 
                      startDateJuld = datenum(startDate, 'yyyymmdd') - g_decArgo_janFirst1950InMatlab;
                      endDateJuld = '';
@@ -2080,7 +2183,7 @@ if (testFlagList(15) == 1)
                      if (((isempty(endDateJuld)) && (juld(idProf) >= startDateJuld)) || ...
                            ((juld(idProf) >= startDateJuld) && (juld(idProf) <= endDateJuld)))
 
-                        idParam = find(strcmp(param, ncParamXNameList) == 1, 1);
+                        idParam = find(strcmp(paramName, ncParamXNameList) == 1, 1);
                         if (~isempty(idParam))
                            paramData = dataStruct.(ncParamXDataList{idParam});
                            paramDataQc = dataStruct.(ncParamXDataQcList{idParam});
@@ -2105,7 +2208,7 @@ if (testFlagList(15) == 1)
                               dataStruct.(ncParamXDataQcList{idParam}) = paramDataQc;
                               testFailedList(15, idProf) = 1;
 
-                              if (strncmp(param, 'PRES', length('PRES')) && (qcVal == g_decArgo_qcStrBad))
+                              if (strncmp(paramName, 'PRES', length('PRES')) && (qcVal == g_decArgo_qcStrBad))
                                  presQc4ProfIdList = [presQc4ProfIdList idProf];
                               end
                            end
@@ -2149,6 +2252,29 @@ if (testFlagList(19) == 1)
          a_floatNum, cycleNumber(idProf), direction(idProf), idProf, ncMetaPathFileName);
    else
 
+      % TEMPORARY 02/02/2024
+      % until version 6.4:
+      % - we provided the list of parameters that have at least on RTQC test defined
+      % - the check was apply to all the parameters attached to the concerned sensor
+      % - the check initialized the profile QC of checked parameters with QC=1 values
+      % since version 6.5:
+      % - we check all the parameters of the profile
+      % - no initialization is done (let to QC=0)
+      % => output profile QC of parameters that don't have any RTQC test defined
+      % are all QC=0 or QC=0 QC=3
+      % unfortunately profiles of PRES_MED_QC=0, TEMP_STD/MED_QC=0 and
+      % PSAL_STD/MED_QC=0 are rejected by the GDAC checker
+      % we then create a version 6.6 to initialize these profiles QC with QC=1
+
+      % parameter list of parameters that need to be initialize with QC=1 values
+      initNeededParameterList = [ ...
+         {'PRES_MED'}; ...
+         {'TEMP_MED'}; ...
+         {'TEMP_STD'}; ...
+         {'PSAL_MED'}; ...
+         {'PSAL_STD'}; ...
+         ];
+
       % compute pressure threshold associated to PROFILE_PRESSURE
       maxProfPres = compute_max_pres_for_rtqc_test19(profilePres);
 
@@ -2156,6 +2282,9 @@ if (testFlagList(19) == 1)
       presParameterList = [ ...
          {'PRES'}; ...
          {'PRES2'}; ...
+         {'PRES_2'}; ...
+         {'PRES3'}; ...
+         {'PRES_3'}; ...
          ];
 
       % list of parameters that should be checked with a constrained data mode
@@ -2167,8 +2296,17 @@ if (testFlagList(19) == 1)
          {'CNDC'}; ...
          {'TEMP_CNDC'}; ...
          {'PRES2'}; ...
+         {'PRES_2'}; ...
          {'TEMP2'}; ...
+         {'TEMP_2'}; ...
          {'PSAL2'}; ...
+         {'PSAL_2'}; ...
+         {'PRES3'}; ...
+         {'PRES_3'}; ...
+         {'TEMP3'}; ...
+         {'TEMP_3'}; ...
+         {'PSAL3'}; ...
+         {'PSAL_3'}; ...
          ];
 
       for idPres = 1:length(presParameterList)
@@ -2230,6 +2368,16 @@ if (testFlagList(19) == 1)
                               testDoneList(19, idProf) = 1;
                               testDoneListForTraj{19, idProf} = [testDoneListForTraj{19, idProf} idNoDef];
 
+                              %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                              % TEMPORARY 02/02/2024 - START
+                              if (ismember(paramName, initNeededParameterList))
+                                 % initialize Qc flags
+                                 paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), g_decArgo_qcStrGood);
+                                 dataStruct.(paramDataQcName) = paramDataQc;
+                              end
+                              % TEMPORARY 02/02/2024 - END
+                              %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
                               % apply the test
                               if (~isempty(idToFlag))
                                  idToFlagParam = idNoDef(find(ismember(idNoDef, idToFlag) == 1));
@@ -2261,8 +2409,11 @@ if (testFlagList(21) == 1)
       test21ParameterList = [ ...
          {'PSAL'} ...
          {'PSAL2'} ...
+         {'PSAL_2'} ...
+         % {'PSAL3'} ... % not involved in this test because assigned to RBR salinity (decId 228)
          {'DOXY'} ...
          {'DOXY2'} ...
+         {'DOXY_2'} ...
          ];
 
       for idProf = 1:length(juld)
@@ -2270,49 +2421,51 @@ if (testFlagList(21) == 1)
 
             for idP = 1:length(test21ParameterList)
                paramName = test21ParameterList{idP};
+               if (ismember(paramName, ncParamNameList))
 
-               % for DOXY the test depends on sensor model (only for
-               % SBE63_OPTODE)
-               if (strncmp(paramName, 'DOXY', length('DOXY')))
-                  % retrieve the sensor of this parameter
-                  idF = find(strcmp(paramName, parameterMeta) == 1, 1);
-                  if (~isempty(idF))
-                     paramSensor = parameterSensorMeta{idF};
-                     % retrieve the sensor model of this parameter
-                     idF = find(strcmp(paramSensor, sensorMeta) == 1, 1);
+                  % for DOXY the test depends on sensor model (only for
+                  % SBE63_OPTODE)
+                  if (strncmp(paramName, 'DOXY', length('DOXY')))
+                     % retrieve the sensor of this parameter
+                     idF = find(strcmp(paramName, parameterMeta) == 1, 1);
                      if (~isempty(idF))
-                        paramSensorModel = sensorModelMeta(idF);
-                        if (~strcmp(paramSensorModel, 'SBE63_OPTODE'))
-                           continue
+                        paramSensor = parameterSensorMeta{idF};
+                        % retrieve the sensor model of this parameter
+                        idF = find(strcmp(paramSensor, sensorMeta) == 1, 1);
+                        if (~isempty(idF))
+                           paramSensorModel = sensorModelMeta(idF);
+                           if (~strcmp(paramSensorModel, 'SBE63_OPTODE'))
+                              continue
+                           end
                         end
                      end
                   end
-               end
 
-               for idDM = 1:2
-                  if (idDM == 1)
-                     dataMode = 'R';
-                  else
-                     dataMode = 'A';
-                  end
+                  for idDM = 1:2
+                     if (idDM == 1)
+                        dataMode = 'R';
+                     else
+                        dataMode = 'A';
+                     end
 
-                  % retrieve PARAM data
-                  [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
-                     get_param_data(paramName, dataStruct, idProf, dataMode);
+                     % retrieve PARAM data
+                     [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+                        get_param_data(paramName, dataStruct, idProf, dataMode);
 
-                  if (~isempty(paramData))
-                     profParam = paramData(idProf, :);
+                     if (~isempty(paramData))
+                        profParam = paramData(idProf, :);
 
-                     % apply the test
-                     idNoDefParam = find(profParam ~= paramDataFillValue);
-                     paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrCorrectable);
-                     dataStruct.(paramDataQcName) = paramDataQc;
+                        % apply the test
+                        idNoDefParam = find(profParam ~= paramDataFillValue);
+                        paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrCorrectable);
+                        dataStruct.(paramDataQcName) = paramDataQc;
 
-                     testFailedList(21, idProf) = 1;
-                     testFailedListForTraj{21, idProf} = [testFailedListForTraj{21, idProf} idNoDefParam];
+                        testFailedList(21, idProf) = 1;
+                        testFailedListForTraj{21, idProf} = [testFailedListForTraj{21, idProf} idNoDefParam];
 
-                     testDoneList(21, idProf) = 1;
-                     testDoneListForTraj{21, idProf} = [testDoneListForTraj{21, idProf} idNoDefParam];
+                        testDoneList(21, idProf) = 1;
+                        testDoneListForTraj{21, idProf} = [testDoneListForTraj{21, idProf} idNoDefParam];
+                     end
                   end
                end
             end
@@ -2330,8 +2483,11 @@ if (testFlagList(22) == 1)
    test22ParameterList = [ ...
       {'PRES'} {'TEMP'} {'PSAL'} {0}; ...
       {'PRES2'} {'TEMP2'} {'PSAL2'} {0}; ...
+      {'PRES_2'} {'TEMP_2'} {'PSAL_2'} {0}; ...
+      % {'PRES3'} {'TEMP3'} {'PSAL3'} {0}; ... % not involved in this test because assigned to RBR salinity (decId 228)
       {'PRES'} {'TEMP_DOXY'} {''} {1}; ...
       {'PRES'} {'TEMP_DOXY2'} {''} {1}; ...
+      {'PRES'} {'TEMP_DOXY_2'} {''} {1}; ...
       ];
 
    for idProf = 1:length(juld)
@@ -2539,12 +2695,28 @@ end
 %
 if (testFlagList(6) == 1)
 
-   % SPECIFIC TO (PRES, TEMP, PSAL) AND (PRES2, TEMP2, PSAL2)
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % SPECIFIC TO (PRES, TEMP, PSAL) AND (PRES2, TEMP2, PSAL2) AND (PRES3, TEMP3, PSAL3)
+   % if PRES < –5dbar, then PRES_QC = '4', TEMP_QC = '4', PSAL_QC = '4'
+   % elseif –5dbar <= PRES <= –2.4dbar, then PRES_QC = '3', TEMP_QC = '3', PSAL_QC = '3'.
+
+   % should be applied to:
+   % (PRES, TEMP, PSAL)
+   % (PRES2, TEMP2, PSAL2)
+   % (PRES3, TEMP3, PSAL3)
+   % (PRES, TEMP_DOXY)
+   % (PRES, TEMP_DOXY2)
 
    % list of parameters concerned by this test
    test6ParameterList1 = [ ...
       {'PRES'} {'TEMP'} {'PSAL'}; ...
       {'PRES2'} {'TEMP2'} {'PSAL2'}; ...
+      {'PRES_2'} {'TEMP_2'} {'PSAL_2'}; ...
+      {'PRES3'} {'TEMP3'} {'PSAL3'}; ...
+      {'PRES_3'} {'TEMP_3'} {'PSAL_3'}; ...
+      {'PRES'} {'TEMP_DOXY'} {''}; ...
+      {'PRES'} {'TEMP_DOXY2'} {''}; ...
+      {'PRES'} {'TEMP_DOXY_2'} {''}; ...
       ];
 
    presQc4ProfIdList = [];
@@ -2562,34 +2734,31 @@ if (testFlagList(6) == 1)
 
          for idProf = 1:length(juld)
 
+            %%%%%%%%%%%%%%%%%%%%
             % retrieve PRES data
             [presData, presDataQc, presDataFillValue, ~, presDataQcName] = ...
                get_param_data(presName, dataStruct, idProf, dataMode);
 
             if (~isempty(presData))
-
                profPres = presData(idProf, :);
 
-               % initialize Qc flags
-               idNoDefPres = find(profPres ~= presDataFillValue);
-               presDataQc(idProf, idNoDefPres) = set_qc(presDataQc(idProf, idNoDefPres), g_decArgo_qcStrGood);
-               dataStruct.(presDataQcName) = presDataQc;
-
-               testDoneList(6, idProf) = 1;
-
                idNoDef = find(profPres ~= presDataFillValue);
-               profPres = profPres(idNoDef);
+               if (~isempty(idNoDef))
 
-               if (~isempty(profPres))
+                  testDoneList(6, idProf) = 1;
+                  testDoneListForTraj{6, idProf} = [testDoneListForTraj{6, idProf} idNoDef];
+
+                  % initialize Qc flags (because the test directly depends on PRES)
+                  presDataQc(idProf, idNoDef) = set_qc(presDataQc(idProf, idNoDef), g_decArgo_qcStrGood);
+                  dataStruct.(presDataQcName) = presDataQc;
 
                   % apply the test
                   for idT = 1:2
                      if (idT == 1)
-                        idToFlag = find(profPres < -5);
+                        idToFlag = find(profPres(idNoDef) < -5);
                         flagValue = g_decArgo_qcStrBad;
                      else
-                        idToFlag = find((profPres >= -5) & ...
-                           (profPres <= -2.4));
+                        idToFlag = find((profPres(idNoDef) >= -5) & (profPres(idNoDef) <= -2.4));
                         flagValue = g_decArgo_qcStrCorrectable;
                      end
 
@@ -2598,6 +2767,7 @@ if (testFlagList(6) == 1)
                         dataStruct.(presDataQcName) = presDataQc;
 
                         testFailedList(6, idProf) = 1;
+                        testFailedListForTraj{6, idProf} = [testFailedListForTraj{6, idProf} idNoDef(idToFlag)];
                         if (flagValue == g_decArgo_qcStrBad)
                            presQc4ProfIdList = [presQc4ProfIdList idProf];
                         end
@@ -2605,37 +2775,25 @@ if (testFlagList(6) == 1)
                   end
                end
 
+               %%%%%%%%%%%%%%%%%%%%
                % retrieve TEMP data
                [tempData, tempDataQc, tempDataFillValue, ~, tempDataQcName] = ...
                   get_param_data(tempName, dataStruct, idProf, dataMode);
 
-               if (~isempty(presData) && ~isempty(tempData))
-
-                  profPres = presData(idProf, :);
+               if (~isempty(tempData))
                   profTemp = tempData(idProf, :);
-
-                  % initialize Qc flags
-                  idNoDefTemp = find(profTemp ~= tempDataFillValue);
-                  tempDataQc(idProf, idNoDefTemp) = set_qc(tempDataQc(idProf, idNoDefTemp), g_decArgo_qcStrGood);
-                  dataStruct.(tempDataQcName) = tempDataQc;
-
-                  testDoneList(6, idProf) = 1;
 
                   idNoDef = find((profPres ~= presDataFillValue) & ...
                      (profTemp ~= tempDataFillValue));
-                  profPres = profPres(idNoDef);
-                  profTemp = profTemp(idNoDef);
-
-                  if (~isempty(profPres) && ~isempty(profTemp))
+                  if (~isempty(idNoDef))
 
                      % apply the test
                      for idT = 1:2
                         if (idT == 1)
-                           idToFlag = find(profPres < -5);
+                           idToFlag = find(profPres(idNoDef) < -5);
                            flagValue = g_decArgo_qcStrBad;
                         else
-                           idToFlag = find((profPres >= -5) & ...
-                              (profPres <= -2.4));
+                           idToFlag = find((profPres(idNoDef) >= -5) & (profPres(idNoDef) <= -2.4));
                            flagValue = g_decArgo_qcStrCorrectable;
                         end
 
@@ -2644,50 +2802,42 @@ if (testFlagList(6) == 1)
                            dataStruct.(tempDataQcName) = tempDataQc;
 
                            testFailedList(6, idProf) = 1;
+                           testFailedListForTraj{6, idProf} = [testFailedListForTraj{6, idProf} idNoDef(idToFlag)];
                         end
                      end
                   end
                end
 
+               %%%%%%%%%%%%%%%%%%%%
                % retrieve PSAL data
-               [psalData, psalDataQc, psalDataFillValue, ~, psalDataQcName] = ...
-                  get_param_data(psalName, dataStruct, idProf, dataMode);
+               if (~isempty(psalName))
+                  [psalData, psalDataQc, psalDataFillValue, ~, psalDataQcName] = ...
+                     get_param_data(psalName, dataStruct, idProf, dataMode);
 
-               if (~isempty(presData) && ~isempty(psalData))
+                  if (~isempty(psalData))
+                     profPsal = psalData(idProf, :);
 
-                  profPres = presData(idProf, :);
-                  profPsal = psalData(idProf, :);
+                     idNoDef = find((profPres ~= presDataFillValue) & ...
+                        (profPsal ~= psalDataFillValue));
+                     if (~isempty(idNoDef))
 
-                  % initialize Qc flags
-                  idNoDefPsal = find(profPsal ~= psalDataFillValue);
-                  psalDataQc(idProf, idNoDefPsal) = set_qc(psalDataQc(idProf, idNoDefPsal), g_decArgo_qcStrGood);
-                  dataStruct.(psalDataQcName) = psalDataQc;
+                        % apply the test
+                        for idT = 1:2
+                           if (idT == 1)
+                              idToFlag = find(profPres(idNoDef) < -5);
+                              flagValue = g_decArgo_qcStrBad;
+                           else
+                              idToFlag = find((profPres(idNoDef) >= -5) & (profPres(idNoDef) <= -2.4));
+                              flagValue = g_decArgo_qcStrCorrectable;
+                           end
 
-                  testDoneList(6, idProf) = 1;
+                           if (~isempty(idToFlag))
+                              psalDataQc(idProf, idNoDef(idToFlag)) = set_qc(psalDataQc(idProf, idNoDef(idToFlag)), flagValue);
+                              dataStruct.(psalDataQcName) = psalDataQc;
 
-                  idNoDef = find((profPres ~= presDataFillValue) & ...
-                     (profPsal ~= psalDataFillValue));
-                  profPres = profPres(idNoDef);
-                  profPsal = profPsal(idNoDef);
-
-                  if (~isempty(profPres) && ~isempty(profPsal))
-
-                     % apply the test
-                     for idT = 1:2
-                        if (idT == 1)
-                           idToFlag = find(profPres < -5);
-                           flagValue = g_decArgo_qcStrBad;
-                        else
-                           idToFlag = find((profPres >= -5) & ...
-                              (profPres <= -2.4));
-                           flagValue = g_decArgo_qcStrCorrectable;
-                        end
-
-                        if (~isempty(idToFlag))
-                           psalDataQc(idProf, idNoDef(idToFlag)) = set_qc(psalDataQc(idProf, idNoDef(idToFlag)), flagValue);
-                           dataStruct.(psalDataQcName) = psalDataQc;
-
-                           testFailedList(6, idProf) = 1;
+                              testFailedList(6, idProf) = 1;
+                              testFailedListForTraj{6, idProf} = [testFailedListForTraj{6, idProf} idNoDef(idToFlag)];
+                           end
                         end
                      end
                   end
@@ -2700,73 +2850,91 @@ if (testFlagList(6) == 1)
    % apply general rule: if PRES_QC=4 then <PARAM>_QC=4 for C, B, IC and IB
    % parameters
    if (~isempty(presQc4ProfIdList))
-      [dataStruct, testFailedList, ~] = update_qc_for_bad_pres(dataStruct, unique(presQc4ProfIdList), testFailedList, [], 6);
+      [dataStruct, testFailedList, testFailedListForTraj] = update_qc_for_bad_pres(dataStruct, unique(presQc4ProfIdList), testFailedList, testFailedListForTraj, 6);
    end
 
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % SPECIFIC TO OTHER PARAMETERS
 
    % list of parameters to test
    test6ParameterList2 = [ ...
-      {'TEMP'} {-2.5} {40}; ...
-      {'TEMP2'} {-2.5} {40}; ...
-      {'TEMP_DOXY'} {-2.5} {40}; ...
-      {'TEMP_DOXY2'} {-2.5} {40}; ...
-      {'PSAL'} {2} {41}; ...
-      {'PSAL2'} {2} {41}; ...
-      {'DOXY'} {-5} {600}; ...
-      {'DOXY2'} {-5} {600}; ...
-      {'CHLA'} {-0.2} {100}; ...
-      {'CHLA_FLUORESCENCE'} {-0.2} {100}; ...
-      {'CHLA2'} {-0.2} {100}; ...
-      {'CHLA_FLUORESCENCE2'} {-0.2} {100}; ...
-      {'PH_IN_SITU_TOTAL'} {7.3} {8.5}; ...
-      {'NITRATE'} {-2} {50}; ...
-      {'DOWN_IRRADIANCE380'} {-1} {1.7}; ...
-      {'DOWN_IRRADIANCE412'} {-1} {2.9}; ...
-      {'DOWN_IRRADIANCE443'} {-1} {3.2}; ...
-      {'DOWN_IRRADIANCE490'} {-1} {3.4}; ...
-      {'DOWN_IRRADIANCE665'} {-1} {2.8}; ...
-      {'DOWNWELLING_PAR'} {-1} {4672}; ...
+      {'TEMP'} {-2.5} {40} {-2.5} {40}; ...
+      {'TEMP2'} {-2.5} {40} {-2.5} {40}; ...
+      {'TEMP_2'} {-2.5} {40} {-2.5} {40}; ...
+      {'TEMP3'} {-2.5} {40} {-2.5} {40}; ...
+      {'TEMP_3'} {-2.5} {40} {-2.5} {40}; ...
+      {'TEMP_DOXY'} {-2.5} {40} {-2.5} {40}; ...
+      {'TEMP_DOXY2'} {-2.5} {40} {-2.5} {40}; ...
+      {'TEMP_DOXY_2'} {-2.5} {40} {-2.5} {40}; ...
+      {'PSAL'} {2} {41} {2} {41}; ...
+      {'PSAL2'} {2} {41} {2} {41}; ...
+      {'PSAL_2'} {2} {41} {2} {41}; ...
+      {'PSAL3'} {2} {41} {2} {41}; ...
+      {'PSAL_3'} {2} {41} {2} {41}; ...
+      {'DOXY'} {-5} {600} {-5} {600}; ...
+      {'DOXY2'} {-5} {600} {-5} {600}; ...
+      {'DOXY_2'} {-5} {600} {-5} {600}; ...
+      {'CHLA'} {g_decArgo_rtqcTest6ChlaMin} {g_decArgo_rtqcTest6ChlaMax} {g_decArgo_rtqcTest6ChlaMin} {g_decArgo_rtqcTest6ChlaMax}; ...
+      {'CHLA2'} {g_decArgo_rtqcTest6ChlaMin} {g_decArgo_rtqcTest6ChlaMax} {g_decArgo_rtqcTest6ChlaMin} {g_decArgo_rtqcTest6ChlaMax}; ...
+      {'CHLA_2'} {g_decArgo_rtqcTest6ChlaMin} {g_decArgo_rtqcTest6ChlaMax} {g_decArgo_rtqcTest6ChlaMin} {g_decArgo_rtqcTest6ChlaMax}; ...
+      {'CHLA_FLUORESCENCE'} {g_decArgo_rtqcTest6ChlaMin} {g_decArgo_rtqcTest6ChlaMax} {g_decArgo_rtqcTest6ChlaMin} {g_decArgo_rtqcTest6ChlaMax}; ...
+      {'CHLA_FLUORESCENCE2'} {g_decArgo_rtqcTest6ChlaMin} {g_decArgo_rtqcTest6ChlaMax} {g_decArgo_rtqcTest6ChlaMin} {g_decArgo_rtqcTest6ChlaMax}; ...
+      {'CHLA_FLUORESCENCE_2'} {g_decArgo_rtqcTest6ChlaMin} {g_decArgo_rtqcTest6ChlaMax} {g_decArgo_rtqcTest6ChlaMin} {g_decArgo_rtqcTest6ChlaMax}; ...
+      {'PH_IN_SITU_TOTAL'} {7.0} {8.8} {7.3} {8.5}; ...
+      {'NITRATE'} {-2} {50} {-2} {50}; ...
+      {'DOWN_IRRADIANCE380'} {-1} {1.7} {-1} {1.7}; ...
+      {'DOWN_IRRADIANCE412'} {-1} {2.9} {-1} {2.9}; ...
+      {'DOWN_IRRADIANCE443'} {-1} {3.2} {-1} {3.2}; ...
+      {'DOWN_IRRADIANCE490'} {-1} {3.4} {-1} {3.4}; ...
+      {'DOWN_IRRADIANCE665'} {-1} {2.8} {-1} {2.8}; ...
+      {'DOWNWELLING_PAR'} {-1} {4672} {-1} {4672}; ...
       ];
 
    for idP = 1:size(test6ParameterList2, 1)
       paramName = test6ParameterList2{idP, 1};
-      paramTestMin = test6ParameterList2{idP, 2};
-      paramTestMax = test6ParameterList2{idP, 3};
+      if (ismember(paramName, ncParamNameList))
 
-      for idDM = 1:2
-         if (idDM == 1)
-            dataMode = 'R';
-         else
-            dataMode = 'A';
-         end
+         for idDM = 1:2
+            if (idDM == 1)
+               dataMode = 'R';
+               paramTestMin = test6ParameterList2{idP, 2};
+               paramTestMax = test6ParameterList2{idP, 3};
+            else
+               dataMode = 'A';
+               paramTestMin = test6ParameterList2{idP, 4};
+               paramTestMax = test6ParameterList2{idP, 5};
+            end
 
-         for idProf = 1:length(juld)
+            for idProf = 1:length(juld)
 
-            % retrieve PARAM data
-            [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
-               get_param_data(paramName, dataStruct, idProf, dataMode);
+               % retrieve PARAM data
+               [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+                  get_param_data(paramName, dataStruct, idProf, dataMode);
 
-            if (~isempty(paramData))
+               if (~isempty(paramData))
 
-               profParam = paramData(idProf, :);
-               idNoDef = find(profParam ~= paramDataFillValue);
-               profParam = profParam(idNoDef);
+                  profParam = paramData(idProf, :);
+                  idNoDef = find(profParam ~= paramDataFillValue);
+                  if (~isempty(idNoDef))
 
-               % initialize Qc flags
-               paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), g_decArgo_qcStrGood);
-               dataStruct.(paramDataQcName) = paramDataQc;
+                     testDoneList(6, idProf) = 1;
+                     testDoneListForTraj{6, idProf} = [testDoneListForTraj{6, idProf} idNoDef];
 
-               testDoneList(6, idProf) = 1;
+                     % initialize Qc flags
+                     paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), g_decArgo_qcStrGood);
+                     dataStruct.(paramDataQcName) = paramDataQc;
 
-               % apply the test
-               idToFlag = find((profParam < paramTestMin) | (profParam > paramTestMax));
+                     % apply the test
+                     profParam = profParam(idNoDef);
+                     idToFlag = find((profParam < paramTestMin) | (profParam > paramTestMax));
+                     if (~isempty(idToFlag))
+                        paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrBad);
+                        dataStruct.(paramDataQcName) = paramDataQc;
 
-               if (~isempty(idToFlag))
-                  paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrBad);
-                  dataStruct.(paramDataQcName) = paramDataQc;
-
-                  testFailedList(6, idProf) = 1;
+                        testFailedList(6, idProf) = 1;
+                        testFailedListForTraj{6, idProf} = [testFailedListForTraj{6, idProf} idNoDef(idToFlag)];
+                     end
+                  end
                end
             end
          end
@@ -2783,10 +2951,17 @@ if (testFlagList(7) == 1)
    test7ParameterList = [ ...
       {'TEMP'} {21} {40} {10} {40}; ...
       {'TEMP2'} {21} {40} {10} {40}; ...
+      {'TEMP_2'} {21} {40} {10} {40}; ...
+      {'TEMP3'} {21} {40} {10} {40}; ...
+      {'TEMP_3'} {21} {40} {10} {40}; ...
       {'TEMP_DOXY'} {21} {40} {10} {40}; ...
       {'TEMP_DOXY2'} {21} {40} {10} {40}; ...
+      {'TEMP_DOXY_2'} {21} {40} {10} {40}; ...
       {'PSAL'} {2} {41} {2} {40}; ...
       {'PSAL2'} {2} {41} {2} {40}; ...
+      {'PSAL_2'} {2} {41} {2} {40}; ...
+      {'PSAL3'} {2} {41} {2} {40}; ...
+      {'PSAL_3'} {2} {41} {2} {40}; ...
       ];
 
    if (~isempty(latitude) && ~isempty(longitude))
@@ -2801,55 +2976,59 @@ if (testFlagList(7) == 1)
 
                for idP = 1:size(test7ParameterList, 1)
                   paramName = test7ParameterList{idP, 1};
-                  paramTestMinRS = test7ParameterList{idP, 2};
-                  paramTestMaxRS = test7ParameterList{idP, 3};
-                  paramTestMinMS = test7ParameterList{idP, 4};
-                  paramTestMaxMS = test7ParameterList{idP, 5};
+                  if (ismember(paramName, ncParamNameList))
 
-                  for idT = 1:2
-                     if (idT == 1)
-                        region = RED_SEA_REGION;
-                        paramTestMin = paramTestMinRS;
-                        paramTestMax = paramTestMaxRS;
-                     else
-                        region = MEDITERRANEAN_SEA_REGION;
-                        paramTestMin = paramTestMinMS;
-                        paramTestMax = paramTestMaxMS;
-                     end
+                     paramTestMinRS = test7ParameterList{idP, 2};
+                     paramTestMaxRS = test7ParameterList{idP, 3};
+                     paramTestMinMS = test7ParameterList{idP, 4};
+                     paramTestMaxMS = test7ParameterList{idP, 5};
 
-                     if (location_in_region(longitude(idProf), latitude(idProf), region))
+                     for idT = 1:2
+                        if (idT == 1)
+                           region = RED_SEA_REGION;
+                           paramTestMin = paramTestMinRS;
+                           paramTestMax = paramTestMaxRS;
+                        else
+                           region = MEDITERRANEAN_SEA_REGION;
+                           paramTestMin = paramTestMinMS;
+                           paramTestMax = paramTestMaxMS;
+                        end
 
-                        for idDM = 1:2
-                           if (idDM == 1)
-                              dataMode = 'R';
-                           else
-                              dataMode = 'A';
-                           end
+                        if (location_in_region(longitude(idProf), latitude(idProf), region))
 
-                           % retrieve PARAM data
-                           [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
-                              get_param_data(paramName, dataStruct, idProf, dataMode);
+                           for idDM = 1:2
+                              if (idDM == 1)
+                                 dataMode = 'R';
+                              else
+                                 dataMode = 'A';
+                              end
 
-                           if (~isempty(paramData))
+                              % retrieve PARAM data
+                              [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+                                 get_param_data(paramName, dataStruct, idProf, dataMode);
 
-                              profParam = paramData(idProf, :);
-                              idNoDef = find(profParam ~= paramDataFillValue);
-                              profParam = profParam(idNoDef);
+                              if (~isempty(paramData))
 
-                              % initialize Qc flags
-                              paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), g_decArgo_qcStrGood);
-                              dataStruct.(paramDataQcName) = paramDataQc;
+                                 profParam = paramData(idProf, :);
+                                 idNoDef = find(profParam ~= paramDataFillValue);
+                                 profParam = profParam(idNoDef);
 
-                              testDoneList(7, idProf) = 1;
-
-                              % apply the test
-                              idToFlag = find((profParam < paramTestMin) | (profParam > paramTestMax));
-
-                              if (~isempty(idToFlag))
-                                 paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrBad);
+                                 % initialize Qc flags
+                                 paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), g_decArgo_qcStrGood);
                                  dataStruct.(paramDataQcName) = paramDataQc;
 
-                                 testFailedList(7, idProf) = 1;
+                                 testDoneList(7, idProf) = 1;
+
+                                 % apply the test
+                                 idToFlag = find((profParam < paramTestMin) | (profParam > paramTestMax));
+
+                                 if (~isempty(idToFlag))
+                                    paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrBad);
+                                    dataStruct.(paramDataQcName) = paramDataQc;
+
+                                    testFailedList(7, idProf) = 1;
+                                    testFailedListForTraj{7, idProf} = [testFailedListForTraj{7, idProf} idNoDef(idToFlag)];
+                                 end
                               end
                            end
                         end
@@ -2871,6 +3050,9 @@ if (testFlagList(8) == 1)
    test8ParameterList = [ ...
       {'PRES'}; ...
       {'PRES2'}; ...
+      {'PRES_2'}; ...
+      {'PRES3'}; ...
+      {'PRES_3'}; ...
       ];
 
    % threshold allowed for possible reversal in monotonic incresing/decreasing
@@ -2972,89 +3154,131 @@ if (testFlagList(9) == 1)
    test9ParameterList = [ ...
       {'PRES'} {'TEMP'} {6} {2} {0}; ...
       {'PRES2'} {'TEMP2'} {6} {2} {0}; ...
+      {'PRES_2'} {'TEMP_2'} {6} {2} {0}; ...
+      {'PRES3'} {'TEMP3'} {6} {2} {0}; ...
+      {'PRES_3'} {'TEMP_3'} {6} {2} {0}; ...
       {'PRES'} {'TEMP_DOXY'} {6} {2} {1}; ...
       {'PRES'} {'TEMP_DOXY2'} {6} {2} {1}; ...
+      {'PRES'} {'TEMP_DOXY_2'} {6} {2} {1}; ...
       {'PRES'} {'PSAL'} {0.9} {0.3} {0}; ...
       {'PRES2'} {'PSAL2'} {0.9} {0.3} {0}; ...
+      {'PRES_2'} {'PSAL_2'} {0.9} {0.3} {0}; ...
+      {'PRES3'} {'PSAL3'} {0.9} {0.3} {0}; ...
+      {'PRES_3'} {'PSAL_3'} {0.9} {0.3} {0}; ...
       {'PRES'} {'DOXY'} {50} {25} {1}; ...
       {'PRES'} {'DOXY2'} {50} {25} {1}; ...
+      {'PRES'} {'DOXY_2'} {50} {25} {1}; ...
       {'PRES'} {'PH_IN_SITU_TOTAL'} {''} {''} {1}; ...
       {'PRES'} {'NITRATE'} {''} {''} {1}; ...
       ];
 
    for idP = 1:size(test9ParameterList, 1)
-      presName = test9ParameterList{idP, 1};
       paramName = test9ParameterList{idP, 2};
-      paramTestShallow = test9ParameterList{idP, 3};
-      paramTestDeep = test9ParameterList{idP, 4};
-      presDataModeFlag = test9ParameterList{idP, 5};
+      if (ismember(paramName, ncParamNameList))
 
-      for idProf = 1:length(juld)
+         presName = test9ParameterList{idP, 1};
+         paramTestShallow = test9ParameterList{idP, 3};
+         paramTestDeep = test9ParameterList{idP, 4};
+         presDataModeFlag = test9ParameterList{idP, 5};
 
-         for idDM = 1:2
-            if (idDM == 1)
-               dataMode = 'R';
-            else
-               dataMode = 'A';
-            end
-            if (presDataModeFlag == 1)
-               presDataMode = '';
-            else
-               presDataMode = dataMode;
-            end
+         for idProf = 1:length(juld)
 
-            % retrieve PARAM data
-            [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
-               get_param_data(paramName, dataStruct, idProf, dataMode);
+            for idDM = 1:2
+               if (idDM == 1)
+                  dataMode = 'R';
+               else
+                  dataMode = 'A';
+               end
+               if (presDataModeFlag == 1)
+                  presDataMode = '';
+               else
+                  presDataMode = dataMode;
+               end
 
-            if (~isempty(paramData))
+               % retrieve PARAM data
+               [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+                  get_param_data(paramName, dataStruct, idProf, dataMode);
 
-               profParam = paramData(idProf, :);
+               if (~isempty(paramData))
 
-               % initialize Qc flags
-               idNoDef = find(profParam ~= paramDataFillValue);
-               paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), g_decArgo_qcStrGood);
-               dataStruct.(paramDataQcName) = paramDataQc;
+                  profParam = paramData(idProf, :);
 
-               testDoneList(9, idProf) = 1;
-               testDoneListForTraj{9, idProf} = [testDoneListForTraj{9, idProf} idNoDef];
+                  % initialize Qc flags
+                  idNoDef = find(profParam ~= paramDataFillValue);
+                  paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), g_decArgo_qcStrGood);
+                  dataStruct.(paramDataQcName) = paramDataQc;
 
-               idToFlag = [];
-               if (~strcmp(paramName, 'PH_IN_SITU_TOTAL') && ...
-                     ~strcmp(paramName, 'NITRATE'))
+                  testDoneList(9, idProf) = 1;
+                  testDoneListForTraj{9, idProf} = [testDoneListForTraj{9, idProf} idNoDef];
 
-                  % retrieve PRES data
-                  [presData, presDataQc, presDataFillValue, ~, ~] = ...
-                     get_param_data(presName, dataStruct, idProf, presDataMode);
+                  idToFlag = [];
+                  if (~strcmp(paramName, 'PH_IN_SITU_TOTAL') && ...
+                        ~strcmp(paramName, 'NITRATE'))
 
-                  if (~isempty(presData))
+                     % retrieve PRES data
+                     [presData, presDataQc, presDataFillValue, ~, ~] = ...
+                        get_param_data(presName, dataStruct, idProf, presDataMode);
 
-                     % spike or gradient test for TEMP, TEMP_DOXY, PSAL and DOXY
-                     profPres = presData(idProf, :);
-                     profPresQc = presDataQc(idProf, :);
-                     profParam = paramData(idProf, :);
-                     profParamQc = paramDataQc(idProf, :);
-                     if (~strncmp(paramName, 'DOXY', length('DOXY')))
-                        idDefOrBad = find((profPres == presDataFillValue) | ...
-                           (profPresQc == g_decArgo_qcStrBad) | ...
-                           (profParam == paramDataFillValue) | ...
-                           (profParamQc == g_decArgo_qcStrBad));
-                     else
-                        % DOXY tests should ignore DOXY_QC = 4, DOXY_ADJUSTED_QC = 3 and DOXY_ADJUSTED_QC = 4
-                        if (idDM == 1)
+                     if (~isempty(presData))
+
+                        % spike or gradient test for TEMP, TEMP_DOXY, PSAL and DOXY
+                        profPres = presData(idProf, :);
+                        profPresQc = presDataQc(idProf, :);
+                        profParam = paramData(idProf, :);
+                        profParamQc = paramDataQc(idProf, :);
+                        if (~strncmp(paramName, 'DOXY', length('DOXY')))
                            idDefOrBad = find((profPres == presDataFillValue) | ...
                               (profPresQc == g_decArgo_qcStrBad) | ...
                               (profParam == paramDataFillValue) | ...
                               (profParamQc == g_decArgo_qcStrBad));
                         else
-                           idDefOrBad = find((profPres == presDataFillValue) | ...
-                              (profPresQc == g_decArgo_qcStrCorrectable) | ...
-                              (profPresQc == g_decArgo_qcStrBad) | ...
-                              (profParam == paramDataFillValue) | ...
-                              (profParamQc == g_decArgo_qcStrCorrectable) | ...
-                              (profParamQc == g_decArgo_qcStrBad));
+                           % DOXY tests should ignore DOXY_QC = 4, DOXY_ADJUSTED_QC = 3 and DOXY_ADJUSTED_QC = 4
+                           if (idDM == 1)
+                              idDefOrBad = find((profPres == presDataFillValue) | ...
+                                 (profPresQc == g_decArgo_qcStrBad) | ...
+                                 (profParam == paramDataFillValue) | ...
+                                 (profParamQc == g_decArgo_qcStrBad));
+                           else
+                              idDefOrBad = find((profPres == presDataFillValue) | ...
+                                 (profPresQc == g_decArgo_qcStrCorrectable) | ...
+                                 (profPresQc == g_decArgo_qcStrBad) | ...
+                                 (profParam == paramDataFillValue) | ...
+                                 (profParamQc == g_decArgo_qcStrCorrectable) | ...
+                                 (profParamQc == g_decArgo_qcStrBad));
+                           end
+                        end
+                        idDefOrBad = [0 idDefOrBad length(profParam)+1];
+                        for idSlice = 1:length(idDefOrBad)-1
+
+                           % part of continuous measurements
+                           idLevel = idDefOrBad(idSlice)+1:idDefOrBad(idSlice+1)-1;
+
+                           % apply the test
+                           if (length(idLevel) > 2)
+                              for id = 2:length(idLevel)-1
+                                 idL = idLevel(id);
+                                 testVal = abs(profParam(idL)-(profParam(idL+1)+profParam(idL-1))/2) - abs((profParam(idL+1)-profParam(idL-1))/2);
+                                 if (profPres(idL) < 500)
+                                    if (testVal > paramTestShallow)
+                                       idToFlag = [idToFlag idL];
+                                    end
+                                 else
+                                    if (testVal > paramTestDeep)
+                                       idToFlag = [idToFlag idL];
+                                    end
+                                 end
+                              end
+                           end
                         end
                      end
+
+                  elseif (strcmp(paramName, 'PH_IN_SITU_TOTAL'))
+
+                     % spike test for PH_IN_SITU_TOTAL
+                     profParam = paramData(idProf, :);
+                     profParamQc = paramDataQc(idProf, :);
+                     idDefOrBad = find((profParam == paramDataFillValue) | ...
+                        (profParamQc == g_decArgo_qcStrBad));
                      idDefOrBad = [0 idDefOrBad length(profParam)+1];
                      for idSlice = 1:length(idDefOrBad)-1
 
@@ -3062,116 +3286,85 @@ if (testFlagList(9) == 1)
                         idLevel = idDefOrBad(idSlice)+1:idDefOrBad(idSlice+1)-1;
 
                         % apply the test
-                        if (length(idLevel) > 2)
-                           for id = 2:length(idLevel)-1
-                              idL = idLevel(id);
-                              testVal = abs(profParam(idL)-(profParam(idL+1)+profParam(idL-1))/2) - abs((profParam(idL+1)-profParam(idL-1))/2);
-                              if (profPres(idL) < 500)
-                                 if (testVal > paramTestShallow)
-                                    idToFlag = [idToFlag idL];
-                                 end
-                              else
-                                 if (testVal > paramTestDeep)
-                                    idToFlag = [idToFlag idL];
-                                 end
-                              end
+                        if (length(idLevel) > 4)
+                           resProfParam = ones(1, length(idLevel)-4)*paramFillValue;
+                           idList = 3:length(idLevel)-2;
+                           for id = 1:length(idList)
+                              idL = idLevel(idList(id));
+                              resProfParam(id) = abs(profParam(idL) - median(profParam(idL-2:idL+2))) - 0.04*profParam(idL);
+                           end
+                           if (any(resProfParam > 0))
+                              idToFlag = [idToFlag idLevel(find(resProfParam > 0)) + 2];
+                           end
+                        end
+                     end
+
+                  elseif (strcmp(paramName, 'NITRATE'))
+
+                     % determine spike threshold value
+                     % 1 micromole/kg in Mediterranean Sea and Red Sea
+                     % 5 micromole/kg anywhere else
+                     spikeThreshold = 5;
+                     if (~isempty(latitude) && ~isempty(longitude))
+                        if ((latitude(idProf) ~= paramLat.fillValue) && ...
+                              (longitude(idProf) ~= paramLon.fillValue))
+                           if ((location_in_region(longitude(idProf), latitude(idProf), RED_SEA_REGION) == 1) || ...
+                                 (location_in_region(longitude(idProf), latitude(idProf), MEDITERRANEAN_SEA_REGION) == 1))
+                              spikeThreshold = 1;
+                           end
+                        end
+                     end
+
+                     % spike test for NITRATE
+                     profParam = paramData(idProf, :);
+                     profParamQc = paramDataQc(idProf, :);
+                     % Catherine SCHMECHTIG's decision 05/21/2019
+                     % values with QC =
+                     % g_decArgo_qcStrCorrectable should be
+                     % considered in spike test (this is
+                     % usually the NITRATE_QC value at this
+                     % processing step)
+                     %                                  idDefOrBad = find((profParam == paramFillValue) | ...
+                     %                                     (profParamQc == g_decArgo_qcStrCorrectable) | ...
+                     %                                     (profParamQc == g_decArgo_qcStrBad));
+                     idDefOrBad = find((profParam == paramDataFillValue) | ...
+                        (profParamQc == g_decArgo_qcStrBad));
+                     idDefOrBad = [0 idDefOrBad length(profParam)+1];
+                     for idSlice = 1:length(idDefOrBad)-1
+
+                        % part of continuous measurements
+                        idLevel = idDefOrBad(idSlice)+1:idDefOrBad(idSlice+1)-1;
+
+                        % apply the test
+                        if (length(idLevel) > 4)
+                           resProfParam = ones(1, length(idLevel)-4)*paramFillValue;
+                           idList = 3:length(idLevel)-2;
+                           for id = 1:length(idList)
+                              idL = idLevel(idList(id));
+                              resProfParam(id) = abs(profParam(idL) - median(profParam(idL-2:idL+2))) - spikeThreshold;
+                           end
+                           if (any(resProfParam > 0))
+                              %                            levelStr = sprintf('%d, ', idLevel(find(resProfParam > 0)) + 2);
+                              %                            if (idD == 1)
+                              %                               fprintf('RTQC_INFO_TEMPO: Float #%d Cycle #%d: NITRATE spike test failed (levels: %s)\n', ...
+                              %                                  a_floatNum, cycleNumber(idProf), levelStr(1:end-2));
+                              %                            else
+                              %                               fprintf('RTQC_INFO_TEMPO: Float #%d Cycle #%d: NITRATE_ADJUSTED spike test failed (levels: %s)\n', ...
+                              %                                  a_floatNum, cycleNumber(idProf), levelStr(1:end-2));
+                              %                            end
+                              idToFlag = [idToFlag idLevel(find(resProfParam > 0)) + 2];
                            end
                         end
                      end
                   end
 
-               elseif (strcmp(paramName, 'PH_IN_SITU_TOTAL'))
+                  if (~isempty(idToFlag))
+                     paramDataQc(idProf, idToFlag) = set_qc(paramDataQc(idProf, idToFlag), g_decArgo_qcStrBad);
+                     dataStruct.(paramDataQcName) = paramDataQc;
 
-                  % spike test for PH_IN_SITU_TOTAL
-                  profParam = paramData(idProf, :);
-                  profParamQc = paramDataQc(idProf, :);
-                  idDefOrBad = find((profParam == paramDataFillValue) | ...
-                     (profParamQc == g_decArgo_qcStrBad));
-                  idDefOrBad = [0 idDefOrBad length(profParam)+1];
-                  for idSlice = 1:length(idDefOrBad)-1
-
-                     % part of continuous measurements
-                     idLevel = idDefOrBad(idSlice)+1:idDefOrBad(idSlice+1)-1;
-
-                     % apply the test
-                     if (length(idLevel) > 4)
-                        resProfParam = ones(1, length(idLevel)-4)*paramFillValue;
-                        idList = 3:length(idLevel)-2;
-                        for id = 1:length(idList)
-                           idL = idLevel(idList(id));
-                           resProfParam(id) = abs(profParam(idL) - median(profParam(idL-2:idL+2))) - 0.04*profParam(idL);
-                        end
-                        if (any(resProfParam > 0))
-                           idToFlag = [idToFlag idLevel(find(resProfParam > 0)) + 2];
-                        end
-                     end
+                     testFailedList(9, idProf) = 1;
+                     testFailedListForTraj{9, idProf} = [testFailedListForTraj{9, idProf} idToFlag];
                   end
-
-               elseif (strcmp(paramName, 'NITRATE'))
-
-                  % determine spike threshold value
-                  % 1 micromole/kg in Mediterranean Sea and Red Sea
-                  % 5 micromole/kg anywhere else
-                  spikeThreshold = 5;
-                  if (~isempty(latitude) && ~isempty(longitude))
-                     if ((latitude(idProf) ~= paramLat.fillValue) && ...
-                           (longitude(idProf) ~= paramLon.fillValue))
-                        if ((location_in_region(longitude(idProf), latitude(idProf), RED_SEA_REGION) == 1) || ...
-                              (location_in_region(longitude(idProf), latitude(idProf), MEDITERRANEAN_SEA_REGION) == 1))
-                           spikeThreshold = 1;
-                        end
-                     end
-                  end
-
-                  % spike test for NITRATE
-                  profParam = paramData(idProf, :);
-                  profParamQc = paramDataQc(idProf, :);
-                  % Catherine SCHMECHTIG's decision 05/21/2019
-                  % values with QC =
-                  % g_decArgo_qcStrCorrectable should be
-                  % considered in spike test (this is
-                  % usually the NITRATE_QC value at this
-                  % processing step)
-                  %                                  idDefOrBad = find((profParam == paramFillValue) | ...
-                  %                                     (profParamQc == g_decArgo_qcStrCorrectable) | ...
-                  %                                     (profParamQc == g_decArgo_qcStrBad));
-                  idDefOrBad = find((profParam == paramDataFillValue) | ...
-                     (profParamQc == g_decArgo_qcStrBad));
-                  idDefOrBad = [0 idDefOrBad length(profParam)+1];
-                  for idSlice = 1:length(idDefOrBad)-1
-
-                     % part of continuous measurements
-                     idLevel = idDefOrBad(idSlice)+1:idDefOrBad(idSlice+1)-1;
-
-                     % apply the test
-                     if (length(idLevel) > 4)
-                        resProfParam = ones(1, length(idLevel)-4)*paramFillValue;
-                        idList = 3:length(idLevel)-2;
-                        for id = 1:length(idList)
-                           idL = idLevel(idList(id));
-                           resProfParam(id) = abs(profParam(idL) - median(profParam(idL-2:idL+2))) - spikeThreshold;
-                        end
-                        if (any(resProfParam > 0))
-                           %                            levelStr = sprintf('%d, ', idLevel(find(resProfParam > 0)) + 2);
-                           %                            if (idD == 1)
-                           %                               fprintf('RTQC_INFO_TEMPO: Float #%d Cycle #%d: NITRATE spike test failed (levels: %s)\n', ...
-                           %                                  a_floatNum, cycleNumber(idProf), levelStr(1:end-2));
-                           %                            else
-                           %                               fprintf('RTQC_INFO_TEMPO: Float #%d Cycle #%d: NITRATE_ADJUSTED spike test failed (levels: %s)\n', ...
-                           %                                  a_floatNum, cycleNumber(idProf), levelStr(1:end-2));
-                           %                            end
-                           idToFlag = [idToFlag idLevel(find(resProfParam > 0)) + 2];
-                        end
-                     end
-                  end
-               end
-
-               if (~isempty(idToFlag))
-                  paramDataQc(idProf, idToFlag) = set_qc(paramDataQc(idProf, idToFlag), g_decArgo_qcStrBad);
-                  dataStruct.(paramDataQcName) = paramDataQc;
-
-                  testFailedList(9, idProf) = 1;
-                  testFailedListForTraj{9, idProf} = [testFailedListForTraj{9, idProf} idToFlag];
                end
             end
          end
@@ -3190,92 +3383,96 @@ if (testFlagList(11) == 1)
    test11ParameterList = [ ...
       {'DOXY'} {50} {25}; ...
       {'DOXY2'} {50} {25}; ...
+      {'DOXY_2'} {50} {25}; ...
       ];
 
    for idP = 1:size(test11ParameterList, 1)
       paramName = test11ParameterList{idP, 1};
-      paramTestShallow = test11ParameterList{idP, 2};
-      paramTestDeep = test11ParameterList{idP, 3};
+      if (ismember(paramName, ncParamNameList))
 
-      for idProf = 1:length(juld)
+         paramTestShallow = test11ParameterList{idP, 2};
+         paramTestDeep = test11ParameterList{idP, 3};
 
-         for idDM = 1:2
-            if (idDM == 1)
-               dataMode = 'R';
-            else
-               dataMode = 'A';
-            end
+         for idProf = 1:length(juld)
 
-            % retrieve PRES data
-            [presData, presDataQc, presDataFillValue, ~, ~] = ...
-               get_param_data('PRES', dataStruct, idProf, '');
-
-            % retrieve PARAM data
-            [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
-               get_param_data(paramName, dataStruct, idProf, dataMode);
-
-            if (~isempty(presData) && ~isempty(paramData))
-
-               profParam = paramData(idProf, :);
-
-               % initialize Qc flags
-               idNoDef = find(profParam ~= paramDataFillValue);
-               paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), g_decArgo_qcStrGood);
-               dataStruct.(paramDataQcName) = paramDataQc;
-
-               testDoneList(11, idProf) = 1;
-               testDoneListForTraj{11, idProf} = [testDoneListForTraj{11, idProf} idNoDef];
-
-               idToFlag = [];
-
-               profPres = presData(idProf, :);
-               profPresQc = presDataQc(idProf, :);
-               profParam = paramData(idProf, :);
-               profParamQc = paramDataQc(idProf, :);
-               % DOXY tests should ignore DOXY_QC = 4, DOXY_ADJUSTED_QC = 3 and DOXY_ADJUSTED_QC = 4
+            for idDM = 1:2
                if (idDM == 1)
-                  idDefOrBad = find((profPres == presDataFillValue) | ...
-                     (profPresQc == g_decArgo_qcStrBad) | ...
-                     (profParam == paramDataFillValue) | ...
-                     (profParamQc == g_decArgo_qcStrBad));
+                  dataMode = 'R';
                else
-                  idDefOrBad = find((profPres == presDataFillValue) | ...
-                     (profPresQc == g_decArgo_qcStrCorrectable) | ...
-                     (profPresQc == g_decArgo_qcStrBad) | ...
-                     (profParam == paramDataFillValue) | ...
-                     (profParamQc == g_decArgo_qcStrCorrectable) | ...
-                     (profParamQc == g_decArgo_qcStrBad));
+                  dataMode = 'A';
                end
-               idDefOrBad = [0 idDefOrBad length(profParam)+1];
-               for idSlice = 1:length(idDefOrBad)-1
 
-                  % part of continuous measurements
-                  idLevel = idDefOrBad(idSlice)+1:idDefOrBad(idSlice+1)-1;
+               % retrieve PRES data
+               [presData, presDataQc, presDataFillValue, ~, ~] = ...
+                  get_param_data('PRES', dataStruct, idProf, '');
 
-                  % apply the test
-                  if (length(idLevel) > 2)
-                     for id = 2:length(idLevel)-1
-                        idL = idLevel(id);
-                        testVal = abs(profParam(idL)-(profParam(idL+1)+profParam(idL-1))/2);
-                        if (profPres(idL) < 500)
-                           if (testVal > paramTestShallow)
-                              idToFlag = [idToFlag idL];
-                           end
-                        else
-                           if (testVal > paramTestDeep)
-                              idToFlag = [idToFlag idL];
+               % retrieve PARAM data
+               [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+                  get_param_data(paramName, dataStruct, idProf, dataMode);
+
+               if (~isempty(presData) && ~isempty(paramData))
+
+                  profParam = paramData(idProf, :);
+
+                  % initialize Qc flags
+                  idNoDef = find(profParam ~= paramDataFillValue);
+                  paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), g_decArgo_qcStrGood);
+                  dataStruct.(paramDataQcName) = paramDataQc;
+
+                  testDoneList(11, idProf) = 1;
+                  testDoneListForTraj{11, idProf} = [testDoneListForTraj{11, idProf} idNoDef];
+
+                  idToFlag = [];
+
+                  profPres = presData(idProf, :);
+                  profPresQc = presDataQc(idProf, :);
+                  profParam = paramData(idProf, :);
+                  profParamQc = paramDataQc(idProf, :);
+                  % DOXY tests should ignore DOXY_QC = 4, DOXY_ADJUSTED_QC = 3 and DOXY_ADJUSTED_QC = 4
+                  if (idDM == 1)
+                     idDefOrBad = find((profPres == presDataFillValue) | ...
+                        (profPresQc == g_decArgo_qcStrBad) | ...
+                        (profParam == paramDataFillValue) | ...
+                        (profParamQc == g_decArgo_qcStrBad));
+                  else
+                     idDefOrBad = find((profPres == presDataFillValue) | ...
+                        (profPresQc == g_decArgo_qcStrCorrectable) | ...
+                        (profPresQc == g_decArgo_qcStrBad) | ...
+                        (profParam == paramDataFillValue) | ...
+                        (profParamQc == g_decArgo_qcStrCorrectable) | ...
+                        (profParamQc == g_decArgo_qcStrBad));
+                  end
+                  idDefOrBad = [0 idDefOrBad length(profParam)+1];
+                  for idSlice = 1:length(idDefOrBad)-1
+
+                     % part of continuous measurements
+                     idLevel = idDefOrBad(idSlice)+1:idDefOrBad(idSlice+1)-1;
+
+                     % apply the test
+                     if (length(idLevel) > 2)
+                        for id = 2:length(idLevel)-1
+                           idL = idLevel(id);
+                           testVal = abs(profParam(idL)-(profParam(idL+1)+profParam(idL-1))/2);
+                           if (profPres(idL) < 500)
+                              if (testVal > paramTestShallow)
+                                 idToFlag = [idToFlag idL];
+                              end
+                           else
+                              if (testVal > paramTestDeep)
+                                 idToFlag = [idToFlag idL];
+                              end
                            end
                         end
                      end
                   end
-               end
 
-               if (~isempty(idToFlag))
-                  paramDataQc(idProf, idToFlag) = set_qc(paramDataQc(idProf, idToFlag), g_decArgo_qcStrBad);
-                  dataStruct.(paramDataQcName) = paramDataQc;
+                  if (~isempty(idToFlag))
+                     paramDataQc(idProf, idToFlag) = set_qc(paramDataQc(idProf, idToFlag), g_decArgo_qcStrBad);
+                     dataStruct.(paramDataQcName) = paramDataQc;
 
-                  testFailedList(11, idProf) = 1;
-                  testFailedListForTraj{11, idProf} = [testFailedListForTraj{11, idProf} idToFlag];
+                     testFailedList(11, idProf) = 1;
+                     testFailedListForTraj{11, idProf} = [testFailedListForTraj{11, idProf} idToFlag];
+                  end
                end
             end
          end
@@ -3292,6 +3489,8 @@ if (testFlagList(25) == 1)
    test25ParameterList = [ ...
       {'PRES'} {'TEMP'} {'PSAL'} {0}; ...
       {'PRES2'} {'TEMP2'} {'PSAL2'} {0}; ...
+      {'PRES_2'} {'TEMP_2'} {'PSAL_2'} {0}; ...
+      {'PRES_3'} {'TEMP_3'} {'PSAL_3'} {0}; ...
       ];
 
    for idP = 1:size(test25ParameterList, 1)
@@ -3465,66 +3664,76 @@ if (testFlagList(12) == 1)
    test12ParameterList = [ ...
       {'TEMP'} {10}; ...
       {'TEMP2'} {10}; ...
+      {'TEMP_2'} {10}; ...
+      {'TEMP3'} {10}; ...
+      {'TEMP_3'} {10}; ...
       {'TEMP_DOXY'} {10}; ...
       {'TEMP_DOXY2'} {10}; ...
+      {'TEMP_DOXY_2'} {10}; ...
       {'PSAL'} {5}; ...
       {'PSAL2'} {5}; ...
+      {'PSAL_2'} {5}; ...
+      {'PSAL3'} {5}; ...
+      {'PSAL_3'} {5}; ...
       ];
 
    for idP = 1:size(test12ParameterList, 1)
       paramName = test12ParameterList{idP, 1};
-      paramDiff = test12ParameterList{idP, 2};
+      if (ismember(paramName, ncParamNameList))
 
-      for idProf = 1:length(juld)
+         paramDiff = test12ParameterList{idP, 2};
 
-         for idDM = 1:2
-            if (idDM == 1)
-               dataMode = 'R';
-            else
-               dataMode = 'A';
-            end
+         for idProf = 1:length(juld)
 
-            % retrieve PARAM data
-            [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
-               get_param_data(paramName, dataStruct, idProf, dataMode);
+            for idDM = 1:2
+               if (idDM == 1)
+                  dataMode = 'R';
+               else
+                  dataMode = 'A';
+               end
 
-            if (~isempty(paramData))
+               % retrieve PARAM data
+               [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+                  get_param_data(paramName, dataStruct, idProf, dataMode);
 
-               profParam = paramData(idProf, :);
+               if (~isempty(paramData))
 
-               % initialize Qc flags
-               idNoDef = find(profParam ~= paramDataFillValue);
-               paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), g_decArgo_qcStrGood);
-               dataStruct.(paramDataQcName) = paramDataQc;
+                  profParam = paramData(idProf, :);
 
-               testDoneList(12, idProf) = 1;
-               testDoneListForTraj{12, idProf} = [testDoneListForTraj{12, idProf} idNoDef];
+                  % initialize Qc flags
+                  idNoDef = find(profParam ~= paramDataFillValue);
+                  paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), g_decArgo_qcStrGood);
+                  dataStruct.(paramDataQcName) = paramDataQc;
 
-               profParam = paramData(idProf, :);
-               profParamQc = paramDataQc(idProf, :);
-               idDefOrBad = find((profParam == paramDataFillValue) | ...
-                  (profParamQc == g_decArgo_qcStrBad));
-               idDefOrBad = [0 idDefOrBad length(profParam)+1];
-               for idSlice = 1:length(idDefOrBad)-1
+                  testDoneList(12, idProf) = 1;
+                  testDoneListForTraj{12, idProf} = [testDoneListForTraj{12, idProf} idNoDef];
 
-                  % part of continuous measurements
-                  idLevel = idDefOrBad(idSlice)+1:idDefOrBad(idSlice+1)-1;
+                  profParam = paramData(idProf, :);
+                  profParamQc = paramDataQc(idProf, :);
+                  idDefOrBad = find((profParam == paramDataFillValue) | ...
+                     (profParamQc == g_decArgo_qcStrBad));
+                  idDefOrBad = [0 idDefOrBad length(profParam)+1];
+                  for idSlice = 1:length(idDefOrBad)-1
 
-                  if (~isempty(idLevel))
+                     % part of continuous measurements
+                     idLevel = idDefOrBad(idSlice)+1:idDefOrBad(idSlice+1)-1;
 
-                     % apply the test
-                     % we choose to set:
-                     % - g_decArgo_qcStrBad on the levels where jumps are detected and
-                     % - g_decArgo_qcStrCorrectable on the remaining levels of the profile
-                     idToFlag = find(abs(diff(profParam(idLevel))) > paramDiff);
-                     if (~isempty(idToFlag))
-                        idToFlag = unique([idToFlag idToFlag+1]);
-                        paramDataQc(idProf, idLevel) = set_qc(paramDataQc(idProf, idLevel), g_decArgo_qcStrCorrectable);
-                        paramDataQc(idProf, idLevel(idToFlag)) = set_qc(paramDataQc(idProf, idLevel(idToFlag)), g_decArgo_qcStrBad);
-                        dataStruct.(paramDataQcName) = paramDataQc;
+                     if (~isempty(idLevel))
 
-                        testFailedList(12, idProf) = 1;
-                        testFailedListForTraj{12, idProf} = [testFailedListForTraj{12, idProf} idLevel];
+                        % apply the test
+                        % we choose to set:
+                        % - g_decArgo_qcStrBad on the levels where jumps are detected and
+                        % - g_decArgo_qcStrCorrectable on the remaining levels of the profile
+                        idToFlag = find(abs(diff(profParam(idLevel))) > paramDiff);
+                        if (~isempty(idToFlag))
+                           idToFlag = unique([idToFlag idToFlag+1]);
+                           paramDataQc(idProf, idLevel) = set_qc(paramDataQc(idProf, idLevel), g_decArgo_qcStrCorrectable);
+                           paramDataQc(idProf, idLevel(idToFlag)) = set_qc(paramDataQc(idProf, idLevel(idToFlag)), g_decArgo_qcStrBad);
+                           dataStruct.(paramDataQcName) = paramDataQc;
+
+                           testFailedList(12, idProf) = 1;
+                           testFailedListForTraj{12, idProf} = [testFailedListForTraj{12, idProf} idLevel];
+                        end
                      end
                   end
                end
@@ -3547,7 +3756,7 @@ if (testFlagList(13) == 1)
             paramName = ncParamNameList{idP};
 
             for idDM = 1:2
-               if (idD == 1)
+               if (idDM == 1)
                   dataMode = 'R';
                else
                   dataMode = 'A';
@@ -3614,6 +3823,8 @@ if (testFlagList(14) == 1)
    test14ParameterList = [ ...
       {'PRES'} {'TEMP'} {'PSAL'}; ...
       {'PRES2'} {'TEMP2'} {'PSAL2'}; ...
+      {'PRES_2'} {'TEMP_2'} {'PSAL_2'}; ...
+      {'PRES_3'} {'TEMP_3'} {'PSAL_3'}; ...
       ];
 
    for idProf = 1:length(juld)
@@ -3873,9 +4084,16 @@ if (testFlagList(16) == 1)
       {'PRES'} {'TEMP'} {1} {0}; ...
       {'PRES'} {'TEMP_DOXY'} {1} {1}; ...
       {'PRES'} {'TEMP_DOXY2'} {1} {1}; ...
+      {'PRES'} {'TEMP_DOXY_2'} {1} {1}; ...
       {'PRES2'} {'TEMP2'} {1} {0}; ...
+      {'PRES_2'} {'TEMP_2'} {1} {0}; ...
+      {'PRES3'} {'TEMP3'} {1} {0}; ...
+      {'PRES_3'} {'TEMP_3'} {1} {0}; ...
       {'PRES'} {'PSAL'} {0.5} {0}; ...
       {'PRES2'} {'PSAL2'} {0.5} {0}; ...
+      {'PRES_2'} {'PSAL_2'} {0.5} {0}; ...
+      {'PRES3'} {'PSAL3'} {0.5} {0}; ...
+      {'PRES_3'} {'PSAL_3'} {0.5} {0}; ...
       ];
 
    for idProf = 1:length(juld)
@@ -3885,112 +4103,115 @@ if (testFlagList(16) == 1)
       if (strncmp(vssList{idProf}, 'Primary sampling:', length('Primary sampling:')))
 
          for idP = 1:size(test16ParameterList, 1)
-            presName = test16ParameterList{idP, 1};
             paramName = test16ParameterList{idP, 2};
-            paramTestDiffMax = test16ParameterList{idP, 3};
-            presDataModeFlag = test16ParameterList{idP, 4};
+            if (ismember(paramName, ncParamNameList))
 
-            for idDM = 1:2
-               if (idDM == 1)
-                  dataMode = 'R';
-               else
-                  dataMode = 'A';
-               end
-               if (presDataModeFlag == 1)
-                  presDataMode = '';
-               else
-                  presDataMode = dataMode;
-               end
+               presName = test16ParameterList{idP, 1};
+               paramTestDiffMax = test16ParameterList{idP, 3};
+               presDataModeFlag = test16ParameterList{idP, 4};
 
-               % retrieve PRES data
-               [presData, presDataQc, presDataFillValue, ~, ~] = ...
-                  get_param_data_m(presName, dataStruct, idProf, presDataMode);
-
-               % retrieve PARAM data
-               [paramData, paramDataQc, paramDataFillValue, ~, ~] = ...
-                  get_param_data_m(paramName, dataStruct, idProf, dataMode);
-
-               if (~isempty(presData) && ~isempty(paramData))
-
-                  % look for a reference mean param value within the
-                  % multi-profile data (primary profiles only) and with the same
-                  % direction
-                  meanParamRef = '';
-                  findInCyNum = cycleNumber(idProf) - 1;
-                  while (isempty(meanParamRef) && (findInCyNum > 0))
-                     idFPrevProf = find((cycleNumberM == findInCyNum) & (directionM == direction(idProf)));
-                     if (length(idFPrevProf) > 1)
-                        fprintf('RTQC_WARNING: Float #%d Cycle #%d: %d profiles with the same cycle # and direction in multi profile file\n', ...
-                           a_floatNum, findInCyNum, length(idFPrevProf));
-                        idFPrevProf = idFPrevProf(end);
-                     end
-                     if (~isempty(idFPrevProf))
-
-                        profPres = presData(idFPrevProf, :);
-                        profPresQc = presDataQc(idFPrevProf, :);
-                        profParam = paramData(idFPrevProf, :);
-                        profParamQc = paramDataQc(idFPrevProf, :);
-
-                        idNoDefAndGood = find((profPres ~= presDataFillValue) & ...
-                           (profPresQc == g_decArgo_qcStrGood) & ...
-                           (profParam ~= paramDataFillValue) & ...
-                           (profParamQc == g_decArgo_qcStrGood));
-                        profPres = profPres(idNoDefAndGood);
-                        profParam = profParam(idNoDefAndGood);
-
-                        idFLev = find(profPres >= (max(profPres)-100));
-                        if (~isempty(idFLev))
-                           meanParamRef = mean(profParam(idFLev));
-                        end
-                     end
-                     if (isempty(meanParamRef))
-                        findInCyNum = findInCyNum - 1;
-                     end
+               for idDM = 1:2
+                  if (idDM == 1)
+                     dataMode = 'R';
+                  else
+                     dataMode = 'A';
+                  end
+                  if (presDataModeFlag == 1)
+                     presDataMode = '';
+                  else
+                     presDataMode = dataMode;
                   end
 
-                  if (~isempty(meanParamRef))
+                  % retrieve PRES data
+                  [presData, presDataQc, presDataFillValue, ~, ~] = ...
+                     get_param_data_m(presName, dataStruct, idProf, presDataMode);
 
-                     % retrieve PRES data
-                     [presData, presDataQc, presDataFillValue, ~, ~] = ...
-                        get_param_data(presName, dataStruct, idProf, presDataMode);
+                  % retrieve PARAM data
+                  [paramData, paramDataQc, paramDataFillValue, ~, ~] = ...
+                     get_param_data_m(paramName, dataStruct, idProf, dataMode);
 
-                     % retrieve PARAM data
-                     [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
-                        get_param_data(paramName, dataStruct, idProf, dataMode);
+                  if (~isempty(presData) && ~isempty(paramData))
 
-                     if (~isempty(presData) && ~isempty(paramData))
+                     % look for a reference mean param value within the
+                     % multi-profile data (primary profiles only) and with the same
+                     % direction
+                     meanParamRef = '';
+                     findInCyNum = cycleNumber(idProf) - 1;
+                     while (isempty(meanParamRef) && (findInCyNum > 0))
+                        idFPrevProf = find((cycleNumberM == findInCyNum) & (directionM == direction(idProf)));
+                        if (length(idFPrevProf) > 1)
+                           fprintf('RTQC_WARNING: Float #%d Cycle #%d: %d profiles with the same cycle # and direction in multi profile file\n', ...
+                              a_floatNum, findInCyNum, length(idFPrevProf));
+                           idFPrevProf = idFPrevProf(end);
+                        end
+                        if (~isempty(idFPrevProf))
 
-                        profPres = presData(idProf, :);
-                        profPresQc = presDataQc(idProf, :);
-                        profParam = paramData(idProf, :);
-                        profParamQc = paramDataQc(idProf, :);
+                           profPres = presData(idFPrevProf, :);
+                           profPresQc = presDataQc(idFPrevProf, :);
+                           profParam = paramData(idFPrevProf, :);
+                           profParamQc = paramDataQc(idFPrevProf, :);
 
-                        % initialize Qc flags
-                        idNoDefParam = find(profParam ~= paramDataFillValue);
-                        paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrGood);
-                        dataStruct.(paramDataQcName) = paramDataQc;
+                           idNoDefAndGood = find((profPres ~= presDataFillValue) & ...
+                              (profPresQc == g_decArgo_qcStrGood) & ...
+                              (profParam ~= paramDataFillValue) & ...
+                              (profParamQc == g_decArgo_qcStrGood));
+                           profPres = profPres(idNoDefAndGood);
+                           profParam = profParam(idNoDefAndGood);
 
-                        testDoneList(16, idProf) = 1;
-                        testDoneListForTraj{16, idProf} = [testDoneListForTraj{16, idProf} idNoDefParam];
+                           idFLev = find(profPres >= (max(profPres)-100));
+                           if (~isempty(idFLev))
+                              meanParamRef = mean(profParam(idFLev));
+                           end
+                        end
+                        if (isempty(meanParamRef))
+                           findInCyNum = findInCyNum - 1;
+                        end
+                     end
 
-                        idNoDefAndGood = find((profPres ~= presDataFillValue) & ...
-                           (profPresQc == g_decArgo_qcStrGood) & ...
-                           (profParam ~= paramDataFillValue) & ...
-                           (profParamQc == g_decArgo_qcStrGood));
-                        profPres = profPres(idNoDefAndGood);
-                        profParam = profParam(idNoDefAndGood);
+                     if (~isempty(meanParamRef))
 
-                        % apply the test
-                        idFLev = find(profPres >= (max(profPres)-100));
-                        if (~isempty(idFLev))
-                           meanParam = mean(profParam(idFLev));
+                        % retrieve PRES data
+                        [presData, presDataQc, presDataFillValue, ~, ~] = ...
+                           get_param_data(presName, dataStruct, idProf, presDataMode);
 
-                           if (abs(meanParam-meanParamRef) > paramTestDiffMax)
-                              paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrCorrectable);
-                              dataStruct.(paramDataQcName) = paramDataQc;
+                        % retrieve PARAM data
+                        [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+                           get_param_data(paramName, dataStruct, idProf, dataMode);
 
-                              testFailedList(16, idProf) = 1;
-                              testFailedListForTraj{16, idProf} = [testFailedListForTraj{16, idProf} idNoDefParam];
+                        if (~isempty(presData) && ~isempty(paramData))
+
+                           profPres = presData(idProf, :);
+                           profPresQc = presDataQc(idProf, :);
+                           profParam = paramData(idProf, :);
+                           profParamQc = paramDataQc(idProf, :);
+
+                           % initialize Qc flags
+                           idNoDefParam = find(profParam ~= paramDataFillValue);
+                           paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrGood);
+                           dataStruct.(paramDataQcName) = paramDataQc;
+
+                           testDoneList(16, idProf) = 1;
+                           testDoneListForTraj{16, idProf} = [testDoneListForTraj{16, idProf} idNoDefParam];
+
+                           idNoDefAndGood = find((profPres ~= presDataFillValue) & ...
+                              (profPresQc == g_decArgo_qcStrGood) & ...
+                              (profParam ~= paramDataFillValue) & ...
+                              (profParamQc == g_decArgo_qcStrGood));
+                           profPres = profPres(idNoDefAndGood);
+                           profParam = profParam(idNoDefAndGood);
+
+                           % apply the test
+                           idFLev = find(profPres >= (max(profPres)-100));
+                           if (~isempty(idFLev))
+                              meanParam = mean(profParam(idFLev));
+
+                              if (abs(meanParam-meanParamRef) > paramTestDiffMax)
+                                 paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrCorrectable);
+                                 dataStruct.(paramDataQcName) = paramDataQc;
+
+                                 testFailedList(16, idProf) = 1;
+                                 testFailedListForTraj{16, idProf} = [testFailedListForTraj{16, idProf} idNoDefParam];
+                              end
                            end
                         end
                      end
@@ -4009,9 +4230,10 @@ if (testFlagList(18) == 1)
 
    % list of parameters to test
    test18ParameterList = [ ...
-      {'PRES'} {'TEMP'} {0.001} {0.3} {0.002} {0}; ...
-      {'PRES'} {'TEMP_DOXY'} {0.001} {0.3} {0.002} {1}; ...
-      {'PRES'} {'TEMP_DOXY2'} {0.001} {0.3} {0.002} {1}; ...
+      {'PRES'} {'TEMP'} {0.001} {0.3} {0.02} {0}; ...
+      {'PRES'} {'TEMP_DOXY'} {0.001} {0.3} {0.02} {1}; ...
+      {'PRES'} {'TEMP_DOXY2'} {0.001} {0.3} {0.02} {1}; ...
+      {'PRES'} {'TEMP_DOXY_2'} {0.001} {0.3} {0.02} {1}; ...
       {'PRES'} {'PSAL'} {0.001} {0.3} {0.004} {0}; ...
       ];
 
@@ -4022,156 +4244,159 @@ if (testFlagList(18) == 1)
       if (strncmp(vssList{idProf}, 'Primary sampling:', length('Primary sampling:')))
 
          for idP = 1:size(test18ParameterList, 1)
-            presName = test18ParameterList{idP, 1};
             paramName = test18ParameterList{idP, 2};
-            paramTestMin = test18ParameterList{idP, 3};
-            paramTestMax = test18ParameterList{idP, 4};
-            paramTestMean = test18ParameterList{idP, 5};
-            presDataModeFlag = test18ParameterList{idP, 6};
+            if (ismember(paramName, ncParamNameList))
 
-            for idDM = 1:2
-               if (idDM == 1)
-                  dataMode = 'R';
-               else
-                  dataMode = 'A';
-               end
-               if (presDataModeFlag == 1)
-                  presDataMode = '';
-               else
-                  presDataMode = dataMode;
-               end
+               presName = test18ParameterList{idP, 1};
+               paramTestMin = test18ParameterList{idP, 3};
+               paramTestMax = test18ParameterList{idP, 4};
+               paramTestMean = test18ParameterList{idP, 5};
+               presDataModeFlag = test18ParameterList{idP, 6};
 
-               % retrieve PRES data
-               [presData, presDataQc, presDataFillValue, ~, ~] = ...
-                  get_param_data_m(presName, dataStruct, idProf, presDataMode);
-
-               % retrieve PARAM data
-               [paramData, paramDataQc, paramDataFillValue, ~, ~] = ...
-                  get_param_data_m(paramName, dataStruct, idProf, dataMode);
-
-               if (~isempty(presData) && ~isempty(paramData))
-
-                  prevProfParamRef = [];
-
-                  idFPrevProf = find((cycleNumberM == cycleNumber(idProf) - 1) & ...
-                     (directionM == direction(idProf)));
-
-                  if (~isempty(idFPrevProf))
-
-                     if (length(idFPrevProf) > 1)
-                        fprintf('RTQC_WARNING: Float #%d Cycle #%d: %d profiles with the same cycle # and direction in multi profile file\n', ...
-                           a_floatNum, cycleNumber(idProf) - 1, length(idFPrevProf));
-                        % the last one is the previous profile of the current
-                        % profile
-                        idFPrevProf = idFPrevProf(end);
-                     end
-
-                     profPres = presData(idFPrevProf, :);
-                     profPresQc = presDataQc(idFPrevProf, :);
-                     profParam = paramData(idFPrevProf, :);
-                     profParamQc = paramDataQc(idFPrevProf, :);
-
-                     idNoDefAndGood = find((profPres ~= presDataFillValue) & ...
-                        (profPresQc ~= g_decArgo_qcStrBad) & ...
-                        (profParam ~= paramDataFillValue) & ...
-                        (profParamQc ~= g_decArgo_qcStrBad));
-                     profPres = profPres(idNoDefAndGood);
-                     profParam = profParam(idNoDefAndGood);
-
-                     % create the previous profile
-                     if (~isempty(profPres) && ~isempty(profParam))
-                        prevProfParamRefLev = 0:50:max(profPres);
-                        prevProfParamRef = ones(length(prevProfParamRefLev)-1, 1)*paramDataFillValue;
-                        for idLev = 1:length(prevProfParamRefLev)-1
-                           if (idLev > 1)
-                              idMeas = find((profPres > prevProfParamRefLev(idLev)) & ...
-                                 (profPres <= prevProfParamRefLev(idLev+1)));
-                           else
-                              idMeas = find(profPres <= prevProfParamRefLev(idLev+1));
-                           end
-                           if (~isempty(idMeas))
-                              prevProfParamRef(idLev) = mean(profParam(idMeas));
-                           end
-                        end
-                     end
+               for idDM = 1:2
+                  if (idDM == 1)
+                     dataMode = 'R';
+                  else
+                     dataMode = 'A';
+                  end
+                  if (presDataModeFlag == 1)
+                     presDataMode = '';
+                  else
+                     presDataMode = dataMode;
                   end
 
-                  if (~isempty(prevProfParamRef))
+                  % retrieve PRES data
+                  [presData, presDataQc, presDataFillValue, ~, ~] = ...
+                     get_param_data_m(presName, dataStruct, idProf, presDataMode);
 
-                     % retrieve PRES data
-                     [presData, presDataQc, presDataFillValue, ~, ~] = ...
-                        get_param_data(presName, dataStruct, idProf, presDataMode);
+                  % retrieve PARAM data
+                  [paramData, paramDataQc, paramDataFillValue, ~, ~] = ...
+                     get_param_data_m(paramName, dataStruct, idProf, dataMode);
 
-                     % retrieve PARAM data
-                     [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
-                        get_param_data(paramName, dataStruct, idProf, dataMode);
+                  if (~isempty(presData) && ~isempty(paramData))
 
-                     if (~isempty(presData) && ~isempty(paramData))
+                     prevProfParamRef = [];
 
-                        profPres = presData(idProf, :);
-                        profPresQc = presDataQc(idProf, :);
-                        profParam = paramData(idProf, :);
-                        profParamQc = paramDataQc(idProf, :);
+                     idFPrevProf = find((cycleNumberM == cycleNumber(idProf) - 1) & ...
+                        (directionM == direction(idProf)));
 
-                        % initialize Qc flags
-                        idNoDefParam = find(profParam ~= paramDataFillValue);
-                        paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrGood);
-                        dataStruct.(paramDataQcName) = paramDataQc;
+                     if (~isempty(idFPrevProf))
 
-                        testDoneList(18, idProf) = 1;
-                        testDoneListForTraj{18, idProf} = [testDoneListForTraj{18, idProf} idNoDefParam];
+                        if (length(idFPrevProf) > 1)
+                           fprintf('RTQC_WARNING: Float #%d Cycle #%d: %d profiles with the same cycle # and direction in multi profile file\n', ...
+                              a_floatNum, cycleNumber(idProf) - 1, length(idFPrevProf));
+                           % the last one is the previous profile of the current
+                           % profile
+                           idFPrevProf = idFPrevProf(end);
+                        end
+
+                        profPres = presData(idFPrevProf, :);
+                        profPresQc = presDataQc(idFPrevProf, :);
+                        profParam = paramData(idFPrevProf, :);
+                        profParamQc = paramDataQc(idFPrevProf, :);
 
                         idNoDefAndGood = find((profPres ~= presDataFillValue) & ...
-                           (profPresQc == g_decArgo_qcStrGood) & ...
+                           (profPresQc ~= g_decArgo_qcStrBad) & ...
                            (profParam ~= paramDataFillValue) & ...
-                           (profParamQc == g_decArgo_qcStrGood));
+                           (profParamQc ~= g_decArgo_qcStrBad));
                         profPres = profPres(idNoDefAndGood);
                         profParam = profParam(idNoDefAndGood);
 
-                        % create the new profile
+                        % create the previous profile
                         if (~isempty(profPres) && ~isempty(profParam))
-
-                           newProfParamLev = 0:50:max(profPres);
-                           newProfParam = ones(length(newProfParamLev)-1, 1)*paramDataFillValue;
-                           for idLev = 1:length(newProfParamLev)-1
+                           prevProfParamRefLev = 0:50:max(profPres);
+                           prevProfParamRef = ones(length(prevProfParamRefLev)-1, 1)*paramDataFillValue;
+                           for idLev = 1:length(prevProfParamRefLev)-1
                               if (idLev > 1)
-                                 idMeas = find((profPres > newProfParamLev(idLev)) & ...
-                                    (profPres <= newProfParamLev(idLev+1)));
+                                 idMeas = find((profPres > prevProfParamRefLev(idLev)) & ...
+                                    (profPres <= prevProfParamRefLev(idLev+1)));
                               else
-                                 idMeas = find(profPres <= newProfParamLev(idLev+1));
+                                 idMeas = find(profPres <= prevProfParamRefLev(idLev+1));
                               end
                               if (~isempty(idMeas))
-                                 newProfParam(idLev) = mean(profParam(idMeas));
+                                 prevProfParamRef(idLev) = mean(profParam(idMeas));
                               end
                            end
+                        end
+                     end
 
-                           % modify the resulting profiles so that they can be
-                           % compared
-                           prevProfParamRefBis = prevProfParamRef;
-                           minSize = min(length(prevProfParamRefBis), length(newProfParam));
-                           prevProfParamRefBis(minSize+1:end) = [];
-                           newProfParam(minSize+1:end) = [];
+                     if (~isempty(prevProfParamRef))
 
-                           if (~isempty(newProfParam))
-                              idToDel = find((prevProfParamRefBis == paramDataFillValue) | ...
-                                 (newProfParam == paramDataFillValue));
-                              prevProfParamRefBis(idToDel) = [];
-                              newProfParam(idToDel) = [];
+                        % retrieve PRES data
+                        [presData, presDataQc, presDataFillValue, ~, ~] = ...
+                           get_param_data(presName, dataStruct, idProf, presDataMode);
+
+                        % retrieve PARAM data
+                        [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+                           get_param_data(paramName, dataStruct, idProf, dataMode);
+
+                        if (~isempty(presData) && ~isempty(paramData))
+
+                           profPres = presData(idProf, :);
+                           profPresQc = presDataQc(idProf, :);
+                           profParam = paramData(idProf, :);
+                           profParamQc = paramDataQc(idProf, :);
+
+                           % initialize Qc flags
+                           idNoDefParam = find(profParam ~= paramDataFillValue);
+                           paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrGood);
+                           dataStruct.(paramDataQcName) = paramDataQc;
+
+                           testDoneList(18, idProf) = 1;
+                           testDoneListForTraj{18, idProf} = [testDoneListForTraj{18, idProf} idNoDefParam];
+
+                           idNoDefAndGood = find((profPres ~= presDataFillValue) & ...
+                              (profPresQc == g_decArgo_qcStrGood) & ...
+                              (profParam ~= paramDataFillValue) & ...
+                              (profParamQc == g_decArgo_qcStrGood));
+                           profPres = profPres(idNoDefAndGood);
+                           profParam = profParam(idNoDefAndGood);
+
+                           % create the new profile
+                           if (~isempty(profPres) && ~isempty(profParam))
+
+                              newProfParamLev = 0:50:max(profPres);
+                              newProfParam = ones(length(newProfParamLev)-1, 1)*paramDataFillValue;
+                              for idLev = 1:length(newProfParamLev)-1
+                                 if (idLev > 1)
+                                    idMeas = find((profPres > newProfParamLev(idLev)) & ...
+                                       (profPres <= newProfParamLev(idLev+1)));
+                                 else
+                                    idMeas = find(profPres <= newProfParamLev(idLev+1));
+                                 end
+                                 if (~isempty(idMeas))
+                                    newProfParam(idLev) = mean(profParam(idMeas));
+                                 end
+                              end
+
+                              % modify the resulting profiles so that they can be
+                              % compared
+                              prevProfParamRefBis = prevProfParamRef;
+                              minSize = min(length(prevProfParamRefBis), length(newProfParam));
+                              prevProfParamRefBis(minSize+1:end) = [];
+                              newProfParam(minSize+1:end) = [];
 
                               if (~isempty(newProfParam))
-                                 % compare the profiles
-                                 deltaParam = abs(prevProfParamRefBis - newProfParam);
+                                 idToDel = find((prevProfParamRefBis == paramDataFillValue) | ...
+                                    (newProfParam == paramDataFillValue));
+                                 prevProfParamRefBis(idToDel) = [];
+                                 newProfParam(idToDel) = [];
 
-                                 % apply the test
-                                 if ((min(deltaParam) <  paramTestMin) && ...
-                                       (max(deltaParam) <  paramTestMax) && ...
-                                       (mean(deltaParam) <  paramTestMean))
+                                 if (~isempty(newProfParam))
+                                    % compare the profiles
+                                    deltaParam = abs(prevProfParamRefBis - newProfParam);
 
-                                    paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrBad);
-                                    dataStruct.(paramDataQcName) = paramDataQc;
+                                    % apply the test
+                                    if ((min(deltaParam) <  paramTestMin) && ...
+                                          (max(deltaParam) <  paramTestMax) && ...
+                                          (mean(deltaParam) <  paramTestMean))
 
-                                    testFailedList(18, idProf) = 1;
-                                    testFailedListForTraj{18, idProf} = [testFailedListForTraj{18, idProf} idNoDefParam];
+                                       paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrBad);
+                                       dataStruct.(paramDataQcName) = paramDataQc;
+
+                                       testFailedList(18, idProf) = 1;
+                                       testFailedListForTraj{18, idProf} = [testFailedListForTraj{18, idProf} idNoDefParam];
+                                    end
                                  end
                               end
                            end
@@ -4190,83 +4415,98 @@ end
 %
 if (testFlagList(26) == 1)
 
-   if (ismember(floatDecoderId, g_decArgo_decoderIdListNkeIridiumRbr))
+   if (rbrFloatFlag)
 
-      for idProf = 1:length(juld)
+      % list of parameters to test
+      test26ParameterList = [ ...
+         {'PRES'} {'TEMP'} {'PSAL'} {'TEMP_CNDC'}; ...
+         {'PRES3'} {'TEMP3'} {'PSAL3'} {'TEMP_CNDC'}; ...
+         {'PRES_3'} {'TEMP_3'} {'PSAL_3'} {'TEMP_CNDC'}; ...
+         ];
 
-         for idDM = 1:2
-            if (idDM == 1)
-               dataMode = 'R';
-            else
-               dataMode = 'A';
-            end
+      for idP = 1:size(test26ParameterList, 1)
 
-            % retrieve PRES data
-            [presData, presDataQc, presDataFillValue, ~, ~] = ...
-               get_param_data('PRES', dataStruct, idProf, dataMode);
+         presName = test26ParameterList{idP, 1};
+         tempName = test26ParameterList{idP, 2};
+         psalName = test26ParameterList{idP, 3};
+         tempCndcName = test26ParameterList{idP, 4};
 
-            % retrieve TEMP data
-            [tempData, tempDataQc, tempDataFillValue, ~, ~] = ...
-               get_param_data('TEMP', dataStruct, idProf, dataMode);
+         for idProf = 1:length(juld)
 
-            % retrieve PSAL data
-            [psalData, psalDataQc, psalDataFillValue, ~, psalDataQcName] = ...
-               get_param_data('PSAL', dataStruct, idProf, dataMode);
+            for idDM = 1:2
+               if (idDM == 1)
+                  dataMode = 'R';
+               else
+                  dataMode = 'A';
+               end
 
-            % retrieve TEMP_CNDC data
-            [tempCndcData, tempCndcDataQc, tempCndcDataFillValue, ~, tempCndcDataQcName] = ...
-               get_param_data('TEMP_CNDC', dataStruct, idProf, 'R');
+               % retrieve PRES data
+               [presData, presDataQc, presDataFillValue, ~, ~] = ...
+                  get_param_data(presName, dataStruct, idProf, dataMode);
 
-            if (~isempty(presData) && ~isempty(tempData) && ~isempty(psalData) && ~isempty(tempCndcData))
+               % retrieve TEMP data
+               [tempData, tempDataQc, tempDataFillValue, ~, ~] = ...
+                  get_param_data(tempName, dataStruct, idProf, dataMode);
 
-               profPres = presData(idProf, :);
-               profPresQc = presDataQc(idProf, :);
-               profTemp = tempData(idProf, :);
-               profTempQc = tempDataQc(idProf, :);
-               profPsal = psalData(idProf, :);
-               profPsalQc = psalDataQc(idProf, :);
-               profTempCndc = tempCndcData(idProf, :);
+               % retrieve PSAL data
+               [psalData, psalDataQc, psalDataFillValue, ~, psalDataQcName] = ...
+                  get_param_data(psalName, dataStruct, idProf, dataMode);
 
-               idNoDefAndGood = find((profPres ~= presDataFillValue) & ...
-                  (profPresQc ~= g_decArgo_qcStrBad) & ...
-                  (profTemp ~= tempDataFillValue) & ...
-                  (profTempQc ~= g_decArgo_qcStrBad) & ...
-                  (profPsal ~= psalDataFillValue) & ...
-                  (profPsalQc ~= g_decArgo_qcStrBad) & ...
-                  (profTempCndc ~= tempCndcDataFillValue));
-               profPres = profPres(idNoDefAndGood);
-               profTemp = profTemp(idNoDefAndGood);
-               profPsal = profPsal(idNoDefAndGood);
-               profTempCndc = profTempCndc(idNoDefAndGood);
+               % retrieve TEMP_CNDC data
+               [tempCndcData, tempCndcDataQc, tempCndcDataFillValue, ~, tempCndcDataQcName] = ...
+                  get_param_data(tempCndcName, dataStruct, idProf, 'R');
 
-               if (~isempty(profPres) && ~isempty(profTemp) && ~isempty(profPsal) && ~isempty(profTempCndc))
+               if (~isempty(presData) && ~isempty(tempData) && ~isempty(psalData) && ~isempty(tempCndcData))
 
-                  % initialize Qc flags
-                  idNoDefTempCndc = find(profTempCndc ~= tempCndcDataFillValue);
-                  tempCndcDataQc(idProf, idNoDefTempCndc) = set_qc(tempCndcDataQc(idProf, idNoDefTempCndc), g_decArgo_qcStrGood);
-                  dataStruct.(tempCndcDataQcName) = tempCndcDataQc;
+                  profPres = presData(idProf, :);
+                  profPresQc = presDataQc(idProf, :);
+                  profTemp = tempData(idProf, :);
+                  profTempQc = tempDataQc(idProf, :);
+                  profPsal = psalData(idProf, :);
+                  profPsalQc = psalDataQc(idProf, :);
+                  profTempCndc = tempCndcData(idProf, :);
 
-                  idNoDefPsal = find(profPsal ~= psalDataFillValue);
-                  psalDataQc(idProf, idNoDefPsal) = set_qc(psalDataQc(idProf, idNoDefPsal), g_decArgo_qcStrGood);
-                  dataStruct.(psalDataQcName) = psalDataQc;
+                  idNoDefAndGood = find((profPres ~= presDataFillValue) & ...
+                     (profPresQc ~= g_decArgo_qcStrBad) & ...
+                     (profTemp ~= tempDataFillValue) & ...
+                     (profTempQc ~= g_decArgo_qcStrBad) & ...
+                     (profPsal ~= psalDataFillValue) & ...
+                     (profPsalQc ~= g_decArgo_qcStrBad) & ...
+                     (profTempCndc ~= tempCndcDataFillValue));
+                  profPres = profPres(idNoDefAndGood);
+                  profTemp = profTemp(idNoDefAndGood);
+                  profPsal = profPsal(idNoDefAndGood);
+                  profTempCndc = profTempCndc(idNoDefAndGood);
 
-                  testDoneList(26, idProf) = 1;
-                  testDoneListForTraj{26, idProf} = [testDoneListForTraj{26, idProf} idNoDefTempCndc];
-                  testDoneListForTraj{26, idProf} = [testDoneListForTraj{26, idProf} idNoDefPsal];
+                  if (~isempty(profPres) && ~isempty(profTemp) && ~isempty(profPsal) && ~isempty(profTempCndc))
 
-                  idPresLt500 = find(profPres <= 500);
-                  idKo1 = find(abs(profTempCndc(idPresLt500) - profTemp(idPresLt500)) > 10);
-                  idPresGt500 = find(profPres > 500);
-                  idKo2 = find(abs(profTempCndc(idPresGt500) - profTemp(idPresGt500)) > 1.5);
-                  if ((length(idKo1) + length(idKo2)) > 2)
-                     tempCndcDataQc(idProf, idNoDefAndGood) = set_qc(tempCndcDataQc(idProf, idNoDefAndGood), g_decArgo_qcStrBad);
+                     % initialize Qc flags
+                     idNoDefTempCndc = find(profTempCndc ~= tempCndcDataFillValue);
+                     tempCndcDataQc(idProf, idNoDefTempCndc) = set_qc(tempCndcDataQc(idProf, idNoDefTempCndc), g_decArgo_qcStrGood);
                      dataStruct.(tempCndcDataQcName) = tempCndcDataQc;
 
-                     psalDataQc(idProf, idNoDefAndGood) = set_qc(psalDataQc(idProf, idNoDefAndGood), g_decArgo_qcStrCorrectable);
+                     idNoDefPsal = find(profPsal ~= psalDataFillValue);
+                     psalDataQc(idProf, idNoDefPsal) = set_qc(psalDataQc(idProf, idNoDefPsal), g_decArgo_qcStrGood);
                      dataStruct.(psalDataQcName) = psalDataQc;
 
-                     testFailedList(26, idProf) = 1;
-                     testFailedListForTraj{26, idProf} = [testFailedListForTraj{14, idProf} idNoDefAndGood];
+                     testDoneList(26, idProf) = 1;
+                     testDoneListForTraj{26, idProf} = [testDoneListForTraj{26, idProf} idNoDefTempCndc];
+                     testDoneListForTraj{26, idProf} = [testDoneListForTraj{26, idProf} idNoDefPsal];
+
+                     idPresLt500 = find(profPres <= 500);
+                     idKo1 = find(abs(profTempCndc(idPresLt500) - profTemp(idPresLt500)) > 10);
+                     idPresGt500 = find(profPres > 500);
+                     idKo2 = find(abs(profTempCndc(idPresGt500) - profTemp(idPresGt500)) > 1.5);
+                     if ((length(idKo1) + length(idKo2)) > 2)
+                        tempCndcDataQc(idProf, idNoDefAndGood) = set_qc(tempCndcDataQc(idProf, idNoDefAndGood), g_decArgo_qcStrBad);
+                        dataStruct.(tempCndcDataQcName) = tempCndcDataQc;
+
+                        psalDataQc(idProf, idNoDefAndGood) = set_qc(psalDataQc(idProf, idNoDefAndGood), g_decArgo_qcStrCorrectable);
+                        dataStruct.(psalDataQcName) = psalDataQc;
+
+                        testFailedList(26, idProf) = 1;
+                        testFailedListForTraj{26, idProf} = [testFailedListForTraj{14, idProf} idNoDefAndGood];
+                     end
                   end
                end
             end
@@ -4289,6 +4529,7 @@ if (testFlagList(24) == 1)
       test24ParameterList1 = [ ...
          {'PSAL'} ...
          {'PSAL2'} ...
+         {'PSAL_2'} ...
          ];
 
       % get the name of PSAL parameter assigned to RBR sensor
@@ -4350,12 +4591,19 @@ if (testFlagList(23) == 1)
 
       % list of parameters to test
       test23ParameterList = [ ...
-         {'PRES'} {'TEMP'} {g_decArgo_qcStrProbablyGood} {g_decArgo_qcStrProbablyGood}; ...
-         {'PRES2'} {'TEMP2'} {g_decArgo_qcStrProbablyGood} {g_decArgo_qcStrProbablyGood}; ...
-         {'PRES'} {'TEMP_DOXY'} {g_decArgo_qcStrProbablyGood} {g_decArgo_qcStrProbablyGood}; ...
-         {'PRES'} {'TEMP_DOXY2'} {g_decArgo_qcStrProbablyGood} {g_decArgo_qcStrProbablyGood}; ...
-         {'PRES'} {'PSAL'} {g_decArgo_qcStrCorrectable} {g_decArgo_qcStrProbablyGood}; ...
-         {'PRES2'} {'PSAL2'} {g_decArgo_qcStrCorrectable} {g_decArgo_qcStrProbablyGood}; ...
+         {'PRES'} {'TEMP'} {g_decArgo_qcStrGood} {g_decArgo_qcStrGood}; ...
+         {'PRES2'} {'TEMP2'} {g_decArgo_qcStrGood} {g_decArgo_qcStrGood}; ...
+         {'PRES_2'} {'TEMP_2'} {g_decArgo_qcStrGood} {g_decArgo_qcStrGood}; ...
+         {'PRES3'} {'TEMP3'} {g_decArgo_qcStrGood} {g_decArgo_qcStrGood}; ...
+         {'PRES_3'} {'TEMP_3'} {g_decArgo_qcStrGood} {g_decArgo_qcStrGood}; ...
+         {'PRES'} {'TEMP_DOXY'} {g_decArgo_qcStrGood} {g_decArgo_qcStrGood}; ...
+         {'PRES'} {'TEMP_DOXY2'} {g_decArgo_qcStrGood} {g_decArgo_qcStrGood}; ...
+         {'PRES'} {'TEMP_DOXY_2'} {g_decArgo_qcStrGood} {g_decArgo_qcStrGood}; ...
+         {'PRES'} {'PSAL'} {g_decArgo_qcStrCorrectable} {g_decArgo_qcStrGood}; ...
+         {'PRES2'} {'PSAL2'} {g_decArgo_qcStrCorrectable} {g_decArgo_qcStrGood}; ...
+         {'PRES_2'} {'PSAL_2'} {g_decArgo_qcStrCorrectable} {g_decArgo_qcStrGood}; ...
+         {'PRES3'} {'PSAL3'} {g_decArgo_qcStrCorrectable} {g_decArgo_qcStrGood}; ...
+         {'PRES_3'} {'PSAL_3'} {g_decArgo_qcStrCorrectable} {g_decArgo_qcStrGood}; ...
          ];
 
       for idProf = 1:length(juld)
@@ -4363,65 +4611,68 @@ if (testFlagList(23) == 1)
          if (~strncmp(vssList{idProf}, 'Near-surface sampling:', length('Near-surface sampling:')))
 
             for idP = 1:size(test23ParameterList, 1)
-               presName = test23ParameterList{idP, 1};
                paramName = test23ParameterList{idP, 2};
-               paramFlagValueR = test23ParameterList{idP, 3};
-               paramFlagValueA = test23ParameterList{idP, 4};
+               if (ismember(paramName, ncParamNameList))
 
-               for idDM = 1:2
-                  if (idDM == 1)
-                     dataMode = 'R';
-                     paramFlagValue = paramFlagValueR;
-                  else
-                     dataMode = 'A';
-                     paramFlagValue = paramFlagValueA;
-                  end
+                  presName = test23ParameterList{idP, 1};
+                  paramFlagValueR = test23ParameterList{idP, 3};
+                  paramFlagValueA = test23ParameterList{idP, 4};
 
-                  % retrieve PRES data
-                  [presData, presDataQc, presDataFillValue, ~, presDataQcName] = ...
-                     get_param_data(presName, dataStruct, idProf, dataMode);
+                  for idDM = 1:2
+                     if (idDM == 1)
+                        dataMode = 'R';
+                        paramFlagValue = paramFlagValueR;
+                     else
+                        dataMode = 'A';
+                        paramFlagValue = paramFlagValueA;
+                     end
 
-                  % retrieve PARAM data
-                  [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
-                     get_param_data(paramName, dataStruct, idProf, dataMode);
+                     % retrieve PRES data
+                     [presData, presDataQc, presDataFillValue, ~, presDataQcName] = ...
+                        get_param_data(presName, dataStruct, idProf, dataMode);
 
-                  if (~isempty(presData) && ~isempty(paramData))
+                     % retrieve PARAM data
+                     [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+                        get_param_data(paramName, dataStruct, idProf, dataMode);
 
-                     profPres = presData(idProf, :);
-                     profParam = paramData(idProf, :);
+                     if (~isempty(presData) && ~isempty(paramData))
 
-                     % initialize Qc flags
-                     idNoDefPres = find(profPres ~= presDataFillValue);
-                     presDataQc(idProf, idNoDefPres) = set_qc(presDataQc(idProf, idNoDefPres), g_decArgo_qcStrGood);
-                     dataStruct.(presDataQcName) = presDataQc;
+                        profPres = presData(idProf, :);
+                        profParam = paramData(idProf, :);
 
-                     idNoDefParam = find(profParam ~= paramDataFillValue);
-                     paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrGood);
-                     dataStruct.(paramDataQcName) = paramDataQc;
+                        % initialize Qc flags
+                        idNoDefPres = find(profPres ~= presDataFillValue);
+                        presDataQc(idProf, idNoDefPres) = set_qc(presDataQc(idProf, idNoDefPres), g_decArgo_qcStrGood);
+                        dataStruct.(presDataQcName) = presDataQc;
 
-                     testDoneList(23, idProf) = 1;
-                     testDoneListForTraj{23, idProf} = [testDoneListForTraj{23, idProf} idNoDefPres];
-                     testDoneListForTraj{23, idProf} = [testDoneListForTraj{23, idProf} idNoDefParam];
+                        idNoDefParam = find(profParam ~= paramDataFillValue);
+                        paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrGood);
+                        dataStruct.(paramDataQcName) = paramDataQc;
 
-                     idNoDef = find((profPres ~= presDataFillValue) & ...
-                        (profParam ~= paramDataFillValue));
-                     profPres = profPres(idNoDef);
-                     profParam = profParam(idNoDef);
+                        testDoneList(23, idProf) = 1;
+                        testDoneListForTraj{23, idProf} = [testDoneListForTraj{23, idProf} idNoDefPres];
+                        testDoneListForTraj{23, idProf} = [testDoneListForTraj{23, idProf} idNoDefParam];
 
-                     if (~isempty(profPres) && ~isempty(profParam))
+                        if (paramFlagValue ~= g_decArgo_qcStrGood)
 
-                        % apply the test
-                        idToFlag = find(profPres > 2000);
+                           idNoDef = find((profPres ~= presDataFillValue) & ...
+                              (profParam ~= paramDataFillValue));
+                           profPres = profPres(idNoDef);
+                           profParam = profParam(idNoDef);
 
-                        if (~isempty(idToFlag))
-                           presDataQc(idProf, idNoDef(idToFlag)) = set_qc(presDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrProbablyGood);
-                           dataStruct.(presDataQcName) = presDataQc;
+                           if (~isempty(profPres) && ~isempty(profParam))
 
-                           paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), paramFlagValue);
-                           dataStruct.(paramDataQcName) = paramDataQc;
+                              % apply the test
+                              idToFlag = find(profPres > 2000);
 
-                           testFailedList(23, idProf) = 1;
-                           testFailedListForTraj{23, idProf} = [testFailedListForTraj{23, idProf} idNoDef(idToFlag)];
+                              if (~isempty(idToFlag))
+                                 paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), paramFlagValue);
+                                 dataStruct.(paramDataQcName) = paramDataQc;
+
+                                 testFailedList(23, idProf) = 1;
+                                 testFailedListForTraj{23, idProf} = [testFailedListForTraj{23, idProf} idNoDef(idToFlag)];
+                              end
+                           end
                         end
                      end
                   end
@@ -4437,22 +4688,17 @@ end
 %
 if (testFlagList(56) == 1)
 
-   % First specific test:
-   % set PH_IN_SITU_TOTAL_QC = '3'
+   if (ismember('PH_IN_SITU_TOTAL', ncParamNameList))
 
-   % list of parameters concerned by this test
-   test56ParameterList = [ ...
-      {'PH_IN_SITU_TOTAL'} ...
-      ];
-
-   for idP = 1:length(test56ParameterList)
-      paramName = test56ParameterList{idP};
+      %%%%%%%%%%%%%%%%%%%%%%
+      % First specific test:
+      % set PH_IN_SITU_TOTAL_QC = '3'
 
       for idProf = 1:length(juld)
 
          % retrieve PARAM data
          [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
-            get_param_data(paramName, dataStruct, idProf, 'R');
+            get_param_data('PH_IN_SITU_TOTAL', dataStruct, idProf, 'R');
 
          if (~isempty(paramData))
 
@@ -4470,61 +4716,10 @@ if (testFlagList(56) == 1)
             testFailedListForTraj{56, idProf} = [testFailedListForTraj{56, idProf} idNoDefParam];
          end
       end
-   end
-end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TEST 57: DOXY specific test
-%
-if (testFlagList(57) == 1)
-
-   % First specific test:
-   % set DOXY_QC = '3'
-
-   % list of parameters concerned by this test
-   test57ParameterList1 = [ ...
-      {'DOXY'} ...
-      {'DOXY2'} ...
-      ];
-
-   for idP = 1:length(test57ParameterList1)
-      paramName = test57ParameterList1{idP};
-
-      for idProf = 1:length(juld)
-
-         % retrieve PARAM data
-         [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
-            get_param_data(paramName, dataStruct, idProf, 'R');
-
-         if (~isempty(paramData))
-
-            profParam = paramData(idProf, :);
-
-            % initialize Qc flags (with QC = '3')
-            idNoDefParam = find(profParam ~= paramDataFillValue);
-            paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrCorrectable);
-            dataStruct.(paramDataQcName) = paramDataQc;
-
-            testDoneList(57, idProf) = 1;
-            testDoneListForTraj{57, idProf} = [testDoneListForTraj{57, idProf} idNoDefParam];
-
-            testFailedList(57, idProf) = 1;
-            testFailedListForTraj{57, idProf} = [testFailedListForTraj{57, idProf} idNoDefParam];
-         end
-      end
-   end
-
-   % Second specific test:
-   % if PRES_QC=4 or TEMP_QC=4 then DOXY_QC=4; if PSAL_QC=4, then DOXY_QC=3
-
-   % list of parameters concerned by this test
-   test57ParameterList2 = [ ...
-      {'DOXY'} ...
-      {'DOXY2'} ...
-      ];
-
-   for idP = 1:length(test57ParameterList2)
-      paramName = test57ParameterList2{idP};
+      %%%%%%%%%%%%%%%%%%%%%%%
+      % Second specific test:
+      % if PRES_QC=4 and/or TEMP_QC=4 then PH_IN_SITU_TOTAL_QC=4; if PSAL_QC=4, then PH_IN_SITU_TOTAL_QC=3
 
       for idProf = 1:length(juld)
 
@@ -4537,125 +4732,292 @@ if (testFlagList(57) == 1)
 
             % retrieve PARAM data
             [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
-               get_param_data(paramName, dataStruct, idProf, dataMode);
+               get_param_data('PH_IN_SITU_TOTAL', dataStruct, idProf, dataMode);
+            if (~isempty(paramData))
 
-            if (isempty(paramData))
-               continue
-            end
+               profParam = paramData(idProf, :);
+               idNoDefParam = find(profParam ~= paramDataFillValue);
+               if (~isempty(idNoDefParam))
 
-            % retrieve PRES data
-            % if PARAMETER_DATA_MODE = �A� then DOXY_ADJUSTED_QC should be defined from PSAL_QC, TEMP_QC and PRES_QC
-            [presData, presDataQc, presDataFillValue, ~, ~] = ...
-               get_param_data('PRES', dataStruct, idProf, 'R');
-
-            profParam = paramData(idProf, :);
-
-            % initialize Qc flags
-            % useless for DOXY_QC, which has been previously set to '3'
-            idNoDefParam = find(profParam ~= paramDataFillValue);
-            paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrGood);
-            dataStruct.(paramDataQcName) = paramDataQc;
-
-            testDoneList(57, idProf) = 1;
-            testDoneListForTraj{57, idProf} = [testDoneListForTraj{57, idProf} idNoDefParam];
-
-            % if PRES_QC=4 then DOXY_QC=4
-            if (~isempty(presData))
-
-               profPres = presData(idProf, :);
-               profPresQc = presDataQc(idProf, :);
-
-               % apply the test
-               idNoDef = find((profPres ~= presDataFillValue) & ...
-                  (profParam ~= paramDataFillValue));
-               idToFlag = find(profPresQc(idNoDef) == g_decArgo_qcStrBad);
-               if (~isempty(idToFlag))
-                  paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrBad);
+                  % initialize Qc flags
+                  % useless for PH_IN_SITU_TOTAL_QC, which has been previously set to '3'
+                  paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrGood);
                   dataStruct.(paramDataQcName) = paramDataQc;
 
-                  testFailedList(57, idProf) = 1;
-                  testFailedListForTraj{57, idProf} = [testFailedListForTraj{57, idProf} idNoDef(idToFlag)];
-               end
-            end
+                  testDoneList(56, idProf) = 1;
+                  testDoneListForTraj{56, idProf} = [testDoneListForTraj{56, idProf} idNoDefParam];
 
-            if (bgcFloatFlag == 0)
+                  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                  % if PRES_QC=4 then PH_IN_SITU_TOTAL_QC=4
 
-               % it is a PTSO float
+                  % retrieve PRES data
+                  % if PARAMETER_DATA_MODE = ‘A’ then PH_IN_SITU_TOTAL_ADJUSTED_QC should be defined from PSAL_QC, TEMP_QC and PRES_QC
+                  [presData, presDataQc, presDataFillValue, ~, ~] = ...
+                     get_param_data('PRES', dataStruct, idProf, 'R');
+                  if (~isempty(presData))
 
-               % retrieve TEMP data
-               % if PARAMETER_DATA_MODE = �A� then DOXY_ADJUSTED_QC should be defined from PSAL_QC, TEMP_QC and PRES_QC
-               [tempData, tempDataQc, tempDataFillValue, ~, ~] = ...
-                  get_param_data(tempName, dataStruct, idProf, 'R');
-
-               % if TEMP_QC=4 then DOXY_QC=4
-               if (~isempty(tempData))
-
-                  profTemp = tempData(idProf, :);
-                  profTempQc = tempDataQc(idProf, :);
-
-                  % apply the test
-                  idNoDef = find((profTemp ~= tempDataFillValue) & ...
-                     (profParam ~= paramDataFillValue));
-                  idToFlag = find(profTempQc(idNoDef) == g_decArgo_qcStrBad);
-                  if (~isempty(idToFlag))
-                     paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrBad);
-                     dataStruct.(paramDataQcName) = paramDataQc;
-
-                     testFailedList(57, idProf) = 1;
-                     testFailedListForTraj{57, idProf} = [testFailedListForTraj{57, idProf} idNoDef(idToFlag)];
-                  end
-               end
-
-               % retrieve PSAL data
-               % if PARAMETER_DATA_MODE = �A� then DOXY_ADJUSTED_QC should be defined from PSAL_QC, TEMP_QC and PRES_QC
-               [psalData, psalDataQc, psalDataFillValue, ~, ~] = ...
-                  get_param_data(psalName, dataStruct, idProf, 'R');
-
-               % if PSAL_QC=4, then DOXY_QC=3
-               if (~isempty(psalData))
-
-                  profPsal = psalData(idProf, :);
-                  profPsalQc = psalDataQc(idProf, :);
-
-                  % apply the test
-                  idNoDef = find((profPsal ~= psalDataFillValue) & ...
-                     (profParam ~= paramDataFillValue));
-                  idToFlag = find(profPsalQc(idNoDef) == g_decArgo_qcStrBad);
-                  if (~isempty(idToFlag))
-                     paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrBad);
-                     dataStruct.(paramDataQcName) = paramDataQc;
-
-                     testFailedList(57, idProf) = 1;
-                     testFailedListForTraj{57, idProf} = [testFailedListForTraj{57, idProf} idNoDef(idToFlag)];
-                  end
-               end
-            else
-
-               % it is a BGC float (each sensor has is own PRES axis)
-
-               % retrieve the CTD data
-               % if PARAMETER_DATA_MODE = �A� then DOXY_ADJUSTED_QC should be defined from PSAL_QC, TEMP_QC and PRES_QC
-
-               [profPresCtd, ~, presCtdDataFillValue, ...
-                  profTempCtd, profTempCtdQc, tempCtdDataFillValue, ...
-                  profPsalCtd, profPsalCtdQc, psalCtdDataFillValue] = ...
-                  get_ctd_data(a_floatNum, dataStruct, vssList, 'R');
-
-               % if TEMP_QC=4 then DOXY_QC=4
-               if (~isempty(profPresCtd) && ~isempty(profTempCtd) && ~isempty(presData))
-
-                  if (any(profTempCtdQc == g_decArgo_qcStrBad))
-
-                     % interpolate and extrapolate the CTD TEMP data at the pressures
-                     % of the DOXY measurements
-                     [profTempInt, profTempIntQc] = compute_interpolated_PARAM_measurements( ...
-                        profPresCtd, profTempCtd, profTempCtdQc, profPres, ...
-                        presCtdDataFillValue, tempCtdDataFillValue, presDataFillValue);
+                     profPres = presData(idProf, :);
+                     profPresQc = presDataQc(idProf, :);
 
                      % apply the test
-                     idNoDef = find((profTempInt ~= tempCtdDataFillValue) & ...
+                     idNoDef = find((profPres ~= presDataFillValue) & ...
                         (profParam ~= paramDataFillValue));
-                     idToFlag = find(profTempIntQc(idNoDef) == g_decArgo_qcStrBad);
+                     idToFlag = find(profPresQc(idNoDef) == g_decArgo_qcStrBad);
+                     if (~isempty(idToFlag))
+                        paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrBad);
+                        dataStruct.(paramDataQcName) = paramDataQc;
+
+                        testFailedList(56, idProf) = 1;
+                        testFailedListForTraj{56, idProf} = [testFailedListForTraj{56, idProf} idNoDef(idToFlag)];
+                     end
+                  end
+
+                  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                  % if TEMP_QC=4 then PH_IN_SITU_TOTAL_QC=4
+                  % if PSAL_QC=4, then PH_IN_SITU_TOTAL_QC=3
+
+                  % TEMP_QC and PSAL_QC are not supposed to be in the same
+                  % idProf as PH_IN_SITU_TOTAL_QC; moreover the values can be
+                  % in multiple profiles (N_PROF=1 and N_PROF=2)
+                  % => we should recover CTD data and interpolate at
+                  % PH_IN_SITU_TOTAL PRES levels (which are initialy the same as
+                  % the CTD ones)
+
+                  % retrieve the CTD data
+                  % if PARAMETER_DATA_MODE = ‘A’ then PH_IN_SITU_TOTAL_ADJUSTED_QC should be defined from PSAL_QC, TEMP_QC and PRES_QC
+
+                  [profPresCtd, ~, presCtdDataFillValue, ...
+                     profTempCtd, profTempCtdQc, tempCtdDataFillValue, ...
+                     profPsalCtd, profPsalCtdQc, psalCtdDataFillValue] = ...
+                     get_ctd_data(a_floatNum, dataStruct, vssList, 'R');
+
+                  if (~isempty(profPresCtd) && ~isempty(profTempCtd) && ~isempty(presData))
+
+                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                     % if TEMP_QC=4 then PH_IN_SITU_TOTAL_QC=4
+
+                     if (any(profTempCtdQc == g_decArgo_qcStrBad))
+
+                        % interpolate and extrapolate the CTD TEMP data at the pressures
+                        % of the PH_IN_SITU_TOTAL measurements
+                        [profTempInt, profTempIntQc] = compute_interpolated_PARAM_measurements( ...
+                           profPresCtd, profTempCtd, profTempCtdQc, profPres, ...
+                           presCtdDataFillValue, tempCtdDataFillValue, presDataFillValue);
+
+                        % apply the test
+                        idNoDef = find((profTempInt ~= tempCtdDataFillValue) & ...
+                           (profParam ~= paramDataFillValue));
+                        idToFlag = find(profTempIntQc(idNoDef) == g_decArgo_qcStrBad);
+                        if (~isempty(idToFlag))
+                           paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrBad);
+                           dataStruct.(paramDataQcName) = paramDataQc;
+
+                           testFailedList(56, idProf) = 1;
+                           testFailedListForTraj{56, idProf} = [testFailedListForTraj{56, idProf} idNoDef(idToFlag)];
+                        end
+                     end
+
+                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                     % if PSAL_QC=4, then PH_IN_SITU_TOTAL_QC=3
+
+                     if (any(profPsalCtdQc == g_decArgo_qcStrBad))
+
+                        % interpolate and extrapolate the CTD PSAL data at the pressures
+                        % of the PH_IN_SITU_TOTAL measurements
+                        [profPsalInt, profPsalIntQc] = compute_interpolated_PARAM_measurements( ...
+                           profPresCtd, profPsalCtd, profPsalCtdQc, profPres, ...
+                           presCtdDataFillValue, psalCtdDataFillValue, presDataFillValue);
+
+                        % apply the test
+                        idNoDef = find((profPsalInt ~= psalCtdDataFillValue) & ...
+                           (profParam ~= paramDataFillValue));
+                        idToFlag = find(profPsalIntQc(idNoDef) == g_decArgo_qcStrBad);
+                        if (~isempty(idToFlag))
+                           paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrCorrectable);
+                           dataStruct.(paramDataQcName) = paramDataQc;
+
+                           testFailedList(56, idProf) = 1;
+                           testFailedListForTraj{56, idProf} = [testFailedListForTraj{57, idProf} idNoDef(idToFlag)];
+                        end
+                     end
+                  end
+               end
+            end
+         end
+      end
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % Sensor diagnostic checks:
+      % if IB_PH or IK_PH is outside range [-100 100] nano amps then PH_IN_SITU_TOTAL_QC=3
+
+      % list of parameters concerned by this test
+      test56ParameterList = [ ...
+         {'IB_PH'} {-100} {100}; ...
+         {'IK_PH'} {-100} {100}; ...
+         ];
+
+      for idP = 1:size(test56ParameterList, 1)
+         iParamName = test56ParameterList{idP, 1};
+         if (ismember(iParamName, ncParamNameList))
+
+            iParamTestMin = test6ParameterList2{idP, 2};
+            iParamTestMax = test6ParameterList2{idP, 3};
+
+            for idProf = 1:length(juld)
+
+               for idDM = 1:2
+                  if (idDM == 1)
+                     dataMode = 'R';
+                  else
+                     dataMode = 'A';
+                  end
+
+                  % retrieve PARAM data
+                  [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+                     get_param_data('PH_IN_SITU_TOTAL', dataStruct, idProf, dataMode);
+
+                  if (~isempty(paramData))
+
+                     % retrieve I_PARAM data
+                     [iParamData, ~, iParamDataFillValue, ~, ~] = ...
+                        get_param_data(iParamName, dataStruct, idProf, 'R');
+
+                     if (~isempty(iParamData))
+
+                        profParam = paramData(idProf, :);
+                        profIParam = iParamData(idProf, :);
+                        idNoDef = find((profParam ~= paramDataFillValue) & (profIParam ~= iParamDataFillValue));
+                        profIParam = profIParam(idNoDef);
+
+                        % initialize Qc flags
+                        paramDataQc(idProf, idNoDef) = set_qc(paramDataQc(idProf, idNoDef), g_decArgo_qcStrGood);
+                        dataStruct.(paramDataQcName) = paramDataQc;
+
+                        testDoneList(56, idProf) = 1;
+                        testDoneListForTraj{56, idProf} = [testDoneListForTraj{56, idProf} idNoDef];
+
+                        % apply the test
+                        idToFlag = find((profIParam < iParamTestMin) | (profIParam > iParamTestMax));
+
+                        if (~isempty(idToFlag))
+                           paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrCorrectable);
+                           dataStruct.(paramDataQcName) = paramDataQc;
+
+                           testFailedList(56, idProf) = 1;
+                           testFailedListForTraj{56, idProf} = [testFailedListForTraj{56, idProf} idNoDef(idToFlag)];
+                        end
+                     end
+                  end
+               end
+            end
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 57: DOXY specific test
+%
+if (testFlagList(57) == 1)
+
+   %%%%%%%%%%%%%%%%%%%%%%
+   % First specific test:
+   % set DOXY_QC = '3'
+
+   % list of parameters concerned by this test
+   test57ParameterList1 = [ ...
+      {'DOXY'} ...
+      {'DOXY2'} ...
+      {'DOXY_2'} ...
+      ];
+
+   for idP = 1:length(test57ParameterList1)
+      paramName = test57ParameterList1{idP};
+      if (ismember(paramName, ncParamNameList))
+
+         for idProf = 1:length(juld)
+
+            % retrieve PARAM data
+            [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+               get_param_data(paramName, dataStruct, idProf, 'R');
+
+            if (~isempty(paramData))
+
+               profParam = paramData(idProf, :);
+
+               % initialize Qc flags (with QC = '3')
+               idNoDefParam = find(profParam ~= paramDataFillValue);
+               paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrCorrectable);
+               dataStruct.(paramDataQcName) = paramDataQc;
+
+               testDoneList(57, idProf) = 1;
+               testDoneListForTraj{57, idProf} = [testDoneListForTraj{57, idProf} idNoDefParam];
+
+               testFailedList(57, idProf) = 1;
+               testFailedListForTraj{57, idProf} = [testFailedListForTraj{57, idProf} idNoDefParam];
+            end
+         end
+      end
+   end
+
+   %%%%%%%%%%%%%%%%%%%%%%%
+   % Second specific test:
+   % if PRES_QC=4 or TEMP_QC=4 then DOXY_QC=4; if PSAL_QC=4, then DOXY_QC=3
+
+   % list of parameters concerned by this test
+   test57ParameterList2 = [ ...
+      {'DOXY'} ...
+      {'DOXY2'} ...
+      {'DOXY_2'} ...
+      ];
+
+   for idP = 1:length(test57ParameterList2)
+      paramName = test57ParameterList2{idP};
+      if (ismember(paramName, ncParamNameList))
+
+         for idProf = 1:length(juld)
+
+            for idDM = 1:2
+               if (idDM == 1)
+                  dataMode = 'R';
+               else
+                  dataMode = 'A';
+               end
+
+               % retrieve PARAM data
+               [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+                  get_param_data(paramName, dataStruct, idProf, dataMode);
+
+               if (~isempty(paramData))
+
+                  profParam = paramData(idProf, :);
+
+                  % initialize Qc flags
+                  % useless for DOXY_QC, which has been previously set to '3'
+                  idNoDefParam = find(profParam ~= paramDataFillValue);
+                  paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrGood);
+                  dataStruct.(paramDataQcName) = paramDataQc;
+
+                  testDoneList(57, idProf) = 1;
+                  testDoneListForTraj{57, idProf} = [testDoneListForTraj{57, idProf} idNoDefParam];
+
+                  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                  % if PRES_QC=4 then DOXY_QC=4
+
+                  % retrieve PRES data
+                  % if PARAMETER_DATA_MODE = ‘A’ then DOXY_ADJUSTED_QC should be defined from PSAL_QC, TEMP_QC and PRES_QC
+                  [presData, presDataQc, presDataFillValue, ~, ~] = ...
+                     get_param_data('PRES', dataStruct, idProf, 'R');
+
+                  if (~isempty(presData))
+
+                     profPres = presData(idProf, :);
+                     profPresQc = presDataQc(idProf, :);
+
+                     % apply the test
+                     idNoDef = find((profPres ~= presDataFillValue) & ...
+                        (profParam ~= paramDataFillValue));
+                     idToFlag = find(profPresQc(idNoDef) == g_decArgo_qcStrBad);
                      if (~isempty(idToFlag))
                         paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrBad);
                         dataStruct.(paramDataQcName) = paramDataQc;
@@ -4664,29 +5026,75 @@ if (testFlagList(57) == 1)
                         testFailedListForTraj{57, idProf} = [testFailedListForTraj{57, idProf} idNoDef(idToFlag)];
                      end
                   end
-               end
 
-               % if PSAL_QC=4, then DOXY_QC=3
-               if (~isempty(profPresCtd) && ~isempty(profPsalCtd) && ~isempty(presData))
+                  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                  % if PSAL_QC=4, then DOXY_QC=3
+                  % if PSAL_QC=4, then DOXY_QC=3
 
-                  if (any(profPsalCtdQc == g_decArgo_qcStrBad))
+                  % TEMP_QC and PSAL_QC are not supposed to be in the same
+                  % idProf as DOXY_QC; moreover the values can be
+                  % in multiple profiles (N_PROF=1 and N_PROF=2)
+                  % => we should recover CTD data and interpolate at
+                  % DOXY_QC PRES levels (which are initialy the same as
+                  % the CTD ones)
 
-                     % interpolate and extrapolate the CTD PSAL data at the pressures
-                     % of the DOXY measurements
-                     [profPsalInt, profPsalIntQc] = compute_interpolated_PARAM_measurements( ...
-                        profPresCtd, profPsalCtd, profPsalCtdQc, profPres, ...
-                        presCtdDataFillValue, psalCtdDataFillValue, presDataFillValue);
+                  % retrieve the CTD data
+                  % if PARAMETER_DATA_MODE = ‘A’ then DOXY_ADJUSTED_QC should be defined from PSAL_QC, TEMP_QC and PRES_QC
 
-                     % apply the test
-                     idNoDef = find((profPsalInt ~= psalCtdDataFillValue) & ...
-                        (profParam ~= paramDataFillValue));
-                     idToFlag = find(profPsalIntQc(idNoDef) == g_decArgo_qcStrBad);
-                     if (~isempty(idToFlag))
-                        paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrBad);
-                        dataStruct.(paramDataQcName) = paramDataQc;
+                  [profPresCtd, ~, presCtdDataFillValue, ...
+                     profTempCtd, profTempCtdQc, tempCtdDataFillValue, ...
+                     profPsalCtd, profPsalCtdQc, psalCtdDataFillValue] = ...
+                     get_ctd_data(a_floatNum, dataStruct, vssList, 'R');
 
-                        testFailedList(57, idProf) = 1;
-                        testFailedListForTraj{57, idProf} = [testFailedListForTraj{57, idProf} idNoDef(idToFlag)];
+                  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                  % if TEMP_QC=4 then DOXY_QC=4
+                  if (~isempty(profPresCtd) && ~isempty(profTempCtd) && ~isempty(presData))
+
+                     if (any(profTempCtdQc == g_decArgo_qcStrBad))
+
+                        % interpolate and extrapolate the CTD TEMP data at the pressures
+                        % of the DOXY measurements
+                        [profTempInt, profTempIntQc] = compute_interpolated_PARAM_measurements( ...
+                           profPresCtd, profTempCtd, profTempCtdQc, profPres, ...
+                           presCtdDataFillValue, tempCtdDataFillValue, presDataFillValue);
+
+                        % apply the test
+                        idNoDef = find((profTempInt ~= tempCtdDataFillValue) & ...
+                           (profParam ~= paramDataFillValue));
+                        idToFlag = find(profTempIntQc(idNoDef) == g_decArgo_qcStrBad);
+                        if (~isempty(idToFlag))
+                           paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrBad);
+                           dataStruct.(paramDataQcName) = paramDataQc;
+
+                           testFailedList(57, idProf) = 1;
+                           testFailedListForTraj{57, idProf} = [testFailedListForTraj{57, idProf} idNoDef(idToFlag)];
+                        end
+                     end
+                  end
+
+                  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                  % if PSAL_QC=4, then DOXY_QC=3
+                  if (~isempty(profPresCtd) && ~isempty(profPsalCtd) && ~isempty(presData))
+
+                     if (any(profPsalCtdQc == g_decArgo_qcStrBad))
+
+                        % interpolate and extrapolate the CTD PSAL data at the pressures
+                        % of the DOXY measurements
+                        [profPsalInt, profPsalIntQc] = compute_interpolated_PARAM_measurements( ...
+                           profPresCtd, profPsalCtd, profPsalCtdQc, profPres, ...
+                           presCtdDataFillValue, psalCtdDataFillValue, presDataFillValue);
+
+                        % apply the test
+                        idNoDef = find((profPsalInt ~= psalCtdDataFillValue) & ...
+                           (profParam ~= paramDataFillValue));
+                        idToFlag = find(profPsalIntQc(idNoDef) == g_decArgo_qcStrBad);
+                        if (~isempty(idToFlag))
+                           paramDataQc(idProf, idNoDef(idToFlag)) = set_qc(paramDataQc(idProf, idNoDef(idToFlag)), g_decArgo_qcStrCorrectable);
+                           dataStruct.(paramDataQcName) = paramDataQc;
+
+                           testFailedList(57, idProf) = 1;
+                           testFailedListForTraj{57, idProf} = [testFailedListForTraj{57, idProf} idNoDef(idToFlag)];
+                        end
                      end
                   end
                end
@@ -4701,7 +5109,7 @@ end
 %
 if (testFlagList(59) == 1)
 
-   if (~isempty(find(strcmp('NITRATE', ncParamNameList) == 1, 1)))
+   if (ismember('NITRATE', ncParamNameList))
 
       % retrieve the CTD data
       % we use the data associated to the PARAMETER_DATA_MODE of the primary
@@ -4859,12 +5267,98 @@ if (testFlagList(59) == 1)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 60: PAR specific test
+%
+if (testFlagList(60) == 1)
+
+   if (ismember('DOWNWELLING_PAR', ncParamNameList))
+
+      %%%%%%%%%%%%%%%%%%%%%%
+      % Specific test:
+      % set DOWNWELLING_PAR_QC = '2'
+
+      for idProf = 1:length(juld)
+
+         % retrieve PARAM data
+         [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+            get_param_data('DOWNWELLING_PAR', dataStruct, idProf, 'R');
+
+         if (~isempty(paramData))
+
+            profParam = paramData(idProf, :);
+
+            % initialize Qc flags (with QC = '2')
+            idNoDefParam = find(profParam ~= paramDataFillValue);
+            paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrProbablyGood);
+            dataStruct.(paramDataQcName) = paramDataQc;
+
+            testDoneList(60, idProf) = 1;
+            testDoneListForTraj{60, idProf} = [testDoneListForTraj{60, idProf} idNoDefParam];
+
+            testFailedList(60, idProf) = 1;
+            testFailedListForTraj{60, idProf} = [testFailedListForTraj{60, idProf} idNoDefParam];
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST 61: IRRADIANCE specific test
+%
+if (testFlagList(61) == 1)
+
+   %%%%%%%%%%%%%%%%%%%%%%
+   % Specific test:
+   % set DOWN_IRRADIANCExxx_QC = '2'
+
+   % list of parameters concerned by this test
+   test61ParameterList = [ ...
+      {'DOWN_IRRADIANCE380'} ...
+      {'DOWN_IRRADIANCE412'} ...
+      {'DOWN_IRRADIANCE443'} ...
+      {'DOWN_IRRADIANCE490'} ...
+      {'DOWN_IRRADIANCE555'} ...
+      {'DOWN_IRRADIANCE665'} ...
+      {'DOWN_IRRADIANCE670'} ...
+      ];
+
+   for idP = 1:length(test61ParameterList)
+      paramName = test61ParameterList{idP};
+      if (ismember(paramName, ncParamNameList))
+
+         for idProf = 1:length(juld)
+
+            % retrieve PARAM data
+            [paramData, paramDataQc, paramDataFillValue, ~, paramDataQcName] = ...
+               get_param_data(paramName, dataStruct, idProf, 'R');
+
+            if (~isempty(paramData))
+
+               profParam = paramData(idProf, :);
+
+               % initialize Qc flags (with QC = '3')
+               idNoDefParam = find(profParam ~= paramDataFillValue);
+               paramDataQc(idProf, idNoDefParam) = set_qc(paramDataQc(idProf, idNoDefParam), g_decArgo_qcStrProbablyGood);
+               dataStruct.(paramDataQcName) = paramDataQc;
+
+               testDoneList(61, idProf) = 1;
+               testDoneListForTraj{61, idProf} = [testDoneListForTraj{61, idProf} idNoDefParam];
+
+               testFailedList(61, idProf) = 1;
+               testFailedListForTraj{61, idProf} = [testFailedListForTraj{61, idProf} idNoDefParam];
+            end
+         end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEST 62: BBP specific test
 %
 bbpAdjInfoList = repmat({''}, length(juld), 2);
 if (testFlagList(62) == 1)
 
-   if (~isempty(find(strcmp('BBP700', ncParamNameList) == 1, 1)))
+   if (ismember('BBP700', ncParamNameList))
 
       % retrieve PARKING_PRESSURE
       parkingPresMeta = '';
@@ -4914,7 +5408,6 @@ if (testFlagList(62) == 1)
 
       for idP = 1:size(test62ParameterList, 1)
          paramName = test62ParameterList{idP};
-         paramAdjName = [paramName '_ADJUSTED'];
 
          for idProf = 1:length(juld)
 
@@ -4926,7 +5419,13 @@ if (testFlagList(62) == 1)
 
                profBbp = bbpData(idProf, :);
                profBbpQc = bbpDataQc(idProf, :);
-               profBbpQcOri = bbpDataQc(idProf, :);
+
+               % initialize Qc flags
+               idNoDefBbp = find(profBbp ~= bbpDataFillValue);
+               profBbpQc(idNoDefBbp) = set_qc(profBbpQc(idNoDefBbp), g_decArgo_qcStrGood);
+
+               % keep a copy of original data for test failed report
+               profBbpQcOri = profBbpQc;
 
                % retrieve PRES data
                [presData, presDataQc, presDataFillValue, ~, ~] = ...
@@ -4936,7 +5435,7 @@ if (testFlagList(62) == 1)
 
                   parkingPres = parkingPresMeta;
 
-                  % drift pressures are more reliable dans PARKING_PRESSURE
+                  % drift pressures are more reliable than PARKING_PRESSURE
                   if (~isempty(g_rtqc_trajData))
                      if (isfield(g_rtqc_trajData, 'cycleNumber') && ...
                            isfield(g_rtqc_trajData, 'measurementCode') && ...
@@ -5017,7 +5516,7 @@ end
 chlaAdjInfoList = repmat({''}, length(juld), 1);
 if (testFlagList(63) == 1)
 
-   if (~isempty(find(strcmp('CHLA', ncParamNameList) == 1, 1)))
+   if (ismember('CHLA', ncParamNameList))
 
       % retrieve the CTD data ('R' version)
 
@@ -5069,8 +5568,7 @@ if (testFlagList(63) == 1)
 
             for idProf = 1:length(juld)
                if ((latitude(idProf) ~= paramLat.fillValue) && ...
-                     (longitude(idProf) ~= paramLon.fillValue) && ...
-                     (direction(idProf) == 'A'))
+                     (longitude(idProf) ~= paramLon.fillValue))
 
                   profPresFluoChla = presData(idProf, :);
                   profPresFluoChlaQc = presDataQc(idProf, :);
@@ -5086,6 +5584,10 @@ if (testFlagList(63) == 1)
                   profChlaFluoAdjQc = chlaFluoDataAdjQc(idProf, :);
 
                   if (any(profFluoChla ~= fluoChlaDataFillValue))
+
+                     % if (direction(idProf) == 'D') && (cycleNumber(idProf) == 4)
+                     %    a=1
+                     % end
 
                      % retrieve DARK_CHLA and SCALE_CHLA at launch from Json meta-data
                      % file
@@ -5119,9 +5621,27 @@ if (testFlagList(63) == 1)
                         prelimDarkChlaStr = '';
                         findInCyNum = cycleNumber(idProf) - 1;
                         [~, fileName, fileExt] = fileparts(ncMonoProfInputPathFileName);
-                        [monoProfWithQc, ~, ~] = fileparts(ncMonoProfOutputPathFileName);
                         while (isempty(prelimDarkChlaStr) && (findInCyNum > 0))
-                           bFileToFind = [monoProfWithQc '/' 'B' fileName(1:end-3) sprintf('%03d', findInCyNum) fileExt];
+
+                           bFileToFind = '';
+                           bfileName = ['B' fileName(1:end-3) sprintf('%03d', findInCyNum) fileExt];
+                           if (g_decArgo_realtimeFlag == 1)
+                              if (~isempty(g_decArgo_filesToMove))
+                                 idF = find(strcmp(bfileName, g_decArgo_filesToMove(:, 1)));
+                                 if (~isempty(idF))
+                                    bFileToFind = g_decArgo_filesToMove{idF, 2};
+                                 end
+                              end
+                           end
+                           if (isempty(bFileToFind))
+                              if (a_justAfterDecodingFlag == 1)
+                                 bFileToFind = [g_decArgo_dirOutputNetcdfFile '/' num2str(a_floatNum) '/profiles/' bfileName];
+                              else
+                                 [monoProfWithQc, ~, ~] = fileparts(ncMonoProfOutputPathFileName);
+                                 bFileToFind = [monoProfWithQc '/' bfileName];
+                              end
+                           end
+
                            if (exist(bFileToFind, 'file') == 2)
 
                               % retrieve information on CHLA adjustments
@@ -5170,9 +5690,9 @@ if (testFlagList(63) == 1)
                                           a_floatNum, cycleNumber(idProf), bFileToFind);
                                        prelimDarkChlaStr = '';
                                     end
-                                 % else
-                                 %    fprintf('RTQC_ERROR: TEST063: Float #%d Cycle #%d: PRELIM_DARK_CHLA not found in file %s\n', ...
-                                 %       a_floatNum, cycleNumber(idProf), bFileToFind);
+                                    % else
+                                    %    fprintf('RTQC_ERROR: TEST063: Float #%d Cycle #%d: PRELIM_DARK_CHLA not found in file %s\n', ...
+                                    %       a_floatNum, cycleNumber(idProf), bFileToFind);
                                  end
                               end
                            end
@@ -5191,7 +5711,9 @@ if (testFlagList(63) == 1)
                      % end
 
                      [profChlaQc, profChlaAdj, profChlaAdjQc, ...
-                        profChlaFluoQc, profChlaFluoAdj, profChlaFluoAdjQc, chlaAdjInfo] = ...
+                        profChlaFluoQc, profChlaFluoAdj, profChlaFluoAdjQc, chlaAdjInfo, ...
+                        testDoneList, testFailedList, ...
+                        testDoneListForTraj, testFailedListForTraj] = ...
                         add_chla_rtqc_to_profile_file( ...
                         a_floatNum, juld(idProf), cycleNumber(idProf), ...
                         profPresFluoChla, profPresFluoChlaQc, presDataFillValue, ...
@@ -5204,7 +5726,10 @@ if (testFlagList(63) == 1)
                         profPresCtd, profPresCtdQc, presCtdDataFillValue, ...
                         profTempCtd, profTempCtdQc, tempCtdDataFillValue, ...
                         profPsalCtd, profPsalCtdQc, psalCtdDataFillValue, ...
-                        longitude(idProf), latitude(idProf));
+                        longitude(idProf), latitude(idProf), ...
+                        testFlagList(6), idProf, ...
+                        testDoneList, testFailedList, ...
+                        testDoneListForTraj, testFailedListForTraj);
 
                      if (~isempty(profChlaQc))
                         chlaDataQc(idProf, :) = profChlaQc;
@@ -5237,6 +5762,28 @@ if (testFlagList(63) == 1)
                         testDoneListForTraj{63, idProf} = [testDoneListForTraj{63, idProf} find(profChlaQc ~= g_decArgo_qcStrDef)];
                      end
                   end
+               else
+
+                  % set CHLA_QC = '3' for not located profile
+                  profChla = chlaData(idProf, :);
+
+                  if (any(profChla ~= chlaDataFillValue))
+
+                     profChlaQc = chlaDataQc(idProf, :);
+
+                     idNoDefParam = find(profChla ~= chlaDataFillValue);
+                     profChlaQc(idNoDefParam) = set_qc(profChlaQc(idNoDefParam), g_decArgo_qcStrCorrectable);
+
+                     chlaDataQc(idProf, :) = profChlaQc;
+                     dataStruct.(ncParamDataQcList{idChla}) = chlaDataQc;
+
+                     testFailedList(63, idProf) = 1;
+                     testFailedListForTraj{63, idProf} = [testFailedListForTraj{63, idProf} ...
+                        find(profChlaQc == g_decArgo_qcStrCorrectable)];
+
+                     testDoneList(63, idProf) = 1;
+                     testDoneListForTraj{63, idProf} = [testDoneListForTraj{63, idProf} find(profChlaQc ~= g_decArgo_qcStrDef)];
+                  end
                end
             end
          end
@@ -5247,12 +5794,14 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CNDC floats
 %
-if (~isempty(find(strcmp('CNDC', ncParamNameList) == 1, 1)))
+if (ismember('CNDC', ncParamNameList))
 
    % list of parameters concerned by this test
    testParameterList = [ ...
       {'TEMP'} {'PSAL'}; ...
       {'TEMP2'} {'PSAL2'}; ...
+      {'TEMP_2'} {'PSAL_2'}; ...
+      % {'TEMP3'} {'PSAL3'}; ... % not involved in this test because assigned to RBR salinity (decId 228)
       ];
 
    for idP = 1:size(testParameterList, 1)
@@ -5650,11 +6199,11 @@ end
 
 % update test done/failed lists according to C and B file tests
 testDoneListCFile = testDoneList;
-testDoneListCFile([11 56 57 59 62 63], :) = 0;
+testDoneListCFile([11 56 57 59:63], :) = 0;
 testDoneListBFile = testDoneList;
 testDoneListBFile([8 14 24 25 26], :) = 0;
 testFailedListCFile = testFailedList;
-testFailedListCFile([11 56 57 59 62 63], :) = 0;
+testFailedListCFile([11 56 57 59:63], :) = 0;
 testFailedListBFile = testFailedList;
 testFailedListBFile([8 14 24 25 26], :) = 0;
 
@@ -5836,95 +6385,6 @@ clear variables;
 return
 
 % ------------------------------------------------------------------------------
-% Retrieve data from NetCDF file.
-%
-% SYNTAX :
-%  [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-%
-% INPUT PARAMETERS :
-%   a_ncPathFileName : NetCDF file name
-%   a_wantedVars     : NetCDF variables to retrieve from the file
-%
-% OUTPUT PARAMETERS :
-%   o_ncData : retrieved data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/15/2014 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_ncData] = get_data_from_nc_file(a_ncPathFileName, a_wantedVars)
-
-% output parameters initialization
-o_ncData = [];
-
-
-if (exist(a_ncPathFileName, 'file') == 2)
-
-   % open NetCDF file
-   fCdf = netcdf.open(a_ncPathFileName, 'NC_NOWRITE');
-   if (isempty(fCdf))
-      fprintf('RTQC_ERROR: Unable to open NetCDF input file: %s\n', a_ncPathFileName);
-      return
-   end
-
-   % retrieve variables from NetCDF file
-   for idVar = 1:length(a_wantedVars)
-      varName = a_wantedVars{idVar};
-
-      if (var_is_present_dec_argo(fCdf, varName))
-         varValue = netcdf.getVar(fCdf, netcdf.inqVarID(fCdf, varName));
-         o_ncData = [o_ncData {varName} {varValue}];
-      else
-         %          fprintf('RTQC_WARNING: Variable %s not present in file : %s\n', ...
-         %             varName, a_ncPathFileName);
-         o_ncData = [o_ncData {varName} {''}];
-      end
-
-   end
-
-   netcdf.close(fCdf);
-end
-
-return
-
-% ------------------------------------------------------------------------------
-% Get data from name in a {name}/{data} list.
-%
-% SYNTAX :
-%  [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
-%
-% INPUT PARAMETERS :
-%   a_dataName : name of the data to retrieve
-%   a_dataList : {name}/{data} list
-%
-% OUTPUT PARAMETERS :
-%   o_dataValues : concerned data
-%
-% EXAMPLES :
-%
-% SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
-% ------------------------------------------------------------------------------
-% RELEASES :
-%   01/21/2015 - RNU - creation
-% ------------------------------------------------------------------------------
-function [o_dataValues] = get_data_from_name(a_dataName, a_dataList)
-
-% output parameters initialization
-o_dataValues = [];
-
-idVal = find(strcmp(a_dataName, a_dataList) == 1, 1);
-if (~isempty(idVal))
-   o_dataValues = a_dataList{idVal+1};
-end
-
-return
-
-% ------------------------------------------------------------------------------
 % Check if a location is in a given region (defined by a list of rectangles).
 %
 % SYNTAX :
@@ -5941,7 +6401,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/21/2015 - RNU - creation
@@ -6032,7 +6492,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/21/2015 - RNU - creation
@@ -6055,9 +6515,25 @@ global g_decArgo_addRtqcToProfileVersion;
 % QC flag values
 global g_decArgo_qcStrDef;           % ' '
 
+% json meta-data
+global g_decArgo_jsonMetaData;
+
 
 % date of the file update
 dateUpdate = datestr(now_utc, 'yyyymmddHHMMSS');
+
+% retrieve histoy institution from META.json file
+histoInstitutionMeta = '';
+if (~isempty(g_decArgo_jsonMetaData))
+   if (isfield(g_decArgo_jsonMetaData, 'DATA_CENTRE'))
+      if (~isempty(g_decArgo_jsonMetaData.DATA_CENTRE))
+         histoInstitutionMeta = strtrim(g_decArgo_jsonMetaData.DATA_CENTRE); % case of a RTQC after a decoding session
+      end
+   end
+end
+if (isempty(histoInstitutionMeta))
+   histoInstitutionMeta = 'IF';
+end
 
 % update the mono profile file(s)
 profIdListC = [];
@@ -6104,43 +6580,46 @@ for idFile = 1:2
       return
    end
 
-   % update misc data (JULD_QC and POSITION_QC), <PARAM>_QC and PROFILE_<PARAM>_QC values
-   for idParamQc = 1:2:length(a_dataQc)
-      paramQcName = a_dataQc{idParamQc};
-      if (var_is_present_dec_argo(fCdf, paramQcName))
+   try
 
-         % <PARAM>_QC values
-         dataQc = a_dataQc{idParamQc+1};
-         if (strcmp(paramQcName, 'JULD_QC') || strcmp(paramQcName, 'POSITION_QC'))
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), dataQc');
-         else
-            if (size(dataQc, 2) > nLevels)
-               dataQc = dataQc(:, 1:nLevels);
-            end
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), dataQc');
+      % update misc data (JULD_QC and POSITION_QC), <PARAM>_QC and PROFILE_<PARAM>_QC values
+      for idParamQc = 1:2:length(a_dataQc)
+         paramQcName = a_dataQc{idParamQc};
+         if (var_is_present_dec_argo(fCdf, paramQcName))
 
-            % PROFILE_<PARAM>_QC values
-            % the <PARAM>_ADJUSTED_QC values are after the <PARAM>_QC values in
-            % the a_dataQc list. So, if <PARAM>_ADJUSTED_QC values differ from
-            % FillValue, they will be used to compute PROFILE_<PARAM>_QC values.
-            profParamQcName = ['PROFILE_' paramQcName];
-            if (var_is_present_dec_argo(fCdf, profParamQcName))
-               % compute PROFILE_<PARAM>_QC from <PARAM>_QC values
-               newProfParamQc = repmat(g_decArgo_qcStrDef, 1, size(dataQc, 1));
-               for idProf = 1:size(dataQc, 1)
-                  newProfParamQc(idProf) = compute_profile_quality_flag(dataQc(idProf, :));
-               end
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), newProfParamQc);
+            % <PARAM>_QC values
+            dataQc = a_dataQc{idParamQc+1};
+            if (strcmp(paramQcName, 'JULD_QC') || strcmp(paramQcName, 'POSITION_QC'))
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), dataQc');
             else
-               if (~isempty(strfind(paramQcName, '_ADJUSTED_QC')))
-                  profParamQcName = ['PROFILE_' regexprep(paramQcName, '_ADJUSTED', '')];
-                  if (var_is_present_dec_argo(fCdf, profParamQcName))
-                     % compute PROFILE_<PARAM>_QC from <PARAM>_ADJUSTED_QC values
-                     for idProf = 1:size(dataQc, 1)
-                        if (any(dataQc(idProf, :) ~= g_decArgo_qcStrDef))
-                           % the parameter is adjusted
-                           newProfParamQc = compute_profile_quality_flag(dataQc(idProf, :));
-                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), idProf-1, newProfParamQc);
+               if (size(dataQc, 2) > nLevels)
+                  dataQc = dataQc(:, 1:nLevels);
+               end
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), dataQc');
+
+               % PROFILE_<PARAM>_QC values
+               % the <PARAM>_ADJUSTED_QC values are after the <PARAM>_QC values in
+               % the a_dataQc list. So, if <PARAM>_ADJUSTED_QC values differ from
+               % FillValue, they will be used to compute PROFILE_<PARAM>_QC values.
+               profParamQcName = ['PROFILE_' paramQcName];
+               if (var_is_present_dec_argo(fCdf, profParamQcName))
+                  % compute PROFILE_<PARAM>_QC from <PARAM>_QC values
+                  newProfParamQc = repmat(g_decArgo_qcStrDef, 1, size(dataQc, 1));
+                  for idProf = 1:size(dataQc, 1)
+                     newProfParamQc(idProf) = compute_profile_quality_flag(dataQc(idProf, :));
+                  end
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), newProfParamQc);
+               else
+                  if (~isempty(strfind(paramQcName, '_ADJUSTED_QC')))
+                     profParamQcName = ['PROFILE_' regexprep(paramQcName, '_ADJUSTED', '')];
+                     if (var_is_present_dec_argo(fCdf, profParamQcName))
+                        % compute PROFILE_<PARAM>_QC from <PARAM>_ADJUSTED_QC values
+                        for idProf = 1:size(dataQc, 1)
+                           if (any(dataQc(idProf, :) ~= g_decArgo_qcStrDef))
+                              % the parameter is adjusted
+                              newProfParamQc = compute_profile_quality_flag(dataQc(idProf, :));
+                              netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), idProf-1, newProfParamQc);
+                           end
                         end
                      end
                   end
@@ -6148,93 +6627,249 @@ for idFile = 1:2
             end
          end
       end
-   end
 
-   % update misc data (JULD_LOCATION and LATITUDE, LONGITUDE) and <PARAM> values
-   for idParam = 1:2:length(a_data)
-      paramName = a_data{idParam};
-      if (var_is_present_dec_argo(fCdf, paramName))
-         data = a_data{idParam+1};
+      % update misc data (JULD_LOCATION and LATITUDE, LONGITUDE) and <PARAM> values
+      for idParam = 1:2:length(a_data)
+         paramName = a_data{idParam};
+         if (var_is_present_dec_argo(fCdf, paramName))
+            data = a_data{idParam+1};
 
-         if (strcmp(paramName, 'JULD_LOCATION') || ...
-               strcmp(paramName, 'LATITUDE') || ...
-               strcmp(paramName, 'LONGITUDE'))
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramName), data);
-         else
-            if (size(data, 2) > nLevels)
-               data = data(:, 1:nLevels);
+            if (strcmp(paramName, 'JULD_LOCATION') || ...
+                  strcmp(paramName, 'LATITUDE') || ...
+                  strcmp(paramName, 'LONGITUDE'))
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramName), data);
+            else
+               if (size(data, 2) > nLevels)
+                  data = data(:, 1:nLevels);
+               end
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramName),  permute(data, fliplr(1:ndims(data))));
             end
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramName),  permute(data, fliplr(1:ndims(data))));
          end
       end
-   end
 
-   % update miscellaneous information
+      % update miscellaneous information
 
-   % retrieve the creation date of the file
-   dateCreation = get_data_from_name('DATE_CREATION', ncProfData)';
-   if (isempty(deblank(dateCreation)))
-      dateCreation = dateUpdate;
-   end
-
-   % set the 'history' global attribute
-   globalVarId = netcdf.getConstant('NC_GLOBAL');
-   globalHistoryText = [datestr(datenum(dateCreation, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; '];
-   globalHistoryText = [globalHistoryText ...
-      datestr(datenum(dateUpdate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COQC software)'];
-   netcdf.reDef(fCdf);
-   netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
-   netcdf.endDef(fCdf);
-
-   % upate date
-   netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), dateUpdate);
-
-   % data state indicator
-   dataStateIndicator = get_data_from_name('DATA_STATE_INDICATOR', ncProfData)';
-   nProf = size(dataStateIndicator, 1);
-   profIdList = [];
-   newDataStateIndicator = '2B';
-   for idProf = 1:nProf
-      if (~isempty(deblank(dataStateIndicator(idProf, :))))
-         dataStateIndicator(idProf, 1:length(newDataStateIndicator)) = newDataStateIndicator;
-         profIdList = [profIdList idProf];
+      % retrieve the creation date of the file
+      dateCreation = get_data_from_name('DATE_CREATION', ncProfData)';
+      if (isempty(deblank(dateCreation)))
+         dateCreation = dateUpdate;
       end
-   end
-   netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_STATE_INDICATOR'), dataStateIndicator');
-   if (idFile == 1)
-      profIdListC = profIdList;
-   else
-      profIdListB = profIdList;
-   end
 
-   % update CHLA and CHLA_FLUORESCENCE data mode and calibration information
-   if ((idFile == 2) && (~isempty(a_chlaProfIdList)))
-      stationParameters = get_data_from_name('STATION_PARAMETERS', ncProfData);
-      [~, nParam, nProf] = size(stationParameters);
-      for idName = 1:2
-         if (idName == 1)
-            paramName = 'CHLA';
-         else
-            paramName = 'CHLA_FLUORESCENCE';
+      % set the 'history' global attribute
+      globalVarId = netcdf.getConstant('NC_GLOBAL');
+      globalHistoryText = [datestr(datenum(dateCreation, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' creation; '];
+      globalHistoryText = [globalHistoryText ...
+         datestr(datenum(dateUpdate, 'yyyymmddHHMMSS'), 'yyyy-mm-ddTHH:MM:SSZ') ' last update (coriolis COQC software)'];
+      netcdf.reDef(fCdf);
+      netcdf.putAtt(fCdf, globalVarId, 'history', globalHistoryText);
+      netcdf.endDef(fCdf);
+
+      % upate date
+      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), dateUpdate);
+
+      % data state indicator
+      dataStateIndicator = get_data_from_name('DATA_STATE_INDICATOR', ncProfData)';
+      nProf = size(dataStateIndicator, 1);
+      profIdList = [];
+      newDataStateIndicator = '2B';
+      for idProf = 1:nProf
+         if (~isempty(deblank(dataStateIndicator(idProf, :))))
+            dataStateIndicator(idProf, 1:length(newDataStateIndicator)) = newDataStateIndicator;
+            profIdList = [profIdList idProf];
          end
-         for idProf = 1:length(a_chlaProfIdList)
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_MODE'), a_chlaProfIdList(idProf)-1, 1, 'A');
+      end
+      netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_STATE_INDICATOR'), dataStateIndicator');
+      if (idFile == 1)
+         profIdListC = profIdList;
+      else
+         profIdListB = profIdList;
+      end
 
-            % look for N_PARAM associated to CHLA
-            idChlaParam = -1;
+      % update CHLA and CHLA_FLUORESCENCE data mode and calibration information
+
+      % a_chlaProfIdList is set from testDoneList(63, :).
+      % If the CHLA profile is not located, CHLA is not adjusted (in this current
+      % file, but it has been adjusted in compute_rt_adjusted_chla) but it is in
+      % testDoneList however (because CHLA_QC has been set to 3.
+      % We then need a_chlaProfIdList AND [a_chlaAdjInfo{:}] to be set to be sure
+      % that the adjustment has been done on CHLA and CHLA_FLUORESCENCE.
+
+      if ((idFile == 2) && (~isempty(a_chlaProfIdList)) && ~isempty([a_chlaAdjInfo{:}]))
+         stationParameters = get_data_from_name('STATION_PARAMETERS', ncProfData);
+         [~, nParam, nProf] = size(stationParameters);
+         for idName = 1:2
+            if (idName == 1)
+               paramName = 'CHLA';
+            else
+               paramName = 'CHLA_FLUORESCENCE';
+            end
+            for idProf = 1:length(a_chlaProfIdList)
+               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_MODE'), a_chlaProfIdList(idProf)-1, 1, 'A');
+
+               % look for N_PARAM associated to CHLA
+               idChlaParam = -1;
+               for idPr = 1:nProf
+                  for idPa = 1:nParam
+                     if (strcmp(deblank(stationParameters(:, idPa, idPr)'), paramName))
+                        idChlaParam = idPa;
+                     end
+                  end
+               end
+               if (idChlaParam == -1)
+                  fprintf('RTQC_ERROR: Parameter %s not found in STATION_PARAMETERS variable - calibration information not updated in file: %s\n', ...
+                     paramName, fileName);
+               else
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER_DATA_MODE'), ...
+                     fliplr([a_chlaProfIdList(idProf)-1 idChlaParam-1]), fliplr([1 1]), 'A');
+               end
+            end
+
+            parameter = get_data_from_name('PARAMETER', ncProfData);
+            sciCalibEquation = get_data_from_name('SCIENTIFIC_CALIB_EQUATION', ncProfData);
+            sciCalibCoefficient = get_data_from_name('SCIENTIFIC_CALIB_COEFFICIENT', ncProfData);
+            sciCalibComment = get_data_from_name('SCIENTIFIC_CALIB_COMMENT', ncProfData);
+            sciCalibDate = get_data_from_name('SCIENTIFIC_CALIB_DATE', ncProfData);
+
+            [~, nParam, nCalib, nProf] = size(parameter);
+            for idProf = 1:nProf
+               if (~isempty(a_chlaAdjInfo{idProf}))
+
+                  % look for N_PARAM associated to CHLA
+                  idParam = -1;
+                  for idP = 1:nParam
+                     if (strcmp(deblank(parameter(:, idP, 1, idProf)'), paramName))
+                        idParam = idP;
+                        break
+                     end
+                  end
+                  if (idParam == -1)
+                     fprintf('RTQC_ERROR: Parameter %s not found in PARAMETER variable - calibration information not updated in file: %s\n', ...
+                        paramName, fileName);
+                     break
+                  end
+
+                  % look for a calibId to store the information
+                  idCalib = -1;
+                  for idC = 1:nCalib
+                     if (isempty(deblank(sciCalibEquation(:, idParam, idC, idProf)')) && ...
+                           isempty(deblank(sciCalibCoefficient(:, idParam, idC, idProf)')) && ...
+                           isempty(deblank(sciCalibComment(:, idParam, idC, idProf)')) && ...
+                           isempty(deblank(sciCalibDate(:, idParam, idC, idProf)')))
+                        idCalib = idC;
+                     end
+                  end
+                  if (idCalib == -1)
+                     %                fprintf('RTQC_WARNING: %s calibration information replaced by new one in file: %s\n', ...
+                     %                   'CHLA', fileName);
+                     idCalib = nCalib;
+                  end
+
+                  if (1)
+
+                     if (idName == 1)
+                        if (isempty(a_chlaAdjInfo{idProf}.depthNPQ))
+                           equation = 'CHLA_ADJUSTED = ((FLUORESCENCE_CHLA-MEDIAN(PRELIM_DARK_CHLA))*SCALE_CHLA)/2';
+                        else
+                           equation = 'CHLA_ADJUSTED = CHLA_NPQ for PRES in [0,ZMaxFluo], CHLA_ADJUSTED = ((FLUORESCENCE_CHLA-MEDIAN(PRELIM_DARK_CHLA))*SCALE_CHLA)/2 otherwise';
+                        end
+
+                        if (isempty(a_chlaAdjInfo{idProf}.depthNPQ))
+                           coefficient = sprintf('PRELIM_DARK_CHLA = [%s], SCALE_CHLA = %g', ...
+                              a_chlaAdjInfo{idProf}.prelimDarkChla, a_chlaAdjInfo{idProf}.scaleChla);
+                        else
+                           coefficient = sprintf('CHLA_NPQ = %g, ZMaxFluo = %g, PRELIM_DARK_CHLA = [%s], SCALE_CHLA = %g', ...
+                              a_chlaAdjInfo{idProf}.chlaNPQ/2, a_chlaAdjInfo{idProf}.depthNPQ, ...
+                              a_chlaAdjInfo{idProf}.prelimDarkChla, a_chlaAdjInfo{idProf}.scaleChla);
+                        end
+
+                        comment = sprintf('CHLA real time adjustment (specified in %s and computed with MLD_LIMIT = %g, and following recommendations of Roesler et al., 2017 (%s))', ...
+                           a_chlaAdjInfo{idProf}.doi1, a_chlaAdjInfo{idProf}.mldLimit, a_chlaAdjInfo{idProf}.doi2);
+                     else
+                        equation = 'CHLA_FLUORESCENCE_ADJUSTED = ((FLUORESCENCE_CHLA-MEDIAN(PRELIM_DARK_CHLA))*SCALE_CHLA)';
+
+                        coefficient = sprintf('PRELIM_DARK_CHLA = [%s], SCALE_CHLA = %g', ...
+                           a_chlaAdjInfo{idProf}.prelimDarkChla, a_chlaAdjInfo{idProf}.scaleChla);
+
+                        comment = sprintf('CHLA_FLUORESCENCE real time adjustment (specified in %s and computed with MLD_LIMIT = %g)', ...
+                           a_chlaAdjInfo{idProf}.doi1, a_chlaAdjInfo{idProf}.mldLimit);
+                     end
+
+                  else
+
+                     % TEMPORARY CHLA adjustment 20250411
+
+                     if (idName == 1)
+                        if (isempty(a_chlaAdjInfo{idProf}.depthNPQ))
+                           equation = 'CHLA_ADJUSTED = ((FLUORESCENCE_CHLA-MEDIAN(PRELIM_DARK_CHLA))*SCALE_CHLA)/PHYSIO_RATIO';
+                        else
+                           equation = 'CHLA_ADJUSTED = CHLA_NPQ for PRES in [0,ZMaxFluo], CHLA_ADJUSTED = ((FLUORESCENCE_CHLA-MEDIAN(PRELIM_DARK_CHLA))*SCALE_CHLA)/PHYSIO_RATIO otherwise';
+                        end
+
+                        if (isempty(a_chlaAdjInfo{idProf}.depthNPQ))
+                           coefficient = sprintf('PRELIM_DARK_CHLA = [%s], SCALE_CHLA = %g, PHYSIO_RATIO = %g', ...
+                              a_chlaAdjInfo{idProf}.prelimDarkChla, a_chlaAdjInfo{idProf}.scaleChla, a_chlaAdjInfo{idProf}.physioRatio);
+                        else
+                           coefficient = sprintf('CHLA_NPQ = %g, ZMaxFluo = %g, PRELIM_DARK_CHLA = [%s], SCALE_CHLA = %g, PHYSIO_RATIO = %g', ...
+                              a_chlaAdjInfo{idProf}.chlaNPQ/2, a_chlaAdjInfo{idProf}.depthNPQ, ...
+                              a_chlaAdjInfo{idProf}.prelimDarkChla, a_chlaAdjInfo{idProf}.scaleChla, a_chlaAdjInfo{idProf}.physioRatio);
+                        end
+
+                        comment = sprintf('CHLA real time adjustment (specified in %s and computed with MLD_LIMIT = %g, and PHYSIO_RATIO from version X.X in https://doi.org/TBD)', ...
+                           a_chlaAdjInfo{idProf}.doi1, a_chlaAdjInfo{idProf}.mldLimit);
+
+                     else
+                        equation = 'CHLA_FLUORESCENCE_ADJUSTED = ((FLUORESCENCE_CHLA-MEDIAN(PRELIM_DARK_CHLA))*SCALE_CHLA)';
+
+                        coefficient = sprintf('PRELIM_DARK_CHLA = [%s], SCALE_CHLA = %g', ...
+                           a_chlaAdjInfo{idProf}.prelimDarkChla, a_chlaAdjInfo{idProf}.scaleChla);
+
+                        comment = sprintf('CHLA_FLUORESCENCE real time adjustment (specified in %s and computed with MLD_LIMIT = %g)', ...
+                           a_chlaAdjInfo{idProf}.doi1, a_chlaAdjInfo{idProf}.mldLimit);
+                     end
+                  end
+
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_EQUATION'), ...
+                     fliplr([idProf-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(equation)]), equation');
+                  % fprintf('\nSCIENTIFIC_CALIB_EQUATION: %s\n', equation);
+
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_COEFFICIENT'), ...
+                     fliplr([idProf-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(coefficient)]), coefficient');
+                  % fprintf('SCIENTIFIC_CALIB_COEFFICIENT: %s\n', coefficient);
+
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_COMMENT'), ...
+                     fliplr([idProf-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(comment)]), comment');
+                  % fprintf('SCIENTIFIC_CALIB_COMMENT: %s\n\n', comment);
+
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_DATE'), ...
+                     fliplr([idProf-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(dateUpdate)]), dateUpdate');
+
+               end
+            end
+         end
+      end
+
+      % update BBP700 data mode and calibration information
+      if ((idFile == 2) && (~isempty(a_bbpProfIdList)))
+         stationParameters = get_data_from_name('STATION_PARAMETERS', ncProfData);
+         [~, nParam, nProf] = size(stationParameters);
+         for idProf = 1:length(a_bbpProfIdList)
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_MODE'), a_bbpProfIdList(idProf)-1, 1, 'A');
+
+            % look for N_PARAM associated to BBP700
+            idBbpParam = -1;
             for idPr = 1:nProf
                for idPa = 1:nParam
-                  if (strcmp(deblank(stationParameters(:, idPa, idPr)'), paramName))
-                     idChlaParam = idPa;
+                  if (strcmp(deblank(stationParameters(:, idPa, idPr)'), 'BBP700'))
+                     idBbpParam = idPa;
                   end
                end
             end
-            if (idChlaParam == -1)
+            if (idBbpParam == -1)
                fprintf('RTQC_ERROR: Parameter %s not found in STATION_PARAMETERS variable - calibration information not updated in file: %s\n', ...
-                  paramName, fileName);
+                  'BBP700', fileName);
             else
                netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER_DATA_MODE'), ...
-                  fliplr([a_chlaProfIdList(idProf)-1 idChlaParam-1]), fliplr([1 1]), 'A');
+                  fliplr([a_bbpProfIdList(idProf)-1 idBbpParam-1]), fliplr([1 1]), 'A');
             end
          end
 
@@ -6246,19 +6881,19 @@ for idFile = 1:2
 
          [~, nParam, nCalib, nProf] = size(parameter);
          for idProf = 1:nProf
-            if (~isempty(a_chlaAdjInfo{idProf}))
+            if (~isempty(a_bbpAdjInfo{idProf, 1}))
 
-               % look for N_PARAM associated to CHLA
+               % look for N_PARAM associated to BBP700
                idParam = -1;
                for idP = 1:nParam
-                  if (strcmp(deblank(parameter(:, idP, 1, idProf)'), paramName))
+                  if (strcmp(deblank(parameter(:, idP, 1, idProf)'), 'BBP700'))
                      idParam = idP;
                      break
                   end
                end
                if (idParam == -1)
                   fprintf('RTQC_ERROR: Parameter %s not found in PARAMETER variable - calibration information not updated in file: %s\n', ...
-                     paramName, fileName);
+                     'BBP700', fileName);
                   break
                end
 
@@ -6273,194 +6908,86 @@ for idFile = 1:2
                   end
                end
                if (idCalib == -1)
-                  %                fprintf('RTQC_WARNING: %s calibration information replaced by new one in file: %s\n', ...
-                  %                   'CHLA', fileName);
+                  % fprintf('RTQC_WARNING: %s calibration information replaced by new one in file: %s\n', ...
+                  %    'BBP700', fileName);
                   idCalib = nCalib;
                end
 
-               if (idName == 1)
-                  if (isempty(a_chlaAdjInfo{idProf}.depthNPQ))
-                     equation = 'CHLA_ADJUSTED = ((FLUORESCENCE_CHLA-MEDIAN(PRELIM_DARK_CHLA))*SCALE_CHLA)/2';
-                  else
-                     equation = 'CHLA_ADJUSTED = CHLA_NPQ for PRES in [0,ZMaxFluo], CHLA_ADJUSTED = ((FLUORESCENCE_CHLA-MEDIAN(PRELIM_DARK_CHLA))*SCALE_CHLA)/2 otherwise';
-                  end
-
-                  if (isempty(a_chlaAdjInfo{idProf}.depthNPQ))
-                     coefficient = sprintf('PRELIM_DARK_CHLA = [%s], SCALE_CHLA = %g', ...
-                        a_chlaAdjInfo{idProf}.prelimDarkChla, a_chlaAdjInfo{idProf}.scaleChla);
-                  else
-                     coefficient = sprintf('CHLA_NPQ = %g, ZMaxFluo = %g, PRELIM_DARK_CHLA = [%s], SCALE_CHLA = %g', ...
-                        a_chlaAdjInfo{idProf}.chlaNPQ/2, a_chlaAdjInfo{idProf}.depthNPQ, ...
-                        a_chlaAdjInfo{idProf}.prelimDarkChla, a_chlaAdjInfo{idProf}.scaleChla);
-                  end
-
-                  comment = sprintf('CHLA real time adjustment (specified in %s and computed with MLD_LIMIT = %g, and following recommendations of Roesler et al., 2017 (%s))', ...
-                     a_chlaAdjInfo{idProf}.doi1, a_chlaAdjInfo{idProf}.mldLimit, a_chlaAdjInfo{idProf}.doi2);
-               else
-                  equation = 'CHLA_FLUORESCENCE_ADJUSTED = ((FLUORESCENCE_CHLA-MEDIAN(PRELIM_DARK_CHLA))*SCALE_CHLA)';
-
-                  coefficient = sprintf('PRELIM_DARK_CHLA = [%s], SCALE_CHLA = %g', ...
-                     a_chlaAdjInfo{idProf}.prelimDarkChla, a_chlaAdjInfo{idProf}.scaleChla);
-
-                  comment = sprintf('CHLA_FLUORESCENCE real time adjustment (specified in %s and computed with MLD_LIMIT = %g)', ...
-                     a_chlaAdjInfo{idProf}.doi1, a_chlaAdjInfo{idProf}.mldLimit);
-               end
-
+               equation = 'BBP700_ADJUSTED = BBP700';
                netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_EQUATION'), ...
                   fliplr([idProf-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(equation)]), equation');
-               % fprintf('\nSCIENTIFIC_CALIB_EQUATION: %s\n', equation);
+               % fprintf('SCIENTIFIC_CALIB_EQUATION: %s\n', equation);
 
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_COEFFICIENT'), ...
-                  fliplr([idProf-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(coefficient)]), coefficient');
-               % fprintf('SCIENTIFIC_CALIB_COEFFICIENT: %s\n', coefficient);
-
+               comment = sprintf('BBP700_ADJUSTED is being filled with BBP700 directly in real time. Adjustment method may be enhanced in the future. RTQC_APPLIED %s RTQC_FAILED %s', ...
+                  a_bbpAdjInfo{idProf, 1}, a_bbpAdjInfo{idProf, 2});
                netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_COMMENT'), ...
                   fliplr([idProf-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(comment)]), comment');
-               % fprintf('SCIENTIFIC_CALIB_COMMENT: %s\n\n', comment);
 
                netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_DATE'), ...
                   fliplr([idProf-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(dateUpdate)]), dateUpdate');
-
             end
          end
       end
-   end
 
-   % update BBP700 data mode and calibration information
-   if ((idFile == 2) && (~isempty(a_bbpProfIdList)))
-      stationParameters = get_data_from_name('STATION_PARAMETERS', ncProfData);
-      [~, nParam, nProf] = size(stationParameters);
-      for idProf = 1:length(a_bbpProfIdList)
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_MODE'), a_bbpProfIdList(idProf)-1, 1, 'A');
+      % update history information
+      historyInstitution = get_data_from_name('HISTORY_INSTITUTION', ncProfData);
+      [~, ~, nHistory] = size(historyInstitution);
+      histoInstitution = histoInstitutionMeta;
+      histoStep = 'ARGQ';
+      histoSoftware = 'COQC';
+      histoSoftwareRelease = g_decArgo_addRtqcToProfileVersion;
 
-         % look for N_PARAM associated to BBP700
-         idBbpParam = -1;
-         for idPr = 1:nProf
-            for idPa = 1:nParam
-               if (strcmp(deblank(stationParameters(:, idPa, idPr)'), 'BBP700'))
-                  idBbpParam = idPa;
-               end
-            end
-         end
-         if (idBbpParam == -1)
-            fprintf('RTQC_ERROR: Parameter %s not found in STATION_PARAMETERS variable - calibration information not updated in file: %s\n', ...
-               'BBP700', fileName);
-         else
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'PARAMETER_DATA_MODE'), ...
-               fliplr([a_bbpProfIdList(idProf)-1 idBbpParam-1]), fliplr([1 1]), 'A');
-         end
-      end
-
-      parameter = get_data_from_name('PARAMETER', ncProfData);
-      sciCalibEquation = get_data_from_name('SCIENTIFIC_CALIB_EQUATION', ncProfData);
-      sciCalibCoefficient = get_data_from_name('SCIENTIFIC_CALIB_COEFFICIENT', ncProfData);
-      sciCalibComment = get_data_from_name('SCIENTIFIC_CALIB_COMMENT', ncProfData);
-      sciCalibDate = get_data_from_name('SCIENTIFIC_CALIB_DATE', ncProfData);
-
-      [~, nParam, nCalib, nProf] = size(parameter);
-      for idProf = 1:nProf
-         if (~isempty(a_bbpAdjInfo{idProf, 1}))
-
-            % look for N_PARAM associated to BBP700
-            idParam = -1;
-            for idP = 1:nParam
-               if (strcmp(deblank(parameter(:, idP, 1, idProf)'), 'BBP700'))
-                  idParam = idP;
-                  break
-               end
-            end
-            if (idParam == -1)
-               fprintf('RTQC_ERROR: Parameter %s not found in PARAMETER variable - calibration information not updated in file: %s\n', ...
-                  'BBP700', fileName);
-               break
-            end
-
-            % look for a calibId to store the information
-            idCalib = -1;
-            for idC = 1:nCalib
-               if (isempty(deblank(sciCalibEquation(:, idParam, idC, idProf)')) && ...
-                     isempty(deblank(sciCalibCoefficient(:, idParam, idC, idProf)')) && ...
-                     isempty(deblank(sciCalibComment(:, idParam, idC, idProf)')) && ...
-                     isempty(deblank(sciCalibDate(:, idParam, idC, idProf)')))
-                  idCalib = idC;
-               end
-            end
-            if (idCalib == -1)
-               % fprintf('RTQC_WARNING: %s calibration information replaced by new one in file: %s\n', ...
-               %    'BBP700', fileName);
-               idCalib = nCalib;
-            end
-
-            equation = 'BBP700_ADJUSTED = BBP700';
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_EQUATION'), ...
-               fliplr([idProf-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(equation)]), equation');
-            % fprintf('SCIENTIFIC_CALIB_EQUATION: %s\n', equation);
-
-            comment = sprintf('BBP700_ADJUSTED is being filled with BBP700 directly in real time. Adjustment method may be enhanced in the future. RTQC_APPLIED %s RTQC_FAILED %s', ...
-               a_bbpAdjInfo{idProf, 1}, a_bbpAdjInfo{idProf, 2});
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_COMMENT'), ...
-               fliplr([idProf-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(comment)]), comment');
-
-            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'SCIENTIFIC_CALIB_DATE'), ...
-               fliplr([idProf-1 idCalib-1 idParam-1 0]), fliplr([1 1 1 length(dateUpdate)]), dateUpdate');
-         end
-      end
-   end
-
-   % update history information
-   historyInstitution = get_data_from_name('HISTORY_INSTITUTION', ncProfData);
-   [~, ~, nHistory] = size(historyInstitution);
-   histoInstitution = 'IF';
-   histoStep = 'ARGQ';
-   histoSoftware = 'COQC';
-   histoSoftwareRelease = g_decArgo_addRtqcToProfileVersion;
-
-   for idHisto = 1:2
-      if (idHisto == 1)
-         histoAction = 'QCP$';
-      else
-         nHistory = nHistory + 1;
-         histoAction = 'QCF$';
-      end
-      for idProf = 1:length(profIdList)
+      for idHisto = 1:2
          if (idHisto == 1)
-            if (idFile == 1)
-               histoQcTest = a_testDoneCHex{profIdList(idProf)};
-            else
-               histoQcTest = a_testDoneBHex{profIdList(idProf)};
-            end
+            histoAction = 'QCP$';
          else
-            if (idFile == 1)
-               histoQcTest = a_testFailedCHex{profIdList(idProf)};
-            else
-               histoQcTest = a_testFailedBHex{profIdList(idProf)};
-            end
+            nHistory = nHistory + 1;
+            histoAction = 'QCF$';
          end
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
-            fliplr([nHistory profIdList(idProf)-1 0]), ...
-            fliplr([1 1 length(histoInstitution)]), histoInstitution');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_STEP'), ...
-            fliplr([nHistory profIdList(idProf)-1 0]), ...
-            fliplr([1 1 length(histoStep)]), histoStep');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
-            fliplr([nHistory profIdList(idProf)-1 0]), ...
-            fliplr([1 1 length(histoSoftware)]), histoSoftware');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
-            fliplr([nHistory profIdList(idProf)-1 0]), ...
-            fliplr([1 1 length(histoSoftwareRelease)]), histoSoftwareRelease');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
-            fliplr([nHistory profIdList(idProf)-1 0]), ...
-            fliplr([1 1 length(dateUpdate)]), dateUpdate');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_ACTION'), ...
-            fliplr([nHistory profIdList(idProf)-1 0]), ...
-            fliplr([1 1 length(histoAction)]), histoAction');
-         netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_QCTEST'), ...
-            fliplr([nHistory profIdList(idProf)-1 0]), ...
-            fliplr([1 1 length(histoQcTest)]), histoQcTest');
+         for idProf = 1:length(profIdList)
+            if (idHisto == 1)
+               if (idFile == 1)
+                  histoQcTest = a_testDoneCHex{profIdList(idProf)};
+               else
+                  histoQcTest = a_testDoneBHex{profIdList(idProf)};
+               end
+            else
+               if (idFile == 1)
+                  histoQcTest = a_testFailedCHex{profIdList(idProf)};
+               else
+                  histoQcTest = a_testFailedBHex{profIdList(idProf)};
+               end
+            end
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
+               fliplr([nHistory profIdList(idProf)-1 0]), ...
+               fliplr([1 1 length(histoInstitution)]), histoInstitution');
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_STEP'), ...
+               fliplr([nHistory profIdList(idProf)-1 0]), ...
+               fliplr([1 1 length(histoStep)]), histoStep');
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
+               fliplr([nHistory profIdList(idProf)-1 0]), ...
+               fliplr([1 1 length(histoSoftware)]), histoSoftware');
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
+               fliplr([nHistory profIdList(idProf)-1 0]), ...
+               fliplr([1 1 length(histoSoftwareRelease)]), histoSoftwareRelease');
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
+               fliplr([nHistory profIdList(idProf)-1 0]), ...
+               fliplr([1 1 length(dateUpdate)]), dateUpdate');
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_ACTION'), ...
+               fliplr([nHistory profIdList(idProf)-1 0]), ...
+               fliplr([1 1 length(histoAction)]), histoAction');
+            netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_QCTEST'), ...
+               fliplr([nHistory profIdList(idProf)-1 0]), ...
+               fliplr([1 1 length(histoQcTest)]), histoQcTest');
+         end
       end
-   end
 
-   netcdf.close(fCdf);
+      netcdf.close(fCdf);
+
+   catch MException
+      netcdf.close(fCdf);
+      rethrow(MException)
+   end
 end
 
 % update the multi profile file(s)
@@ -6502,139 +7029,147 @@ if (~isempty(a_cMultiFileName))
             return
          end
 
-         for idProf = 1:length(a_idProfM)
-            if (a_idProfM(idProf) ~= -1)
-               idProfM = a_idProfM(idProf);
+         try
 
-               % update misc data (JULD_QC and POSITION_QC), <PARAM>_QC and PROFILE_<PARAM>_QC values
-               for idParamQcM = 1:2:length(a_dataQcM)
-                  paramQcName = a_dataQcM{idParamQcM};
-                  if (var_is_present_dec_argo(fCdf, paramQcName))
+            for idProf = 1:length(a_idProfM)
+               if (a_idProfM(idProf) ~= -1)
+                  idProfM = a_idProfM(idProf);
 
-                     % <PARAM>_QC values
-                     dataQc = a_dataQcM{idParamQcM+1};
-                     if (strcmp(paramQcName, 'JULD_QC') || strcmp(paramQcName, 'POSITION_QC'))
-                        dataQc = dataQc(1, idProfM);
-                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), ...
-                           idProfM-1, 1, dataQc);
-                     else
-                        dataQc = dataQc(idProfM, :);
-                        if (size(dataQc, 2) > nLevels)
-                           dataQc = dataQc(:, 1:nLevels);
-                        end
-                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), ...
-                           fliplr([idProfM-1 0]), fliplr([1 length(dataQc)]), dataQc');
+                  % update misc data (JULD_QC and POSITION_QC), <PARAM>_QC and PROFILE_<PARAM>_QC values
+                  for idParamQcM = 1:2:length(a_dataQcM)
+                     paramQcName = a_dataQcM{idParamQcM};
+                     if (var_is_present_dec_argo(fCdf, paramQcName))
 
-                        % PROFILE_<PARAM>_QC values
-                        % the <PARAM>_ADJUSTED_QC values are after the <PARAM>_QC
-                        % values in the a_dataQc list. So, if <PARAM>_ADJUSTED_QC
-                        % values differ from FillValue, they will be used to
-                        % compute PROFILE_<PARAM>_QC values.
-                        profParamQcName = ['PROFILE_' paramQcName];
-                        if (var_is_present_dec_argo(fCdf, profParamQcName))
-                           % compute PROFILE_<PARAM>_QC from <PARAM>_QC values
-                           newProfParamQc = compute_profile_quality_flag(dataQc);
-                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), ...
-                              idProfM-1, 1, newProfParamQc);
+                        % <PARAM>_QC values
+                        dataQc = a_dataQcM{idParamQcM+1};
+                        if (strcmp(paramQcName, 'JULD_QC') || strcmp(paramQcName, 'POSITION_QC'))
+                           dataQc = dataQc(1, idProfM);
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), ...
+                              idProfM-1, 1, dataQc);
                         else
-                           if (~isempty(strfind(paramQcName, '_ADJUSTED_QC')))
-                              if ~((length(unique(dataQc)) == 1) && (unique(dataQc) == g_decArgo_qcStrDef))
-                                 profParamQcName = ['PROFILE_' regexprep(paramQcName, '_ADJUSTED', '')];
-                                 if (var_is_present_dec_argo(fCdf, profParamQcName))
-                                    % compute PROFILE_<PARAM>_QC from
-                                    % <PARAM>_ADJUSTED_QC values
-                                    newProfParamQc = compute_profile_quality_flag(dataQc);
-                                    netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), ...
-                                       idProfM-1, 1, newProfParamQc);
+                           dataQc = dataQc(idProfM, :);
+                           if (size(dataQc, 2) > nLevels)
+                              dataQc = dataQc(:, 1:nLevels);
+                           end
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramQcName), ...
+                              fliplr([idProfM-1 0]), fliplr([1 length(dataQc)]), dataQc');
+
+                           % PROFILE_<PARAM>_QC values
+                           % the <PARAM>_ADJUSTED_QC values are after the <PARAM>_QC
+                           % values in the a_dataQc list. So, if <PARAM>_ADJUSTED_QC
+                           % values differ from FillValue, they will be used to
+                           % compute PROFILE_<PARAM>_QC values.
+                           profParamQcName = ['PROFILE_' paramQcName];
+                           if (var_is_present_dec_argo(fCdf, profParamQcName))
+                              % compute PROFILE_<PARAM>_QC from <PARAM>_QC values
+                              newProfParamQc = compute_profile_quality_flag(dataQc);
+                              netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), ...
+                                 idProfM-1, 1, newProfParamQc);
+                           else
+                              if (~isempty(strfind(paramQcName, '_ADJUSTED_QC')))
+                                 if ~((length(unique(dataQc)) == 1) && (unique(dataQc) == g_decArgo_qcStrDef))
+                                    profParamQcName = ['PROFILE_' regexprep(paramQcName, '_ADJUSTED', '')];
+                                    if (var_is_present_dec_argo(fCdf, profParamQcName))
+                                       % compute PROFILE_<PARAM>_QC from
+                                       % <PARAM>_ADJUSTED_QC values
+                                       newProfParamQc = compute_profile_quality_flag(dataQc);
+                                       netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, profParamQcName), ...
+                                          idProfM-1, 1, newProfParamQc);
+                                    end
                                  end
                               end
                            end
                         end
                      end
                   end
-               end
 
-               % update misc data (JULD_LOCATION and LATITUDE, LONGITUDE)
-               for idParamM = 1:2:length(a_dataM)
-                  paramName = a_dataM{idParamM};
-                  if (var_is_present_dec_argo(fCdf, paramName))
+                  % update misc data (JULD_LOCATION and LATITUDE, LONGITUDE)
+                  for idParamM = 1:2:length(a_dataM)
+                     paramName = a_dataM{idParamM};
+                     if (var_is_present_dec_argo(fCdf, paramName))
 
-                     % <PARAM>_QC values
-                     data = a_dataM{idParamM+1};
-                     if (strcmp(paramName, 'JULD_LOCATION') || ...
-                           strcmp(paramName, 'LATITUDE') || ...
-                           strcmp(paramName, 'LONGITUDE'))
-                        data = data(1, idProfM);
-                        netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramName), ...
-                           idProfM-1, 1, data);
-                     end
-                  end
-               end
-
-               % update miscellaneous information
-
-               % upate date
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), dateUpdate);
-
-               % data state indicator
-               newDataStateIndicator = '2B';
-               netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_STATE_INDICATOR'), ...
-                  fliplr([idProfM-1 0]), fliplr([1 length(newDataStateIndicator)]), newDataStateIndicator');
-
-               % update history information
-               historyInstitution = get_data_from_name('HISTORY_INSTITUTION', ncProfData);
-               [~, ~, nHistory] = size(historyInstitution);
-               histoInstitution = 'IF';
-               histoStep = 'ARGQ';
-               histoSoftware = 'COQC';
-               histoSoftwareRelease = g_decArgo_addRtqcToProfileVersion;
-
-               for idHisto = 1:2
-                  if (idHisto == 1)
-                     histoAction = 'QCP$';
-                     if (idFile == 1)
-                        histoQcTest = a_testDoneCHex{profIdList(idProf)};
-                     else
-                        histoQcTest = a_testDoneBHex{profIdList(idProf)};
-                     end
-                  else
-                     nHistory = nHistory + 1;
-                     histoAction = 'QCF$';
-                     if (idFile == 1)
-                        histoQcTest = a_testFailedCHex{profIdList(idProf)};
-                     else
-                        histoQcTest = a_testFailedBHex{profIdList(idProf)};
+                        % <PARAM>_QC values
+                        data = a_dataM{idParamM+1};
+                        if (strcmp(paramName, 'JULD_LOCATION') || ...
+                              strcmp(paramName, 'LATITUDE') || ...
+                              strcmp(paramName, 'LONGITUDE'))
+                           data = data(1, idProfM);
+                           netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, paramName), ...
+                              idProfM-1, 1, data);
+                        end
                      end
                   end
 
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
-                     fliplr([nHistory idProfM-1 0]), ...
-                     fliplr([1 1 length(histoInstitution)]), histoInstitution');
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_STEP'), ...
-                     fliplr([nHistory idProfM-1 0]), ...
-                     fliplr([1 1 length(histoStep)]), histoStep');
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
-                     fliplr([nHistory idProfM-1 0]), ...
-                     fliplr([1 1 length(histoSoftware)]), histoSoftware');
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
-                     fliplr([nHistory idProfM-1 0]), ...
-                     fliplr([1 1 length(histoSoftwareRelease)]), histoSoftwareRelease');
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
-                     fliplr([nHistory idProfM-1 0]), ...
-                     fliplr([1 1 length(dateUpdate)]), dateUpdate');
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
-                     fliplr([nHistory idProfM-1 0]), ...
-                     fliplr([1 1 length(dateUpdate)]), dateUpdate');
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_ACTION'), ...
-                     fliplr([nHistory idProfM-1 0]), ...
-                     fliplr([1 1 length(histoAction)]), histoAction');
-                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_QCTEST'), ...
-                     fliplr([nHistory idProfM-1 0]), ...
-                     fliplr([1 1 length(histoQcTest)]), histoQcTest');
+                  % update miscellaneous information
+
+                  % upate date
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATE_UPDATE'), dateUpdate);
+
+                  % data state indicator
+                  newDataStateIndicator = '2B';
+                  netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'DATA_STATE_INDICATOR'), ...
+                     fliplr([idProfM-1 0]), fliplr([1 length(newDataStateIndicator)]), newDataStateIndicator');
+
+                  % update history information
+                  historyInstitution = get_data_from_name('HISTORY_INSTITUTION', ncProfData);
+                  [~, ~, nHistory] = size(historyInstitution);
+                  histoInstitution = histoInstitutionMeta;
+                  histoStep = 'ARGQ';
+                  histoSoftware = 'COQC';
+                  histoSoftwareRelease = g_decArgo_addRtqcToProfileVersion;
+
+                  for idHisto = 1:2
+                     if (idHisto == 1)
+                        histoAction = 'QCP$';
+                        if (idFile == 1)
+                           histoQcTest = a_testDoneCHex{profIdList(idProf)};
+                        else
+                           histoQcTest = a_testDoneBHex{profIdList(idProf)};
+                        end
+                     else
+                        nHistory = nHistory + 1;
+                        histoAction = 'QCF$';
+                        if (idFile == 1)
+                           histoQcTest = a_testFailedCHex{profIdList(idProf)};
+                        else
+                           histoQcTest = a_testFailedBHex{profIdList(idProf)};
+                        end
+                     end
+
+                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_INSTITUTION'), ...
+                        fliplr([nHistory idProfM-1 0]), ...
+                        fliplr([1 1 length(histoInstitution)]), histoInstitution');
+                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_STEP'), ...
+                        fliplr([nHistory idProfM-1 0]), ...
+                        fliplr([1 1 length(histoStep)]), histoStep');
+                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE'), ...
+                        fliplr([nHistory idProfM-1 0]), ...
+                        fliplr([1 1 length(histoSoftware)]), histoSoftware');
+                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_SOFTWARE_RELEASE'), ...
+                        fliplr([nHistory idProfM-1 0]), ...
+                        fliplr([1 1 length(histoSoftwareRelease)]), histoSoftwareRelease');
+                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
+                        fliplr([nHistory idProfM-1 0]), ...
+                        fliplr([1 1 length(dateUpdate)]), dateUpdate');
+                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_DATE'), ...
+                        fliplr([nHistory idProfM-1 0]), ...
+                        fliplr([1 1 length(dateUpdate)]), dateUpdate');
+                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_ACTION'), ...
+                        fliplr([nHistory idProfM-1 0]), ...
+                        fliplr([1 1 length(histoAction)]), histoAction');
+                     netcdf.putVar(fCdf, netcdf.inqVarID(fCdf, 'HISTORY_QCTEST'), ...
+                        fliplr([nHistory idProfM-1 0]), ...
+                        fliplr([1 1 length(histoQcTest)]), histoQcTest');
+                  end
                end
             end
+            
+            netcdf.close(fCdf);
+
+         catch MException
+            netcdf.close(fCdf);
+            rethrow(MException)
          end
-         netcdf.close(fCdf);
       end
    end
 end
@@ -6659,7 +7194,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/21/2015 - RNU - creation
@@ -6700,7 +7235,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/04/2022 - RNU - creation
@@ -6745,7 +7280,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/13/2020 - RNU - creation
@@ -6865,7 +7400,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/15/2020 - RNU - creation
@@ -6978,7 +7513,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/15/2020 - RNU - creation
@@ -7097,7 +7632,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/16/2020 - RNU - creation
@@ -7121,6 +7656,12 @@ o_psalCtdDataFillValue = '';
 
 % retrieve the primary profile Id
 idPrimary = find(strncmp(a_vssList, 'Primary sampling:', length('Primary sampling:')) == 1);
+
+if (length(idPrimary) > 1)
+   fprintf('RTQC_ERROR: Float #%d: %d primary profiles in the file - only the first one is used\n', ...
+      a_floatNum, length(idPrimary));
+   idPrimary = idPrimary(1);
+end
 
 % retrieve PRES CTD data
 profPresPrimaryCtd = [];
@@ -7289,7 +7830,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   01/19/2024 - RNU - creation
@@ -7313,6 +7854,9 @@ if (~isempty(a_profIdList))
    presNameList = [ ...
       {'PRES'}; ...
       {'PRES2'}; ...
+      {'PRES_2'}; ...
+      {'PRES3'}; ...
+      {'PRES_3'}; ...
       ];
 
    for idPres = 1:length(presNameList)

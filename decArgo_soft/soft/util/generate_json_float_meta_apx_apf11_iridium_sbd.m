@@ -12,7 +12,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/27/2018 - RNU - creation
@@ -37,6 +37,9 @@ CALIB_FILE_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\_CalibCoef\cali
 
 % directory of configuration files at launch
 CONFIG_DIR_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\_ConfigAtLaunch\';
+
+% directory of RAMSES calibration files
+RAMSES_CALIB_DIR_NAME = 'C:\Users\jprannou\_RNU\DecApx_info\APEX_APF11\_ramses_calibration_file\';
 
 % directory of individual json float meta-data files
 OUTPUT_DIR_NAME = ['C:\Users\jprannou\_RNU\DecArgo_soft\work\generate_json_float_meta_' datestr(now, 'yyyymmddTHHMMSS')];
@@ -66,6 +69,7 @@ generate_json_float_meta_apx_apf11_iridium_(...
    FLOAT_LIST_FILE_NAME, ...
    CALIB_FILE_NAME, ...
    CONFIG_DIR_NAME, ...
+   RAMSES_CALIB_DIR_NAME, ...
    OUTPUT_DIR_NAME, ...
    DIR_CSV_FILE, ...
    rudicsFlag, ...

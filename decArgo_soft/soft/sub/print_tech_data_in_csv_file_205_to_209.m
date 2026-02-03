@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   03/11/2015 - RNU - creation
@@ -158,7 +158,7 @@ elseif (size(a_tabTech, 1) == 1)
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; "Subsurface" meas PRES; %d; => %.1f; dbar\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 41), sensor_2_value_for_pressure_204_to_209_219_220(a_tabTech(id, 41)));
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; "Subsurface" meas TEMP; %d; => %.3f; degC\n', ...
-         g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 42), sensor_2_value_for_temp_204_to_214_217_219_220_222_to_226(a_tabTech(id, 42)));
+         g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 42), sensor_2_value_for_temp_2xx_4_to_14_17_19_20_22_to_27_31_32(a_tabTech(id, 42)));
       fprintf(g_decArgo_outputCsvFileId, '%d; %d; Tech; "Subsurface" meas PSAL; %d; => %.3f; PSU\n', ...
          g_decArgo_floatNum, g_decArgo_cycleNum, a_tabTech(id, 43), a_tabTech(id, 43)/1000);
    end

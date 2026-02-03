@@ -27,6 +27,7 @@ TECH_PARAM_DEC_ID;TECH_PARAM_MSG_ID;TECH_PARAM_MSG_LABEL;TECH_PARAM_NAME;TECH_PA
 1020;-1;Number of active-ballast adjustments made during the park phase;NUMBER_RepositionsDuringPark_COUNT;number of times the float readjusts its buoyancy during park phase - using either the pump or EV
 1021;-1;The ice evasion record for the most recent 8 profiles. The most recent profile is in the position of the least significant bit. Asserted bits indicate profiles where the ice-detection algorithm terminated true.;FLAG_IceDetected_bit;aborted profile count - increments by one for each profile interrupted by ice detection. If units are 'bit' then represents the ice evasion record for the last 8 profiles with the latest profile in the least significant bit.
 1022;-1;Number of mixed-layer samples taken;NUMBER_MixedLayerSamples_COUNT;number of CTD samples taken in the mixed layer
+1030;-1;;TEMP_MixedLayerMedian_degC;median of the mixed layer samples taken
 1023;-1;The infimum of the mixed-layer median temperature since the last successful telemetry;TEMP_MixedLayerInfimum_degC;infimum of the mixed-layer median temperature since the last successful telemetry
 1024;-1;Number of hourly park-level PT samples;NUMBER_ParkSamples_COUNT;number of samples collected during park phase
 1025;-1;Number of descent pressure marks;NUMBER_PRESSamplesDuringDescentToPark_COUNT;number of pressure samples collected as the float descends from the Shallow to the park pressure.

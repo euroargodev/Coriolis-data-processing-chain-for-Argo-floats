@@ -11,7 +11,7 @@
 % INPUT PARAMETERS :
 %   a_tPhaseDoxy : TPHASE_DOXY sensor measurements
 %   a_pres       : pressure in dbar
-%   a_temp       : temperature measurement values in °C (from the optode if
+%   a_temp       : temperature measurement values in Â°C (from the optode if
 %                  available, from the CTD otherwise)
 %   a_tabCoef    : calibration coefficients
 %                  For the Aanderaa standard calibration method:

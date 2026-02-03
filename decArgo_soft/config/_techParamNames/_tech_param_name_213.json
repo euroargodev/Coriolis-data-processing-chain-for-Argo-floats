@@ -718,5 +718,13 @@
       "TECH_PARAM_MSG_LABEL" : "Number of parameter packets received",
       "TECH_PARAM_NAME" : "TECH_AUX_NUMBER_ParameterMessageReceived_COUNT",
       "TECH_PARAM_DESCRIPTION" : "Number of times parameter message has been received."
+   },
+   "TECH_PARAM_91" :
+   {
+      "TECH_PARAM_DEC_ID" : "1010",
+      "TECH_PARAM_MSG_ID" : "-1",
+      "TECH_PARAM_MSG_LABEL" : "Offset de pression (quand erreur de resetoffset)",
+      "TECH_PARAM_NAME" : "TECH_AUX_PRES_OffsetNotSampledAtSurface_dbar",
+      "TECH_PARAM_DESCRIPTION" : "Pressure offset not necessarily sampled at the surface but originally used to correct PRES data provided by the float (copy of PRES_SurfaceOffsetCorrectedNotResetNegative_1cBarResolution_dbar in case of erroneous resetoffset)."
    }
 }

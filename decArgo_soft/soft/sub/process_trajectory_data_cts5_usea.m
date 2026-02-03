@@ -17,7 +17,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -59,7 +59,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation
@@ -108,7 +108,7 @@ global g_MC_AscProfDeepestBin;
 global g_MC_SpyInAscProf;
 global g_MC_AscProf;
 global g_MC_LastAscPumpedCtd;
-global g_MC_IceAscentAbortNum;
+global g_MC_IceAscentAbort;
 global g_MC_AET;
 global g_MC_SpyAtSurface;
 global g_MC_TST;
@@ -1182,7 +1182,7 @@ for idCyc = 1:length(cycleNumList)
          end
       end
 
-      % last pumped CTD measurement or ice abort JULD and PRES
+      % last pumped CTD measurement
       idPackData  = find( ...
          (a_tabTrajIndex(:, 1) == g_MC_LastAscPumpedCtd) & ...
          (a_tabTrajIndex(:, 2) == cycleNum) & ...
@@ -1199,17 +1199,6 @@ for idCyc = 1:length(cycleNumList)
                paramPsal = get_netcdf_param_attributes('PSAL');
                measStruct.paramList = [paramPres paramTemp paramPsal];
                measStruct.paramData = single([data.pres data.temp data.psal]);
-            else
-               paramName = cell2mat(data);
-               paramName = {paramName.paramName};
-               % time should be missing (information reported in Events only)
-               [measStruct, ~] = create_one_meas_float_time_bis(g_MC_IceAscentAbortNum, ...
-                  data{find(strcmp(paramName, 'JULD'), 1)}.value, ...
-                  data{find(strcmp(paramName, 'JULD'), 1)}.valueAdj, ...
-                  g_JULD_STATUS_2);
-               paramPres = get_netcdf_param_attributes('PRES');
-               measStruct.paramList = paramPres;
-               measStruct.paramData = single(data{find(strcmp(paramName, 'PRES'), 1)}.value);
             end
             measStruct.cyclePhase = g_decArgo_phaseSatTrans;
             measStruct.sensorNumber = 0;
@@ -1492,7 +1481,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   09/22/2020 - RNU - creation

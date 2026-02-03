@@ -29,7 +29,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/16/2018 - RNU - creation
@@ -132,16 +132,6 @@ global g_decArgo_rsyncLogFileUsedList;
 % array to store Iridium mail contents
 global g_decArgo_iridiumMailData;
 
-% list of cycle numbers and ice detection flag
-global g_decArgo_cycleNumListForIce;
-global g_decArgo_cycleNumListIceDetected;
-g_decArgo_cycleNumListForIce = [];
-g_decArgo_cycleNumListIceDetected = [];
-
-% ice float flag
-global g_decArgo_iceFloat;
-g_decArgo_iceFloat = 0;
-
 % TRAJ 3.2 file generation flag
 global g_decArgo_generateNcTraj32;
 
@@ -238,7 +228,7 @@ end
 % create list of mail files to decode
 realtimeFlagTmp = g_decArgo_realtimeFlag;
 g_decArgo_realtimeFlag = 0;
-[cycleFileNameList, ~] = get_float_cycle_list(a_floatNum, num2str(a_floatImei), a_floatLaunchDate, a_decoderId);
+[cycleFileNameList, ~] = get_float_cycle_list(a_floatNum, num2str(a_floatImei), a_floatLaunchDate, a_floatEndDate, a_decoderId);
 g_decArgo_realtimeFlag = realtimeFlagTmp;
 
 % store mail file information and extract attachment
@@ -380,16 +370,15 @@ for idCy = 1:length(cycleList)
          profFlbb, profFlbbCfg, profFlbbCd, profFlbbCdCfg, profOcr504I, ...
          profRamses, ...
          grounding, iceDetection, buoyancy, cycleTimeData, g_decArgo_presOffsetData);
-      
+
       % compute derived parameters
-      [profDo, ...
-         profCtdPtsh, profCtdCpH, profFlbb, profFlbbCd, profRafos] = ...
+      [profDo, profCtdPtsh, profCtdCpH, profFlbb, profFlbbCd, profRamses, profRafos] = ...
          compute_derived_parameters_apx_apf11_ir( ...
          profCtdPts, profCtdCp, profDo, ...
-         profCtdPtsh, profCtdCpH, profFlbb, profFlbbCd, ...
+         profCtdPtsh, profCtdCpH, profFlbb, profFlbbCd, profRamses, ...
          profRafos, ...
          cycleTimeData, a_decoderId);
-      
+
       % apply clock offset adjustment
       [profCtdP, profCtdPt, profCtdPts, profCtdPtsh, profDo, ...
          profCtdCp, profCtdCpH, ...
@@ -545,7 +534,7 @@ for idCy = 1:length(cycleList)
          
          % create time series of technical data
          [tabTechNMeas, tabTechAuxNMeas] = create_technical_time_series_apx_apf11_ir( ...
-            vitalsData, cycleTimeData, iceDetection, g_decArgo_cycleNum);
+            vitalsData, cycleTimeData, g_decArgo_cycleNum);
          
          if (~isempty(tabTechNMeas))
             o_tabTechNMeas = [o_tabTechNMeas; tabTechNMeas];

@@ -1,5 +1,5 @@
 % ------------------------------------------------------------------------------
-% Initialisation des valeurs par défaut des variables courantes.
+% Initialisation des valeurs par dÃ©faut des variables courantes.
 %
 % SYNTAX :
 %   init_valdef
@@ -11,7 +11,7 @@
 % EXAMPLES :
 %
 % SEE ALSO : 
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   29/08/2007 - RNU - creation
@@ -79,14 +79,14 @@ g_satNameDef = '9';
 g_dateGregStr = '9999/99/99 99:99:99';
 g_profNumDef = -1;
 
-% valeurs par défaut du format DEP2
+% valeurs par dÃ©faut du format DEP2
 g_clockDriftFlagDef = 9;
 
-% valeurs par défaut du format TRAJ
+% valeurs par dÃ©faut du format TRAJ
 g_cycleNumTrajDef = 99999;
 g_clockOffsetTrajDef = 999999.0;
 
-% valeurs par défaut du format YoMaHa
+% valeurs par dÃ©faut du format YoMaHa
 g_yoLonDef = -999.9999;
 g_yoLatDef = -99.9999;
 g_yoPresDef = -999.9;
@@ -97,7 +97,7 @@ g_yoUVDef = -999.99;
 g_yoDeepUVErrDef = -999.99;
 g_yoProfNumDef = -99;
 
-% valeurs par défaut des fichiers Argos bruts au format Aoml
+% valeurs par dÃ©faut des fichiers Argos bruts au format Aoml
 g_argosLonDef = 999.999;
 g_argosLatDef = 99.999;
 

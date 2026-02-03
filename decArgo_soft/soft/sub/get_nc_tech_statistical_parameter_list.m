@@ -13,7 +13,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   08/04/2013 - RNU - creation
@@ -41,27 +41,33 @@ switch (a_decoderId)
    case {210, 211, 213}
       o_statNcTechParamList = 1001:1009;
       
-   case {212, 222, 214, 217, 223, 224, 225, 226}
+   case {212, 222, 214, 217, 223, 224, 225, 226, 227, 231, 232}
       o_statNcTechParamList = 1001:1010;
       
    case {215, 216}
       o_statNcTechParamList = 1001:1009;
       
-   case {218, 221}
+   case {218, 221, 230}
       o_statNcTechParamList = [1001:1009 1016];
       
    case {219, 220}
       o_statNcTechParamList = 1000;
 
+   case {228, 229}
+      o_statNcTechParamList = 1001:1009;
+
+   case {401, 402}
+      o_statNcTechParamList = 1000:1003;
+
    case {1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, ...
          1012, 1013, 1014, 1015, 1016, 1021, 1022}
       o_statNcTechParamList = 10:19;
       
-   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, ...
+   case {1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112, 1113, 1114, 1115, ...
          1201, ...
          1314, ...
          1321, 1322, 1323, ...
-         1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130}
+         1121, 1122, 1123, 1124, 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132}
       % none
       
    case {2001, 2002, 2003}

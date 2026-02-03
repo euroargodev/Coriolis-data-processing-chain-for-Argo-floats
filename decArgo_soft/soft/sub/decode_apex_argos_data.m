@@ -31,7 +31,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2015 - RNU - creation
@@ -91,6 +91,10 @@ g_decArgo_presOffsetData = get_apx_pres_offset_init_struct;
 
 % array to store surface data of Argos floats
 global g_decArgo_floatSurfData;
+
+% to store ICE data used to simulate ICE algorithm
+global g_decArgo_iceData;
+g_decArgo_iceData = [];
 
 % TRAJ 3.2 file generation flag
 global g_decArgo_generateNcTraj32;
@@ -237,8 +241,11 @@ for idCy = 1:length(a_cycleList)
       
       % update surface times in the float surface data structure
       g_decArgo_floatSurfData = update_surf_data(g_decArgo_floatSurfData, g_decArgo_timeData, cycleNum);
-      
+
       if (~isempty(g_decArgo_outputCsvFileId))
+
+         % store ICE information
+         store_ice_information_apf9_argos(miscInfo, profData, profNstData, surfData);
          
          % output CSV file
          
@@ -393,6 +400,12 @@ if (isempty(g_decArgo_outputCsvFileId))
       [o_tabTrajNMeas, o_tabTrajNCycle] = report_rt_adjusted_profile_data_in_trajectory( ...
          o_tabTrajNMeas, o_tabTrajNCycle, o_tabProfiles);
    end
+   
+else
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % check consistency between ICE algorithm and float behaviour
+   check_ice_algorithm_apf9_argos;
    
 end
 

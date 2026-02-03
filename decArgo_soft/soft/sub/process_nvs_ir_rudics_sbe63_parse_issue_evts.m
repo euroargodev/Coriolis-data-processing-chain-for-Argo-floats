@@ -14,7 +14,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   07/10/2017 - RNU - creation
@@ -61,8 +61,8 @@ if (~isempty(data))
    
    % create the parameters
    paramJuld = get_netcdf_param_attributes('JULD');
-   paramPhaseDelayDoxy = get_netcdf_param_attributes('PHASE_DELAY_DOXY2');
-   paramTempDoxy2 = get_netcdf_param_attributes('TEMP_DOXY2');
+   paramPhaseDelayDoxy = get_netcdf_param_attributes('PHASE_DELAY_DOXY_2');
+   paramTempDoxy2 = get_netcdf_param_attributes('TEMP_DOXY_2');
    
    % store surface data
    o_sbe63ParseIssueData = get_apx_profile_data_init_struct;

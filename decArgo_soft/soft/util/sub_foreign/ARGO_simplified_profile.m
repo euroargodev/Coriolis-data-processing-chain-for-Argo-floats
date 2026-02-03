@@ -52,6 +52,9 @@ function synthfull=ARGO_simplified_profile(varargin)
 % 11.01.2024, PRES may be non-monotonic with revised pressure increasing
 %             test 08 - remove internal pressure inversion test and prepare
 %             code for repeated pressures: aggregate with nanmean
+% 12.05.2025, allow multiple occurences of the same sensor type in the
+%             launch configuration's list of VerticalPressureOffset_dbar in
+%             the meta file, e.g., DOXY as well as DOXY2 or DOXY_2
 
 % output CSV file information
 global g_cocs_fidCsvFile;
@@ -146,7 +149,7 @@ else
        message = 'No corresponding core file found. Create empty s-profile.';
        [~, fileName, fileExt] = fileparts(bfilepath);
        g_cocs_inputFile  = [fileName fileExt];
-       if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+       if ~isempty(g_cocs_fidCsvFile) && g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
           fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
              g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
        end
@@ -162,7 +165,7 @@ if isfield(S,'empty') && bgcfloatflag
        message = 'No corresponding bio file found. Use only the core file.';
        [~, fileName, fileExt] = fileparts(cfilepath);
        g_cocs_inputFile  = [fileName fileExt];
-       if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+       if ~isempty(g_cocs_fidCsvFile) && g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
           fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
              g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
        end
@@ -191,7 +194,7 @@ catch me
           strjoin(C.PARAMETER.dimname,' '));
        [~, fileName, fileExt] = fileparts(cfilepath);
        g_cocs_inputFile  = [fileName fileExt];
-       if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+       if ~isempty(g_cocs_fidCsvFile) && g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
           fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
              g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
        end
@@ -216,7 +219,7 @@ catch me
           strjoin(C.PARAMETER.dimname,' '));
        [~, fileName, fileExt] = fileparts(cfilepath);
        g_cocs_inputFile  = [fileName fileExt];
-       if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+       if ~isempty(g_cocs_fidCsvFile) && g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
           fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
              g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
        end
@@ -247,7 +250,7 @@ catch me
           strjoin(S.PARAMETER.dimname,' '));
        [~, fileName, fileExt] = fileparts(bfilepath);
        g_cocs_inputFile  = [fileName fileExt];
-       if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+       if ~isempty(g_cocs_fidCsvFile) && g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
           fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
              g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
        end
@@ -271,7 +274,7 @@ catch me
        message = sprintf('Could not figure out N_DIMs order of bio file STATION_PARAMETERS field with dimensions: %s.', strjoin(S.PARAMETER.dimname,' '));
        [~, fileName, fileExt] = fileparts(bfilepath);
        g_cocs_inputFile  = [fileName fileExt];
-       if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+       if ~isempty(g_cocs_fidCsvFile) && g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
           fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
              g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
        end
@@ -364,7 +367,7 @@ if any(size(S.PRES.value)~=size(S.PRES_QC.value))
        message = 'PRES (bio) and PRES_QC (core) dimensions don''t match. Create synthetic profile only with available core data.';
        [~, fileName, fileExt] = fileparts(bfilepath);
        g_cocs_inputFile  = [fileName fileExt];
-       if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+       if ~isempty(g_cocs_fidCsvFile) && g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
           fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
              g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
        end
@@ -402,7 +405,7 @@ if any(pinversion(:))
          num2str(sum(pinversion(:))));
       [~, fileName, fileExt] = fileparts(cfilepath);
       g_cocs_inputFile  = [fileName fileExt];
-      if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+      if ~isempty(g_cocs_fidCsvFile) && g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
          fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
             g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
       end
@@ -431,7 +434,7 @@ if any(pinversion(:))
           num2str(pnum));
        [~, fileName, fileExt] = fileparts(cfilepath);
        g_cocs_inputFile  = [fileName fileExt];
-       if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+       if ~isempty(g_cocs_fidCsvFile) && g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
           fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
              g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
        end
@@ -490,7 +493,7 @@ catch me
       message = 'File not found.';
       [~, fileName, fileExt] = fileparts(metafilepath);
       g_cocs_inputFile  = [fileName fileExt];
-      if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+      if ~isempty(g_cocs_fidCsvFile) && g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
          fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
             g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
       end
@@ -506,7 +509,7 @@ if isempty(C)
       msgType = 'error';
       message = 'File not found.';
       g_cocs_inputFile  = [strtrim(S.PLATFORM_NUMBER.value(1,:)) '_meta.nc'];
-      if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+      if ~isempty(g_cocs_fidCsvFile) && g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
          fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
             g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
       end
@@ -550,7 +553,6 @@ if isfield(C,'LAUNCH_CONFIG_PARAMETER_NAME') % pre-v3.1 meta files might not hav
     % find occurences of search parameter
     cnames={'VerticalPressureOffset_dbar'};
     ind=find(~cellfun(@isempty,strfind(cellstr(lower(names)),lower(cnames{1})))); % ignore upper/lower case
-    
     if any(ind)
         if (verbose>1)
            disp(['S-PROF_INFO: File ' metafilestr '.nc: Found ' num2str(length(ind)) ' VerticalOffsets'])
@@ -561,13 +563,17 @@ if isfield(C,'LAUNCH_CONFIG_PARAMETER_NAME') % pre-v3.1 meta files might not hav
               num2str(length(ind)));
            [~, fileName, fileExt] = fileparts(metafilestr);
            g_cocs_inputFile  = [fileName fileExt];
-           if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+           if ~isempty(g_cocs_fidCsvFile) && g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
               fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
                  g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
            end
         end
         % get short sensor names and vertical offsets
-        cpnames=strrep(strrep(cellstr(lower(names(ind,:))),lower(cnames{1}),''),lower('CONFIG_'),'');
+        cpnamesfull=strrep(strrep(cellstr(lower(names(ind,:))),lower(cnames{1}),''),lower('CONFIG_'),'');
+        % allow multiple sensors of the same parameter to occur (i.e., treat Optode2 or Optode_2 like Optode)
+        cpnames=regexp(cpnamesfull,'_?\d*','split','forceCellOutput');
+        cpnames=cellfun(@(x)x{1},cpnames,'uniform',0);
+        cpnumbers=regexp(cpnamesfull,'_?\d*','match');
         voffset=values(ind);
         try % get corresponding full-length sensor name: index to param_sensors / sensors
             sensorind=cellfun(@(x)find(~cellfun(@isempty,strfind(lower(sensors),lower(x)))),cpnames);
@@ -580,7 +586,7 @@ if isfield(C,'LAUNCH_CONFIG_PARAMETER_NAME') % pre-v3.1 meta files might not hav
               message = sprintf('Could not identify some short sensor name in meta file %s.', strjoin(cpnames,' '));
               [~, fileName, fileExt] = fileparts(bfilepath);
               g_cocs_inputFile  = [fileName fileExt];
-              if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+              if ~isempty(g_cocs_fidCsvFile) && g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
                  fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
                     g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
               end
@@ -591,7 +597,9 @@ if isfield(C,'LAUNCH_CONFIG_PARAMETER_NAME') % pre-v3.1 meta files might not hav
         linvoffset=zeros(size(linbgcparams));
         C.PARAMETER.value=cellstr(C.PARAMETER.value); % make cellstr
         for i=1:length(sensorind) % cycle all vertical offsets
-            snames=param_sensors{sensorind(i)}; % associated param_sensor long names
+            %snames=param_sensors{sensorind(i)}; % associated param_sensor long names
+            % allow multiple sensors of the same parameter to occur (i.e., treat Optode2 or Optode_2 like Optode)
+            snames=[param_sensors{sensorind(i)} char(cpnumbers{i})]; % associated param_sensor long names, incl. numerical extension if present
             if iscell(snames) % sensor has multiple param_sensor names
                 pind=false(length(C.PARAMETER.value),1);
                 for k=1:length(snames) % find occurence of param_sensor name in meta file
@@ -602,8 +610,6 @@ if isfield(C,'LAUNCH_CONFIG_PARAMETER_NAME') % pre-v3.1 meta files might not hav
                 %pind=~cellfun(@isempty,regexp(cellstr(C.PARAMETER_SENSOR.value),['^' strrep(snames,'<nnn>','[0-9][0-9][0-9]') '$*'])); % include secondary sensors..
                 pind=~cellfun(@isempty,regexp(cellstr(C.PARAMETER_SENSOR.value),['^' strrep(snames,'<nnn>','[0-9][0-9][0-9]') '$'])); % exclude secondary sensors
             end % multiple or single param_sensor name
-            %% does ignore second sensors, e.g., DOXY and DOXY2 !!!
-            %% 
             if ~any(pind)
                 %disp(['S-PROF_WARNING: File ' metafilestr '.nc: Could not identify parameter with sensor name(s) ' strjoin(cellstr(snames),', ')])
                 %disp(['S-PROF_WARNING: File ' metafilestr '.nc: Skipping vertical offset of ' num2str(voffset(i)) ' dbar for ' strjoin(cellstr(snames),', ')])
@@ -619,7 +625,7 @@ if isfield(C,'LAUNCH_CONFIG_PARAMETER_NAME') % pre-v3.1 meta files might not hav
                       strjoin(cellstr(snames),' '), num2str(voffset(i)));
                    [~, fileName, fileExt] = fileparts(bfilepath);
                    g_cocs_inputFile  = [fileName fileExt];
-                   if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+                   if g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
                       fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
                          g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
                    end
@@ -652,7 +658,7 @@ if isfield(C,'LAUNCH_CONFIG_PARAMETER_NAME') % pre-v3.1 meta files might not hav
            message = 'Found no VerticalOffsets in meta file.';
            [~, fileName, fileExt] = fileparts(bfilepath);
            g_cocs_inputFile  = [fileName fileExt];
-           if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+           if g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
               fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
                  g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
            end
@@ -670,7 +676,7 @@ else
          C.FORMAT_VERSION.value);
       [~, fileName, fileExt] = fileparts(bfilepath);
       g_cocs_inputFile  = [fileName fileExt];
-      if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+      if g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
          fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
             g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
       end
@@ -699,7 +705,7 @@ if isempty(upres)
             message = 'Found no b-parameters. Create synthetic profile only with available core data.';
             [~, fileName, fileExt] = fileparts(bfilepath);
             g_cocs_inputFile  = [fileName fileExt];
-            if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+            if g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
                fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
                   g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
             end
@@ -712,7 +718,7 @@ if isempty(upres)
                strjoin(ubgcparams,' '));
             [~, fileName, fileExt] = fileparts(bfilepath);
             g_cocs_inputFile  = [fileName fileExt];
-            if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+            if g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
                fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
                   g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
             end
@@ -737,7 +743,7 @@ if ~any(prespresent(:)) % may not be needed; redundant
           strjoin(ubgcparams,' '));
        [~, fileName, fileExt] = fileparts(bfilepath);
        g_cocs_inputFile  = [fileName fileExt];
-       if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+       if g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
           fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
              g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
        end
@@ -793,7 +799,7 @@ while ~isempty(i)
                message = 'Trouble during creation of synthetic pressure axis. Create synthetic profile only with available core data.';
                [~, fileName, fileExt] = fileparts(bfilepath);
                g_cocs_inputFile  = [fileName fileExt];
-               if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+               if g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
                   fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
                      g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
                end
@@ -820,7 +826,7 @@ while ~isempty(i)
           message = 'Exceeded maximum number of iterations in selection of synthetic pressure levels. Should not happen... Create synthetic profile only with available core data.';
           [~, fileName, fileExt] = fileparts(bfilepath);
           g_cocs_inputFile  = [fileName fileExt];
-          if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+          if g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
              fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
                 g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
           end
@@ -863,7 +869,7 @@ else % pre-v3.1 meta file
           C.FORMAT_VERSION.value);
        [~, fileName, fileExt] = fileparts(bfilepath);
        g_cocs_inputFile  = [fileName fileExt];
-       if ~isempty(fopen(g_cocs_fidCsvFile)) % g_cocs_fidCsvFile points to a valid file identifier
+       if g_cocs_fidCsvFile>0 % g_cocs_fidCsvFile points to a valid file identifier
           fprintf(g_cocs_fidCsvFile, '%s,%s,%s,%s%s,%s,%s\n', ...
              g_cocs_dacName, msgType, g_cocs_floatWmoStr, g_cocs_cycleNumStr, g_cocs_cycleDir, message, g_cocs_inputFile);
        end

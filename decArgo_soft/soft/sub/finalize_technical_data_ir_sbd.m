@@ -15,7 +15,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/16/2017 - RNU - creation
@@ -27,47 +27,12 @@ function [o_tabNcTechIndex, o_tabNcTechVal] = finalize_technical_data_ir_sbd( ..
 o_tabNcTechIndex = a_tabNcTechIndex;
 o_tabNcTechVal = a_tabNcTechVal;
 
-% to detect ICE mode activation
-global g_decArgo_7TypePacketReceivedCyNum;
-
-% list of cycle numbers and ice detection flag
-global g_decArgo_cycleNumListForIce;
-global g_decArgo_cycleNumListIceDetected;
-
 % output NetCDF technical parameter Ids
 global g_decArgo_outputNcParamId;
 
 % sensor list
 global g_decArgo_sensorMountedOnFloat;
 
-
-% add ICE detected flag
-if (ismember(a_decoderId, [212, 222, 214, 217, 218, 221, 223, 224, 225, 226]))
-   if (~isempty(g_decArgo_7TypePacketReceivedCyNum))
-      
-      % ICE mode is activated
-      for idCy = 1:length(g_decArgo_cycleNumListForIce)
-         cycleNumber = g_decArgo_cycleNumListForIce(idCy);
-         iceDetectedBitValue = compute_ice_detected_bit_value(cycleNumber, ...
-            g_decArgo_cycleNumListForIce, g_decArgo_cycleNumListIceDetected);
-         
-         o_tabNcTechIndex = [o_tabNcTechIndex;
-            cycleNumber 243];
-         o_tabNcTechVal{end+1} = iceDetectedBitValue;
-      end
-   end
-elseif (ismember(a_decoderId, [216]))
-   % ICE mode is supposed to be activated
-   for idCy = 1:length(g_decArgo_cycleNumListForIce)
-      cycleNumber = g_decArgo_cycleNumListForIce(idCy);
-      iceDetectedBitValue = compute_ice_detected_bit_value(cycleNumber, ...
-         g_decArgo_cycleNumListForIce, g_decArgo_cycleNumListIceDetected);
-      
-      o_tabNcTechIndex = [o_tabNcTechIndex;
-         cycleNumber 233];
-      o_tabNcTechVal{end+1} = iceDetectedBitValue;
-   end
-end
 
 % remove TechId #129 from tecnical data if no Optode is mounted on the Arvor
 % Deep float

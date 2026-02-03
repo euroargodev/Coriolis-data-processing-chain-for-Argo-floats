@@ -3,20 +3,7 @@
 %
 % SYNTAX :
 %  print_dates_in_csv_file_212_214_217( ...
-%    a_cycleStartDate, ...
-%    a_descentToParkStartDate, ...
-%    a_firstStabDate, a_firstStabPres, ...
-%    a_descentToParkEndDate, ...
-%    a_descentToProfStartDate, ...
-%    a_descentToProfEndDate, ...
-%    a_ascentStartDate, ...
-%    a_ascentEndDate, ...
-%    a_transStartDate, ...
-%    a_gpsDate, ...
-%    a_firstGroundingDate, a_firstGroundingPres, ...
-%    a_secondGroundingDate, a_secondGroundingPres, ...
-%    a_eolStartDate, ...
-%    a_firstEmergencyAscentDate, a_firstEmergencyAscentPres, ...
+%    a_cycleTimeData, ...
 %    a_descProfDate, a_descProfPres, ...
 %    a_parkDate, a_parkPres, ...
 %    a_ascProfDate, a_ascProfPres, ...
@@ -25,62 +12,32 @@
 %    a_evAct, a_pumpAct)
 %
 % INPUT PARAMETERS :
-%   a_cycleStartDate           : cycle start date
-%   a_descentToParkStartDate   : descent to park start date
-%   a_firstStabDate            : first stabilisation date
-%   a_firstStabPres            : first stabilisation pressure
-%   a_descentToParkEndDate     : descent to park end date
-%   a_descentToProfStartDate   : descent to profile start date
-%   a_descentToProfEndDate     : descent to profile end date
-%   a_ascentStartDate          : ascent start date
-%   a_ascentEndDate            : ascent end date
-%   a_transStartDate           : transmission start date
-%   a_gpsDate                  : date associated to the GPS location
-%   a_firstGroundingDate       : first grounding date
-%   a_firstGroundingPres       : first grounding pressure
-%   a_secondGroundingDate      : second grounding date
-%   a_secondGroundingPres      : second grounding pressure
-%   a_eolStartDate             : EOL start date
-%   a_firstEmergencyAscentDate : first emergency ascent ascent date
-%   a_firstEmergencyAscentPres : first grounding pressure
-%   a_descProfDate             : descending profile dates
-%   a_descProfPres             : descending profile PRES
-%   a_parkDate                 : drift meas dates
-%   a_parkPres                 : drift meas PRES
-%   a_ascProfDate              : ascending profile dates
-%   a_ascProfPres              : ascending profile PRES
-%   a_nearSurfDate             : "near surface" profile dates
-%   a_nearSurfPres             : "near surface" profile PRES
-%   a_inAirDate                : "in air" profile dates
-%   a_inAirPres                : "in air" profile PRES
-%   a_evAct                    : decoded hydraulic (EV) data
-%   a_pumpAct                  : decoded hydraulic (pump) data
+%   a_cycleTimeData : cycle timings structure
+%   a_descProfDate  : descending profile dates
+%   a_descProfPres  : descending profile PRES
+%   a_parkDate      : drift meas dates
+%   a_parkPres      : drift meas PRES
+%   a_ascProfDate   : ascending profile dates
+%   a_ascProfPres   : ascending profile PRES
+%   a_nearSurfDate  : "near surface" profile dates
+%   a_nearSurfPres  : "near surface" profile PRES
+%   a_inAirDate     : "in air" profile dates
+%   a_inAirPres     : "in air" profile PRES
+%   a_evAct         : decoded hydraulic (EV) data
+%   a_pumpAct       : decoded hydraulic (pump) data
 %
 % OUTPUT PARAMETERS :
 %
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   10/16/2017 - RNU - creation
 % ------------------------------------------------------------------------------
 function print_dates_in_csv_file_212_214_217( ...
-   a_cycleStartDate, ...
-   a_descentToParkStartDate, ...
-   a_firstStabDate, a_firstStabPres, ...
-   a_descentToParkEndDate, ...
-   a_descentToProfStartDate, ...
-   a_descentToProfEndDate, ...
-   a_ascentStartDate, ...
-   a_ascentEndDate, ...
-   a_transStartDate, ...
-   a_gpsDate, ...
-   a_firstGroundingDate, a_firstGroundingPres, ...
-   a_secondGroundingDate, a_secondGroundingPres, ...
-   a_eolStartDate, ...
-   a_firstEmergencyAscentDate, a_firstEmergencyAscentPres, ...
+   a_cycleTimeData, ...
    a_descProfDate, a_descProfPres, ...
    a_parkDate, a_parkPres, ...
    a_ascProfDate, a_ascProfPres, ...
@@ -110,75 +67,75 @@ tabLabel = [];
 tabPres = [];
 
 % cycle timings
-if (~isempty(a_cycleStartDate))
-   tabDate(end+1) = a_cycleStartDate;
+if (~isempty(a_cycleTimeData.cycleStartDate))
+   tabDate(end+1) = a_cycleTimeData.cycleStartDate;
    tabLabel{end+1} = 'CYCLE_START_TIME';
    tabPres(end+1) = g_decArgo_presDef;
 end
-if (~isempty(a_descentToParkStartDate))
-   tabDate(end+1) = a_descentToParkStartDate;
+if (~isempty(a_cycleTimeData.descentToParkStartDate))
+   tabDate(end+1) = a_cycleTimeData.descentToParkStartDate;
    tabLabel{end+1} = 'DESCENT_TO_PARK_START_TIME';
    tabPres(end+1) = g_decArgo_presDef;
 end
-if (~isempty(a_firstStabDate))
-   tabDate(end+1) = a_firstStabDate;
+if (~isempty(a_cycleTimeData.firstStabDate))
+   tabDate(end+1) = a_cycleTimeData.firstStabDate;
    tabLabel{end+1} = 'FIRST_STABILIZATION_TIME';
-   tabPres(end+1) = a_firstStabPres;
+   tabPres(end+1) = a_cycleTimeData.firstStabPres;
 end
-if (~isempty(a_descentToParkEndDate))
-   tabDate(end+1) = a_descentToParkEndDate;
+if (~isempty(a_cycleTimeData.descentToParkEndDate))
+   tabDate(end+1) = a_cycleTimeData.descentToParkEndDate;
    tabLabel{end+1} = 'PARK_START_TIME';
    tabPres(end+1) = g_decArgo_presDef;
 end
-if (~isempty(a_descentToProfStartDate))
-   tabDate(end+1) = a_descentToProfStartDate;
+if (~isempty(a_cycleTimeData.descentToProfStartDate))
+   tabDate(end+1) = a_cycleTimeData.descentToProfStartDate;
    tabLabel{end+1} = 'PARK_END_TIME';
    tabPres(end+1) = g_decArgo_presDef;
 end
-if (~isempty(a_descentToProfEndDate))
-   tabDate(end+1) = a_descentToProfEndDate;
+if (~isempty(a_cycleTimeData.descentToProfEndDate))
+   tabDate(end+1) = a_cycleTimeData.descentToProfEndDate;
    tabLabel{end+1} = 'DEEP_PARK_START_TIME';
    tabPres(end+1) = g_decArgo_presDef;
 end
-if (~isempty(a_ascentStartDate))
-   tabDate(end+1) = a_ascentStartDate;
+if (~isempty(a_cycleTimeData.ascentStartDate))
+   tabDate(end+1) = a_cycleTimeData.ascentStartDate;
    tabLabel{end+1} = 'ASCENT_START_TIME';
    tabPres(end+1) = g_decArgo_presDef;
 end
-if (~isempty(a_ascentEndDate))
-   tabDate(end+1) = a_ascentEndDate;
+if (~isempty(a_cycleTimeData.ascentEndDate))
+   tabDate(end+1) = a_cycleTimeData.ascentEndDate;
    tabLabel{end+1} = 'ASCENT_END_TIME';
    tabPres(end+1) = g_decArgo_presDef;
 end
-if (~isempty(a_transStartDate))
-   tabDate(end+1) = a_transStartDate;
+if (~isempty(a_cycleTimeData.transStartDate))
+   tabDate(end+1) = a_cycleTimeData.transStartDate;
    tabLabel{end+1} = 'TRANSMISSION_START_TIME';
    tabPres(end+1) = g_decArgo_presDef;
 end
-if (~isempty(a_gpsDate))
-   tabDate(end+1) = a_gpsDate;
+if (~isempty(a_cycleTimeData.gpsDate))
+   tabDate(end+1) = a_cycleTimeData.gpsDate;
    tabLabel{end+1} = 'GPS_LOCATION_TIME';
    tabPres(end+1) = g_decArgo_presDef;
 end
-if (~isempty(a_firstGroundingDate))
-   tabDate(end+1) = a_firstGroundingDate;
-   tabLabel{end+1} = 'FIRST_GROUNDING_TIME';
-   tabPres(end+1) = a_firstGroundingPres;
-end
-if (~isempty(a_secondGroundingDate))
-   tabDate(end+1) = a_secondGroundingDate;
-   tabLabel{end+1} = 'SECOND_GROUNDING_TIME';
-   tabPres(end+1) = a_secondGroundingPres;
-end
-if (~isempty(a_eolStartDate))
-   tabDate(end+1) = a_eolStartDate;
+if (~isempty(a_cycleTimeData.eolStartDate))
+   tabDate(end+1) = a_cycleTimeData.eolStartDate;
    tabLabel{end+1} = 'EOL_START_TIME';
    tabPres(end+1) = g_decArgo_presDef;
 end
-if (~isempty(a_firstEmergencyAscentDate))
-   tabDate(end+1) = a_firstEmergencyAscentDate;
+if (~isempty(a_cycleTimeData.firstGroundingDate))
+   tabDate(end+1) = a_cycleTimeData.firstGroundingDate;
+   tabLabel{end+1} = 'FIRST_GROUNDING_TIME';
+   tabPres(end+1) = a_cycleTimeData.firstGroundingPres;
+end
+if (~isempty(a_cycleTimeData.secondGroundingDate))
+   tabDate(end+1) = a_cycleTimeData.secondGroundingDate;
+   tabLabel{end+1} = 'SECOND_GROUNDING_TIME';
+   tabPres(end+1) = a_cycleTimeData.secondGroundingPres;
+end
+if (~isempty(a_cycleTimeData.firstEmergencyAscentDate))
+   tabDate(end+1) = a_cycleTimeData.firstEmergencyAscentDate;
    tabLabel{end+1} = 'FIRST_EMERGENCY_ASCENT_TIME';
-   tabPres(end+1) = a_firstEmergencyAscentPres;
+   tabPres(end+1) = a_cycleTimeData.firstEmergencyAscentPres;
 end
 
 % CTD dated measurements

@@ -70,7 +70,7 @@
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   04/27/2023 - RNU - creation
@@ -239,10 +239,6 @@ if (~isempty(idNoDef))
       end
    end
 
-   % if (a_cyNum == 1)
-   %    a=1
-   % end
-
    % compute CHLA_ADJUSTED
    o_profChlaAdj = ones(size(a_profChla))*a_chlaDataFillValue;
    o_profChlaAdjQc = repmat(g_decArgo_qcStrDef, size(a_profChlaQc));
@@ -388,13 +384,34 @@ end
 % Calibration slope adjustment
 
 idNoDef = find(o_profChlaAdj ~= a_chlaDataAdjFillValue);
+physioRatio = nan;
 if (~isempty(idNoDef))
-   o_profChlaAdj(idNoDef) = o_profChlaAdj(idNoDef)/2;
 
-   % apply range test to CHLA_ADJUSTED
-   idToFlag = find((o_profChlaAdj(idNoDef) < -0.1) | (o_profChlaAdj(idNoDef) > 50));
-   if (~isempty(idToFlag))
-      o_profChlaAdjQc(idNoDef(idToFlag)) = set_qc(o_profChlaAdjQc(idNoDef(idToFlag)), g_decArgo_qcStrBad);
+   if (1)
+      o_profChlaAdj(idNoDef) = o_profChlaAdj(idNoDef)/2;
+
+      % apply range test to CHLA_ADJUSTED
+      idToFlag = find((o_profChlaAdj(idNoDef) < -0.1) | (o_profChlaAdj(idNoDef) > 50));
+      if (~isempty(idToFlag))
+         o_profChlaAdjQc(idNoDef(idToFlag)) = set_qc(o_profChlaAdjQc(idNoDef(idToFlag)), g_decArgo_qcStrBad);
+      end
+
+   else
+      
+      % TEMPORARY CHLA adjustment 20250411
+      
+      % retrieve PHYSIO_RATIO to adjust CHLA
+      physioRatio = get_chla_cor_fact_data(a_lon, a_lat);
+
+      if (~isnan(physioRatio))
+         o_profChlaAdj(idNoDef) = o_profChlaAdj(idNoDef)/physioRatio;
+
+         % apply range test to CHLA_ADJUSTED
+         idToFlag = find((o_profChlaAdj(idNoDef) < -0.1) | (o_profChlaAdj(idNoDef) > 50));
+         if (~isempty(idToFlag))
+            o_profChlaAdjQc(idNoDef(idToFlag)) = set_qc(o_profChlaAdjQc(idNoDef(idToFlag)), g_decArgo_qcStrBad);
+         end
+      end
    end
 end
 
@@ -407,6 +424,7 @@ o_chlaAdjInfo.depthNPQ = zMaxFluo;
 prelimDarkChlaStr = sprintf('%g,', a_prelimDarkChla);
 o_chlaAdjInfo.prelimDarkChla = prelimDarkChlaStr(1:end-1);
 o_chlaAdjInfo.scaleChla = a_scaleChla;
+o_chlaAdjInfo.physioRatio = physioRatio;
 
 return
 
@@ -426,7 +444,7 @@ return
 % EXAMPLES :
 %
 % SEE ALSO :
-% AUTHORS  : Jean-Philippe Rannou (Altran)(jean-philippe.rannou@altran.com)
+% AUTHOR : Jean-Philippe Rannou (Capgemini) (jean.philippe.rannou@partenaire-exterieur.ifremer.fr)
 % ------------------------------------------------------------------------------
 % RELEASES :
 %   11/15/2022 - RNU - creation
