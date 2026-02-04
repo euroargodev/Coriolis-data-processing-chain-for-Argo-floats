@@ -670,7 +670,7 @@ end
 if (ismember(g_decArgo_floatNum, [ ...
       6903865, 6903771, 7900543, 6900790, 6901880, 6903229, 6902802, 7900522, ...
       6903774, 3901644, 6903010, 6902938, 6903777, 6902989, 6903256, 6903000, ...
-      6903009, 6903230, 6903766, 6903782, 7900595, 6903561]))
+      6903009, 6903230, 6903766, 6903782, 7900595, 6903561, 6902994]))
    switch g_decArgo_floatNum
       case 6903865
          % cycle #58 data are separated
@@ -1025,6 +1025,26 @@ if (ismember(g_decArgo_floatNum, [ ...
          tabSession(id263(1:end-3)) = tabSession(id263(1));
          tabDeep(id263(end-2:end)) = 0;
 
+         % cycle #267 in 2 sessions
+         id267 = find(tabCyNum == 267);
+         tabRank(id267) = tabRank(id267(1));
+
+         % cycle #267 data of second iridium session
+         id = find((tabCyNum == 267) & (tabPackType == 0));
+         tabRank(id(2)) = tabRank(id267(1)) + 1;
+         tabDeep(id(2)) = 0;
+         id = find((tabCyNum == 267) & (tabPackType == 4));
+         tabRank(id(2)) = tabRank(id267(1)) + 1;
+         tabDeep(id(2)) = 0;
+         id = find((tabCyNum == 267) & (tabPackType == 5));
+         tabRank(id(2)) = tabRank(id267(1)) + 1;
+         tabDeep(id(2)) = 0;
+
+         % cycle #268 in 2 sessions
+         id268 = find(tabCyNum == 268);
+         tabRank(id268(1:end-3)) = tabRank(id268(1));
+         tabDeep(id268(end-2:end)) = 0;
+
       case 6903009
          % cycle #213 in 2 sessions
          id213 = find(tabCyNum == 213);
@@ -1096,6 +1116,23 @@ if (ismember(g_decArgo_floatNum, [ ...
          % cycle #227 data are separated
          id = find(tabCyNum == 227);
          tabRank(id) = tabRank(id(1));
+
+      case 6902994
+         % cycle #169 data are separated
+         id = find(tabCyNum == 169);
+         tabRank(id(1:end-3)) = tabRank(id(1));
+         tabSession(id(1:end-3)) = tabSession(id(1));
+
+         % Tech#1, Tech#2 and Prog#1 of cycle #169 transmitted twice
+         id = find((tabCyNum == 169) & (tabPackType == 0));
+         tabRank(id(2)) = -1;
+         tabRankByCycle(id(2)) = -1;
+         id = find((tabCyNum == 169) & (tabPackType == 4));
+         tabRank(id(2)) = -1;
+         tabRankByCycle(id(2)) = -1;
+         id = find((tabCyNum == 169) & (tabPackType == 5));
+         tabRank(id(2)) = -1;
+         tabRankByCycle(id(2)) = -1;
 
    end
 

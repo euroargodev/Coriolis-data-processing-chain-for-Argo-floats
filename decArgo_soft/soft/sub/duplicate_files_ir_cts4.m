@@ -51,6 +51,12 @@ switch(g_decArgo_floatNum)
       for idF = 1:length(delFile)
          move_file([a_outputDir '/' delFile(idF).name], g_decArgo_unusedDirectory);
       end
+   case 6904112
+      % an erroneous file has been transmitted
+      delFile = dir([a_outputDir '/450802_120839_bshbio005b_00240.bin']);
+      if (~isempty(delFile))
+         move_file([a_outputDir '/' delFile.name], g_decArgo_unusedDirectory);
+      end
 end
 
 return

@@ -119,7 +119,7 @@ for idP = 1:size(a_tabTech, 1)
    end
    
    % specific
-   if (ismember(g_decArgo_floatNum, [3902120 6904134]))
+   if (ismember(g_decArgo_floatNum, [3902120 6904134 6904112]))
       switch g_decArgo_floatNum
          case 3902120
             % At the end of cycle #134 the float stayed at the surface from
@@ -138,6 +138,15 @@ for idP = 1:size(a_tabTech, 1)
          case 6904134
             if ((cycleNum == 10) && (a_tabTech(idP, 8) == g_decArgo_phaseSatTrans))
                refDay = refDay + 10;
+            end
+         case 6904112
+            % an error occured on cycle #240 and the reference day shifted twice
+            % (in cycle #240 and #241)
+            if (cycleNum == 240)
+               refDay = refDay - 1;
+            end
+            if (cycleNum == 241)
+               refDay = refDay - 1;
             end
       end
    end
@@ -304,6 +313,8 @@ for idP = 1:size(a_tabTech, 1)
                julian_2_gregorian_dec_argo(refDay));
             refDay = refDay + offset;
          elseif (length(offset) > 1)
+            offset2
+            offset3
             fprintf('ERROR: Float #%d cycle #%d prof #%d: check of float reference day returns inconsistent offsets (%d values)\n', ...
                g_decArgo_floatNum, a_tabTech(idP, 4), a_tabTech(idP, 5), ...
                length(offset));

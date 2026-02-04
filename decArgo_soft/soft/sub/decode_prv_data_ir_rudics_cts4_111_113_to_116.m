@@ -1962,6 +1962,19 @@ switch (packType)
          packType);
 end
 
+% specific
+if (g_decArgo_floatNum == 6904112)
+   % during cycle #240 the transmitted measurement dates are inconsistent (we
+   % should remove 7168 days)
+   if ((decodedData.cyNumRaw == 240) && (decodedData.packType == 0))
+      decData = decodedData.decData;
+      decDataDate = decData{1};
+      decDataDate(4) = decDataDate(4) - 7168;
+      decData{1} = decDataDate;
+      decodedData.decData = decData;
+   end
+end
+
 o_decodedData = cat(2, o_decodedData, decodedData);
 
 return

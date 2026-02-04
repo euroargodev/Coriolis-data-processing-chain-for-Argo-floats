@@ -452,7 +452,7 @@ if (ismember(g_decArgo_floatNum, [ ...
       6903815, 6903055, 6904234, 6904079, 5906866, 7901091, 6904206, 1902575, ...
       3902013, 6904237, 7900555, 6903296, 6904215, 7902194, 6903866, 4903836, ...
       2903876, 6990663, 3902461, 7902191, 6903061, 7900577, 6900793, 4903797, ...
-      5907217, 3902474, 2904032]))
+      5907217, 3902474, 2904032, 6990708]))
    switch g_decArgo_floatNum
       case 6900791
          % cycle #11 data are separated
@@ -567,6 +567,10 @@ if (ismember(g_decArgo_floatNum, [ ...
          id = id(1);
          tabRank(tabCyNum == 28) = tabRank(id);
          tabDelayed(tabCyNum == 28) = 1;
+
+         % cycle #178 last data transmitted in another buffer
+         id = find(tabCyNum == 178);
+         tabRank(id) = tabRank(id(1));
 
       case 6903800
          % float picked up by a fisherman during cycle #34
@@ -1312,7 +1316,16 @@ if (ismember(g_decArgo_floatNum, [ ...
 
       case 2904032
          % separated buffers
-         cycleList = [29];
+         cycleList = [29, 48];
+         for cyNum = cycleList
+            id = find(tabCyNum == cyNum);
+            tabRank(id) = tabRank(id(1));
+            tabSession(id) = tabSession(id(1));
+         end
+
+      case 6990708
+         % separated buffers
+         cycleList = [28];
          for cyNum = cycleList
             id = find(tabCyNum == cyNum);
             tabRank(id) = tabRank(id(1));

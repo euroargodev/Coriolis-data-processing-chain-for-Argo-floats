@@ -2,21 +2,26 @@
 % Compute RTQC data for CHLA parameter and adjust CHLA data.
 %
 % SYNTAX :
-% [o_profChlaQc, o_profChlaAdj, o_profChlaAdjQc, ...
-%   o_profChlaFluoQc, o_profChlaFluoAdj, o_profChlaFluoAdjQc, o_chlaAdjInfo] = ...
-%   add_chla_rtqc_to_profile_file( ...
-%   a_floatNum, a_julD, a_cyNum, ...
-%   a_profPresFluoChla, a_profPresFluoChlaQc, a_presFluoChlaDataFillValue, ...
-%   a_profFluoChla, a_profFluoChlaQc, a_fluoChlaDataFillValue, ...
-%   a_profChla, a_profChlaQc, a_chlaDataFillValue, ...
-%   a_profChlaAdj, a_profChlaAdjQc, a_chlaDataAdjFillValue, ...
-%   a_profChlaFluo, a_profChlaFluoQc, a_chlaFluoDataFillValue, ...
-%   a_profChlaFluoAdj, a_profChlaFluoAdjQc, a_chlaFluoDataAdjFillValue, ...
-%   a_darkChla, a_scaleChla, a_prelimDarkChla, ...
-%   a_profPres, a_profPresQc, a_presDataFillValue, ...
-%   a_profTemp, a_profTempQc, a_tempDataFillValue, ...
-%   a_profPsal, a_profPsalQc, a_psalDataFillValue, ...
-%   a_lon, a_lat)
+% function [ ...
+%    o_profChlaQc, o_profChlaAdj, o_profChlaAdjQc, ...
+%    o_profChlaFluoQc, o_profChlaFluoAdj, o_profChlaFluoAdjQc, o_chlaAdjInfo, ...
+%    o_testDoneList, o_testFailedList, ...
+%    o_testDoneListForTraj, o_testFailedListForTraj] = ...
+%    add_chla_rtqc_to_profile_file( ...
+%    a_floatNum, a_julD, a_cyNum, ...
+%    a_profPresFluoChla, a_profPresFluoChlaQc, a_presFluoChlaDataFillValue, ...
+%    a_profFluoChla, a_profFluoChlaQc, a_fluoChlaDataFillValue, ...
+%    a_profChla, a_profChlaQc, a_chlaDataFillValue, ...
+%    a_profChlaAdj, a_profChlaAdjQc, a_chlaDataAdjFillValue, ...
+%    a_profChlaFluo, a_profChlaFluoQc, a_chlaFluoDataFillValue, ...
+%    a_profChlaFluoAdj, a_profChlaFluoAdjQc, a_chlaFluoDataAdjFillValue, ...
+%    a_darkChla, a_scaleChla, a_prelimDarkChla, ...
+%    a_profPres, a_profPresQc, a_presDataFillValue, ...
+%    a_profTemp, a_profTempQc, a_tempDataFillValue, ...
+%    a_profPsal, a_profPsalQc, a_psalDataFillValue, ...
+%    a_lon, a_lat, ...
+%    a_test6Flag, a_profId, a_testDoneList, a_testFailedList, ...
+%    a_testDoneListForTraj, a_testFailedListForTraj)
 %
 % INPUT PARAMETERS :
 %   a_floatNum                  : float WMO number
@@ -57,15 +62,25 @@
 %   a_psalDataFillValue         : fill value of the PSAL parameter
 %   a_lon                       : longitude of the profile
 %   a_lat                       : latitude of the profile
+%   a_test6Flag                 : RTQC Test 6 flag
+%   a_profId                    : profile Id in RTQC reported variables
+%   a_testDoneList              : input test done list
+%   a_testFailedList            : input test failed list
+%   a_testDoneListForTraj       : input test done list for traj
+%   a_testFailedListForTraj     : input test failed list for traj
 %
 % OUTPUT PARAMETERS :
-%   o_profChlaQc        : Qcs of the CHLA parameter profile
-%   o_profChlaAdj       : CHLA_ADJUSTED parameter profile
-%   o_profChlaAdjQc     : Qcs of the CHLA_ADJUSTED parameter profile
-%   o_profChlaFluoQc    : Qcs of the CHLA_FLUORESCENCE parameter profile
-%   o_profChlaFluoAdj   : CHLA_FLUORESCENCE_ADJUSTED parameter profile
-%   o_profChlaFluoAdjQc : Qcs of the CHLA_FLUORESCENCE_ADJUSTED parameter profile
-%   o_chlaAdjInfo       : output information on CHLA adjustment
+%   o_profChlaQc            : Qcs of the CHLA parameter profile
+%   o_profChlaAdj           : CHLA_ADJUSTED parameter profile
+%   o_profChlaAdjQc         : Qcs of the CHLA_ADJUSTED parameter profile
+%   o_profChlaFluoQc        : Qcs of the CHLA_FLUORESCENCE parameter profile
+%   o_profChlaFluoAdj       : CHLA_FLUORESCENCE_ADJUSTED parameter profile
+%   o_profChlaFluoAdjQc     : Qcs of the CHLA_FLUORESCENCE_ADJUSTED parameter profile
+%   o_chlaAdjInfo           : output information on CHLA adjustment
+%   o_testDoneList          : output test done list
+%   o_testFailedList        : output test failed list
+%   o_testDoneListForTraj   : output test done list for traj
+%   o_testFailedListForTraj : output test failed list for traj
 %
 % EXAMPLES :
 %
@@ -77,7 +92,9 @@
 % ------------------------------------------------------------------------------
 function [ ...
    o_profChlaQc, o_profChlaAdj, o_profChlaAdjQc, ...
-   o_profChlaFluoQc, o_profChlaFluoAdj, o_profChlaFluoAdjQc, o_chlaAdjInfo] = ...
+   o_profChlaFluoQc, o_profChlaFluoAdj, o_profChlaFluoAdjQc, o_chlaAdjInfo, ...
+   o_testDoneList, o_testFailedList, ...
+   o_testDoneListForTraj, o_testFailedListForTraj] = ...
    add_chla_rtqc_to_profile_file( ...
    a_floatNum, a_julD, a_cyNum, ...
    a_profPresFluoChla, a_profPresFluoChlaQc, a_presFluoChlaDataFillValue, ...
@@ -90,7 +107,9 @@ function [ ...
    a_profPres, a_profPresQc, a_presDataFillValue, ...
    a_profTemp, a_profTempQc, a_tempDataFillValue, ...
    a_profPsal, a_profPsalQc, a_psalDataFillValue, ...
-   a_lon, a_lat)
+   a_lon, a_lat, ...
+   a_test6Flag, a_profId, a_testDoneList, a_testFailedList, ...
+   a_testDoneListForTraj, a_testFailedListForTraj)
 
 % output parameters initialization
 o_profChlaQc = [];
@@ -100,6 +119,10 @@ o_profChlaFluoQc = [];
 o_profChlaFluoAdj = [];
 o_profChlaFluoAdjQc = [];
 o_chlaAdjInfo = [];
+o_testDoneList = a_testDoneList;
+o_testFailedList = a_testFailedList;
+o_testDoneListForTraj = a_testDoneListForTraj;
+o_testFailedListForTraj = a_testFailedListForTraj;
 
 % global default values
 global g_decArgo_dateDef;
@@ -117,6 +140,10 @@ global g_decArgo_qcStrBad;           % '4'
 global g_decArgo_qcStrChanged;       % '5'
 global g_decArgo_qcStrInterpolated;  % '8'
 global g_decArgo_qcStrMissing;       % '9'
+
+% CHLA range min/max for RTQC test 6 (global range test)
+global g_decArgo_rtqcTest6ChlaMin;
+global g_decArgo_rtqcTest6ChlaMax;
 
 
 MIN_PROF_DEPTH_FOR_DARK_ESTIMATION_1 = 950;
@@ -262,6 +289,23 @@ if (~isempty(idNoDef))
    idNoDef = find(a_profFluoChla ~= a_fluoChlaDataFillValue);
    o_profChlaFluoAdj(idNoDef) = (a_profFluoChla(idNoDef) - darkPChla)*a_scaleChla;
    o_profChlaFluoAdjQc(idNoDef) = set_qc(a_profChlaFluoAdjQc(idNoDef), chlaFluoAdjQCValue);
+
+   % apply "TEST 6: global range test" to CHLA_FLUORESCENCE_ADJUSTED
+   if (a_test6Flag == 1)
+      if (~isempty(idNoDef))
+
+         o_testDoneList(6, a_profId) = 1;
+         o_testDoneListForTraj{6, a_profId} = [o_testDoneListForTraj{6, a_profId} idNoDef];
+
+         idToFlag = find((o_profChlaFluoAdj(idNoDef) < g_decArgo_rtqcTest6ChlaMin) | (o_profChlaFluoAdj(idNoDef) > g_decArgo_rtqcTest6ChlaMax));
+         if (~isempty(idToFlag))
+            o_profChlaFluoAdjQc(idNoDef(idToFlag)) = set_qc(o_profChlaFluoAdjQc(idNoDef(idToFlag)), g_decArgo_qcStrBad);
+
+            o_testFailedList(6, a_profId) = 1;
+            o_testFailedListForTraj{6, a_profId} = [o_testFailedListForTraj{6, a_profId} idNoDef(idToFlag)];
+         end
+      end
+   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -390,10 +434,21 @@ if (~isempty(idNoDef))
    if (1)
       o_profChlaAdj(idNoDef) = o_profChlaAdj(idNoDef)/2;
 
-      % apply range test to CHLA_ADJUSTED
-      idToFlag = find((o_profChlaAdj(idNoDef) < -0.1) | (o_profChlaAdj(idNoDef) > 50));
-      if (~isempty(idToFlag))
-         o_profChlaAdjQc(idNoDef(idToFlag)) = set_qc(o_profChlaAdjQc(idNoDef(idToFlag)), g_decArgo_qcStrBad);
+      % apply "TEST 6: global range test" to CHLA_ADJUSTED
+      if (a_test6Flag == 1)
+         if (~isempty(idNoDef))
+
+            o_testDoneList(6, a_profId) = 1;
+            o_testDoneListForTraj{6, a_profId} = [o_testDoneListForTraj{6, a_profId} idNoDef];
+
+            idToFlag = find((o_profChlaAdj(idNoDef) < g_decArgo_rtqcTest6ChlaMin) | (o_profChlaAdj(idNoDef) > g_decArgo_rtqcTest6ChlaMax));
+            if (~isempty(idToFlag))
+               o_profChlaAdjQc(idNoDef(idToFlag)) = set_qc(o_profChlaAdjQc(idNoDef(idToFlag)), g_decArgo_qcStrBad);
+
+               o_testFailedList(6, a_profId) = 1;
+               o_testFailedListForTraj{6, a_profId} = [o_testFailedListForTraj{6, a_profId} idNoDef(idToFlag)];
+            end
+         end
       end
 
    else
@@ -406,10 +461,21 @@ if (~isempty(idNoDef))
       if (~isnan(physioRatio))
          o_profChlaAdj(idNoDef) = o_profChlaAdj(idNoDef)/physioRatio;
 
-         % apply range test to CHLA_ADJUSTED
-         idToFlag = find((o_profChlaAdj(idNoDef) < -0.1) | (o_profChlaAdj(idNoDef) > 50));
-         if (~isempty(idToFlag))
-            o_profChlaAdjQc(idNoDef(idToFlag)) = set_qc(o_profChlaAdjQc(idNoDef(idToFlag)), g_decArgo_qcStrBad);
+         % apply "TEST 6: global range test" to CHLA_ADJUSTED
+         if (a_test6Flag == 1)
+            if (~isempty(idNoDef))
+
+               o_testDoneList(6, a_profId) = 1;
+               o_testDoneListForTraj{6, a_profId} = [o_testDoneListForTraj{6, a_profId} idNoDef];
+
+               idToFlag = find((o_profChlaAdj(idNoDef) < g_decArgo_rtqcTest6ChlaMin) | (o_profChlaAdj(idNoDef) > g_decArgo_rtqcTest6ChlaMax));
+               if (~isempty(idToFlag))
+                  o_profChlaAdjQc(idNoDef(idToFlag)) = set_qc(o_profChlaAdjQc(idNoDef(idToFlag)), g_decArgo_qcStrBad);
+
+                  o_testFailedList(6, a_profId) = 1;
+                  o_testFailedListForTraj{6, a_profId} = [o_testFailedListForTraj{6, a_profId} idNoDef(idToFlag)];
+               end
+            end
          end
       end
    end

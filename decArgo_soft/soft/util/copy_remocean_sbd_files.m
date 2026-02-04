@@ -155,6 +155,13 @@ for idFloat = 1:nbFloats
             move_file([floatOutputDirName '/' delFile(idF).name], unusedDirName);
             fprintf('MISC: %s - not used\n', delFile(idF).name);
          end
+      case 6904112
+         % an erroneous file has been transmitted
+         delFile = dir([floatOutputDirName '/450802_120839_bshbio005b_00240.bin']);
+         if (~isempty(delFile))
+            move_file([floatOutputDirName '/' delFile.name], unusedDirName);
+            fprintf('MISC: %s - not used\n', delFile.name);
+         end
    end
 
 end

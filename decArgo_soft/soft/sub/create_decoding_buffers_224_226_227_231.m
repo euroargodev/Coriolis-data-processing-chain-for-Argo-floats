@@ -441,7 +441,7 @@ if (ismember(g_decArgo_floatNum, [ ...
 
       case 3902607
          % separated buffers
-         cycleList = [88, 89];
+         cycleList = [88, 89, 90];
          for cyNum = cycleList
             id = find(tabCyNum == cyNum);
             tabRank(id) = tabRank(id(1));

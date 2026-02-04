@@ -539,7 +539,7 @@ global g_decArgo_nitrate_opticalWavelengthOffset;
 % the first 3 digits are incremented at each new complete dated release
 % the last digit is incremented at each patch associated to a given complete
 % dated release
-g_decArgo_decoderVersion = '082m';
+g_decArgo_decoderVersion = '082q';
 
 % list of managed decoders
 
@@ -549,7 +549,7 @@ g_decArgo_decoderVersion = '082m';
 % all managed decoders
 g_decArgo_decoderIdListNkeArgos = [1, 3, 4, 11, 12, 17, 19, 24, 25, 27:32];
 g_decArgo_decoderIdListNkeIridiumRbr = [224, 226, 227, 228, 229];
-g_decArgo_decoderIdListNkeIridiumDeep = [201, 202, 203, 215, 216, 218, 221, 228, 229, 230, 501];
+g_decArgo_decoderIdListNkeIridiumDeep = [201, 202, 203, 215, 216, 218, 221, 228, 229, 230, 403];
 g_decArgo_decoderIdListNkeIridiumNotDeep = setdiff(201:232, g_decArgo_decoderIdListNkeIridiumDeep);
 g_decArgo_decoderIdListNkePfv2IridiumSbd = [401:402];
 g_decArgo_decoderIdListNkePfv2IridiumRudics = [403];
